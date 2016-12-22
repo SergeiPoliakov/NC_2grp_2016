@@ -9,6 +9,7 @@
 
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>domain.UserProfile</class>
+        <class>domain.Event</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect" />
             <property name="hibernate.hbm2ddl.auto" value="update" />
