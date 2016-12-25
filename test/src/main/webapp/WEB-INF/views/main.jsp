@@ -23,6 +23,8 @@
      <a href="registration.html">Регистрация</a>
      <br>
      <a href="event.html">Запланировать событие</a>
+     <br>
+     <a href="message.html">Отправить сообщение</a>
 
 </body>
 </html>
