@@ -16,15 +16,40 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Main Page</title>
-
+    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/css/main.css" rel="stylesheet">
 </head>
 <body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="/resources/js/bootstrap.min.js"></script>
 
-     <a href="registration.html">Регистрация</a>
-     <br>
-     <a href="event.html">Запланировать событие</a>
-     <br>
-     <a href="message.html">Отправить сообщение</a>
+<div class="container  ">
+    <div class="row" >
+        <div class="well logo  col-lg-3 col-lg-offset-5 ">
+            <legend class="logo">Вход</legend>
+            <form action="/login" method="post">
+                <fieldset class="account-info">
+                    <label>
+                        <input type="text" name="email" placeholder="Введите имя">
+                    </label>
+                    <label>
+                        <input type="password" name="password"placeholder="Введите пароль">
+                    </label>
+                </fieldset>
+                <label>
+                    <input type="checkbox" name="remember"> Запомнить
+                </label>
+                <fieldset class="account-action">
+                    <input class="btn btn-sm" type="submit" name="submit" value="Войти">
+
+                    <a href="registration.html">Регистрация</a>
+                </fieldset>
+            </form>
+
+        </div>
+
+    </div>
+</div>
 
 </body>
 </html>

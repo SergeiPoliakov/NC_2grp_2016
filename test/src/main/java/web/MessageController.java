@@ -1,11 +1,14 @@
 package web;
 
 import domain.Message;
+import domain.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import service.MessageService;
+import service.UserProfileService;
 
+import javax.servlet.http.HttpSession;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,6 +21,9 @@ import java.text.SimpleDateFormat;
 public class MessageController {
     @Autowired
     MessageService messageService;
+
+    @Autowired
+    UserProfileService userProfileService;
 
     private java.sql.Date strToDate(String str) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -37,15 +43,21 @@ public class MessageController {
 
     @RequestMapping(value = "/message", method = RequestMethod.POST)
     public String createMessage(@ModelAttribute("userMessage") Message message,
-                              @RequestParam("date_beginStr") String date_begin
+                              @RequestParam("date_beginStr") String date_begin,
+                                HttpSession session
     )
     {
-
+        UserProfile host = (UserProfile) session.getAttribute("user");
+        if (host != null) {
+            message.setFrom_id(host.getId());
+        } else {
+            return "/notLogIn";
+        }
         java.sql.Date beginDate = strToDate(date_begin);
 
         message.setDate_begin(beginDate);
         messageService.createMessage(message);
-        return "/main";
+        return "/main-Login";
     }
 
 }

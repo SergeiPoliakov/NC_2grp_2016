@@ -31,10 +31,7 @@
             <label for="name">Введите заголовок</label>
             <input type="text" class="form-control " name="name" id="name" placeholder="Название">
         </div>
-        <div class="form-group col-lg-offset-4 col-lg-5">
-            <label for="from_id">Введите ID отправителя</label>
-            <input type="text" class="form-control " name="from_id" id="from_id" placeholder="Название">
-        </div>
+
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="to_id">Введите ID получателя</label>
             <input type="text" class="form-control " name="to_id" id="to_id" placeholder="Название">

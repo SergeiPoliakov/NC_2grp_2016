@@ -1,11 +1,13 @@
 package web;
 
 import domain.Event;
+import domain.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import service.EventService;
 
+import javax.servlet.http.HttpSession;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,9 +43,19 @@ public class EventController {
     @RequestMapping(value = "/event", method = RequestMethod.POST)
     public String createEvent(@ModelAttribute("userEvent") Event event,
                                 @RequestParam("date_beginStr") String date_begin,
-                                @RequestParam("date_endStr") String date_end
+                                @RequestParam("date_endStr") String date_end,
+                              HttpSession session
                                )
     {
+
+        UserProfile host = (UserProfile) session.getAttribute("user");
+
+        if (host != null) {
+            event.setHost_id(host.getId());
+        } else {
+            return "/notLogIn";
+        }
+
 
         java.sql.Date beginDate = strToDate(date_begin);
         java.sql.Date endDate = strToDate(date_end);
@@ -51,11 +63,10 @@ public class EventController {
         event.setDate_begin(beginDate);
         event.setDate_end(endDate);
 
-       // eventService.createEvent(event);
 
-            eventService.createEvent(event);
+        eventService.createEvent(event);
 
-        return "/main";
+        return "/main-login";
     }
 
 }

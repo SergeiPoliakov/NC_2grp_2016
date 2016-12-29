@@ -2,11 +2,6 @@
 <project version="4">
   <component name="dataSourceStorageLocal">
     <data-source name="Oracle - @localhost" uuid="3982bdd6-1b90-4ec7-b19c-a7fdea0edb57">
-      <database-info product="Oracle" version="Oracle Database 11g Express Edition Release 11.2.0.2.0 - Production" jdbc-version="4.0" driver-name="Oracle JDBC driver" driver-version="12.1.0.2.0">
-        <extra-name-characters>$#</extra-name-characters>
-        <identifier-quote-string>&quot;</identifier-quote-string>
-      </database-info>
-      <case-sensitivity plain-identifiers="upper" quoted-identifiers="exact" />
       <secret-storage>master_key</secret-storage>
       <first-sync>true</first-sync>
       <user-name>netcracker</user-name>

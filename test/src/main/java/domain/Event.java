@@ -13,6 +13,8 @@ import java.util.Date;
 public class Event {
     private Integer id;
 
+    private int host_id;
+
     private String name;
 
     private Date date_begin;
@@ -31,6 +33,14 @@ public class Event {
     }
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public int getHost_id() {
+        return host_id;
+    }
+
+    public void setHost_id(int host_id) {
+        this.host_id = host_id;
     }
 
     public String getName() {
@@ -67,14 +77,11 @@ public class Event {
 
 
     public Event() {
-        this.name = null;
-        this.date_begin = null;
-        this.date_end = null;
-        this.priority = null;
-        this.info = null;
+
     }
 
-    public Event(String name, Date date_begin, Date date_end, int priority, String info) {
+    public Event(int host_id, String name, Date date_begin, Date date_end, int priority, String info) {
+        this.host_id = host_id;
         this.name = name;
         this.date_begin = date_begin;
         this.date_end = date_end;

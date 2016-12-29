@@ -12,10 +12,21 @@ import javax.servlet.http.HttpSession;
 public class MainController {
 
     @RequestMapping(value = {"/", "main"})
-    public ModelAndView index() {
+    public ModelAndView index(HttpSession httpSession) {
+        UserProfile client = (UserProfile) httpSession.getAttribute("user");
+        if (client == null) {
             return new ModelAndView("main");
+        }
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("main-login");
+        return modelAndView;
     }
 
+
+    @RequestMapping(value = "/mainLogin", method = RequestMethod.GET)
+    public String getMainLogin() {
+        return "main-login";
+    }
 
 
 }
