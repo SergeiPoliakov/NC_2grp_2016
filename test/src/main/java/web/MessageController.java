@@ -57,7 +57,7 @@ public class MessageController {
 
         message.setDate_begin(beginDate);
         messageService.createMessage(message);
-        return "/main-Login";
+        return "/main-login";
     }
 
 }
