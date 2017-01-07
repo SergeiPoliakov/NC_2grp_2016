@@ -24,6 +24,7 @@
                  <li class="active pull-right"><a href="/logout">Выход</a></li>
                  <li class="active pull-right"><a href="/message">Отправить сообщение</a></li>
                  <li class="active pull-right"><a href="/event">Добавить событие</a></li>
+                 <li class="active pull-right"><a href="/profile">Профиль</a></li>
 
 
              </ul>

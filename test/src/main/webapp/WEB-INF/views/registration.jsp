@@ -24,40 +24,30 @@
     </div>
     <form name="registration" action="/registration" method="post">
         <div class="form-group col-lg-offset-4 col-lg-5">
+            <label for="nickname">Введите никнейм</label>
+            <input type="text" class="form-control " name="nickname" id="nickname" placeholder="Никнейм">
+        </div>
+
+        <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="name">Введите Имя</label>
             <input type="text" class="form-control " name="name" id="name" placeholder="Имя">
         </div>
+
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="surname">Введите фамилию</label>
             <input type="text" class="form-control" name="surname" id="surname" placeholder="Фамилия">
         </div>
+
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="age">Введите ваш возраст</label>
             <input type="text" class="form-control" name="age" id="age" placeholder="Возраст">
         </div>
-        <div class="form-group  col-lg-offset-4 col-lg-5">
-            <label for="city">Введите ваш город</label>
-            <input type="text" class="form-control"  name="city" id="city" placeholder="Город">
-        </div>
-        <div class="form-group col-lg-offset-4 col-lg-5">
-            <label>Выберите ваш пол</label>
-            <div class="radio">
-                <label>
-                    <input type="radio" name="sex" id="Gender1" value="М" checked>
-                    Мужской
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" name="sex" id="Gender2" value="Ж" checked>
-                    Женский
-                </label>
-            </div>
-        </div>
+
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="email">Введите email</label>
             <input type="email" class="form-control" name="email" id="email" placeholder="Email">
         </div>
+
         <div class="form-group  col-lg-offset-4 col-lg-5">
             <label for="password">Введите пароль</label>
             <input type="password" class="form-control" name="password" id="password" placeholder="Пароль">

@@ -2,6 +2,10 @@ package validation;
 
 public class Validation {
 
+    public static boolean isValidNickName(String nickname) {
+        return nickname.toLowerCase().matches("^[а-яё a-z]+$");
+    }
+
     public static boolean isValidName(String name) {
         return name.toLowerCase().matches("^[а-яё a-z]+$");
     }

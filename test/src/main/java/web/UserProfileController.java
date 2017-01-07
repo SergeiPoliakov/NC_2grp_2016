@@ -29,15 +29,8 @@ public class UserProfileController {
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public String registerUser(@ModelAttribute("userProfile") UserProfile userProfile) throws CustomException
     {
-        if (Validation.isValidName(userProfile.getName())) {
-            if (Validation.isValidName(userProfile.getSurname())) {
-                if (Validation.isValidEmail(userProfile.getEmail())) {
-                    if (Validation.isValidCity(userProfile.getCity())) {
+
                         userProfileService.registerUser(userProfile);
-                    }
-                }
-            }
-        }
 
         return "/main";
     }
@@ -50,14 +43,50 @@ public class UserProfileController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String loginUser(@RequestParam("email") String email,
+    public String loginUser(@RequestParam("nickname") String nickname,
                             @RequestParam("password") String password,
                             ModelMap m) throws CustomException
     {
-        UserProfile user = userProfileService.loginUser(email, password);
+        UserProfile user = userProfileService.loginUser(nickname, password);
         m.addAttribute("user", user);
         return "redirect:/mainLogin";
     }
+
+
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public String getUserPage(HttpSession session)
+    {
+        UserProfile userProfile = (UserProfile) session.getAttribute("user");
+        if (userProfile == null) {
+            return "/notLogIn";
+        }
+
+        return "/profile";
+    }
+
+
+    @RequestMapping(value = "/changeProfile", method = RequestMethod.GET)
+    public String getChangeProfileUserPage(ModelMap m, HttpSession session) {
+        UserProfile user = (UserProfile) session.getAttribute("user");
+        if (user == null) {
+            return "/notLogIn";
+        } else {
+            m.addAttribute("user", user);
+            return "/changeProfile";
+        }
+    }
+
+    @RequestMapping(value = "/changeProfile/{userId}", method = RequestMethod.POST)
+    public String changeUser(@PathVariable("userId") Integer userId, @ModelAttribute("userProfile") UserProfile userProfile)
+    {
+
+                        userProfile.setId(userId);
+                        userProfileService.updateUserProfile(userProfile);
+
+
+        return "redirect:/profile";
+    }
+
 
     @RequestMapping(value = "/logout")
     public String logOut(SessionStatus sessionStatus) {

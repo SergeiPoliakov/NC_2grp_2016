@@ -30,7 +30,7 @@
             <form action="/login" method="post">
                 <fieldset class="account-info">
                     <label>
-                        <input type="text" name="email" placeholder="Введите имя">
+                        <input type="text" name="nickname" placeholder="Введите имя">
                     </label>
                     <label>
                         <input type="password" name="password"placeholder="Введите пароль">

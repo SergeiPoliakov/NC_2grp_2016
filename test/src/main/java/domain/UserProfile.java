@@ -11,6 +11,8 @@ public class UserProfile {
 
     private Integer id;
 
+    private String nickname;
+
     private String name;
 
     private String surname;
@@ -25,6 +27,10 @@ public class UserProfile {
 
     private String sex;
 
+    private String phone;
+
+    private String info;
+
     @Id
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
@@ -33,6 +39,14 @@ public class UserProfile {
     }
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getName() {
@@ -85,16 +99,31 @@ public class UserProfile {
         this.sex = sex;
     }
 
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
     public UserProfile() {}
 
-    public UserProfile(String name, String surname, String email, String password, String city, int age, String sex) {
+    public UserProfile(String nickname, String name, String surname, String email, String password) {
+        this.nickname = nickname;
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
-        this.city = city;
-        this.age = age;
-        this.sex = sex;
     }
 
 

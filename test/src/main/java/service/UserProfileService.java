@@ -21,19 +21,23 @@ public class UserProfileService {
         }
     }
 
-    public UserProfile loginUser(String email, String password) throws CustomException {
+    public UserProfile loginUser(String nickname, String password) throws CustomException {
         List<UserProfile> users = userProfileDAO.readAll();
         for (UserProfile user : users) {
-            if (user.getEmail().equals(email) && user.getPassword().equals(password))
+            if (user.getNickname().equals(nickname) && user.getPassword().equals(password))
                 return user;
         }
 
-        throw new CustomException("Указан неправильный email или пароль");
+        throw new CustomException("Указано неверное имя пользователя или пароль");
     }
 
 
     public UserProfile getUserByEmail(String email) {
         return userProfileDAO.findUserWithEmail(email);
+    }
+
+    public UserProfile updateUserProfile(UserProfile userProfile) {
+        return userProfileDAO.update(userProfile);
     }
 
 }
