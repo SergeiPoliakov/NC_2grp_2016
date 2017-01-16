@@ -1,4 +1,4 @@
---liquibase formatted sql
+﻿--liquibase formatted sql
 
 --changeset Hroniko:1 
 
@@ -85,17 +85,19 @@ ALTER TABLE References ADD CONSTRAINT References_Objects
 
 --User_Attributes (1-100)
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('1', 'name');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('2', 'birth_date');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('3', 'country');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('4', 'sex');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('5', 'e-mail');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('6', 'additional_field');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('7', 'picture');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('8', 'login');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('9', 'password');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('10', 'friends');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('11', 'task_id');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('12', 'events');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('2', 'surname');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('3', 'middle_name');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('4', 'birth_date');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('5', 'country');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('6', 'sex');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('7', 'e-mail');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('8', 'additional_field');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('9', 'picture');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('10', 'login');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('11', 'password');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('12', 'friends');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('13', 'task_id');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('14', 'events');
 
 --Tasks_Attributes (101-200)
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('101', 'time_start');
@@ -130,6 +132,8 @@ INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '9');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '10');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '11');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '12');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '13');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '14');
 
 --Tasks Object_Attributes
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1002', '101');
@@ -179,32 +183,36 @@ INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('20004', '1
 -- Users
 --User Id: 10001
 INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('10001', '1001', 'Геннадий Иванович Степанов');
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '1', 'Геннадий Иванович Степанов'); --name
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '2', '09.07.1985'); --birthdate
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '3', 'Россия'); --country
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '4', 'мужской'); --sex
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '5', 'gena51rus@pochta.ru'); --e-mail
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '6', 'Тут дополнительная информация'); --additional_field
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '7', 'pic.jpg'); --picture
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '8', 'gena322'); --login
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '9', 'password123'); --password
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '10', ''); -- friends
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '11', ''); --task_id
-    INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '11', '20001'); --task_id
-    INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '11', '20004'); --task_id
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '1', 'Геннадий'); --name
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '2', 'Иванович'); --surname
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '3', 'Степанов'); --middle_name
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '4', '09.07.1985'); --birthdate
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '5', 'Россия'); --country
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '6', 'мужской'); --sex
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '7', 'gena51rus@pochta.ru'); --e-mail
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '8', 'Тут дополнительная информация'); --additional_field
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '9', 'pic.jpg'); --picture
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '10', 'gena322'); --login
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '11', 'password123'); --password
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '12', ''); -- friends
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '13', ''); --task_id
+    INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '13', '20001'); --task_id
+    INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '13', '20004'); --task_id
 --User Id: 10002
 INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('10002', '1001', 'Василий Сергеевич Рожненко');
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '1', 'Василий Сергеевич Рожненко'); --name
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '2', '17.05.1995'); --birthdate
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '3', 'Россия'); --country
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '4', 'мужской'); --sex
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '5', 'vasyarozh@poshta.com'); --e-mail
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '6', 'Тут дополнительная информация о Васе'); --additional_field
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '7', 'picvasya.jpg'); --picture
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '8', 'vasyan14'); --login
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '9', 'passwordvasyana'); --password
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '10', ''); -- friends
-    INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '11', '10001'); --friend
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '11', ''); --task_id
-    INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '11', '20002'); --task_id
-    INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '11', '20003'); --task_id
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '1', 'Василий'); --name
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '2', 'Сергеевич'); --surname
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '3', 'Рожненко'); --middle_name
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '4', '17.05.1995'); --birthdate
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '5', 'Россия'); --country
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '6', 'мужской'); --sex
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '7', 'vasyarozh@poshta.com'); --e-mail
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '8', 'Тут дополнительная информация о Васе'); --additional_field
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '9', 'picvasya.jpg'); --picture
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '10', 'vasyan14'); --login
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '11', 'passwordvasyana'); --password
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '12', ''); -- friends
+  INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '12', '10001'); --friend
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '13', ''); --task_id
+  INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '13', '20002'); --task_id
+  INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '13', '20003'); --task_id
