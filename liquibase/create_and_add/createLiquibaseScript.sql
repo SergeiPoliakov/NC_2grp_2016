@@ -87,14 +87,14 @@ ALTER TABLE References ADD CONSTRAINT References_Objects
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('1', 'name');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('2', 'surname');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('3', 'middle_name');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('4', 'birth_date');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('5', 'country');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('6', 'sex');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('7', 'e-mail');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('8', 'additional_field');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('9', 'picture');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('10', 'login');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('11', 'password');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('4', 'login');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('5', 'birth_date');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('6', 'e-mail');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('7', 'password');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('8', 'sex');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('9', 'country');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('10', 'additional_field');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('11', 'picture');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('12', 'friends');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('13', 'task_id');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('14', 'events');
@@ -186,14 +186,14 @@ INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('10001', '1
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '1', 'Геннадий'); --name
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '2', 'Иванович'); --surname
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '3', 'Степанов'); --middle_name
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '4', '09.07.1985'); --birthdate
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '5', 'Россия'); --country
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '6', 'мужской'); --sex
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '7', 'gena51rus@pochta.ru'); --e-mail
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '8', 'Тут дополнительная информация'); --additional_field
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '9', 'pic.jpg'); --picture
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '10', 'gena322'); --login
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '11', 'password123'); --password
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '4', 'gena322'); --login
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '5', '09.07.1985'); --birthdate
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '6', 'gena51rus@pochta.ru'); --e-mail
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '7', 'password123'); --password
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '8', 'мужской'); --sex
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '9', 'Россия'); --country
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '10', 'Тут дополнительная информация'); --additional_field
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '11', 'pic.jpg'); --picture
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '12', ''); -- friends
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '13', ''); --task_id
     INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '13', '20001'); --task_id
@@ -203,14 +203,14 @@ INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('10002', '1
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '1', 'Василий'); --name
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '2', 'Сергеевич'); --surname
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '3', 'Рожненко'); --middle_name
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '4', '17.05.1995'); --birthdate
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '5', 'Россия'); --country
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '6', 'мужской'); --sex
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '7', 'vasyarozh@poshta.com'); --e-mail
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '8', 'Тут дополнительная информация о Васе'); --additional_field
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '9', 'picvasya.jpg'); --picture
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '10', 'vasyan14'); --login
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '11', 'passwordvasyana'); --password
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '4', 'vasyan14'); --login
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '5', '17.05.1995'); --birthdate
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '6', 'vasyarozh@poshta.com'); --e-mail
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '7', 'passwordvasyana'); --password
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '8', 'мужской'); --sex
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '9', 'Россия'); --country
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '10', 'Тут дополнительная информация о Васе'); --additional_field
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '11', 'picvasya.jpg'); --picture
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '12', ''); -- friends
   INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '12', '10001'); --friend
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '13', ''); --task_id

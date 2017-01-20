@@ -2,11 +2,15 @@ package web;
 
 import dbHelp.DBHelp;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -16,23 +20,10 @@ import java.util.Map;
 @Controller
 public class MainController {
 
-
     @RequestMapping(value = {"/", "test"})
     public ModelAndView index() {
 
-            return new ModelAndView("test");
+        return new ModelAndView("test");
 
     }
-
-    @Deprecated
-    @RequestMapping("/allObject")
-    public String listApartments(Map<String, Object> map) throws SQLException {
-        map.put("allObject", new DBHelp().getObjectsIDbyObjectTypeID(1001));
-        return "allObj";
-    }
-
-
-
-
-
 }
