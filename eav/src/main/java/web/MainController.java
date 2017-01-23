@@ -20,10 +20,10 @@ import java.util.Map;
 @Controller
 public class MainController {
 
-    @RequestMapping(value = {"/", "test"})
+    @RequestMapping(value = {"/", "main"})
     public ModelAndView index() {
 
-        return new ModelAndView("test");
+        return new ModelAndView("main");
 
     }
 }

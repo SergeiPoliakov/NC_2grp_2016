@@ -2,6 +2,7 @@ package web;
 
 import dbHelp.DBHelp;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by Lawrence on 20.01.2017.
@@ -50,18 +52,27 @@ public class UserController {
 
         String full_name = name + " " + surname + " " + middle_name;
 
-        String[] massAttr = new String[7];
-        massAttr[0] = name;
-        massAttr[1] = surname;
-        massAttr[2] = middle_name;
-        massAttr[3] = nickname;
-        massAttr[4] = ageUser;
-        massAttr[5] = email;
-        massAttr[6] = password;
+        TreeMap<Integer, String> mapAttr = new TreeMap<>();
+        mapAttr.put(1, name);
+        mapAttr.put(2, surname);
+        mapAttr.put(3, middle_name);
+        mapAttr.put(4, nickname);
+        mapAttr.put(5, ageUser);
+        mapAttr.put(6, email);
+        mapAttr.put(7,password);
 
-        new DBHelp().addNewUser(1001, full_name, massAttr);
+
+        new DBHelp().addNewUser(1001, full_name, mapAttr);
 
         return "/test";
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String loginUser(@RequestParam("nickname") String nickname,
+                            @RequestParam("password") String password
+                            )
+    {
+        return "test";
     }
 
 }

@@ -1,0 +1,152 @@
+body{
+    background:linear-gradient(#501318, rgba(186, 255, 246, 0));
+    color:whitesmoke ;
+    font-weight: 700;
+
+}
+.vrn,.msc,
+.spb,.krs,.sch,
+.anp{
+    width:550px;
+    height:590px;
+
+
+    margin-bottom: 10px;
+    margin-top: 10px;
+    line-height: 590px;
+    text-align-last: center;
+    font-size:44px;
+}
+.vrn{
+    background:url("../img/vrn.jpg") no-repeat 50% 0%;
+}
+.msc {
+    background: url("../img/msc.jpg") no-repeat 100% 70%;
+}
+.spb{
+    background:url("../img/spb.jpg") no-repeat 50% 0%;
+}
+.sch{
+    background:url("../img/sch.jpg") no-repeat 50% 0%;
+}
+.krs{
+    background:url("../img/krs.jpg") no-repeat 50% 0%;
+}
+.anp{
+    background:url("../img/anp.jpg") no-repeat 50% 0%;
+}
+.login{
+    width:100%;
+    height:400px;
+    background:url("../img/Milan.jpg") no-repeat 50% 50%;
+}
+.srch{
+    margin-top:300px;
+
+}
+.btn{
+    height:26px;
+    width:100px;
+}
+input{
+    color:#337ab7;
+}
+
+
+.grad{
+    width:100%;
+
+}
+.logo{
+    background:#222;
+    color:#337ab7;
+
+
+}
+a{
+    font-weight: 900;
+    color:whitesmoke;
+}
+a:hover{
+    color:whitesmoke;
+}
+form{
+    margin-left: 20px;
+
+}
+.form-group{
+    float:none;
+}
+.img-polaroid{
+    height:300px;
+    width:300px;
+}
+.carouselPhoto{
+    height:400px;
+    width:100%;
+}
+.about{
+    height:300px;
+}
+.clear{
+    height:290px;
+
+}
+#homePhoto{
+    height:500px;
+}
+
+.comment{
+    color:#501318;
+}
+#userLink{
+     color:#222;
+ }
+#userLink:hover{
+    color:#222;
+}
+hr{
+    color:#501318;
+    background-color: #501318;
+    height: 2px;
+}
+.help{
+    color:#501318;
+    font-height:5px;
+    font-size: 15px;
+}
+footer{
+    color:whitesmoke;
+}
+.filter{
+    margin-top:100px;
+    margin-bottom: 118px;
+}
+.table{
+    color:#222;
+    border-spacing: 10px;
+    font-size:20px;
+}
+#discr{
+    color:#222;
+}
+#discr:hover{
+    color:#222;
+}
+tr,th{
+    padding:5px;
+}
+.alarm{
+    margin-top:100px;
+    height:100px;
+}
+.notLogin{
+    margin-top:100px;
+    margin-bottom:297px;
+    background:#222;
+    color:#337ab7;
+
+    height:200px;
+}
+
+

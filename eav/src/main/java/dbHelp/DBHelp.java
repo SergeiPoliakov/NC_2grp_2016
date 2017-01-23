@@ -71,6 +71,27 @@ public class DBHelp {
         return attrid;
     }
 
+
+    private static String getValue(int ObjID, int AttrId) throws SQLException
+    {
+        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        PreparedStatement PS = Con
+                .prepareStatement("SELECT VALUE FROM PARAMS WHERE OBJECT_ID = ? and ATTR_ID = ?");
+        PS.setInt(1, ObjID);
+        PS.setInt(2, AttrId);
+        ResultSet RS = PS.executeQuery();
+        String value = "";
+        while(RS.next())
+        {
+            value =  RS.getString(1);
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return value;
+    }
+
+
     public void deleteObject(Integer ID) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException
     {
         Connection Con = getConnection();
@@ -92,7 +113,7 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    public void addNewUser(int ObjTypeID, String name, String[] massAttr) throws SQLException,
+    public void addNewUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
@@ -110,15 +131,10 @@ public class DBHelp {
         PS.executeUpdate();
         PS.close();
 
-        TreeMap<Integer, String> Map = new TreeMap<>();
-        for (int i = 1; i <= massAttr.length; i++) {
-            Map.put(i, massAttr[i-1]);
-        }
-
         PreparedStatement PS1 = Con
                 .prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
-        while (!Map.isEmpty()) {
-            java.util.Map.Entry<Integer, String> En = Map.pollFirstEntry();
+        while (!massAttr.isEmpty()) {
+            java.util.Map.Entry<Integer, String> En = massAttr.pollFirstEntry();
             PS1.setObject(1, En.getValue());
             PS1.setInt(2, newID);
             PS1.setInt(3, En.getKey());
@@ -139,6 +155,7 @@ public class DBHelp {
         //System.out.println(attr);
        // deleteObject(10001);
        // addTask();
+        System.out.println(getValue(10001, 6));
     }
 
 
