@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd
+
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+    <http auto-config="true" use-expressions="true">
+
+        <access-denied-handler error-page="/accessDenied" />
+
+          <intercept-url pattern="/allUser" access="isAuthenticated()" />
+        <intercept-url pattern="/main-login" access="isAuthenticated()" />
+          <intercept-url pattern="/allUser" access="hasRole('ROLE_USER')" />
+
+          <!-- access denied page -->
+        <form-login
+                login-page="/login"
+                default-target-url="/main-login"
+                always-use-default-target="true"
+                authentication-failure-url="/login?error"
+                username-parameter="username"
+                password-parameter="password" />
+        <logout logout-success-url="/main?logout"  />
+
+
+        <!-- Включаем поддержку Запомнить Меня: -->
+        <remember-me
+                key="netcracker"
+                token-validity-seconds="3600" /> <!-- Включаем хранение кукисов в течение 2 часов -->
+    </http>
+
+
+    <!-- Select users and user_roles from database -->
+    <authentication-manager>
+        <authentication-provider >
+            <password-encoder ref="bcrypt" />
+            <jdbc-user-service data-source-ref="dataSource"
+                               users-by-username-query=
+                                       "SELECT username.VALUE AS username,
+password.VALUE AS password,
+'True' AS enabled
+FROM PARAMS username
+JOIN (
+SELECT ps.*
+FROM PARAMS ps
+) password ON
+username.OBJECT_ID = password.OBJECT_ID
+AND username.ATTR_ID = 4
+AND password.ATTR_ID = 7
+AND username.VALUE = ?"
+                               authorities-by-username-query=
+                                       "SELECT US.VALUE AS username,
+CASE
+WHEN US.COUNT = 0 THEN
+'ROLE_GUEST'
+ELSE
+'ROLE_USER'
+END AS ROLE
+FROM (
+SELECT username.VALUE, COUNT(*) AS COUNT
+FROM PARAMS username
+WHERE username.ATTR_ID = 4
+AND username.VALUE = ?
+GROUP BY username.VALUE
+) US " />
+        </authentication-provider>
+    </authentication-manager>
+
+    <beans:bean id="bcrypt" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+        <beans:constructor-arg name="strength" value="11" />
+    </beans:bean>
+
+</beans:beans>
