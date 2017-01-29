@@ -35,6 +35,35 @@ public class DBHelp {
         Con.close();
     }
 
+
+    private static int getObjID(String username) throws SQLException
+    {
+        Connection Con = getConnection();
+        PreparedStatement PS = Con
+                .prepareStatement("SELECT OBJECT_ID FROM PARAMS WHERE VALUE = ?");
+        PS.setString(1, username);
+        ResultSet RS = PS.executeQuery();
+        int objID = 0;
+        while(RS.next())
+        {
+            objID =  RS.getInt(1);
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return objID;
+    }
+
+
+    private static int getObjParamsByobjID(int objID) throws SQLException
+    {
+        Connection Con = getConnection();
+
+        CloseConnection(Con);
+        return objID;
+    }
+
+
     public ArrayList<Object> getObjectsIDbyObjectTypeID(int ObjectTypeID)
             throws SQLException {
         ArrayList<Object> Res = new ArrayList<>();
