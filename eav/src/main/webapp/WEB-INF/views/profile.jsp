@@ -54,12 +54,12 @@
 
                     <div class="form-group ">
                         <label for="InputMiddleName1">Введите отчество</label>
-                        <input type="text" class="form-control" name="middleName" id="InputMiddleName1" value=${user.middleName}>
+                        <input type="text" class="form-control" name="middle_name" id="InputMiddleName1" value=${user.middleName}>
                     </div>
 
                     <div class="form-group  ">
                         <label for="InputAge1">Введите вашу дату рождения</label>
-                        <input type="date" class="form-control" name="age" id="InputAge1" value=${user.ageDate}>
+                        <input type="date" class="form-control" name="ageDate" id="InputAge1" value=${user.ageDate}>
                     </div>
 
                     <div class="form-group  ">
@@ -72,7 +72,7 @@
                         </div>
                         <div class="radio">
                             <label>
-                                <input type="radio" name="sex" id="Gender2" value="Ж" checked>
+                                <input type="radio" name="sex" id="Gender2" value="Ж">
                                 Женский
                             </label>
                         </div>

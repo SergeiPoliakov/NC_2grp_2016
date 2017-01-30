@@ -160,7 +160,7 @@ public class DBHelp {
     public void addNewUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
         PreparedStatement PS = Con
                 .prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
         Statement st = Con.createStatement();
@@ -188,6 +188,32 @@ public class DBHelp {
         PS1.close();
 
 
+        CloseConnection(Con);
+    }
+
+
+    public void updateUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        Connection Con = getConnection();
+        PreparedStatement PS = Con
+                .prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
+        while (!massAttr.isEmpty()) {
+            java.util.Map.Entry<Integer, String> En = massAttr.pollFirstEntry();
+            PS.setObject(1, En.getValue());
+            PS.setInt(2, ObjTypeID);
+            PS.setInt(3, En.getKey());
+            PS.addBatch();
+        }
+        PS.executeBatch();
+        PS.close();
+
+        PreparedStatement PS1 = Con
+                .prepareStatement("UPDATE OBJECTS SET OBJECT_NAME = ? WHERE OBJECT_ID = ?");
+        PS1.setString(1, name);
+        PS1.setInt(2, ObjTypeID);
+        PS1.executeUpdate();
+        PS1.close();
         CloseConnection(Con);
     }
 

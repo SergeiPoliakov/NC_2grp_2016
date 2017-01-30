@@ -114,7 +114,7 @@ public class UserController {
                                @RequestParam("surname") String surname,
                                @RequestParam("middle_name") String middle_name,
                                @RequestParam("nickname") String nickname,
-                               @RequestParam("ageUser") String ageUser,
+                               @RequestParam("ageUser") String ageDate,
                                @RequestParam("email") String email,
                                @RequestParam("password") String password
     ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
@@ -128,7 +128,7 @@ public class UserController {
         mapAttr.put(2, surname);
         mapAttr.put(3, middle_name);
         mapAttr.put(4, nickname);
-        mapAttr.put(5, ageUser);
+        mapAttr.put(5, ageDate);
         mapAttr.put(6, email);
         mapAttr.put(7,bcryptPass);
         mapAttr.put(8, null);
@@ -178,6 +178,35 @@ public class UserController {
         return "/profile";
     }
 
+    @RequestMapping(value = "/changeProfile/{userId}", method = RequestMethod.POST)
+    public String changeUser(@PathVariable("userId") Integer userId,
+                             @RequestParam("name") String name,
+                             @RequestParam("surname") String surname,
+                             @RequestParam("middle_name") String middle_name,
+                             @RequestParam("nickname") String nickname,
+                             @RequestParam("ageDate") String ageDate,
+                             @RequestParam("sex") String sex,
+                             @RequestParam("country") String country,
+                             @RequestParam("info") String additional_field) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+        String full_name = name + " " + surname + " " + middle_name;
+
+
+        TreeMap<Integer, String> mapAttr = new TreeMap<>();
+        mapAttr.put(1, name);
+        mapAttr.put(2, surname);
+        mapAttr.put(3, middle_name);
+        mapAttr.put(4, nickname);
+        mapAttr.put(5, ageDate);
+
+        mapAttr.put(8, sex);
+        mapAttr.put(9, country);
+        mapAttr.put(10, additional_field);
+
+        new DBHelp().updateUser(userId, full_name, mapAttr);
+
+        return "/main-login";
+    }
+
 
     @RequestMapping(value = "/accessDenied", method = RequestMethod.GET)
     public ModelAndView accesssDenied(Principal user) {
@@ -185,7 +214,7 @@ public class UserController {
         ModelAndView model = new ModelAndView();
 
         if (user != null) {
-            model.addObject("errorMsg", user.getName() + " у вас нет доступа к этой странице!");
+            model.addObject("errorMsg", user.getName() + ", у вас нет доступа к этой странице!");
         } else {
             model.addObject("errorMsg", "У вас нет доступа к этой странице!");
         }
