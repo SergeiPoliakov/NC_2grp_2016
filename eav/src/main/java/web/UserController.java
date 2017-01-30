@@ -1,6 +1,7 @@
 package web;
 
 import dbHelp.DBHelp;
+import entities.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,12 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,6 +30,8 @@ import java.util.TreeMap;
  */
 @Controller
 public class UserController {
+
+    UserService userService = new UserService();
 
 
     @RequestMapping(value = {"/", "main"})
@@ -126,17 +131,50 @@ public class UserController {
         mapAttr.put(5, ageUser);
         mapAttr.put(6, email);
         mapAttr.put(7,bcryptPass);
+        mapAttr.put(8, null);
+        mapAttr.put(9, null);
+        mapAttr.put(10, null);
+        mapAttr.put(11, null);
+        mapAttr.put(12, null);
+        mapAttr.put(13, null);
+
 
 
         new DBHelp().addNewUser(1001, full_name, mapAttr);
 
-        return "main-login";
+        return "/login";
     }
 
 
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
-    public String getProfileUserPage(ModelMap m)
-    {
+    public String getProfileUserPage(User user, ModelMap m) throws SQLException {
+        Integer idUser = new DBHelp().getObjID(userService.getCurrentUsername());
+
+        ArrayList<String> userParams = new DBHelp().getObjParamsByObjID(idUser);
+
+        String name = userParams.get(0);
+        String surname = userParams.get(1);
+        String middleName = userParams.get(2);
+        String login = userParams.get(3);
+        String ageDate = userParams.get(4);
+        String email = userParams.get(5);
+        String sex = userParams.get(7);
+        String country = userParams.get(8);
+        String additional_field = userParams.get(9);
+
+        user.setId(idUser);
+        user.setName(name);
+        user.setSurname(surname);
+        user.setMiddleName(middleName);
+        user.setLogin(login);
+        user.setAgeDate(ageDate);
+        user.setEmail(email);
+        user.setSex(sex);
+        user.setCountry(country);
+        user.setAdditional_field(additional_field);
+
+
+        m.addAttribute("userParams", user);
         return "/profile";
     }
 

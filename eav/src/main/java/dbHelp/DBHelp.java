@@ -1,5 +1,8 @@
 package dbHelp;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -15,6 +18,8 @@ import java.util.*;
  */
 
 public class DBHelp {
+
+    private static final Logger logger = LoggerFactory.getLogger(DBHelp.class);
 
     private static Connection getConnection() throws SQLException {
         Locale.setDefault(Locale.ENGLISH);
@@ -36,7 +41,7 @@ public class DBHelp {
     }
 
 
-    private static int getObjID(String username) throws SQLException
+    public int getObjID(String username) throws SQLException
     {
         Connection Con = getConnection();
         PreparedStatement PS = Con
@@ -55,12 +60,22 @@ public class DBHelp {
     }
 
 
-    private static int getObjParamsByobjID(int objID) throws SQLException
+    public ArrayList<String> getObjParamsByObjID(int objID) throws SQLException
     {
+        ArrayList<String> objParams = new ArrayList<>();
         Connection Con = getConnection();
-
+        PreparedStatement PS = Con
+                .prepareStatement("SELECT NVL(VALUE, ' ') FROM PARAMS WHERE OBJECT_ID = ? and ATTR_ID BETWEEN 1 and 10");
+        PS.setInt(1, objID);
+        ResultSet RS = PS.executeQuery();
+        while (RS.next()) {
+            objParams.add(RS.getString(1));
+        }
+        logger.info("size = " + objParams.size());
+        RS.close();
+        PS.close();
         CloseConnection(Con);
-        return objID;
+        return objParams;
     }
 
 
@@ -81,7 +96,7 @@ public class DBHelp {
         return Res;
     }
 
-    private static int getAttrID(int ObjID, int ObjRefID) throws SQLException
+    public int getAttrID(int ObjID, int ObjRefID) throws SQLException
     {
         Connection Con = getConnection();
         PreparedStatement PS = Con
@@ -101,7 +116,7 @@ public class DBHelp {
     }
 
 
-    private static String getValue(int ObjID, int AttrId) throws SQLException
+    public String getValue(int ObjID, int AttrId) throws SQLException
     {
         Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
         PreparedStatement PS = Con
@@ -184,7 +199,9 @@ public class DBHelp {
         //System.out.println(attr);
        // deleteObject(10001);
        // addTask();
-        System.out.println(getValue(10001, 6));
+
+      //  System.out.println(getValue(10001, 6));
+
     }
 
 

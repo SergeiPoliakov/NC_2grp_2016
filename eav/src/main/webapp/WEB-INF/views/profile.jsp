@@ -53,18 +53,13 @@
                     </div>
 
                     <div class="form-group ">
-                        <label for="InputSurname1">Введите отчество</label>
-                        <input type="text" class="form-control" name="middleName" id="InputMiddleName1" value=${user.surname}>
+                        <label for="InputMiddleName1">Введите отчество</label>
+                        <input type="text" class="form-control" name="middleName" id="InputMiddleName1" value=${user.middleName}>
                     </div>
 
                     <div class="form-group  ">
-                        <label for="InputAge1">Введите ваш возраст</label>
-                        <input type="text" class="form-control" name="age" id="InputAge1" value=${user.age}>
-                    </div>
-
-                    <div class="form-group  ">
-                        <label for="InputCountry1">Введите вашу страну</label>
-                        <input type="text" class="form-control" name="country" id="InputCountry1" value=${user.city}>
+                        <label for="InputAge1">Введите вашу дату рождения</label>
+                        <input type="date" class="form-control" name="age" id="InputAge1" value=${user.ageDate}>
                     </div>
 
                     <div class="form-group  ">
@@ -84,17 +79,18 @@
                     </div>
 
                     <div class="form-group  ">
-                        <label for="InputNickName1">Введите Никнейм</label>
-                        <input type="text" class="form-control " name="nickname" id="InputNickName1" value=${user.nickname}>
+                        <label for="InputCountry1">Введите вашу страну</label>
+                        <input type="text" class="form-control" name="country" id="InputCountry1" value=${user.country}>
                     </div>
 
-                    <div class="form-group   ">
-                        <label for="InputPassword1">Введите пароль</label>
-                        <input type="password" class="form-control" name="password" id="InputPassword1" value=${user.password}>
+                    <div class="form-group  ">
+                        <label for="InputNickName1">Введите Никнейм</label>
+                        <input type="text" class="form-control " name="nickname" id="InputNickName1" value=${user.login}>
                     </div>
+
                     <div class="form-group ">
                         <label for="TextArea1">Расскажите немного о себе</label>
-                        <textarea rows="3" class="form-control" name="info" id="TextArea1" value=${user.info}></textarea>
+                        <textarea rows="3" class="form-control" name="info" id="TextArea1" >${user.additional_field}</textarea>
                     </div>
 
                     <button type="submit" class="btn-lg btn-success col-lg-5 col-lg-offset-4">Сохранить</button>

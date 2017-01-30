@@ -29,7 +29,7 @@
             <ul class="nav nav-pills">
                 <li class="active pull-right"><a href="/logout">Выход</a></li>
                 <li class="active pull-right"><a href="/allUser">Все пользователи</a></li>
-                <li class="pull-right"><a href="/profile">Профиль</a></li>
+                <li class="active pull-right"><a href="/profile">Профиль</a></li>
 
 
 

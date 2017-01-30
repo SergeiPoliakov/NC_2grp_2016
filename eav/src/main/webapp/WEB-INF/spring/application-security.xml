@@ -12,9 +12,11 @@
 
         <access-denied-handler error-page="/accessDenied" />
 
-          <intercept-url pattern="/allUser" access="isAuthenticated()" />
+        <intercept-url pattern="/allUser" access="isAuthenticated()" />
+        <intercept-url pattern="/profile" access="isAuthenticated()" />
         <intercept-url pattern="/main-login" access="isAuthenticated()" />
-          <intercept-url pattern="/allUser" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/allUser" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/profile" access="hasRole('ROLE_USER')" />
 
           <!-- access denied page -->
         <form-login
