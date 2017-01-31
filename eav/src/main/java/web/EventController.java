@@ -13,6 +13,7 @@ import service.UserService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.TreeMap;
 
 @Controller
@@ -47,6 +48,15 @@ public class EventController {
         new DBHelp().addNewEvent(1002, name, mapAttr); // Передаем в хелпер задачу со всеми атрибутами
 
         return "main-login";
+    }
+
+    // Обход всех событий
+    @Deprecated
+    @RequestMapping("/allEvent")
+    public String listObjects(Map<String, Object> map) throws SQLException {
+        Integer idUser = new DBHelp().getObjID(userService.getCurrentUsername());
+        map.put("allObject", new DBHelp().getEventsIDbyObjectID(idUser));
+        return "allEvent";
     }
 
 }

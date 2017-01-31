@@ -79,7 +79,7 @@ public class DBHelp {
         return objParams;
     }
 
-
+    // Получение всех пользователей
     public ArrayList<Object> getObjectsIDbyObjectTypeID(int ObjectTypeID)
             throws SQLException {
         ArrayList<Object> Res = new ArrayList<>();
@@ -87,6 +87,26 @@ public class DBHelp {
         PreparedStatement PS = Con
                 .prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
         PS.setInt(1, ObjectTypeID);
+        ResultSet RS = PS.executeQuery();
+        while (RS.next()) {
+            Res.add(RS.getObject(1));
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return Res;
+    }
+
+    // Получение всех событий данного пользователя
+    public ArrayList<Object> getEventsIDbyObjectID(int ObjectID) throws SQLException {
+        ArrayList<Object> Res = new ArrayList<>();
+        Connection Con = getConnection();
+        // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
+
+        PreparedStatement PS = Con.prepareStatement("SELECT NVL(ev.OBJECT_NAME, 'Нет событий') " +
+                "AS EVENT FROM OBJECTS ob LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID " +
+                "LEFT JOIN OBJECTS ev ON re.REFERENCE = ev.OBJECT_ID WHERE ob.OBJECT_ID =  ?");
+        PS.setInt(1, ObjectID); // В качестве параметра id пользователя
         ResultSet RS = PS.executeQuery();
         while (RS.next()) {
             Res.add(RS.getObject(1));
@@ -198,7 +218,7 @@ public class DBHelp {
             IllegalArgumentException, InvocationTargetException {
         Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
 
-        // 1) Добавление задачи:
+        // 1) Добавление события:
         PreparedStatement PS = Con.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
         Statement st = Con.createStatement();
         ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + ObjTypeID);
@@ -212,7 +232,7 @@ public class DBHelp {
         PS.executeUpdate();
         PS.close();
 
-        // 2) Добавление атрибутов задачи:
+        // 2) Добавление атрибутов события (параметры со страницы создания события):
         PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
         while (!massAttr.isEmpty()) {
             java.util.Map.Entry<Integer, Object> En = massAttr.pollFirstEntry();
@@ -224,7 +244,7 @@ public class DBHelp {
         PS1.executeBatch();
         PS1.close();
 
-        // 3) Добавление ссылки Юзер - Задача (связывание):
+        // 3) Добавление ссылки Юзер - Событие (связывание):
         UserService userService = new UserService();
         int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
         int attrId = 13;
@@ -234,6 +254,25 @@ public class DBHelp {
         PS2.setInt(3, newID); // System.out.println(newID);
         PS2.executeQuery(); // PS2.executeBatch();
         PS2.close();
+
+        // 4) Добавление 13-го параметра в PARAMS (task_id для текущего пользователя):
+        PreparedStatement PS3 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
+        PS3.setInt(1, idUser); // System.out.println(idUser); // = user_id
+        PS3.setInt(2, attrId); // System.out.println(attrId); // = 13
+        PS3.setObject(3, newID); // System.out.println(newID); // = task_id
+        PS3.executeQuery();
+        PS3.close();
+
+
+        /*
+        // Обновление существующего
+        PreparedStatement PS3 = Con.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
+        PS3.setObject(1, newID); System.out.println(newID); // = task_id
+        PS3.setInt(2, idUser); System.out.println(idUser); // = user_id
+        PS3.setInt(3, attrId); System.out.println(attrId); // = 13
+        PS3.executeUpdate();
+        PS3.close();
+        */
 
         CloseConnection(Con);
     }

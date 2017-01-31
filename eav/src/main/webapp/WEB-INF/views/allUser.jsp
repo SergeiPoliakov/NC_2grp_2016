@@ -15,11 +15,11 @@
 
 <html>
 <head>
-    <title>Title</title>
+    <title>Список пользователей</title>
 </head>
 <body>
 
-<h2 id="faq">Object</h2>
+<h2 id="faq">Список польователей:</h2>
 <c:forEach items="${allObject}" var="object">
     <h4>${object}</h4>
 </c:forEach>
