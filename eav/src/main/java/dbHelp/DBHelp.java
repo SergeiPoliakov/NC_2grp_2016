@@ -2,6 +2,7 @@ package dbHelp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserService;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -191,6 +192,51 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
+    // Метод добавления события со всеми его атрибутами (2017-01-31)
+    public void addNewEvent(int ObjTypeID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+
+        // 1) Добавление задачи:
+        PreparedStatement PS = Con.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
+        Statement st = Con.createStatement();
+        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + ObjTypeID);
+        int newID = 0;
+        while (RS.next()) {
+            newID = RS.getInt(1) + 1;
+        }
+        PS.setInt(1, newID);
+        PS.setInt(2, ObjTypeID);
+        PS.setObject(3, name);
+        PS.executeUpdate();
+        PS.close();
+
+        // 2) Добавление атрибутов задачи:
+        PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
+        while (!massAttr.isEmpty()) {
+            java.util.Map.Entry<Integer, Object> En = massAttr.pollFirstEntry();
+            PS1.setObject(1, En.getValue());
+            PS1.setInt(2, newID);
+            PS1.setInt(3, En.getKey());
+            PS1.addBatch();
+        }
+        PS1.executeBatch();
+        PS1.close();
+
+        // 3) Добавление ссылки Юзер - Задача (связывание):
+        UserService userService = new UserService();
+        int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
+        int attrId = 13;
+        PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+        PS2.setInt(1, idUser); // System.out.println(idUser);
+        PS2.setInt(2, attrId); // System.out.println(attrId);
+        PS2.setInt(3, newID); // System.out.println(newID);
+        PS2.executeQuery(); // PS2.executeBatch();
+        PS2.close();
+
+        CloseConnection(Con);
+    }
 
     public void updateUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
             NoSuchMethodException, IllegalAccessException,

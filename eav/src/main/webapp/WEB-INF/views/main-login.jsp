@@ -30,7 +30,7 @@
                 <li class="active pull-right"><a href="/logout">Выход</a></li>
                 <li class="active pull-right"><a href="/allUser">Все пользователи</a></li>
                 <li class="active pull-right"><a href="/profile">Профиль</a></li>
-
+                <li class="active pull-right"><a href="/addEvent">Добавить событие</a></li>
 
 
             </ul>
