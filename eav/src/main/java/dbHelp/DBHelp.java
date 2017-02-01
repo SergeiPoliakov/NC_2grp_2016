@@ -210,7 +210,7 @@ public class DBHelp {
     }
 
     // Получение ВСЕХ событий данного пользователя
-    public ArrayList<Event> getEventsIDbyObjectID(int ObjectID) throws SQLException {
+    public ArrayList<Event> getEventList(int ObjectID) throws SQLException {
         ArrayList<Event> Res = new ArrayList<>();
         Connection Con = getConnection();
         // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");

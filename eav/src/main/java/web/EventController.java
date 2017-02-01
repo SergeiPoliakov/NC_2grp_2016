@@ -66,7 +66,7 @@ public class EventController {
     @RequestMapping("/allEvent")
     public String listObjects(Map<String, Object> map) throws SQLException {
         Integer idUser = new DBHelp().getObjID(userService.getCurrentUsername());
-        map.put("allObject", new DBHelp().getEventsIDbyObjectID(idUser));
+        map.put("allObject", new DBHelp().getEventList(idUser));
         return "allEvent";
     }
 
