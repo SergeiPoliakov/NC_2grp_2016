@@ -103,7 +103,7 @@
 </div>
 
 <footer class="navbar-static-bottom navbar-inverse">
-    <small>&copy; Netcracker</small>
+    <small>&copy; NetCracker</small>
 </footer>
 </body>
 </html>

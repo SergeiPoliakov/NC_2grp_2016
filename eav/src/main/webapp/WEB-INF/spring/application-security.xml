@@ -18,6 +18,13 @@
         <intercept-url pattern="/allUser" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/profile" access="hasRole('ROLE_USER')" />
 
+        <intercept-url pattern="/allEvent" access="isAuthenticated()" />
+        <intercept-url pattern="/editEvent" access="isAuthenticated()" />
+        <intercept-url pattern="/addEvent" access="isAuthenticated()" />
+        <intercept-url pattern="/allEvent" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/editEvent" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/addEvent" access="hasRole('ROLE_USER')" />
+
           <!-- access denied page -->
         <form-login
                 login-page="/login"

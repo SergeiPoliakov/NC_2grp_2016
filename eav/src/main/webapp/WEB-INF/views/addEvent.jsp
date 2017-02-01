@@ -23,7 +23,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
 
-
 <div class="container">
     <div class="page-header">
         <h1>Netcracker <small>Создание события</small></h1>
@@ -53,7 +52,7 @@
 
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="info">Введите информацию о событии</label>
-            <input type="text" class="form-control" name="info" id="info" placeholder="Информация">
+            <textarea rows="3" class="form-control" name="info" id="info" placeholder="Информация"></textarea>
         </div>
 
         <button type="submit"  class="btn-lg btn-success col-lg-5 col-lg-offset-4">Создать</button>

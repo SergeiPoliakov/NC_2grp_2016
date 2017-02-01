@@ -1,5 +1,6 @@
 package dbHelp;
 
+import entities.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -79,6 +80,25 @@ public class DBHelp {
         return objParams;
     }
 
+    public ArrayList<Object> getEventParamsByObjID(int eventID) throws SQLException
+    {
+        ArrayList<Object> eventParams = new ArrayList<>();
+        Connection Con = getConnection();
+        PreparedStatement PS = Con.prepareStatement("SELECT NVL(VALUE, ' ') FROM PARAMS WHERE OBJECT_ID = ? and ATTR_ID BETWEEN 101 and 105");
+        PS.setInt(1, eventID);
+        ResultSet RS = PS.executeQuery();
+        while (RS.next()) {
+            eventParams.add(RS.getString(1));
+        }
+        logger.info("size = " + eventParams.size());
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return eventParams;
+    }
+
+
+
     // Получение всех пользователей
     public ArrayList<Object> getObjectsIDbyObjectTypeID(int ObjectTypeID)
             throws SQLException {
@@ -97,25 +117,104 @@ public class DBHelp {
         return Res;
     }
 
-    // Получение всех событий данного пользователя
-    public ArrayList<Object> getEventsIDbyObjectID(int ObjectID) throws SQLException {
-        ArrayList<Object> Res = new ArrayList<>();
+    // Получение ВСЕХ событий данного пользователя
+    public ArrayList<Event> getEventsIDbyObjectID(int ObjectID) throws SQLException {
+        ArrayList<Event> Res = new ArrayList<>();
         Connection Con = getConnection();
         // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
 
-        PreparedStatement PS = Con.prepareStatement("SELECT NVL(ev.OBJECT_NAME, 'Нет событий') " +
-                "AS EVENT FROM OBJECTS ob LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID " +
-                "LEFT JOIN OBJECTS ev ON re.REFERENCE = ev.OBJECT_ID WHERE ob.OBJECT_ID =  ?");
+        PreparedStatement PS = Con.prepareStatement("SELECT ev.OBJECT_ID, ob.OBJECT_ID, ev.OBJECT_NAME," +
+                "pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE FROM OBJECTS ob LEFT JOIN REFERENCES re " +
+                "ON ob.OBJECT_ID = re.OBJECT_ID LEFT JOIN OBJECTS ev  ON re.REFERENCE = ev.OBJECT_ID " +
+                "LEFT JOIN PARAMS pa1 ON ev.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 103 LEFT JOIN PARAMS pa2 " +
+                "ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 101   LEFT JOIN PARAMS pa3 " +
+                "ON ev.OBJECT_ID = pa3.OBJECT_ID AND  pa3.ATTR_ID = 102 LEFT JOIN PARAMS pa4 " +
+                "ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 105 LEFT JOIN PARAMS pa5 " +
+                "ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 104 WHERE ob.OBJECT_ID = ? ORDER BY ev.OBJECT_ID");
         PS.setInt(1, ObjectID); // В качестве параметра id пользователя
-        ResultSet RS = PS.executeQuery();
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         while (RS.next()) {
-            Res.add(RS.getObject(1));
+            Event event = new Event();
+            event.setId( RS.getInt(1));
+            event.setHost_id( RS.getInt(2));
+            event.setName( RS.getString(3));
+            event.setDate_begin( RS.getString(4));
+            event.setDate_end( RS.getString(5));
+            event.setPriority( RS.getInt(6));
+            event.setInfo( RS.getString(7));
+
+            Res.add(event); // Res.add(RS.getObject(1));
+            //Res.add(RS.getObject(2));
         }
         RS.close();
         PS.close();
         CloseConnection(Con);
         return Res;
     }
+
+    // Получение события данного пользователя по id этого события
+    public Event getEventByEventID(int EventID) throws SQLException {
+        Connection Con = getConnection();
+
+        Integer idUser = new DBHelp().getObjID(new UserService().getCurrentUsername());
+
+        PreparedStatement PS = Con.prepareStatement("SELECT ev.OBJECT_ID, ob.OBJECT_ID, ev.OBJECT_NAME," +
+                "pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE FROM OBJECTS ob LEFT JOIN REFERENCES re " +
+                "ON ob.OBJECT_ID = re.OBJECT_ID LEFT JOIN OBJECTS ev  ON re.REFERENCE = ev.OBJECT_ID " +
+                "LEFT JOIN PARAMS pa1 ON ev.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 103 LEFT JOIN PARAMS pa2 " +
+                "ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 101   LEFT JOIN PARAMS pa3 " +
+                "ON ev.OBJECT_ID = pa3.OBJECT_ID AND  pa3.ATTR_ID = 102 LEFT JOIN PARAMS pa4 " +
+                "ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 105 LEFT JOIN PARAMS pa5 " +
+                "ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 104 WHERE ob.OBJECT_ID = ? AND ev.OBJECT_ID = ? ORDER BY ev.OBJECT_ID");
+        PS.setInt(1, idUser); // В качестве параметра id пользователя
+        PS.setInt(2, EventID); // В качестве параметра id пользователя
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+        Event event = null;
+        while (RS.next()) {
+            event = new Event();
+            event.setId(RS.getInt(1));
+            event.setHost_id(RS.getInt(2));
+            event.setName(RS.getString(3));
+            event.setDate_begin(RS.getString(4));
+            event.setDate_end(RS.getString(5));
+            event.setPriority(RS.getInt(6));
+            event.setInfo(RS.getString(7));
+        }
+
+
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return event;
+    }
+
+    /*
+        public ArrayList<Object> getEventsIDbyObjectID(int ObjectID) throws SQLException {
+        ArrayList<Object> Res = new ArrayList<>();
+        Connection Con = getConnection();
+        // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
+
+        PreparedStatement PS = Con.prepareStatement("SELECT ev.OBJECT_ID, NVL(ev.OBJECT_NAME, 'Нет событий') " +
+                "AS EVENT FROM OBJECTS ob LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID " +
+                "LEFT JOIN OBJECTS ev ON re.REFERENCE = ev.OBJECT_ID WHERE ob.OBJECT_ID =  ?");
+        PS.setInt(1, ObjectID); // В качестве параметра id пользователя
+        ResultSet RS = PS.executeQuery(); System.out.println(RS);
+        while (RS.next()) {
+            ArrayList<Object> arrayRS = new ArrayList<>();
+            Event event = new Event();
+            event.
+            arrayRS.add(RS.getObject(1));
+            arrayRS.add(RS.getObject(2));
+            Res.add(arrayRS); // Res.add(RS.getObject(1));
+            //Res.add(RS.getObject(2));
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return Res;
+    }
+
+     */
 
     public int getAttrID(int ObjID, int ObjRefID) throws SQLException
     {
@@ -157,6 +256,7 @@ public class DBHelp {
     }
 
 
+    // Удаление пользователя
     public void deleteObject(Integer ID) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException
     {
         Connection Con = getConnection();
@@ -174,6 +274,31 @@ public class DBHelp {
         PS = Con.prepareStatement("DELETE FROM OBJECTS WHERE OBJECT_ID = ?");
         PS.setInt(1, ID);
         PS.executeUpdate();
+        PS.close();
+        CloseConnection(Con);
+    }
+
+    // Удаление события:
+    public void deleteEvent(Integer eventId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException
+    {
+        Connection Con = getConnection();
+        PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
+        PS.setInt(1, eventId);
+        PS.executeUpdate();
+        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ?");
+        PS.setInt(1, eventId);
+        PS.executeUpdate();
+        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ?");
+        PS.setInt(1, eventId);
+        PS.executeUpdate();
+        PS = Con.prepareStatement("DELETE FROM OBJECTS WHERE OBJECT_ID = ?");
+        PS.setInt(1, eventId);
+        PS.executeUpdate();
+        // И удаляем 13-ый параметр в PARAMS (task_id для текущего пользователя):
+        PS = Con.prepareStatement("DELETE FROM PARAMS WHERE VALUE = ?");
+        PS.setString(1, String.valueOf(eventId));
+        PS.executeUpdate();
+
         PS.close();
         CloseConnection(Con);
     }
@@ -263,6 +388,13 @@ public class DBHelp {
         PS3.executeQuery();
         PS3.close();
 
+        // 5) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 13-го параметра с VALUE = NULL в PARAMS (task_id для текущего пользователя):
+        PreparedStatement PS4 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
+        PS4.setInt(1, idUser); // = user_id
+        PS4.setInt(2, attrId); // = 13
+        PS4.executeUpdate();
+        PS4.close();
+
 
         /*
         // Обновление существующего
@@ -276,6 +408,32 @@ public class DBHelp {
 
         CloseConnection(Con);
     }
+
+    // Обновление события
+    public void updateEvent(int ObjID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        Connection Con = getConnection();
+        PreparedStatement PS = Con.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
+        while (!massAttr.isEmpty()) {
+            java.util.Map.Entry<Integer, Object> En = massAttr.pollFirstEntry();
+            PS.setObject(1, En.getValue());
+            PS.setInt(2, ObjID);
+            PS.setInt(3, En.getKey());
+            PS.addBatch();
+        }
+        PS.executeBatch();
+        PS.close();
+
+        PreparedStatement PS1 = Con.prepareStatement("UPDATE OBJECTS SET OBJECT_NAME = ? WHERE OBJECT_ID = ?");
+        PS1.setString(1, name);
+        PS1.setInt(2, ObjID); //
+        PS1.executeUpdate();
+        PS1.close();
+
+        CloseConnection(Con);
+    }
+
 
     public void updateUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
