@@ -30,13 +30,11 @@
                 <li class="active pull-right"><a href="/profile">Профиль</a></li>
                 <li class="active pull-right"><a href="/allEvent">Список событий</a></li>
                 <li class="active pull-right"><a href="/addEvent">Добавить событие</a></li>
-
-
             </ul>
-            <h3>Список событий для <sec:authentication property="principal.username" /></h3>
         </div>
     </div>
 </div>
+<h2 id="faq">Список событий для <sec:authentication property="principal.username" /></h2>
 <c:forEach items="${allObject}" var="object">
     <div class="thumbnail">
         <h4>${object.name}</h4>

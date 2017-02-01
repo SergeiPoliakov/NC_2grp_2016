@@ -1,6 +1,7 @@
 package dbHelp;
 
 import entities.Event;
+import entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -117,6 +118,97 @@ public class DBHelp {
         return Res;
     }
 
+    // Получение всех пользователей
+    public ArrayList<User> getUserList() throws SQLException {
+        ArrayList<User> Res = new ArrayList<>();
+        Connection Con = getConnection();
+        Integer userTypeID = 1001; // ID типа Пользователь
+        PreparedStatement PS = Con.
+                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
+                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
+                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
+                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
+                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
+                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
+                        "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " +
+                        "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " +
+                        "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " +
+                        "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
+                        "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
+                        "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
+                        "WHERE ob.OBJECT_TYPE_ID = ? ORDER BY ob.OBJECT_ID");
+        PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+        while (RS.next()) {
+            User user = new User();
+            user.setId(RS.getInt(1));
+            user.setName(RS.getString(2));
+            user.setSurname(RS.getString(3));
+            user.setMiddleName(RS.getString(4));
+            user.setLogin(RS.getString(5));
+            user.setAgeDate(RS.getString(6));
+            user.setEmail(RS.getString(7));
+            user.setPassword(RS.getString(8));
+            user.setSex(RS.getString(9));
+            user.setCountry(RS.getString(10));
+            user.setAdditional_field(RS.getString(11));
+            Res.add(user);
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return Res;
+    }
+
+    // Получение объекта текущего авторизованного пользователя
+    public User getCurrentUser() throws SQLException {
+        Integer userID = new DBHelp().getObjID(new UserService().getCurrentUsername());
+        User user = getUserByUserID(userID);
+        return user;
+    }
+
+    // Получение объекта одного конкретного пользователя по id этого пользователя
+    public User getUserByUserID(int userID) throws SQLException {
+        Connection Con = getConnection();
+        Integer userTypeID = 1001; // ID типа Пользователь
+        PreparedStatement PS = Con.
+                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
+                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
+                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
+                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
+                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
+                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
+                        "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " +
+                        "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " +
+                        "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " +
+                        "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
+                        "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
+                        "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
+                        "WHERE ob.OBJECT_TYPE_ID = ? AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID");
+        PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
+        PS.setInt(2, userID); // В качестве параметра id пользователя
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+        User user = null;
+        while (RS.next()) {
+            user = new User();
+            user.setId(RS.getInt(1));
+            user.setName(RS.getString(2));
+            user.setSurname(RS.getString(3));
+            user.setMiddleName(RS.getString(4));
+            user.setLogin(RS.getString(5));
+            user.setAgeDate(RS.getString(6));
+            user.setEmail(RS.getString(7));
+            user.setPassword(RS.getString(8));
+            user.setSex(RS.getString(9));
+            user.setCountry(RS.getString(10));
+            user.setAdditional_field(RS.getString(11));
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return user;
+    }
+
     // Получение ВСЕХ событий данного пользователя
     public ArrayList<Event> getEventsIDbyObjectID(int ObjectID) throws SQLException {
         ArrayList<Event> Res = new ArrayList<>();
@@ -152,7 +244,7 @@ public class DBHelp {
         return Res;
     }
 
-    // Получение события данного пользователя по id этого события
+    // Получение одного конкретного события данного пользователя по id этого события
     public Event getEventByEventID(int EventID) throws SQLException {
         Connection Con = getConnection();
 

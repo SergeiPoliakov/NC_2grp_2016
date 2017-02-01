@@ -2,6 +2,8 @@ package web;
 
 import dbHelp.DBHelp;
 import entities.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,6 +32,7 @@ import java.util.TreeMap;
  */
 @Controller
 public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(EventController.class);
 
     UserService userService = new UserService();
 
@@ -92,7 +95,7 @@ public class UserController {
     @Deprecated
     @RequestMapping("/allUser")
     public String listObjects(Map<String, Object> map) throws SQLException {
-        map.put("allObject", new DBHelp().getObjectsIDbyObjectTypeID(1001));
+        map.put("allObject", new DBHelp().getUserList());
         return "allUser";
     }
 
@@ -130,7 +133,7 @@ public class UserController {
         mapAttr.put(4, nickname);
         mapAttr.put(5, ageDate);
         mapAttr.put(6, email);
-        mapAttr.put(7,bcryptPass);
+        mapAttr.put(7, bcryptPass);
         mapAttr.put(8, null);
         mapAttr.put(9, null);
         mapAttr.put(10, null);
@@ -145,36 +148,12 @@ public class UserController {
         return "/login";
     }
 
-
-    @RequestMapping(value = "/profile", method = RequestMethod.GET)
-    public String getProfileUserPage(User user, ModelMap m) throws SQLException {
-        Integer idUser = new DBHelp().getObjID(userService.getCurrentUsername());
-
-        ArrayList<String> userParams = new DBHelp().getObjParamsByObjID(idUser);
-
-        String name = userParams.get(0);
-        String surname = userParams.get(1);
-        String middleName = userParams.get(2);
-        String login = userParams.get(3);
-        String ageDate = userParams.get(4);
-        String email = userParams.get(5);
-        String sex = userParams.get(7);
-        String country = userParams.get(8);
-        String additional_field = userParams.get(9);
-
-        user.setId(idUser);
-        user.setName(name);
-        user.setSurname(surname);
-        user.setMiddleName(middleName);
-        user.setLogin(login);
-        user.setAgeDate(ageDate);
-        user.setEmail(email);
-        user.setSex(sex);
-        user.setCountry(country);
-        user.setAdditional_field(additional_field);
-
-
-        m.addAttribute("userParams", user);
+    // Выводим данные о пользователе на форму редактирования профиля
+    @RequestMapping("/profile")
+    public String getProfileUserPage(User user, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        user = new DBHelp().getCurrentUser(); // Получаем Объект текущего пользователя
+        logger.info("User = " + user.toString());
+        m.addAttribute(user);
         return "/profile";
     }
 
