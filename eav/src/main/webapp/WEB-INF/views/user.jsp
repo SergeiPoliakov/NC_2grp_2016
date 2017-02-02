@@ -123,7 +123,7 @@
                             <div class='row '>
                                 <div class='col-md-6'>
                                     <div class="input-group">
-                                        <span class="input-group-addon" id="basic-addon1">Название</span>
+                                        <span class="input-group-addon">Название</span>
                                         <input type="text" class="form-control" name="name" id="taskName" placeholder="Введите название задачи">
                                     </div>
                                 </div>
@@ -143,20 +143,20 @@
                             <div class='row top-buffer-2'>
                                 <div class='col-md-6'>
                                     <div class='input-group date' id='datetimepicker1'>
-                                        <span class="input-group-addon" id="basic-addon1">Начало</span>
+                                        <span class="input-group-addon">Начало</span>
                                         <input type='text' name="date_begin" class="form-control" id="taskStartTime" />
                                         <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class='col-md-6'>
                                     <div class='input-group date' id='datetimepicker2'>
-                                        <span class="input-group-addon" id="basic-addon1">Окончание</span>
+                                        <span class="input-group-addon">Окончание</span>
                                         <input type='text' name="date_end" class="form-control" id="taskEndTime" />
                                         <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -259,6 +259,9 @@
         stack: false,
         multiselect: true,
         dataAttributes: 'all',
+        itemsAlwaysDraggable: true,
+        zoomMin: 60000, // 1 минута
+        zoomMax: 157700000000, //5 лет
 
         // Добавление задачи
         onAdd: function (item, callback) {
@@ -325,13 +328,12 @@
             $('#taskPriority').val(item.className);
             $('#taskPriority').selectpicker('refresh');
             $( "#eventForm" ).submit();
-            callback(null);
+            callback(item);
         }
     };
     // Create a Timeline
     var timeline = new vis.Timeline(container, items, options);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     // Вывод информации, при наведении на элемент
     function createTooltip(){
         Tipped.create('.vis-item', function(element) {
