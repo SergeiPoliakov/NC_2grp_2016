@@ -232,7 +232,7 @@ public class DBHelp {
             event.setName( RS.getString(3));
             event.setDate_begin( RS.getString(4));
             event.setDate_end( RS.getString(5));
-            event.setPriority( RS.getInt(6));
+            event.setPriority( RS.getString(6));
             event.setInfo( RS.getString(7));
 
             Res.add(event); // Res.add(RS.getObject(1));
@@ -269,7 +269,7 @@ public class DBHelp {
             event.setName(RS.getString(3));
             event.setDate_begin(RS.getString(4));
             event.setDate_end(RS.getString(5));
-            event.setPriority(RS.getInt(6));
+            event.setPriority(RS.getString(6));
             event.setInfo(RS.getString(7));
         }
 

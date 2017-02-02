@@ -1,0 +1,222 @@
+body, html {
+    font-family: Roboto;
+}
+/*Bootstrap*/
+
+/*CheckBox*/
+.material-switch > input[type="checkbox"] {
+    display: none;   
+}
+.material-switch > label {
+    cursor: pointer;
+    height: 0px;
+    position: relative; 
+    width: 40px;  
+}
+.material-switch > label::before {
+    background: rgb(0, 0, 0);
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    content: '';
+    height: 16px;
+    margin-top: -8px;
+    position:absolute;
+    opacity: 0.3;
+    transition: all 0.4s ease-in-out;
+    width: 40px;
+}
+.material-switch > label::after {
+    background: rgb(255, 255, 255);
+    border-radius: 16px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    content: '';
+    height: 24px;
+    left: -4px;
+    margin-top: -8px;
+    position: absolute;
+    top: -4px;
+    transition: all 0.3s ease-in-out;
+    width: 24px;
+}
+.material-switch > input[type="checkbox"]:checked + label::before {
+    background: inherit;
+    opacity: 0.5;
+}
+.material-switch > input[type="checkbox"]:checked + label::after {
+    background: inherit;
+    left: 20px;
+}
+/*MyCSS*/
+.list-group-item-nopadding{
+  padding: 0px;
+}
+.card-nomargin{
+  margin-bottom: 0px;
+}
+.nav{
+    max-height: 300px;
+    overflow-y:scroll; 
+}
+.list-group-my{
+  margin-bottom: 0px;
+}
+.thumbnail-my{
+  margin-bottom: 0px;
+}
+.noresize {
+  resize: none; 
+}
+.textarea-addon{
+  border-bottom-left-radius: 0px !important;
+  border-top-right-radius: 4px !important;
+  border:1px solid #ccc !important;
+}
+.textarea-for-modal{
+  border-top-left-radius:0px !important;
+  border-top-right-radius:0px !important;
+}
+.timeline-menu-button{
+  border-top-left-radius:4px;
+  border-top-right-radius:4px;
+  border-bottom-right-radius: 0px; 
+  border-bottom-left-radius: 0px; 
+}
+/*Вертикальный отступ*/
+.top-buffer-1 { margin-top:1px; }
+.top-buffer-2 { margin-top:7px; }
+.top-buffer-3 { margin-top:3px; }
+.top-buffer-4 { margin-top:4px; }
+.top-buffer-5 { margin-top:5px; }
+.top-buffer-10 { margin-top:10px; }
+.top-buffer-15 { margin-top:15px; }
+.top-buffer-20 { margin-top:20px; }
+.top-buffer-30 { margin-top:30px; }
+.top-buffer-40 { margin-top:40px; }
+.top-buffer-50 { margin-top:50px; }
+.top-buffer-60 { margin-top:60px; }
+/*Элемент modal по центру экрана*/
+.modal {
+  text-align: center;
+  padding: 0!important;
+}
+
+.modal:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -4px;
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+/*Timeline*/
+
+/*Крестик для удаления*/
+.vis-delete{
+  right: -4.5px;
+  top: -7px;
+  font-family: Roboto;
+  color: whitesmoke;
+}
+.vis-delete-rtl{
+  right: -4.5px;
+  top: -7px;
+  font-family: Roboto;
+  color: whitesmoke;
+}
+.vis-item-content{
+  cursor: default;
+}
+.vis-timeline {
+  border-top-left-radius:0px;
+  border-top-right-radius:0px;
+  border-bottom-right-radius: 4px; 
+  border-bottom-left-radius: 4px;
+}
+/*Любой элемент*/
+.vis-item {
+  border-radius: 5px;
+  color: white;
+  background-color: lawngreen;
+  border-color: darkred;
+}
+/*Выделенный элемент*/
+.vis-item.vis-selected{
+  color: black;
+  background-color: white;
+}
+/*Стиль 1 (красный элемент)*/
+.vis-item.Style1 {
+  text-align: justify ;
+  border-radius: 5px;
+  color: white;
+  background-color: #d9534f;
+  border-color: darkred;
+}
+/*Выделенный красный элемент*/
+.vis-item.vis-selected.Style1{
+  color: white;
+  background-color: #c9302c;
+}
+/*Стиль 2 (жёлтый элемент)*/
+.vis-item.Style2 {
+  text-align: justify ;
+  border-radius: 5px;
+  color: white;
+  background-color: #f0ad4e;
+  border-color: darkred;
+}
+/*Выделенный жёлтый элемент*/
+.vis-item.vis-selected.Style2{
+  color: white;
+  background-color: #ec971f;
+}
+/*Стиль 1 (синий элемент)*/
+.vis-item.Style3 {
+  text-align: justify ;
+  border-radius: 5px;
+  color: white;
+  background-color: #5bc0de;
+  border-color: darkred;
+}
+/*Выделенный синий элемент*/
+.vis-item.vis-selected.Style3{
+  color: white;
+  background-color: #31b0d5;
+}
+
+/*Enscroll*/
+
+.track3 {
+    width: 10px;
+    background: rgba(0, 0, 0, 0);
+    margin-right: 2px;
+    border-radius: 10px;
+    -webkit-transition: background 250ms linear;
+    transition: background 250ms linear;
+}
+
+.track3:hover,
+.track3.dragging {
+    background: #d9d9d9; /* Browsers without rgba support */
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.handle3 {
+    width: 7px;
+    right: 0;
+    background: #999;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 7px;
+    -webkit-transition: width 250ms;
+    transition: width 250ms;
+}
+
+.track3:hover .handle3,
+.track3.dragging .handle3 {
+    width: 10px;
+}

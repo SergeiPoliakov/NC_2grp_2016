@@ -3,6 +3,8 @@ package entities;
 /**
  * Created by Hroniko on 31.01.2017.
  */
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Event {
@@ -12,7 +14,7 @@ public class Event {
     private String name;
     private String date_begin;
     private String date_end;
-    private int priority;
+    private String priority;
     private String info;
 
 
@@ -38,11 +40,11 @@ public class Event {
         this.name = name;
     }
 
-    public int getPriority() {
+    public String getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(String priority) {
         this.priority = priority;
     }
 
@@ -54,7 +56,10 @@ public class Event {
         this.info = info;
     }
 
-    public String getDate_begin() { return date_begin; }
+    public String getDate_begin() throws ParseException {
+
+        return date_begin;
+    }
     public void setDate_begin(String data_begin) { this.date_begin = data_begin; }
 
     public String getDate_end() { return date_end; }
@@ -64,7 +69,7 @@ public class Event {
 
     public Event() {}
 
-    public Event(int host_id, String name, String date_begin, String date_end, int priority, String info) {
+    public Event(int host_id, String name, String date_begin, String date_end, String priority, String info) {
         this.host_id = host_id;
         this.name = name;
         this.date_begin = date_begin;

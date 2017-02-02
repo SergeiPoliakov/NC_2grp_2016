@@ -37,12 +37,12 @@
 
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="date_begin">Введите дату начала</label>
-            <input type="date" class="form-control" name="date_begin" id="date_begin" placeholder="Начало">
+            <input type="text" class="form-control" name="date_begin" id="date_begin" placeholder="Начало">
         </div>
 
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="date_end">Введите дату окончания</label>
-            <input type="date" class="form-control " name="date_end" id="date_end" placeholder="Окончание">
+            <input type="text" class="form-control " name="date_end" id="date_end" placeholder="Окончание">
         </div>
 
         <div class="form-group col-lg-offset-4 col-lg-5">

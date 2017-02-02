@@ -37,13 +37,13 @@
 
             <div class="form-group col-lg-offset-4 col-lg-5">
                 <label for="InputDateBegin1">Введите дату начала</label>
-                <input type="date" class="form-control" name="date_begin" id="InputDateBegin1"
+                <input type="text" class="form-control" name="date_begin" id="InputDateBegin1"
                        value=${event.date_begin}>
             </div>
 
             <div class="form-group col-lg-offset-4 col-lg-5">
                 <label for="InputDateEnd1">Введите дату окончания</label>
-                <input type="date" class="form-control" name="date_end" id="InputDateEnd1" value=${event.date_end}>
+                <input type="text" class="form-control" name="date_end" id="InputDateEnd1" value=${event.date_end}>
             </div>
 
             <div class="form-group col-lg-offset-4 col-lg-5">

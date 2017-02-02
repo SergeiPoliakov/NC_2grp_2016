@@ -43,8 +43,6 @@
             <li class="active pull-left"><a href="/deleteEvent/${object.id}">Удалить</a></li>
             <li class="active pull-left"><a href="/editEvent/${object.id}">Редактировать</a></li>
     <%--<li class="active pull-left"><a href="/addEvent">Добавить событие</a></li>--%>
-
-
         </ul>
 
 </div>

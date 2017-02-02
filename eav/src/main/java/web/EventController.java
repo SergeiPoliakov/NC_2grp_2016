@@ -41,7 +41,7 @@ public class EventController {
     public String registerUser(@RequestParam("name") String name,
                                @RequestParam("date_begin") String date_begin,
                                @RequestParam("date_end") String date_end,
-                               @RequestParam("priority") int priority,
+                               @RequestParam("priority") String priority,
                                @RequestParam("info") String info
     ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
@@ -87,13 +87,13 @@ public class EventController {
         return "/editEvent";
     }
 
-    // Редактирование события
+    // Редактирование событияsdasdasd
     @RequestMapping(value = "/changeEvent/{eventId}", method = RequestMethod.POST)
     public String changeEvent(@PathVariable("eventId") Integer eventId,
                               @RequestParam("name") String name,
                               @RequestParam("date_begin") String date_begin,
                               @RequestParam("date_end") String date_end,
-                              @RequestParam("priority") Integer priority,
+                              @RequestParam("priority") String priority,
                               @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();

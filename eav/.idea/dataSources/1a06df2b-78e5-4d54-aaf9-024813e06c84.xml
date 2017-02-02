@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="@localhost">
+  <database-model serializer="dbm" rdbms="ORACLE" format-version="4.0">
+    <root id="1"/>
+    <schema id="2" parent="1" name="NC">
+      <ObjectId>49</ObjectId>
+      <IntrospectionTimestamp>2017-02-02.02:02:34</IntrospectionTimestamp>
+      <CreatedTimestamp>2017-02-01.22:13:35</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <schema id="3" parent="1" name="PUBLIC">
+      <ObjectId>1</ObjectId>
+    </schema>
+    <schema id="4" parent="1" name="SYS">
+      <ObjectId>0</ObjectId>
+    </schema>
+    <schema id="5" parent="1" name="SYSTEM">
+      <ObjectId>5</ObjectId>
+    </schema>
+    <schema id="6" parent="1" name="OUTLN">
+      <ObjectId>9</ObjectId>
+    </schema>
+    <schema id="7" parent="1" name="DIP">
+      <ObjectId>14</ObjectId>
+    </schema>
+    <schema id="8" parent="1" name="ORACLE_OCM">
+      <ObjectId>21</ObjectId>
+    </schema>
+    <schema id="9" parent="1" name="DBSNMP">
+      <ObjectId>29</ObjectId>
+    </schema>
+    <schema id="10" parent="1" name="APPQOSSYS">
+      <ObjectId>30</ObjectId>
+    </schema>
+    <schema id="11" parent="1" name="CTXSYS">
+      <ObjectId>32</ObjectId>
+    </schema>
+    <schema id="12" parent="1" name="XDB">
+      <ObjectId>34</ObjectId>
+    </schema>
+    <schema id="13" parent="1" name="ANONYMOUS">
+      <ObjectId>35</ObjectId>
+    </schema>
+    <schema id="14" parent="1" name="MDSYS">
+      <ObjectId>42</ObjectId>
+    </schema>
+    <schema id="15" parent="1" name="HR">
+      <ObjectId>43</ObjectId>
+    </schema>
+    <schema id="16" parent="1" name="FLOWS_FILES">
+      <ObjectId>44</ObjectId>
+    </schema>
+    <schema id="17" parent="1" name="APEX_PUBLIC_USER">
+      <ObjectId>45</ObjectId>
+    </schema>
+    <schema id="18" parent="1" name="APEX_040000">
+      <ObjectId>47</ObjectId>
+    </schema>
+    <schema id="19" parent="1" name="NETCRACKER">
+      <ObjectId>48</ObjectId>
+    </schema>
+    <schema id="20" parent="1" name="XS$NULL">
+      <ObjectId>2147483638</ObjectId>
+    </schema>
+    <table id="21" parent="2" name="ATTRIBUTES">
+      <ObjectId>23303</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:35</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:35</ModifiedTimestamp>
+    </table>
+    <table id="22" parent="2" name="OBJECTS">
+      <ObjectId>23310</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:36</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+    </table>
+    <table id="23" parent="2" name="OBJ_ATTRIBUTES">
+      <ObjectId>23306</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:36</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+    </table>
+    <table id="24" parent="2" name="OBJ_TYPES">
+      <ObjectId>23307</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:36</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+    </table>
+    <table id="25" parent="2" name="PARAMS">
+      <ObjectId>23312</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:36</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+    </table>
+    <table id="26" parent="2" name="REFERENCES">
+      <ObjectId>23313</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:36</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+    </table>
+    <column id="27" parent="21" name="ATTR_ID">
+      <Position>1</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="28" parent="21" name="ATTR_NAME">
+      <Position>2</Position>
+      <DataType>VARCHAR2(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="29" parent="21" name="ATTRIBUTES_PK">
+      <ObjectId>23304</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:35</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:35</ModifiedTimestamp>
+      <TablespaceName>SYSTEM</TablespaceName>
+      <ColNames>ATTR_ID</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="30" parent="21" name="ATTR_NAME">
+      <ObjectId>23305</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:35</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:35</ModifiedTimestamp>
+      <TablespaceName>SYSTEM</TablespaceName>
+      <ColNames>ATTR_NAME</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="31" parent="21" name="ATTRIBUTES_PK">
+      <ModifiedTimestamp>2017-02-01.22:13:35</ModifiedTimestamp>
+      <ColNames>ATTR_ID</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <UnderlyingIndexName>ATTRIBUTES_PK</UnderlyingIndexName>
+      <Primary>1</Primary>
+    </key>
+    <key id="32" parent="21" name="ATTR_NAME">
+      <ModifiedTimestamp>2017-02-01.22:13:35</ModifiedTimestamp>
+      <ColNames>ATTR_NAME</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <UnderlyingIndexName>ATTR_NAME</UnderlyingIndexName>
+    </key>
+    <column id="33" parent="22" name="OBJECT_ID">
+      <Position>1</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="34" parent="22" name="OBJECT_TYPE_ID">
+      <Position>2</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="35" parent="22" name="OBJECT_NAME">
+      <Position>3</Position>
+      <DataType>VARCHAR2(70)|0</DataType>
+    </column>
+    <index id="36" parent="22" name="OBJECTS_PK">
+      <ObjectId>23311</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:36</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <TablespaceName>SYSTEM</TablespaceName>
+      <ColNames>OBJECT_ID</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="37" parent="22" name="OBJECTS_PK">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>OBJECT_ID</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <UnderlyingIndexName>OBJECTS_PK</UnderlyingIndexName>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="38" parent="22" name="OBJ_TYPES_OBJECTS">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>OBJECT_TYPE_ID</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <RefTableName>OBJ_TYPES</RefTableName>
+      <RefKeyName>OBJ_TYPES_PK</RefKeyName>
+    </foreign-key>
+    <column id="39" parent="23" name="OBJECT_TYPE_ID">
+      <Position>1</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="40" parent="23" name="ATTR_ID">
+      <Position>2</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <foreign-key id="41" parent="23" name="OBJ_ATTRIBUTES_OBJ_TYPES">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>OBJECT_TYPE_ID</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <RefTableName>OBJ_TYPES</RefTableName>
+      <RefKeyName>OBJ_TYPES_PK</RefKeyName>
+    </foreign-key>
+    <foreign-key id="42" parent="23" name="OBJ_ATTRIBUTES_ATTRIBUTES">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>ATTR_ID</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <RefTableName>ATTRIBUTES</RefTableName>
+      <RefKeyName>ATTRIBUTES_PK</RefKeyName>
+    </foreign-key>
+    <column id="43" parent="24" name="OBJECT_TYPE_ID">
+      <Position>1</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="44" parent="24" name="NAME">
+      <Position>2</Position>
+      <DataType>VARCHAR2(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="45" parent="24" name="OBJ_TYPES_PK">
+      <ObjectId>23308</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:36</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <TablespaceName>SYSTEM</TablespaceName>
+      <ColNames>OBJECT_TYPE_ID</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="46" parent="24" name="OBJ_TYPES_AK_1">
+      <ObjectId>23309</ObjectId>
+      <CreatedTimestamp>2017-02-01.22:13:36</CreatedTimestamp>
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <TablespaceName>SYSTEM</TablespaceName>
+      <ColNames>NAME</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="47" parent="24" name="OBJ_TYPES_PK">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>OBJECT_TYPE_ID</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <UnderlyingIndexName>OBJ_TYPES_PK</UnderlyingIndexName>
+      <Primary>1</Primary>
+    </key>
+    <key id="48" parent="24" name="OBJ_TYPES_AK_1">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>NAME</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <UnderlyingIndexName>OBJ_TYPES_AK_1</UnderlyingIndexName>
+    </key>
+    <column id="49" parent="25" name="OBJECT_ID">
+      <Position>1</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="50" parent="25" name="ATTR_ID">
+      <Position>2</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="51" parent="25" name="VALUE">
+      <Position>3</Position>
+      <DataType>VARCHAR2(70)|0</DataType>
+    </column>
+    <foreign-key id="52" parent="25" name="PARAMS_OBJECTS">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>OBJECT_ID</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <RefTableName>OBJECTS</RefTableName>
+      <RefKeyName>OBJECTS_PK</RefKeyName>
+    </foreign-key>
+    <foreign-key id="53" parent="25" name="PARAMS_ATTRIBUTES">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>ATTR_ID</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <RefTableName>ATTRIBUTES</RefTableName>
+      <RefKeyName>ATTRIBUTES_PK</RefKeyName>
+    </foreign-key>
+    <column id="54" parent="26" name="OBJECT_ID">
+      <Position>1</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="55" parent="26" name="ATTR_ID">
+      <Position>2</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="56" parent="26" name="REFERENCE">
+      <Position>3</Position>
+      <DataType>NUMBER(6)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <foreign-key id="57" parent="26" name="REFERENCES_OBJECTS">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>OBJECT_ID</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <RefTableName>OBJECTS</RefTableName>
+      <RefKeyName>OBJECTS_PK</RefKeyName>
+    </foreign-key>
+    <foreign-key id="58" parent="26" name="REFERENCES_ATTRIBUTES">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>ATTR_ID</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <RefTableName>ATTRIBUTES</RefTableName>
+      <RefKeyName>ATTRIBUTES_PK</RefKeyName>
+    </foreign-key>
+    <foreign-key id="59" parent="26" name="OBJECTS_REFERENCES">
+      <ModifiedTimestamp>2017-02-01.22:13:36</ModifiedTimestamp>
+      <ColNames>REFERENCE</ColNames>
+      <InitiallyDeferred>1</InitiallyDeferred>
+      <RefTableName>OBJECTS</RefTableName>
+      <RefKeyName>OBJECTS_PK</RefKeyName>
+    </foreign-key>
+  </database-model>
+</dataSource>
