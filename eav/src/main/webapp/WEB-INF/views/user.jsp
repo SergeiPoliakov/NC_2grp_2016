@@ -46,7 +46,7 @@
                     <img src="http://s5.postimg.org/4xpbh5oo3/user_000000_128.png" alt='Изображение'>
                 </a>
                 <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item">Возраст: ${user.ageDate}</li>
+                    <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
                     <li class="list-group-item">Город: ${user.country}</li>
                     <li class="list-group-item">Пол: ${user.sex.toLowerCase()}</li>
                     <li class="list-group-item">О себе: ${user.additional_field}</li>
@@ -191,6 +191,7 @@
 </div>
 
 <script type="text/javascript">
+
     // Scrollbar для кардхолдера
     $('#cardsholderItems').enscroll({
         showOnHover: false,
@@ -243,7 +244,6 @@
     // TIMELINE FILL, SETUP AND CREATE
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     var container = document.getElementById('visualization');
-
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
     <c:forEach items="${allEvents}" var="event">
@@ -284,7 +284,6 @@
 
         // Удаление задачи
         onRemove: function (item, callback) {
-            //window.location.replace("/userRemoveEvent/" + item.id);
             $('#eventForm').attr('action', '/userRemoveEvent/'+item.id);
             $( "#eventForm" ).submit();
             callback(item);
@@ -375,6 +374,18 @@
         return dateObject;
     }
 
+    // Получить возраст
+    function getAge(dateString) {
+        var today = new Date();
+        var birthDate = new Date(dateString);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
     // Просмотр сегодняшнего дня
     document.getElementById('showTodayButton').onclick = function() {
         var currentDate = new Date();
@@ -431,9 +442,9 @@
             'properties=' + JSON.stringify(properties);
         log.firstChild ? log.insertBefore(msg, log.firstChild) : log.appendChild(msg);
     }
-
-
     createTooltip();
+    // Установка возраста
+    $("#userAge").html('Возраст: ' + getAge(getDateFromString('${user.ageDate}')));
 </script>
 </body>
 </html>
