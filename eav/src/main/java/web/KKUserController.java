@@ -39,4 +39,53 @@ public class KKUserController {
         m.addAttribute("allEvents", new DBHelp().getEventList(idUser));
         return "user";
     }
+
+    @RequestMapping(value = "/userAddEvent", method = RequestMethod.POST)
+    public String addEvent(@RequestParam("name") String name,
+                           @RequestParam("date_begin") String date_begin,
+                           @RequestParam("date_end") String date_end,
+                           @RequestParam("priority") String priority,
+                           @RequestParam("info") String info
+        ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
+
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
+        mapAttr.put(101, date_begin);
+        mapAttr.put(102, date_end);
+        mapAttr.put(103, null); // Продолжительность события. Пока что так, потом исправить, вставить расчет
+        mapAttr.put(104, info);
+        mapAttr.put(105, priority);
+
+
+        new DBHelp().addNewEvent(1002, name, mapAttr); // Передаем в хелпер задачу со всеми атрибутами
+
+        return "redirect:/user";
+    }
+
+    // Редактирование события
+    @RequestMapping(value = "/userChangeEvent/{eventId}", method = RequestMethod.POST)
+    public String changeEvent(@PathVariable("eventId") Integer eventId,
+                              @RequestParam("name") String name,
+                              @RequestParam("date_begin") String date_begin,
+                              @RequestParam("date_end") String date_end,
+                              @RequestParam("priority") String priority,
+                              @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
+        mapAttr.put(101, date_begin);
+        mapAttr.put(102, date_end);
+        mapAttr.put(105, priority);
+        mapAttr.put(104, info);
+
+        // mapAttr.put(103, date_begin - date_end); // Продолжительность, потом вставить ее расчет
+        new DBHelp().updateEvent(eventId, name, mapAttr);
+        return "redirect:/user";
+    }
+
+    @RequestMapping(value = "/userRemoveEvent/{eventId}", method = RequestMethod.POST)
+    public String removeEvent(@PathVariable("eventId") Integer eventId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        new DBHelp().deleteEvent(eventId);
+        return "redirect:/user";
+    }
+
 }

@@ -47,6 +47,10 @@ body, html {
     left: 20px;
 }
 /*MyCSS*/
+.hidden {
+  display: none !important;
+  visibility: hidden !important;
+}
 .list-group-item-nopadding{
   padding: 0px;
 }

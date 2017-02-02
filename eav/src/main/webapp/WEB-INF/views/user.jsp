@@ -36,11 +36,6 @@
     <script type="text/javascript" src="resources\js\bootstrap-select.min.js"> </script>
 </head>
 <body>
-<c:forEach items="${allEvents}" var="event">
-    {id: ${event.id}, content: '${event.name}', start: '${event.date_begin}', end: '${event.date_end}', className: '${event.priority}'}
-
-</c:forEach>
-
 <div class="container top-buffer-20">
     <!-- Информация о пользователе -->
     <div class="row">
@@ -116,77 +111,80 @@
     <!-- Форма для создания новой задачи -->
     <div id="taskmodal" class="modal fade">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- Заголовок модального окна -->
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title text-center">Создание новой задачи</h4>
-                </div>
-                <!-- Основное содержимое модального окна -->
-                <div class="modal-body">
-                    <div class='row '>
-                        <div class='col-md-6'>
-                            <div class="input-group">
-                                <span class="input-group-addon" id="basic-addon1">Название</span>
-                                <input type="text" class="form-control" id="taskName" placeholder="Введите название задачи">
-                            </div>
-                        </div>
-                        <div class='col-md-6'>
-                            <div class="input-group">
-                                <span class="input-group-addon">Приоритет</span>
-                                <select id="taskPriority" class="selectpicker form-control" title="Выберите приоритет">
-                                    <option style="background: #d9534f; color: #fff;" value="Style1">Высокий</option>
-                                    <option style="background: #f0ad4e; color: #fff;" value="Style2">Средний</option>
-                                    <option style="background: #5bc0de; color: #fff;" value="Style3" selected>Низкий</option>
-                                </select>
-                            </div>
-                        </div>
+            <form id="eventForm" name="creation" action="/userAddEvent" method="post">
+                <div class="modal-content">
+                    <!-- Заголовок модального окна -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title text-center">Создание новой задачи</h4>
                     </div>
-                    <!-- DateTime Pickers -->
-                    <div class='row top-buffer-2'>
-                        <div class='col-md-6'>
-                            <div class='input-group date' id='datetimepicker1'>
-                                <span class="input-group-addon" id="basic-addon1">Начало</span>
-                                <input type='text' class="form-control" id="taskStartTime" />
-                                <span class="input-group-addon">
-							<span class="glyphicon glyphicon-calendar"></span>
-						</span>
+                    <!-- Основное содержимое модального окна -->
+                    <div class="modal-body">
+                            <div class='row '>
+                                <div class='col-md-6'>
+                                    <div class="input-group">
+                                        <span class="input-group-addon" id="basic-addon1">Название</span>
+                                        <input type="text" class="form-control" name="name" id="taskName" placeholder="Введите название задачи">
+                                    </div>
+                                </div>
+                                <div class='col-md-6'>
+                                    <div class="input-group">
+                                        <div type="text" class="hidden" name="eventId" id="taskID" value = "eventId"></div>
+                                        <span class="input-group-addon">Приоритет</span>
+                                        <select type="text" id="taskPriority" name="priority" class="selectpicker form-control" title="Выберите приоритет">
+                                            <option style="background: #d9534f; color: #fff;" value="Style1">Высокий</option>
+                                            <option style="background: #f0ad4e; color: #fff;" value="Style2">Средний</option>
+                                            <option style="background: #5bc0de; color: #fff;" value="Style3" selected>Низкий</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class='col-md-6'>
-                            <div class='input-group date' id='datetimepicker2'>
-                                <span class="input-group-addon" id="basic-addon1">Окончание</span>
-                                <input type='text' class="form-control" id="taskEndTime" />
-                                <span class="input-group-addon">
-							<span class="glyphicon glyphicon-calendar"></span>
-						</span>
+                            <!-- DateTime Pickers -->
+                            <div class='row top-buffer-2'>
+                                <div class='col-md-6'>
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <span class="input-group-addon" id="basic-addon1">Начало</span>
+                                        <input type='text' name="date_begin" class="form-control" id="taskStartTime" />
+                                        <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                                    </div>
+                                </div>
+                                <div class='col-md-6'>
+                                    <div class='input-group date' id='datetimepicker2'>
+                                        <span class="input-group-addon" id="basic-addon1">Окончание</span>
+                                        <input type='text' name="date_end" class="form-control" id="taskEndTime" />
+                                        <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <div class="row top-buffer-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="input-group-addon textarea-addon">Дополнительная информация</div>
+                                        <textarea type='text' name="info" class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="list-group list-group-my">
+                                <li class="list-group-item">
+                                    Сохранить шаблон
+                                    <div class="material-switch pull-right">
+                                        <input id="SaveTemplateCheckBox" type="checkbox"/>
+                                        <label for="SaveTemplateCheckBox" class="label-primary"></label>
+                                    </div>
+                                </li>
+                            </ul>
                     </div>
-                    <div class="row top-buffer-2">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <div class="input-group-addon textarea-addon">Дополнительная информация</div>
-                                <textarea class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo"></textarea>
-                            </div>
-                        </div>
+                    <!-- Футер модального окна -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary" id="modalAddButton">Добавить</button>
                     </div>
-                    <ul class="list-group list-group-my">
-                        <li class="list-group-item">
-                            Сохранить шаблон
-                            <div class="material-switch pull-right">
-                                <input id="SaveTemplateCheckBox" type="checkbox"/>
-                                <label for="SaveTemplateCheckBox" class="label-primary"></label>
-                            </div>
-                        </li>
-                    </ul>
                 </div>
-                <!-- Футер модального окна -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                    <button type="button" class="btn btn-primary" id="modalAddButton">Добавить</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
     <div id="log"></div>
@@ -248,13 +246,9 @@
 
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
-        {id: 1, content: 'Работа', start: new Date(2017,1,2), end: new Date(2017,1,2,8), className: 'Style1'},
-        {id: 2, content: 'Сон', start: new Date(2017,1,2,8), end: new Date(2017,1,2,17,30), className: 'Style3'},
-        {id: 3, content: 'Прогулка', start: new Date(2017,1,2,18), end: new Date(2017,1,2,21,50), className: 'Style2'},
-        {id: 4, content: 'Еще что то', start: new Date(2017,1,2,21,50,1), end: new Date(2017,1,2,24), className: 'Style3'},
-        <c:forEach items="${allEvents}" var="event">
-            {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}'}
-        </c:forEach>
+    <c:forEach items="${allEvents}" var="event">
+        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}'},
+    </c:forEach>
     ]);
 
     // Configuration for the Timeline
@@ -268,46 +262,70 @@
 
         // Добавление задачи
         onAdd: function (item, callback) {
+            $('#eventForm').attr('action', '/userAddEvent');
             $('#taskName').val("Новая задача");
             $("#modalAddButton").html('Добавить');
             document.getElementById('taskStartTime').value = toLocaleDateTimeString(item.start);
             document.getElementById('taskEndTime').value = toLocaleDateTimeString(item.start);
             $('#taskmodal').modal('show');
             document.getElementById('modalAddButton').onclick = function() {
-                item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
+                $('#taskmodal').modal('hide');
+                // Изменение элемента на таймлайне, наверное уже не нужно, т.к. сервер сам перегружает данные, но на всякий пусть останется
+                /*item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
                 item.start = getDateFromString(document.getElementById('taskStartTime').value);
                 item.end = getDateFromString(document.getElementById('taskEndTime').value);
                 item.content = document.getElementById('taskName').value;
                 $('#taskmodal').modal('hide');
                 callback(item);
-                createTooltip();
+                createTooltip();*/
             };
             callback(null);
         },
 
         // Удаление задачи
         onRemove: function (item, callback) {
+            //window.location.replace("/userRemoveEvent/" + item.id);
+            $('#eventForm').attr('action', '/userRemoveEvent/'+item.id);
+            $( "#eventForm" ).submit();
             callback(item);
         },
 
         // Обновление задачи
         onUpdate: function (item, callback) {
+            $('#eventForm').attr('action', '/userChangeEvent/'+item.id);
             $("#modalAddButton").html('Сохранить');
             $('#taskStartTime').val(toLocaleDateTimeString(item.start));
             $('#taskEndTime').val(toLocaleDateTimeString(item.end));
+            $('#taskID').val(item.id);
             $('#taskName').val(item.content);
             $('#taskPriority').val(item.className);
             $('#taskPriority').selectpicker('refresh');
             $('#taskmodal').modal('show');
             document.getElementById('modalAddButton').onclick = function() {
-                item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
+                $('#taskmodal').modal('hide');
+                // Изменение элемента на таймлайне, наверное уже не нужно, т.к. сервер сам перегружает данные, но на всякий пусть останется
+                /*item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
                 item.start = getDateFromString(document.getElementById('taskStartTime').value);
                 item.end = getDateFromString(document.getElementById('taskEndTime').value);
                 item.content = document.getElementById('taskName').value;
                 $('#taskmodal').modal('hide');
                 callback(item);
-                createTooltip();
+                createTooltip();*/
             };
+            callback(null);
+        },
+
+        // Перемещение задачи
+        onMove: function (item, callback) {
+            $('#eventForm').attr('action', '/userChangeEvent/'+item.id);
+            $("#modalAddButton").html('Сохранить');
+            $('#taskStartTime').val(toLocaleDateTimeString(item.start));
+            $('#taskEndTime').val(toLocaleDateTimeString(item.end));
+            $('#taskID').val(item.id);
+            $('#taskName').val(item.content);
+            $('#taskPriority').val(item.className);
+            $('#taskPriority').selectpicker('refresh');
+            $( "#eventForm" ).submit();
             callback(null);
         }
     };
