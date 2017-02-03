@@ -32,18 +32,17 @@
 
             <div class="form-group col-lg-offset-4 col-lg-5">
                 <label for="InputName1">Введите название</label>
-                <input type="text" class="form-control " name="name" id="InputName1" value=${event.name}>
+                <textarea rows="1" class="form-control" name="name" id="InputName1">${event.name}</textarea>
             </div>
 
             <div class="form-group col-lg-offset-4 col-lg-5">
                 <label for="InputDateBegin1">Введите дату начала</label>
-                <input type="text" class="form-control" name="date_begin" id="InputDateBegin1"
-                       value=${event.date_begin}>
+                <textarea rows="1" class="form-control" name="info" id="InputDateBegin1">${event.date_begin}</textarea>
             </div>
 
             <div class="form-group col-lg-offset-4 col-lg-5">
                 <label for="InputDateEnd1">Введите дату окончания</label>
-                <input type="text" class="form-control" name="date_end" id="InputDateEnd1" value=${event.date_end}>
+                <textarea rows="1" class="form-control" name="info" id="InputDateEnd1">${event.date_end}</textarea>
             </div>
 
             <div class="form-group col-lg-offset-4 col-lg-5">

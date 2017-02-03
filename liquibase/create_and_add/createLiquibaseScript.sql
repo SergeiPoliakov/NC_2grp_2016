@@ -1,4 +1,4 @@
---liquibase formatted sql
+﻿--liquibase formatted sql
 
 --changeset Hroniko:1 
 

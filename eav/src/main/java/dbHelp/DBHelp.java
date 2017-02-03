@@ -99,6 +99,41 @@ public class DBHelp {
     }
 
 
+    public ArrayList<User> searchUser(String name) throws SQLException {
+        ArrayList<User> Res = new ArrayList<>();
+        Connection Con = getConnection();
+        Integer userTypeID = 1001; // ID типа Пользователь
+        String sqlName = "%" + name + "%";
+        PreparedStatement PS = Con.
+                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE " +
+                        " FROM OBJECTS ob " +
+                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
+                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
+                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
+                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
+                        " WHERE ob.OBJECT_TYPE_ID = ? AND (lower(ob.OBJECT_NAME) LIKE lower(?)) ORDER BY ob.OBJECT_NAME");
+        PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
+        PS.setString(2, sqlName);
+        ResultSet RS = PS.executeQuery();
+
+        while (RS.next()) {
+            User user = new User();
+            user.setId(RS.getInt(1));
+            user.setName(RS.getString(2));
+            user.setSurname(RS.getString(3));
+            user.setMiddleName(RS.getString(4));
+            user.setLogin(RS.getString(5));
+            Res.add(user);
+
+            // System.out.println(user.getId() + " , " + user.getName());
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return Res;
+    }
+
+
 
     // Получение всех пользователей
     public ArrayList<Object> getObjectsIDbyObjectTypeID(int ObjectTypeID)
@@ -552,7 +587,98 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
+    // Добавление юзера в список друзей по его ID (2017-02-03)
+    public void addFriend(int idFriend) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
 
+        UserService userService = new UserService();
+        int idUser = new DBHelp().getObjID(userService.getCurrentUsername()); // Получаем имя текущего авторизованного пользователя
+        int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
+
+
+        // 1) Добавление 12-го параметра в PARAMS (user_id для текущего пользователя):
+
+        PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
+        PS1.setInt(1, idUser); //  = current user_id
+        PS1.setInt(2, attrId); //  = 12
+        PS1.setObject(3, idFriend); //  = new friend user_id
+        PS1.executeQuery();
+        PS1.close();
+
+        // 2) Добавление 12-го параметра в PARAMS (наоборот для друга - что вы у него в друзьях):
+        PreparedStatement PS2 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
+        PS2.setInt(1, idFriend);
+        PS2.setInt(2, attrId);
+        PS2.setObject(3, idUser);
+        PS2.executeQuery();
+        PS2.close();
+/*
+        // 3) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 12-го параметра с VALUE = NULL в PARAMS
+        PreparedStatement PS3 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
+        PS3.setInt(1, idUser);
+        PS3.setInt(2, attrId);
+        PS3.executeUpdate();
+        PS3.close();
+
+        // 3) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 12-го параметра с VALUE = NULL в PARAMS
+        PreparedStatement PS4 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
+        PS4.setInt(1, idFriend);
+        PS4.setInt(2, attrId);
+        PS4.executeUpdate();
+        PS4.close();
+*/
+
+
+
+/* 2017-02-02
+        // 1) Проверяем, находится ли данный пользователь у нас в друзьях:
+        PreparedStatement PS = Con.prepareStatement("SELECT COUNT(*) FROM PARAMS WHERE (OBJECT_ID = ? AND VALUE = ? OR OBJECT_ID = ? AND VALUE = ?) AND ATTR_ID = ?");
+        PS.setInt(1, idUser);
+        PS.setInt(2, idFriend);
+        PS.setInt(3, idFriend);
+        PS.setInt(4, idUser);
+        PS.setInt(5, attrId);
+        ResultSet RS = PS.executeQuery();
+        int count = 0;
+        while(RS.next())
+        {
+            count =  RS.getInt(1);
+        }
+        RS.close();
+        PS.close();
+
+
+        if (count == 0){ // Если нет в друзьях, то добавляем
+
+            // 2) Добавление 12-го параметра в PARAMS (user_id для текущего пользователя):
+            PreparedStatement PS2 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
+            PS2.setInt(1, idUser); // System.out.println(idUser); // = current user_id
+            PS2.setInt(2, attrId); // System.out.println(attrId); // = 12
+            PS2.setObject(3, idFriend); // System.out.println(idFriend); // = new friend user_id
+            PS2.executeQuery();
+            PS2.close();
+
+            // 3) Добавление 12-го параметра в PARAMS (наоборот для друга - что вы у него в друзьях):
+            PreparedStatement PS3 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
+            PS3.setInt(1, idUser); // System.out.println(idUser); // = current user_id
+            PS3.setInt(2, attrId); // System.out.println(attrId); // = 12
+            PS3.setObject(3, idFriend); // System.out.println(idFriend); // = new friend user_id
+            PS3.executeQuery();
+            PS3.close();
+
+            // 4) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 12-го параметра с VALUE = NULL у текущего юзера и его друга:
+            PreparedStatement PS4 = Con.prepareStatement("DELETE FROM PARAMS WHERE (OBJECT_ID = ? OR OBJECT_ID = ?) AND ATTR_ID = ? AND VALUE IS NULL");
+            PS4.setInt(1, idUser);
+            PS4.setInt(2, idFriend);
+            PS4.setInt(3, attrId);
+            PS4.executeUpdate();
+            PS4.close();
+        }
+		*/
+        CloseConnection(Con);
+    }
 
     public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         //DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");

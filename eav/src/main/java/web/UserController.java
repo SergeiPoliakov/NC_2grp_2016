@@ -92,6 +92,21 @@ public class UserController {
     }
 
 
+    @RequestMapping(value = "/searchUser", method = RequestMethod.GET)
+    public String searchUserPage() throws SQLException {
+        //map.put("allObject", new DBHelp().searchUser(name));
+        return "searchUser";
+
+    }
+
+    ///////
+    @RequestMapping(value = "/searchUser1", method = RequestMethod.POST)
+    public String searchUser(@RequestParam("name") String name, Map<String, Object> map) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        map.put("allObject", new DBHelp().searchUser(name));
+        return "searchUser";
+    }
+
+
     @Deprecated
     @RequestMapping("/allUser")
     public String listObjects(Map<String, Object> map) throws SQLException {
@@ -150,8 +165,8 @@ public class UserController {
 
     // Выводим данные о пользователе на форму редактирования профиля
     @RequestMapping("/profile")
-    public String getProfileUserPage(User user, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        user = new DBHelp().getCurrentUser(); // Получаем Объект текущего пользователя
+    public String getProfileUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        User user = new DBHelp().getCurrentUser(); // Получаем Объект текущего пользователя
         logger.info("User = " + user.toString());
         m.addAttribute(user);
         return "/profile";
@@ -184,6 +199,23 @@ public class UserController {
         new DBHelp().updateUser(userId, full_name, mapAttr);
 
         return "/main-login";
+    }
+
+
+    // Добавление пользователя в друзья (по его ID)
+    @RequestMapping("/addFriend/{objectId}")
+    public String addFriend(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        new DBHelp().addFriend(objectId);
+        return "/addFriend";
+    }
+
+
+    @RequestMapping(value = "/viewProfile/{id}")
+    public String viewUser(@PathVariable("id") int userId,
+                             ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+        User user = new DBHelp().getUserByUserID(userId);
+        m.addAttribute(user);
+        return "/viewProfile";
     }
 
 

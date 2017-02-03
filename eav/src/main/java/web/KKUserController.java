@@ -74,8 +74,9 @@ public class KKUserController {
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(105, priority);
         mapAttr.put(104, info);
+        mapAttr.put(105, priority);
+
 
         // mapAttr.put(103, date_begin - date_end); // Продолжительность, потом вставить ее расчет
         new DBHelp().updateEvent(eventId, name, mapAttr);

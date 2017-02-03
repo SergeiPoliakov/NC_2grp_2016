@@ -19,7 +19,9 @@
         <div class="navbar-inner ">
             <a class="navbar-brand" href="/">Netcracker</a>
             <ul class="nav nav-pills">
-            <li class="active pull-right"><a href="/addUser">Зарегистрироваться</a></li>
+
+                <li class="active pull-right"><a href="/searchUser">Найти пользователя</a></li>
+                <li class="active pull-right"><a href="/addUser">Зарегистрироваться</a></li>
                 <li class="active pull-right"><a href="/login">Войти</a></li>
 
             </ul>
