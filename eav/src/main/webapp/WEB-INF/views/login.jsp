@@ -43,8 +43,7 @@
                 <input id="remember_me"
                        name="_spring_security_remember_me"
                        type="checkbox"/> <!-- Флажок "запомнить" -->
-                <label for="remember_me"
-                       class="inline">Запомнить</label>
+                <label for="remember_me" class="inline">Запомнить</label>
                 <fieldset class="account-action">
                     <input class="btn btn-sm" type="submit" name="submit" value="Войти">
 

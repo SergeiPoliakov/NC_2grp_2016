@@ -17,11 +17,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Change Profile Page</title>
     <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/resources/css/main.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <%@include file='header.jsp'%>
+
+
 </head>
 <body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
+
 <div class="container">
 
 

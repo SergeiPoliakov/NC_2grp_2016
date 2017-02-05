@@ -16,9 +16,13 @@
 <html>
 <head>
     <title>Добавление в друзья</title>
-    <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
 </head>
 <body>
+
+<%@include file='header.jsp'%>
 
 <div class="container">
     <div class="page-header">

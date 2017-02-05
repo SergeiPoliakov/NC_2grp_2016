@@ -16,12 +16,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Edit Event Page</title>
-    <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/resources/css/main.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
 </head>
 <body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
+
+<%@include file='header.jsp'%>
 
 <div class="container">
     <div class="page-header">
@@ -37,12 +38,12 @@
 
             <div class="form-group col-lg-offset-4 col-lg-5">
                 <label for="InputDateBegin1">Введите дату начала</label>
-                <textarea rows="1" class="form-control" name="info" id="InputDateBegin1">${event.date_begin}</textarea>
+                <textarea rows="1" class="form-control" name="date_begin" id="InputDateBegin1">${event.date_begin}</textarea>
             </div>
 
             <div class="form-group col-lg-offset-4 col-lg-5">
                 <label for="InputDateEnd1">Введите дату окончания</label>
-                <textarea rows="1" class="form-control" name="info" id="InputDateEnd1">${event.date_end}</textarea>
+                <textarea rows="1" class="form-control" name="date_end" id="InputDateEnd1">${event.date_end}</textarea>
             </div>
 
             <div class="form-group col-lg-offset-4 col-lg-5">

@@ -16,13 +16,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Registration Page</title>
-    <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/resources/css/main.css" rel="stylesheet">
+
 
 </head>
 <body>
+
+<%@include file='headerGuest.jsp'%>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
+
+
 <div class="container">
 
 

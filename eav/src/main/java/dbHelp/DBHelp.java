@@ -2,6 +2,7 @@ package dbHelp;
 
 import entities.Event;
 import entities.User;
+import entities.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserService;
@@ -257,7 +258,7 @@ public class DBHelp {
                 "ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 101   LEFT JOIN PARAMS pa3 " +
                 "ON ev.OBJECT_ID = pa3.OBJECT_ID AND  pa3.ATTR_ID = 102 LEFT JOIN PARAMS pa4 " +
                 "ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 105 LEFT JOIN PARAMS pa5 " +
-                "ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 104 WHERE ob.OBJECT_ID = ? ORDER BY ev.OBJECT_ID");
+                "ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 104 WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 13 ORDER BY ev.OBJECT_ID");
         PS.setInt(1, ObjectID); // В качестве параметра id пользователя
         ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         while (RS.next()) {
@@ -679,6 +680,126 @@ public class DBHelp {
 		*/
         CloseConnection(Con);
     }
+
+
+    // Метод добавления сообщения со всеми его атрибутами (2017-02-04)
+    public void addNewMessage(int ObjTypeID, TreeMap<Integer, Object> massAttr) throws SQLException,
+           NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+
+        // 1) Добавление сообщения:
+        PreparedStatement PS = Con.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
+        Statement st = Con.createStatement();
+        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + ObjTypeID);
+        int newID = 30001; // 30к - отсюда отсчет айди для сообщений
+        while (RS.next()) {
+            newID = RS.getInt(1) + 1;
+        }
+
+        String name = "Message_" + newID;
+        PS.setInt(1, newID);
+        PS.setInt(2, ObjTypeID);
+        PS.setObject(3, name);
+        PS.executeUpdate();
+        PS.close();
+
+        // 2) Добавление атрибутов со страницы создания сообщения:
+        PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
+        while (!massAttr.isEmpty()) {
+            java.util.Map.Entry<Integer, Object> En = massAttr.pollFirstEntry();
+            PS1.setObject(1, En.getValue());
+            PS1.setInt(2, newID);
+            PS1.setInt(3, En.getKey());
+            PS1.addBatch();
+        }
+        PS1.executeBatch();
+        PS1.close();
+
+        // 3) Добавление ссылки Юзер - Сообщение (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '30', '30001');
+        UserService userService = new UserService();
+        int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
+        int attrId = 30;
+        PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+        PS2.setInt(1, idUser); // System.out.println(idUser);
+        PS2.setInt(2, attrId); // System.out.println(attrId);
+        PS2.setInt(3, newID); // System.out.println(newID);
+        PS2.executeQuery(); // PS2.executeBatch();
+        PS2.close();
+
+        CloseConnection(Con);
+    }
+
+    // Удаление сообщения:
+    public void deleteMessage(Integer messageId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException
+    {
+        Connection Con = getConnection();
+        PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
+        PS.setInt(1, messageId);
+        PS.executeUpdate();
+        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ?");
+        PS.setInt(1, messageId);
+        PS.executeUpdate();
+        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ?");
+        PS.setInt(1, messageId);
+        PS.executeUpdate();
+        PS = Con.prepareStatement("DELETE FROM OBJECTS WHERE OBJECT_ID = ?");
+        PS.setInt(1, messageId);
+        PS.executeUpdate();
+        // И удаляем 30-ый параметр в PARAMS (task_id для текущего пользователя):
+        PS = Con.prepareStatement("DELETE FROM PARAMS WHERE VALUE = ?");
+        PS.setString(1, String.valueOf(messageId));
+        PS.executeUpdate();
+
+        PS.close();
+        CloseConnection(Con);
+    }
+
+
+    // Получение ВСЕХ соообщений данного пользователя
+    public ArrayList<Message> getMessageList(int from_id, int to_id) throws SQLException {
+        // from_id = 10001; to_id = 10002; // ТОЛЬКО ДЛЯ ОТЛАДКИ!!!
+        ArrayList<Message> Res = new ArrayList<>();
+        Connection Con = getConnection();
+        PreparedStatement PS = Con.prepareStatement("SELECT ms.OBJECT_ID, ob.OBJECT_ID, pa2.VALUE, " +
+                "pa3.VALUE, pa4.VALUE, pa5.VALUE, pa6.VALUE, pa7.VALUE FROM OBJECTS ob " +
+                "LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID " +
+                "LEFT JOIN OBJECTS ms ON re.REFERENCE = ms.OBJECT_ID " +
+                "LEFT JOIN PARAMS pa1 ON ms.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 201 " +
+                "LEFT JOIN PARAMS pa2 ON ms.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 " +
+                "LEFT JOIN PARAMS pa3 ON ms.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 203 " +
+                "LEFT JOIN PARAMS pa4 ON ms.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 204 " +
+                "LEFT JOIN PARAMS pa5 ON ms.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 205 " +
+                "LEFT JOIN PARAMS pa6 ON ms.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 206 " +
+                "LEFT JOIN PARAMS pa7 ON ms.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 207 " +
+                "WHERE (ob.OBJECT_ID = ? AND pa2.VALUE = ? OR ob.OBJECT_ID = ? " +
+                "AND pa2.VALUE = ?) AND re.ATTR_ID = 30 ORDER BY ms.OBJECT_ID");
+        PS.setInt(1, from_id); // В качестве параметра id пользователя отправителя
+        PS.setInt(2, to_id); // В качестве параметра id пользователя получателя
+        // и наоборот:
+        PS.setInt(3, to_id); // В качестве параметра id пользователям
+        PS.setInt(4, from_id); // В качестве параметра id пользователя отправителя
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+        while (RS.next()) {
+            Message message = new Message();
+            message.setId( RS.getInt(1) );
+            message.setFrom_id( RS.getInt(2) );
+            message.setTo_id( RS.getInt(3) );
+            message.setDate_send( RS.getString(4));
+            message.setRead_status( RS.getInt(5) );
+            message.setText( RS.getString(6));
+            message.setFrom_name( RS.getString(7));
+            message.setTo_name( RS.getString(8));
+
+            Res.add(message); // Res.add(RS.getObject(1));
+            //Res.add(RS.getObject(2));
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return Res;
+    }
+
 
     public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         //DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");

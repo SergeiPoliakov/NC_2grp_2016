@@ -59,7 +59,7 @@ public class KKUserController {
 
         new DBHelp().addNewEvent(1002, name, mapAttr); // Передаем в хелпер задачу со всеми атрибутами
 
-        return "redirect:/user";
+        return "redirect:/main-login";
     }
 
     // Редактирование события
@@ -80,13 +80,13 @@ public class KKUserController {
 
         // mapAttr.put(103, date_begin - date_end); // Продолжительность, потом вставить ее расчет
         new DBHelp().updateEvent(eventId, name, mapAttr);
-        return "redirect:/user";
+        return "redirect:/main-login";
     }
 
     @RequestMapping(value = "/userRemoveEvent/{eventId}", method = RequestMethod.POST)
     public String removeEvent(@PathVariable("eventId") Integer eventId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         new DBHelp().deleteEvent(eventId);
-        return "redirect:/user";
+        return "redirect:/main-login";
     }
 
 }

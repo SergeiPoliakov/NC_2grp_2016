@@ -62,7 +62,6 @@ public class EventController {
     }
 
     // Вытаскивание событий
-    @Deprecated
     @RequestMapping("/allEvent")
     public String listObjects(Map<String, Object> map) throws SQLException {
         Integer idUser = new DBHelp().getObjID(userService.getCurrentUsername());
@@ -87,7 +86,7 @@ public class EventController {
         return "/editEvent";
     }
 
-    // Редактирование событияsdasdasd
+    // Редактирование события
     @RequestMapping(value = "/changeEvent/{eventId}", method = RequestMethod.POST)
     public String changeEvent(@PathVariable("eventId") Integer eventId,
                               @RequestParam("name") String name,

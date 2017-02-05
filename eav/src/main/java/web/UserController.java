@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -44,8 +42,13 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/mainLogin", method = RequestMethod.GET)
-    public String getMainLogin() {
+    @RequestMapping(value = "/main-login", method = RequestMethod.GET)
+    public String getUserPage(User user, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        user = new DBHelp().getCurrentUser(); // Получаем Объект текущего пользователя
+        logger.info("User = " + user.toString());
+        Integer idUser = new DBHelp().getObjID(userService.getCurrentUsername());
+        m.addAttribute(user);
+        m.addAttribute("allEvents", new DBHelp().getEventList(idUser));
         return "main-login";
     }
 
@@ -78,32 +81,13 @@ public class UserController {
 
     @RequestMapping(value = "/main", method = RequestMethod.GET)
     public String mainPage() {
-
         return "main";
-
     }
 
-
-    @RequestMapping(value = "/main-login", method = RequestMethod.GET)
-    public String mainLoginPage() {
-
-        return "main-login";
-
-    }
-
-
-    @RequestMapping(value = "/searchUser", method = RequestMethod.GET)
-    public String searchUserPage() throws SQLException {
-        //map.put("allObject", new DBHelp().searchUser(name));
-        return "searchUser";
-
-    }
-
-    ///////
-    @RequestMapping(value = "/searchUser1", method = RequestMethod.POST)
-    public String searchUser(@RequestParam("name") String name, Map<String, Object> map) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+    @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
+    public String searchUser(@RequestParam("name") String name, Map<String, Object> map) throws SQLException {
         map.put("allObject", new DBHelp().searchUser(name));
-        return "searchUser";
+        return "/searchUser";
     }
 
 
@@ -198,7 +182,7 @@ public class UserController {
 
         new DBHelp().updateUser(userId, full_name, mapAttr);
 
-        return "/main-login";
+        return "redirect:/main-login";
     }
 
 

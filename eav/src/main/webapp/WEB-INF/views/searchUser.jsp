@@ -1,4 +1,6 @@
-<%--
+<%@ page import="org.hibernate.Session" %>
+<%@ page import="org.springframework.security.core.Authentication" %>
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %><%--
   Created by IntelliJ IDEA.
   User: Lawrence
   Date: 01.02.2017
@@ -18,35 +20,14 @@
 <html lang="en">
 <head>
     <title>DB Test</title>
-    <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
+
+        <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"> </script>
+
 </head>
 <body>
 
-<div class="container login">
-    <div class="navbar ">
-        <div class="navbar-inner ">
-            <a class="navbar-brand" href="/">Netcracker</a>
-            <ul class="nav nav-pills">
-                <li class="active pull-right"><a href="/logout">Выход</a></li>
-                <li class="active pull-right"><a href="/allUser">Все пользователи</a></li>
-                <li class="active pull-right"><a href="/profile">Профиль</a></li>
-                <li class="active pull-right"><a href="/allEvent">Список событий</a></li>
-                <li class="active pull-right"><a href="/addEvent">Добавить событие</a></li>
-                <li class="active pull-right"><a href="/searchUser">Найти пользователя</a></li>
-                <li class="active pull-right"><a href="/user">Годнота</a></li>
 
-
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class="row srch">
-    <form action="/searchUser1" method="post">
-        <input  type="text" class="col-lg-4 col-lg-offset-4" name="name" placeholder="search">
-        <button type="submit" >Поиск</button>
-    </form>
-</div>
+<%@include file='header.jsp'%>
 
 
 <h2 id="faq">Результаты поиска:</h2>

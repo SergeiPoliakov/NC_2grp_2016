@@ -16,25 +16,17 @@
 <html>
 <head>
     <title>Список событий</title>
-    <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
 </head>
 <body>
 <%--<h2 id="faq">Список событий для <sec:authentication property="principal.username"/></h2>--%>
-<div class="container login">
-    <div class="navbar ">
-        <div class="navbar-inner ">
-            <a class="navbar-brand" href="/">Netcracker</a>
-            <ul class="nav nav-pills">
-                <li class="active pull-right"><a href="/logout">Выход</a></li>
-                <li class="active pull-right"><a href="/allUser">Все пользователи</a></li>
-                <li class="active pull-right"><a href="/profile">Профиль</a></li>
-                <li class="active pull-right"><a href="/allEvent">Список событий</a></li>
-                <li class="active pull-right"><a href="/addEvent">Добавить событие</a></li>
-                <li class="active pull-right"><a href="/user">Годнота</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
+
+
+<%@include file='header.jsp'%>
+
+
 <h2 id="faq">Список событий для <sec:authentication property="principal.username" /></h2>
 <c:forEach items="${allObject}" var="object">
     <div class="thumbnail">
