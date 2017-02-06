@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
-  User: Lawrence
-  Date: 29.01.2017
-  Time: 15:10
+  User: Костя
+  Date: 02.02.2017
+  Time: 0:42
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=utf8"
@@ -14,35 +14,30 @@
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- 249 СТРОКА, ДОБАВЛЕНИЕ ЗАДАЧИ -->
-<html lang="en">
+<html>
 <head>
     <title>${user.name} ${user.surname}</title>
-
-
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-select.min.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/tipped.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/vis.min.css">
-
-    <link rel="stylesheet" type="text/css" href="/resources/css/tlmain.css">
-
-
-    <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"> </script>
-    <script type="text/javascript" src="/resources/js/moment-with-locales.min.js"> </script>
-    <script type="text/javascript" src="/resources/js/enscroll-0.6.2.min.js"> </script>
-    <script type="text/javascript" src="/resources/js/tipped.js"> </script>
-    <script type="text/javascript" src="/resources/js/vis.js"> </script>
-
-    <script type="text/javascript" src="/resources/js/bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript" src="/resources/js/bootstrap-select.min.js"> </script>
-
     <%@include file='header.jsp'%>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\tipped.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\vis.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\tlmain.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\jquery.mCustomScrollbar.min.css">
 
+    <script type="text/javascript" src="resources\js\jquery-1.9.1.min.js"> </script>
+    <script type="text/javascript" src="resources\js\moment-with-locales.min.js"> </script>
+    <script type="text/javascript" src="resources\js\tipped.js"> </script>
+    <script type="text/javascript" src="resources\js\vis.js"> </script>
+    <script type="text/javascript" src="resources\js\bootstrap.min.js"></script>
+    <script type="text/javascript" src="resources\js\bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="resources\js\bootstrap-select.min.js"> </script>
+    <script type="text/javascript" src="resources\js\jquery.mCustomScrollbar.concat.min.js"> </script>
 </head>
 <body>
-
-
-
 <div class="container top-buffer-20">
     <!-- Информация о пользователе -->
     <div class="row">
@@ -58,7 +53,9 @@
                     <li class="list-group-item">Пол: ${user.sex.toLowerCase()}</li>
                     <li class="list-group-item">О себе: ${user.additional_field}</li>
                 </ul>
-                <button type="button" class="btn btn-success btn-block">Отслеживать</button>
+                <button id="inviteButton" type="button" class="btn btn-success btn-group-justified">
+                    <span class="glyphicon glyphicon glyphicon-user" aria-hidden="true"></span> Добавить в друзья
+                </button>
             </div>
         </div>
         <!-- Список шаблонов задач -->
@@ -67,7 +64,7 @@
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>
                 </div>
-                <ul class="list-group list-group-my list-group-flush text-center nav" id="cardsholderItems">
+                <ul class="list-group list-group-my list-group-flush text-center nav mCustomScrollbar" data-mcs-theme="minimal-dark" id="cardsholderItems">
                     <li class="list-group-item list-group-item-info">РАЗ ШАБЛОН</li>
                     <li class="list-group-item list-group-item-danger">ДВА ШАБЛОН</li>
                     <li class="list-group-item list-group-item-info">ТРИ ШАБЛОН</li>
@@ -152,7 +149,7 @@
                                 <div class='input-group date' id='datetimepicker1'>
                                     <span class="input-group-addon">Начало</span>
                                     <input type='text' name="date_begin" class="form-control" id="taskStartTime" />
-                                        <span class="input-group-addon">
+                                    <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
                                 </div>
@@ -161,7 +158,7 @@
                                 <div class='input-group date' id='datetimepicker2'>
                                     <span class="input-group-addon">Окончание</span>
                                     <input type='text' name="date_end" class="form-control" id="taskEndTime" />
-                                        <span class="input-group-addon">
+                                    <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
                                 </div>
@@ -198,12 +195,13 @@
 </div>
 
 <script type="text/javascript">
-
-    // Scrollbar для кардхолдера
-    $('#cardsholderItems').enscroll({
-        showOnHover: false,
-        verticalTrackClass: 'track3',
-        verticalHandleClass: 'handle3'
+    // Поле дополнительная информация eventID : info
+    var addInfoArray = {
+    <c:forEach items="${allEvents}" var="event">${event.id}:'${event.info}',</c:forEach>
+    };
+    // Настройка кастомного скроллбара
+    $("#cardsholderItems").mCustomScrollbar({
+        scrollInertia: 275
     });
     // Modal datetimepickers для создания новой задачи
     $(function () {
@@ -307,6 +305,7 @@
             $('#taskEndTime').val(toLocaleDateTimeString(item.end));
             $('#taskID').val(item.id);
             $('#taskName').val(item.content);
+            $('#taskAddInfo').val(addInfoArray[item.id]);
             $('#taskPriority').val(item.className);
             $('#taskPriority').selectpicker('refresh');
             $('#taskmodal').modal('show');
@@ -344,18 +343,18 @@
     // Вывод информации, при наведении на элемент
     function createTooltip(){
         Tipped.create('.vis-item', function(element) {
-                    var itemId = $(element).attr('data-id');
-                    var item = items.get(itemId);
-                    return {
-                        title: item.content,
-                        content: toLocaleDateTimeString(item.start) + ' - ' + toLocaleDateTimeString(item.end)
-                    }
-                },
-                {
-                    position: 'bottom',
-                    behavior: 'hide',
-                    cache: false
+                var itemId = $(element).attr('data-id');
+                var item = items.get(itemId);
+                return {
+                    title: item.content,
+                    content: toLocaleDateTimeString(item.start) + ' - ' + toLocaleDateTimeString(item.end)
                 }
+            },
+            {
+                position: 'bottom',
+                behavior: 'hide',
+                cache: false
+            }
         );
     }
 
@@ -374,11 +373,11 @@
         var reggie = /(\d{2}).(\d{2}).(\d{4}) (\d{2}):(\d{2})/;
         var dateArray = reggie.exec(dateString);
         var dateObject = new Date(
-                (+dateArray[3]),
-                (+dateArray[2])-1, // Careful, month starts at 0!
-                (+dateArray[1]),
-                (+dateArray[4]),
-                (+dateArray[5])
+            (+dateArray[3]),
+            (+dateArray[2])-1, // Careful, month starts at 0!
+            (+dateArray[1]),
+            (+dateArray[4]),
+            (+dateArray[5])
         );
         return dateObject;
     }
@@ -394,7 +393,11 @@
         }
         return age;
     }
-
+    // Склонение существительных после числительных
+    function declOfNum(number, titles) {
+        cases = [2, 0, 1, 1, 1, 2];
+        return number + ' ' + titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
+    }
     // Просмотр сегодняшнего дня
     document.getElementById('showTodayButton').onclick = function() {
         var currentDate = new Date();
@@ -448,16 +451,12 @@
         var log = document.getElementById('log');
         var msg = document.createElement('div');
         msg.innerHTML = 'event=' + JSON.stringify(event) + ', ' +
-                'properties=' + JSON.stringify(properties);
+            'properties=' + JSON.stringify(properties);
         log.firstChild ? log.insertBefore(msg, log.firstChild) : log.appendChild(msg);
     }
     createTooltip();
     // Установка возраста
-    $("#userAge").html('Возраст: ' + getAge(getDateFromString('${user.ageDate}')));
+    $("#userAge").html('Возраст: ' + declOfNum(getAge(getDateFromString('${user.ageDate}')), ['год', 'года', 'лет']));
 </script>
 </body>
 </html>
-
-
-
-

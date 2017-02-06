@@ -14,26 +14,27 @@
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <html lang="en">
 <head>
+    <%@include file='header.jsp'%>
     <title>Список встреч</title>
+    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\tipped.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\vis.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\tlmain.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\jquery.mCustomScrollbar.min.css">
 
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-select.min.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/tipped.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/vis.min.css">
+    <script type="text/javascript" src="resources\js\jquery-1.9.1.min.js"> </script>
+    <script type="text/javascript" src="resources\js\moment-with-locales.min.js"> </script>
+    <script type="text/javascript" src="resources\js\tipped.js"> </script>
+    <script type="text/javascript" src="resources\js\vis.js"> </script>
+    <script type="text/javascript" src="resources\js\bootstrap.min.js"></script>
+    <script type="text/javascript" src="resources\js\bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="resources\js\bootstrap-select.min.js"> </script>
+    <script type="text/javascript" src="resources\js\jquery.mCustomScrollbar.concat.min.js"> </script>
 
-    <link rel="stylesheet" type="text/css" href="/resources/css/tlmain.css">
 
-
-    <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="/resources/js/moment-with-locales.min.js"></script>
-    <script type="text/javascript" src="/resources/js/enscroll-0.6.2.min.js"></script>
-    <script type="text/javascript" src="/resources/js/tipped.js"></script>
-    <script type="text/javascript" src="/resources/js/vis.js"></script>
-
-    <script type="text/javascript" src="/resources/js/bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript" src="/resources/js/bootstrap-select.min.js"></script>
-
-    <%@include file='header.jsp' %>
 </head>
 <body>
 <div class="container top-buffer-20">
@@ -71,11 +72,11 @@
                 <div class="form-inline" id="inviteAtMeetingForm">
                     <select class="selectpicker form-control" id="inviteAtMeetingSelectPicker"
                             multiple data-live-search="true"
-                            title="<span class='glyphicon glyphicon-th-list' aria-hidden='true'></span> Пригласить участников""
+                            title="<span class='glyphicon glyphicon-th-list' aria-hidden='true'></span> Пригласить участников"
                     data-selected-text-format="count>0" data-count-selected-text="Выбрано участников: {0}"
                     data-none-results-text="Никого не найдено" data-actions-box="true"
                     data-select-all-text="Выбрать всех" data-deselect-all-text="Убрать всех"
-                    data-size="8">
+                    data-size="8" data-dropup-auto="false">
                     <option value="userID1">Василий Иванов</option>
                     <option value="userID2">Имя Фамилиев</option>
                     <option value="userID3">Аркадий Степанов</option>
@@ -98,7 +99,7 @@
                     <option value="userID20">Имя Фамилиев</option>
                     <option value="userID21">Аркадий Степанов</option>
                     </select>
-                    <span class="form-group-btn" id="inviteButton">
+                    <span class="form-group-btn">
 						<button id="inviteButton" type="button" class="btn btn-primary btn-group-justified">
 						  <span class="glyphicon glyphicon glyphicon-user" aria-hidden="true"></span> Пригласить
 						</button>
@@ -186,7 +187,7 @@
                     <div class='row '>
                         <div class='col-md-6'>
                             <div class="input-group">
-                                <span class="input-group-addon" id="basic-addon1">Название</span>
+                                <span class="input-group-addon">Название</span>
                                 <input type="text" class="form-control" id="taskName"
                                        placeholder="Введите название задачи">
                             </div>
@@ -208,7 +209,7 @@
                     <div class='row top-buffer-2'>
                         <div class='col-md-6'>
                             <div class='input-group date' id='datetimepicker1'>
-                                <span class="input-group-addon" id="basic-addon1">Начало</span>
+                                <span class="input-group-addon">Начало</span>
                                 <input type='text' class="form-control" id="taskStartTime"/>
                                 <span class="input-group-addon">
 							<span class="glyphicon glyphicon-calendar"></span>
@@ -217,7 +218,7 @@
                         </div>
                         <div class='col-md-6'>
                             <div class='input-group date' id='datetimepicker2'>
-                                <span class="input-group-addon" id="basic-addon1">Окончание</span>
+                                <span class="input-group-addon" >Окончание</span>
                                 <input type='text' class="form-control" id="taskEndTime"/>
                                 <span class="input-group-addon">
 							<span class="glyphicon glyphicon-calendar"></span>
