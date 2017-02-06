@@ -20,10 +20,6 @@
     <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
 
     <style>
-        body{
-            font-family: Roboto;
-        }
-
         #login-dp{
             min-width: 250px;
             padding: 14px 14px 0;

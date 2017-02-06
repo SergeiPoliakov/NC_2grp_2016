@@ -16,23 +16,23 @@
 <head>
     <%@include file='header.jsp'%>
     <title>Список встреч</title>
-    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap-select.min.css">
-    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="resources\css\tipped.css">
-    <link rel="stylesheet" type="text/css" href="resources\css\vis.min.css">
-    <link rel="stylesheet" type="text/css" href="resources\css\tlmain.css">
-    <link rel="stylesheet" type="text/css" href="resources\css\jquery.mCustomScrollbar.min.css">
 
-    <script type="text/javascript" src="resources\js\jquery-1.9.1.min.js"> </script>
-    <script type="text/javascript" src="resources\js\moment-with-locales.min.js"> </script>
-    <script type="text/javascript" src="resources\js\tipped.js"> </script>
-    <script type="text/javascript" src="resources\js\vis.js"> </script>
-    <script type="text/javascript" src="resources\js\bootstrap.min.js"></script>
-    <script type="text/javascript" src="resources\js\bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript" src="resources\js\bootstrap-select.min.js"> </script>
-    <script type="text/javascript" src="resources\js\jquery.mCustomScrollbar.concat.min.js"> </script>
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/tipped.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/vis.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/tlmain.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/jquery.mCustomScrollbar.min.css">
+
+    <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"> </script>
+    <script type="text/javascript" src="/resources/js/moment-with-locales.min.js"> </script>
+    <script type="text/javascript" src="/resources/js/tipped.js"> </script>
+    <script type="text/javascript" src="/resources/js/vis.js"> </script>
+    <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/resources/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="/resources/js/bootstrap-select.min.js"> </script>
+    <script type="text/javascript" src="/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 
 
 </head>

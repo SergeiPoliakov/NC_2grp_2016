@@ -38,7 +38,7 @@ public class UserController {
     @RequestMapping(value = {"/", "main"})
     public ModelAndView index() {
 
-            return new ModelAndView("main");
+        return new ModelAndView("main");
     }
 
 
@@ -62,7 +62,7 @@ public class UserController {
             model.addObject("error", "Invalid username or password!");
         }
 
-        model.setViewName("login");
+        model.setViewName("main");
 
         return model;
 
@@ -144,7 +144,7 @@ public class UserController {
 
         new DBHelp().addNewUser(1001, full_name, mapAttr);
 
-        return "/login";
+        return "/main";
     }
 
     // Выводим данные о пользователе на форму редактирования профиля
@@ -196,9 +196,10 @@ public class UserController {
 
     @RequestMapping(value = "/viewProfile/{id}")
     public String viewUser(@PathVariable("id") int userId,
-                             ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+                           ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         User user = new DBHelp().getUserByUserID(userId);
         m.addAttribute(user);
+        m.addAttribute("allEvents", new DBHelp().getEventList(userId));
         return "/viewProfile";
     }
 

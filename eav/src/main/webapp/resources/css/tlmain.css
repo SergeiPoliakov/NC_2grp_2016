@@ -1,5 +1,4 @@
 body, html {
-    font-family: Roboto;
 	/*background-color: #f5f8fa;*/
 }
 /*Bootstrap*/
@@ -58,7 +57,17 @@ body, html {
 .card-nomargin{
   margin-bottom: 0px;
 }
-.nav{
+
+.card {
+    position: relative;
+    display: block;
+    margin-bottom: .75rem;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: .25rem;
+}
+
+.navi{
     max-height: 300px;
     overflow:hidden !important;
 }
@@ -128,13 +137,11 @@ body, html {
 .vis-delete{
   right: -4.5px;
   top: -7px;
-  font-family: Roboto;
   color: whitesmoke;
 }
 .vis-delete-rtl{
   right: -4.5px;
   top: -7px;
-  font-family: Roboto;
   color: whitesmoke;
 }
 .vis-item-content{
