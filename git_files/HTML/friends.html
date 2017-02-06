@@ -1,0 +1,82 @@
+﻿<!DOCTYPE HTML>
+<!-- 249 СТРОКА, ДОБАВЛЕНИЕ ЗАДАЧИ -->
+<html>
+<head>
+  <title>Ваши друзья</title>
+  <meta charset="UTF-8">
+  
+  <link rel="stylesheet" type="text/css" href="resources\css\bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="resources\css\bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="resources\css\tlmain.css">
+    
+  <script type="text/javascript" src="resources\js\jquery-1.9.1.min.js"> </script>
+  <script type="text/javascript" src="resources\js\bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container top-buffer-20">
+	<input id="number" placeholder="Число объектов"></input>
+	<button id="but">OK</button>
+	<div class="row">
+		<!-- Карточка пользователя -->
+		
+		<div class="col-md-3 col-sm-4" id="forCloning">
+			<div class="card style_prevu_kit">
+				<h3 class="card-title text-center">Имя Фамилия</h3>
+				<div class="profile-userpic">
+					<img src="https://fshoke.com/wp-content/uploads/2016/01/Sean-Penn-mixed-with-Leonardo-DiCaprio.jpg" class="img-responsive"  alt='Изображение' >
+				</div>
+				<div class="profile-userbuttons">
+					<a href="#userID"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"> Профиль</span> </button></a>
+					<a href="#removeFriendId"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
+				</div>
+				<ul class="list-group list-group-my list-group-flush">
+					<li class="list-group-item">Возраст: 49 лет</li>
+					<li class="list-group-item">Город: Васюки</li>
+					<li class="list-group-item">Пол: мужской</li>
+					<li class="list-group-item">О себе: ничего</li>
+				</ul>			
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+// Для теста
+$("#but").click( function()
+	{
+		for (var i = 0; i < $("#number").val(); i++) {
+			$( "#forCloning" ).clone().appendTo( ".row" );
+		}
+	}
+);
+
+</script>
+
+<script type="text/javascript">
+ 
+  // Преобразовать дату в строку формата DD.MM.YYYY hh:mm
+  function toLocaleDateTimeString(dateString){
+	var eventTime = dateString.toLocaleTimeString();
+	var eventTimeAfter = eventTime.substring(0, eventTime.length-3);
+	if (eventTimeAfter.length < 5)
+		eventTimeAfter = '0' + eventTimeAfter;
+	var startDate = dateString.toLocaleDateString() + ' ' + eventTimeAfter;
+	return startDate;
+  }
+  // Получить дату из строки вида DD.MM.YYYY hh:mm
+  function getDateFromString(dateString){
+	var reggie = /(\d{2}).(\d{2}).(\d{4}) (\d{2}):(\d{2})/;
+	var dateArray = reggie.exec(dateString); 
+	var dateObject = new Date(
+		(+dateArray[3]),
+		(+dateArray[2])-1, // Careful, month starts at 0!
+		(+dateArray[1]),
+		(+dateArray[4]),
+		(+dateArray[5])
+	);	
+	return dateObject;
+  }
+</script>
+</body>
+</html>

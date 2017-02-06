@@ -25,15 +25,16 @@
     <link rel="stylesheet" type="text/css" href="resources\css\tipped.css">
     <link rel="stylesheet" type="text/css" href="resources\css\vis.min.css">
     <link rel="stylesheet" type="text/css" href="resources\css\tlmain.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\jquery.mCustomScrollbar.min.css">
 
     <script type="text/javascript" src="resources\js\jquery-1.9.1.min.js"> </script>
     <script type="text/javascript" src="resources\js\moment-with-locales.min.js"> </script>
-    <script type="text/javascript" src="resources\js\enscroll-0.6.2.min.js"> </script>
     <script type="text/javascript" src="resources\js\tipped.js"> </script>
     <script type="text/javascript" src="resources\js\vis.js"> </script>
     <script type="text/javascript" src="resources\js\bootstrap.min.js"></script>
     <script type="text/javascript" src="resources\js\bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="resources\js\bootstrap-select.min.js"> </script>
+    <script type="text/javascript" src="resources\js\jquery.mCustomScrollbar.concat.min.js"> </script>
 </head>
 <body>
 <div class="container login">
@@ -71,7 +72,9 @@
                     <li class="list-group-item">Пол: ${user.sex.toLowerCase()}</li>
                     <li class="list-group-item">О себе: ${user.additional_field}</li>
                 </ul>
-                <button type="button" class="btn btn-success btn-block">Отслеживать</button>
+                <button id="inviteButton" type="button" class="btn btn-success btn-group-justified">
+                    <span class="glyphicon glyphicon glyphicon-user" aria-hidden="true"></span> Добавить в друзья
+                </button>
             </div>
         </div>
         <!-- Список шаблонов задач -->
@@ -80,7 +83,7 @@
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>
                 </div>
-                <ul class="list-group list-group-my list-group-flush text-center nav" id="cardsholderItems">
+                <ul class="list-group list-group-my list-group-flush text-center nav mCustomScrollbar" data-mcs-theme="minimal-dark" id="cardsholderItems">
                     <li class="list-group-item list-group-item-info">РАЗ ШАБЛОН</li>
                     <li class="list-group-item list-group-item-danger">ДВА ШАБЛОН</li>
                     <li class="list-group-item list-group-item-info">ТРИ ШАБЛОН</li>
@@ -211,12 +214,9 @@
 </div>
 
 <script type="text/javascript">
-
-    // Scrollbar для кардхолдера
-    $('#cardsholderItems').enscroll({
-        showOnHover: false,
-        verticalTrackClass: 'track3',
-        verticalHandleClass: 'handle3'
+    // Настройка кастомного скроллбара
+    $("#cardsholderItems").mCustomScrollbar({
+        scrollInertia: 275
     });
     // Modal datetimepickers для создания новой задачи
     $(function () {
@@ -407,7 +407,11 @@
         }
         return age;
     }
-
+    // Склонение существительных после числительных
+    function declOfNum(number, titles) {
+        cases = [2, 0, 1, 1, 1, 2];
+        return number + ' ' + titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
+    }
     // Просмотр сегодняшнего дня
     document.getElementById('showTodayButton').onclick = function() {
         var currentDate = new Date();
@@ -466,7 +470,7 @@
     }
     createTooltip();
     // Установка возраста
-    $("#userAge").html('Возраст: ' + getAge(getDateFromString('${user.ageDate}')));
+    $("#userAge").html('Возраст: ' + declOfNum(getAge(getDateFromString('${user.ageDate}')), ['год', 'года', 'лет']));
 </script>
 </body>
 </html>
