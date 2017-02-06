@@ -82,9 +82,6 @@
 <body>
 
 
-
-
-
 <nav class="navbar navbar-default navbar-inverse" role="navigation">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -101,8 +98,12 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Ссылка 1</a></li>
-                <li><a href="#">Ссылка 2</a></li>
+                <!-- <li class="active"> -->
+
+                <li><a href="/main-login">Расписание</a></li>
+                <li><a href="/meeting">Встречи</a></li>
+                <li><a href="/allEvent">События</a></li>
+                <li><a href="/allUser">Друзья</a></li>
 
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Меню <span class="caret"></span></a>

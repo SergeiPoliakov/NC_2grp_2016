@@ -182,9 +182,9 @@ INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('20004', '1
 
 -- Users
 --User Id: 10001
-INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('10001', '1001', 'Геннадий �?ванович Степанов');
+INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('10001', '1001', 'Геннадий Иванович Степанов');
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '1', 'Геннадий'); --name
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '2', '�?ванович'); --surname
+  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '2', 'Иванович'); --surname
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '3', 'Степанов'); --middle_name
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '4', 'gena322'); --login
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '5', '09.07.1985'); --birthdate

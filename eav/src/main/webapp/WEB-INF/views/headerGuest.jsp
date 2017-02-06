@@ -95,15 +95,15 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Ссылка 1</a></li>
-                <li><a href="#">Ссылка 2</a></li>
+                <li><a href="/addUser">Регистрация</a></li>
+                <li><a href="#">Быстрый старт</a></li>
             </ul>
-            <form action="/searchUser" class="navbar-form navbar-left" role="search" method="post">
+            <!--<form action="/searchUser" class="navbar-form navbar-left" role="search" method="post">
                 <div class="form-group">
                     <input type="text" class="form-control" name="name" placeholder="Поиск">
                 </div>
                 <button type="submit" class="btn btn-default">Поиск</button>
-            </form>
+            </form> -->
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <p class="navbar-text">Уже зарегестрированы?</p>
