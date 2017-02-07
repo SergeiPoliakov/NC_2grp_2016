@@ -1,6 +1,7 @@
 package dbHelp;
 
 import entities.Event;
+import entities.Meeting;
 import entities.User;
 import entities.Message;
 import org.slf4j.Logger;
@@ -881,15 +882,219 @@ public class DBHelp {
         return Res;
     }
 
+    //region Meeting
+
+    // Получение списка всех существующих встреч
+    public ArrayList<Meeting> getAllMeetingsList() throws SQLException {
+        ArrayList<Meeting> Res = new ArrayList<>();
+        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Integer objTypeID = new Meeting().objTypeID; // ID типа Встреча
+        PreparedStatement PS = Con.
+                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
+                        "pa6.VALUE, pa7.VALUE FROM OBJECTS ob " +
+                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 301 " +
+                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 302 " +
+                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 303 " +
+                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 304 " +
+                        "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 305 " +
+                        "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 306 " +
+                        "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 307 " +
+                        "WHERE ob.OBJECT_TYPE_ID = ? ORDER BY ob.OBJECT_ID");
+        PS.setInt(1, objTypeID); // В качестве параметра id типа Пользователь
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+        while (RS.next()) {
+            Meeting meeting = new Meeting();
+            meeting.setId(RS.getString(1));
+            meeting.setTitle(RS.getString(2));
+            meeting.setDate_start(RS.getString(3));
+            meeting.setDate_end(RS.getString(4));
+            meeting.setInfo(RS.getString(5));
+            meeting.setOrganizer(RS.getString(6));
+            meeting.setTag(RS.getString(7));
+            meeting.setMembers(RS.getString(8));
+            Res.add(meeting);
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return Res;
+    }
+
+    // Получение списка всех существующих встреч конкретного пользователя
+    public ArrayList<Meeting> getUserMeetingsList(int userID) throws SQLException {
+        ArrayList<Meeting> Res = new ArrayList<>();
+        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
+
+        PreparedStatement PS = Con.prepareStatement("SELECT  ev.OBJECT_ID, " +
+                "        pa1.VALUE as PA1," +
+                "        pa2.VALUE as PA2," +
+                "        pa3.VALUE as PA3," +
+                "        pa4.VALUE as PA4," +
+                "        pa5.VALUE as PA5," +
+                "        pa6.VALUE as PA6 " +
+                "FROM  OBJECTS ob " +
+                "      LEFT JOIN REFERENCES re " +
+                "        ON ob.OBJECT_ID = re.REFERENCE " +
+                "      LEFT JOIN OBJECTS ev " +
+                "        ON re.OBJECT_ID = ev.OBJECT_ID " +
+                "      LEFT JOIN PARAMS pa1 " +
+                "        ON ev.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 301 " +
+                "      LEFT JOIN PARAMS pa2 " +
+                "        ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 302 " +
+                "      LEFT JOIN PARAMS pa3 " +
+                "        ON ev.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 303 " +
+                "      LEFT JOIN PARAMS pa4 " +
+                "        ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 304 " +
+                "      LEFT JOIN PARAMS pa5 " +
+                "        ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 305 " +
+                "      LEFT JOIN PARAMS pa6 " +
+                "        ON ev.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 306 " +
+                "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 307 ORDER BY ev.OBJECT_ID");
+        PS.setInt(1, userID); // В качестве параметра id пользователя
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+        while (RS.next()) {
+            Meeting meeting = new Meeting();
+            meeting.setId(RS.getString(1));
+            meeting.setTitle(RS.getString(2));
+            meeting.setDate_start(RS.getString(3));
+            meeting.setDate_end(RS.getString(4));
+            meeting.setInfo(RS.getString(5));
+            meeting.setOrganizer(RS.getString(6));
+            meeting.setTag(RS.getString(7));
+            Res.add(meeting);
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return Res;
+    }
+
+    // Добавление встречи
+    public void addMeeting(Meeting meeting) throws SQLException{
+
+        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        int meetingID = 40000;
+        TreeMap<Integer, Object> attributeArray = meeting.getArrayWithAttributes();
+
+        Statement st = connection.createStatement();
+        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + meeting.objTypeID);
+        while (RS.next()) {
+            meetingID = RS.getInt(1) + 1;
+        }
+
+        PreparedStatement PS = connection.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
+        PS.setInt(1, meetingID);
+        PS.setInt(2, meeting.objTypeID);
+        PS.setObject(3, "Met" + meetingID);
+        PS.executeUpdate();
+        PS.close();
+
+        // 2) Добавление атрибутов события (параметры со страницы создания события):
+        PreparedStatement PS1 = connection.prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
+        while (!attributeArray.isEmpty()) {
+            java.util.Map.Entry<Integer, Object> en = attributeArray.pollFirstEntry();
+            PS1.setObject(1, en.getValue());
+            PS1.setInt(2, meetingID);
+            PS1.setInt(3, en.getKey());
+            PS1.addBatch();
+        }
+        PS1.executeBatch();
+        PS1.close();
+
+        // 3) Добавление ссылки Встреча - Участники (админ в анном случае):
+        String  idUser = meeting.getOrganizer();
+        int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
+        PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+        PS2.setInt(1, meetingID ); // ID встречи
+        PS2.setInt(2, referenceAttrId); // ID параметра(307)
+        PS2.setString(3, idUser); // ID организатора
+        PS2.executeQuery(); //PS2.executeBatch();
+        PS2.close();
+
+        CloseConnection(connection);
+    }
+
+    // Обновление встречи, meeting - обновленные данные события (ИДЕЯ С ОБЪЕКТАМИ ПОХОДУ ХУЙНЯ)
+    public void updateEvent(String meetingID, Meeting newmeeting) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+
+        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        PreparedStatement PS = connection.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
+        TreeMap<Integer, Object> arrayAttrib = newmeeting.getArrayWithAttributes();
+
+        while (!arrayAttrib.isEmpty()) {
+            java.util.Map.Entry<Integer, Object> En = arrayAttrib.pollFirstEntry();
+            PS.setObject(1, En.getValue());
+            PS.setString(2, meetingID);
+            PS.setInt(3, En.getKey());
+            PS.addBatch();
+        }
+        PS.executeBatch();
+        PS.close();
+        CloseConnection(connection);
+    }
+
+    // Добавление пользователей на встречу
+    public void addUsersToMeeting(String meetingID, String... userIDs) throws SQLException{
+        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
+        PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+
+        for (int i = 0; i < userIDs.length; i++) {
+            PS2.setString(1, meetingID); // ID встречи
+            PS2.setInt(2, referenceAttrId); // ID параметра(307)
+            PS2.setString(3, userIDs[i]); // ID пользователя
+            PS2.addBatch();
+        }
+        PS2.executeBatch();
+        PS2.close();
+        CloseConnection(connection);
+    }
+
+    // Удаление пользователей со встречи
+    public void removeUsersFromMeeting(String meetingID, String... userIDs) throws SQLException{
+        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        PreparedStatement PS2 = connection.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ? AND OBJECT_ID = ?");
+
+        for (int i = 0; i < userIDs.length; i++) {
+            PS2.setString(1, userIDs[i]); // ID пользователя
+            PS2.setString(2, meetingID ); // ID встречи
+            PS2.executeUpdate();
+        }
+        PS2.close();
+        CloseConnection(connection);
+    }
+
+    //endregion
+
 
     public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+
+       /*System.out.println("START");
+        addMeeting(new Meeting("Выпиваем2", "07.02.2017 12:00", "07.02.2017 19:30", "Всем ку, тут хранится информация",  "10003", "#ky", ""));
+        updateEvent("28", new Meeting("НЕ Выпиваем ters", "07.02.2017 14:40", "07.02.2017 14:32", "ЗДАРОВ",  "10003", "#ky", ""));
+        removeUsersFromMeeting("27",  "10003");
+        ArrayList<Meeting> mm = getAllMeetingsList();
+        ArrayList<Meeting> ms = getUserMeetingsList(10002);
+        for (int i=0; i < ms.size(); i++){
+            System.out.println(ms.get(i).getId());
+            System.out.println(ms.get(i).getTitle());
+            System.out.println(ms.get(i).getDate_start());
+            System.out.println(ms.get(i).getDate_end());
+            System.out.println(ms.get(i).getInfo());
+            System.out.println(ms.get(i).getOrganizer());
+            System.out.println(ms.get(i).getTag());
+        }
+        System.out.println("END");*/
         //DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
         //int attr = getAttrID(10001, 20004);
         //System.out.println(attr);
-       // deleteObject(10001);
-       // addTask();
+        // deleteObject(10001);
+        // addTask();
 
-      //  System.out.println(getValue(10001, 6));
+        //  System.out.println(getValue(10001, 6));
 
     }
 
