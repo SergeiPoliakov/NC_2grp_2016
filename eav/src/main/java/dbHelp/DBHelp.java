@@ -1067,15 +1067,117 @@ public class DBHelp {
         CloseConnection(connection);
     }
 
+    // Просмотр участников встречи
+    public ArrayList<User> getUsersAtMeeting(String meetingID) throws SQLException{
+        ArrayList<User> Res = new ArrayList<>();
+        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
+
+        PreparedStatement PS = Con.prepareStatement("SELECT DISTINCT " +
+                "        re.REFERENCE, " +
+                "        pa1.VALUE as PA1, " +
+                "        pa2.VALUE as PA2, " +
+                "        pa3.VALUE as PA3 " +
+                " FROM  OBJECTS ob " +
+                "      LEFT JOIN REFERENCES re " +
+                "        ON ob.OBJECT_ID = re.OBJECT_ID " +
+                "      LEFT JOIN PARAMS pa1 " +
+                "        ON re.REFERENCE = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
+                "      LEFT JOIN PARAMS pa2\n" +
+                "        ON re.REFERENCE = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
+                "      LEFT JOIN PARAMS pa3\n" +
+                "        ON re.REFERENCE = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
+                "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 307 ORDER BY re.OBJECT_ID");
+        PS.setString(1, meetingID); // В качестве параметра id встречи
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+        while (RS.next()) {
+            User user = new User();
+            user.setId(RS.getInt(1));
+            user.setName(RS.getString(2));
+            user.setSurname(RS.getString(3));
+            user.setMiddleName(RS.getString(4));
+            Res.add(user);
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return  Res;
+    }
+
+    // Получение конкретной встречи
+    public Meeting getMeeting(int meetingID) throws SQLException {
+
+        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        PreparedStatement PS = Con.prepareStatement("SELECT  ob.OBJECT_ID, " +
+                "        pa1.VALUE as PA1, " +
+                "        pa2.VALUE as PA2, " +
+                "        pa3.VALUE as PA3, " +
+                "        pa4.VALUE as PA4, " +
+                "        pa5.VALUE as PA5, " +
+                "        pa6.VALUE as PA6 " +
+                " FROM  OBJECTS ob " +
+                "      LEFT JOIN PARAMS pa1 " +
+                "        ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 301 " +
+                "      LEFT JOIN PARAMS pa2 " +
+                "        ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 302 " +
+                "      LEFT JOIN PARAMS pa3 " +
+                "        ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 303 " +
+                "      LEFT JOIN PARAMS pa4 " +
+                "        ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 304 " +
+                "      LEFT JOIN PARAMS pa5 " +
+                "        ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 305 " +
+                "      LEFT JOIN PARAMS pa6 " +
+                "        ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 306 " +
+                " WHERE ob.OBJECT_ID = ? " +
+                " ORDER BY ob.OBJECT_ID");
+        PS.setInt(1, meetingID); // В качестве параметра id пользователя
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+        RS.next();
+        Meeting meeting = new Meeting();
+        meeting.setId(RS.getString(1));
+        meeting.setTitle(RS.getString(2));
+        meeting.setDate_start(RS.getString(3));
+        meeting.setDate_end(RS.getString(4));
+        meeting.setInfo(RS.getString(5));
+        meeting.setOrganizer(RS.getString(6));
+        meeting.setTag(RS.getString(7));
+
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return meeting;
+    }
+
     //endregion
 
 
     public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
+        Meeting ms = new DBHelp().getMeeting(28);
+        System.out.println(ms.getTitle());
+        /*ArrayList<User> ms = new DBHelp().getUsersAtMeeting("28");
+        for (int i=0; i < ms.size(); i++){
+            System.out.println(ms.get(i).getId());
+            System.out.println(ms.get(i).getName());
+            System.out.println(ms.get(i).getSurname());
+            System.out.println(ms.get(i).getMiddleName());
+        }*/
+        //new DBHelp().addUsersToMeeting("28", "10002", "10001");
+        /*ArrayList<Meeting> ms = new DBHelp().getUserMeetingsList(10003);
+        for (int i=0; i < ms.size(); i++){
+            System.out.println(ms.get(i).getId());
+            System.out.println(ms.get(i).getTitle());
+            System.out.println(ms.get(i).getDate_start());
+            System.out.println(ms.get(i).getDate_end());
+            System.out.println(ms.get(i).getInfo());
+            System.out.println(ms.get(i).getOrganizer());
+            System.out.println(ms.get(i).getTag());
+        }*/
        /*System.out.println("START");
         addMeeting(new Meeting("Выпиваем2", "07.02.2017 12:00", "07.02.2017 19:30", "Всем ку, тут хранится информация",  "10003", "#ky", ""));
         updateEvent("28", new Meeting("НЕ Выпиваем ters", "07.02.2017 14:40", "07.02.2017 14:32", "ЗДАРОВ",  "10003", "#ky", ""));
         removeUsersFromMeeting("27",  "10003");
+
         ArrayList<Meeting> mm = getAllMeetingsList();
         ArrayList<Meeting> ms = getUserMeetingsList(10002);
         for (int i=0; i < ms.size(); i++){

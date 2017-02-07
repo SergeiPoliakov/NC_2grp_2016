@@ -38,19 +38,17 @@
 </head>
 <body>
 <div class="container top-buffer-20">
-    <!-- Информация о пользователе -->
+    <!-- Информация о встрече -->
     <div class="row">
         <div class="col-md-6">
             <div class="card" style="width: 30rem;">
-                <h3 class="card-title text-center">Название</h3>
+                <h3 class="card-title text-center">${meeting.title}</h3>
                 <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item">Организатор: <a href='#'>Имя организатора</a></li>
-                    <li class="list-group-item">Место: Нью-Васюки</li>
-                    <li class="list-group-item">Начало: dd.MM.yyyy hh:mm</li>
-                    <li class="list-group-item">Окончание: dd.MM.yyyy hh:mm</li>
-                    <li class="list-group-item">Описание: буквы, цифры</li>
-                    <li class="list-group-item">Теги: <a href='#'>слова</a>, <a href='#'>через</a>, <a
-                            href='#'>запятую</a></li>
+                    <li class="list-group-item">Организатор: <a href='/user${meeting.organizer}'>${meeting.organizer}</a></li>
+                    <li class="list-group-item">Начало: ${meeting.date_start}</li>
+                    <li class="list-group-item">Окончание: ${meeting.date_end}</li>
+                    <li class="list-group-item">Описание: ${meeting.info}</li>
+                    <li class="list-group-item">Теги: ${meeting.tag}</li>
                 </ul>
                 <div class="btn-group btn-group-justified" id="acceptDeclineForm" role="group" aria-label="...">
                     <div class="btn-group" role="group">
