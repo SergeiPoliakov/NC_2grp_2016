@@ -588,25 +588,54 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    // Добавление юзера в список друзей по его ID (2017-02-03) (испр. 2017-02-07)
+    // Добавление юзера в список друзей по его ID (2017-02-03)
     public void addFriend(int idFriend) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
 
         UserService userService = new UserService();
-        int idUser = getObjID(userService.getCurrentUsername()); // Получаем id текущего авторизованного пользователя
+        int idUser = new DBHelp().getObjID(userService.getCurrentUsername()); // Получаем имя текущего авторизованного пользователя
         int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
 
-        User user = getCurrentUser(); // Получаем объект текущего пользователя
-        String fullNameUser = user.getMiddleName() + " " +  user.getName() + " " + user.getSurname(); // Формируем полное имя друга
 
-        User friend = getUserByUserID(idFriend); // Получаем объект друга
-        String fullNameFriend = friend.getMiddleName() + " " +  friend.getName() + " " + friend.getSurname(); // Формируем полное имя друга
+        // 1) Добавление 12-го параметра в PARAMS (user_id для текущего пользователя):
 
+        PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
+        PS1.setInt(1, idUser); //  = current user_id
+        PS1.setInt(2, attrId); //  = 12
+        PS1.setObject(3, idFriend); //  = new friend user_id
+        PS1.executeQuery();
+        PS1.close();
+
+        // 2) Добавление 12-го параметра в PARAMS (наоборот для друга - что вы у него в друзьях):
+        PreparedStatement PS2 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
+        PS2.setInt(1, idFriend);
+        PS2.setInt(2, attrId);
+        PS2.setObject(3, idUser);
+        PS2.executeQuery();
+        PS2.close();
+/*
+        // 3) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 12-го параметра с VALUE = NULL в PARAMS
+        PreparedStatement PS3 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
+        PS3.setInt(1, idUser);
+        PS3.setInt(2, attrId);
+        PS3.executeUpdate();
+        PS3.close();
+
+        // 3) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 12-го параметра с VALUE = NULL в PARAMS
+        PreparedStatement PS4 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
+        PS4.setInt(1, idFriend);
+        PS4.setInt(2, attrId);
+        PS4.executeUpdate();
+        PS4.close();
+*/
+
+
+
+/* 2017-02-02
         // 1) Проверяем, находится ли данный пользователь у нас в друзьях:
-        // SELECT COUNT(*) FROM REFERENCES WHERE (OBJECT_ID = 10003 AND REFERENCE = 10002 OR OBJECT_ID = 10002 AND REFERENCE = 10003) AND ATTR_ID = 12;
-        PreparedStatement PS = Con.prepareStatement("SELECT COUNT(*) FROM REFERENCES WHERE (OBJECT_ID = ? AND REFERENCE = ? OR OBJECT_ID = ? AND REFERENCE = ?) AND ATTR_ID = ?");
+        PreparedStatement PS = Con.prepareStatement("SELECT COUNT(*) FROM PARAMS WHERE (OBJECT_ID = ? AND VALUE = ? OR OBJECT_ID = ? AND VALUE = ?) AND ATTR_ID = ?");
         PS.setInt(1, idUser);
         PS.setInt(2, idFriend);
         PS.setInt(3, idFriend);
@@ -622,144 +651,34 @@ public class DBHelp {
         PS.close();
 
 
-        if ( (count == 0) & (idUser != idFriend) ){ // Если нет в друзьях и не добавляем пользователя к самому себе в друзья, то добавляем
+        if (count == 0){ // Если нет в друзьях, то добавляем
 
-            // 1) Добавление 12-го параметра в PARAMS (user_id для текущего пользователя):
-
-            PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
-            PS1.setInt(1, idUser); //  = current user_id
-            PS1.setInt(2, attrId); //  = 12
-            PS1.setObject(3, fullNameFriend); //  = new friend user_id
-            PS1.executeQuery();
-            PS1.close();
-
-            // 2) Добавление 12-го параметра в PARAMS (наоборот для друга - что вы у него в друзьях):
+            // 2) Добавление 12-го параметра в PARAMS (user_id для текущего пользователя):
             PreparedStatement PS2 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
-            PS2.setInt(1, idFriend);
-            PS2.setInt(2, attrId);
-            PS2.setObject(3, fullNameUser);
+            PS2.setInt(1, idUser); // System.out.println(idUser); // = current user_id
+            PS2.setInt(2, attrId); // System.out.println(attrId); // = 12
+            PS2.setObject(3, idFriend); // System.out.println(idFriend); // = new friend user_id
             PS2.executeQuery();
             PS2.close();
 
-            // 3) Добавление ссылки Юзер - Друг (связывание):
-            PreparedStatement PS3 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-            PS3.setInt(1, idUser);
-            PS3.setInt(2, attrId);
-            PS3.setInt(3, idFriend);
+            // 3) Добавление 12-го параметра в PARAMS (наоборот для друга - что вы у него в друзьях):
+            PreparedStatement PS3 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
+            PS3.setInt(1, idUser); // System.out.println(idUser); // = current user_id
+            PS3.setInt(2, attrId); // System.out.println(attrId); // = 12
+            PS3.setObject(3, idFriend); // System.out.println(idFriend); // = new friend user_id
             PS3.executeQuery();
             PS3.close();
 
-            // 4) Добавление ссылки Друг - Юзер (обратное связывание):
-            PreparedStatement PS4 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-            PS4.setInt(1, idFriend);
-            PS4.setInt(2, attrId);
-            PS4.setInt(3, idUser);
-            PS4.executeQuery();
+            // 4) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 12-го параметра с VALUE = NULL у текущего юзера и его друга:
+            PreparedStatement PS4 = Con.prepareStatement("DELETE FROM PARAMS WHERE (OBJECT_ID = ? OR OBJECT_ID = ?) AND ATTR_ID = ? AND VALUE IS NULL");
+            PS4.setInt(1, idUser);
+            PS4.setInt(2, idFriend);
+            PS4.setInt(3, attrId);
+            PS4.executeUpdate();
             PS4.close();
-
-            // 5) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 12-го параметра с VALUE = NULL в PARAMS (для текущего пользователя)
-            PreparedStatement PS5 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
-            PS5.setInt(1, idUser);
-            PS5.setInt(2, attrId);
-            PS5.executeUpdate();
-            PS5.close();
-
-            // 6) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 12-го параметра с VALUE = NULL в PARAMS (для друга)
-            PreparedStatement PS6 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
-            PS6.setInt(1, idFriend);
-            PS6.setInt(2, attrId);
-            PS6.executeUpdate();
-            PS6.close();
-
         }
-
+		*/
         CloseConnection(Con);
-    }
-
-
-    // Удаление юзера из списка друзей по его ID (2017-02-07)
-    public void deleteFriend(int idFriend) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
-
-        UserService userService = new UserService();
-        int idUser = getObjID(userService.getCurrentUsername()); // Получаем id текущего авторизованного пользователя
-        int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
-
-        PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE (OBJECT_ID = ? OR OBJECT_ID = ?) AND ATTR_ID = ?");
-        PS.setInt(1, idUser);  //  = current user_id
-        PS.setInt(2, idFriend); //  = new friend user_id
-        PS.setInt(3, attrId); //  = 12
-        PS.executeUpdate();
-
-        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE (OBJECT_ID = ? AND REFERENCE = ? OR OBJECT_ID = ? AND REFERENCE = ?) AND ATTR_ID = ?");
-        PS.setInt(1, idUser);  //  = current user_id
-        PS.setInt(2, idFriend); //  = new friend user_id
-        PS.setInt(3, idFriend); //  = new friend user_id
-        PS.setInt(4, idUser);  //  = current user_id
-        PS.setInt(5, attrId); //  = 12
-        PS.executeUpdate();
-        PS.close();
-        CloseConnection(Con);
-    }
-
-    // Получение всех друзей текущего пользователя (2017-02-07)
-    public ArrayList<User> getFriendListCurrentUser() throws SQLException {
-        Integer userID = new DBHelp().getObjID(new UserService().getCurrentUsername());
-        ArrayList<User> friendList = getFriendListByUserId(userID);
-        return friendList;
-    }
-
-    // Получение всех друзей пользователя по его id (2017-02-07)
-    public ArrayList<User> getFriendListByUserId(int userID) throws SQLException {
-        ArrayList<User> Res = new ArrayList<>();
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
-        Integer userTypeID = 1001; // ID типа Пользователь
-        int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
-
-        PreparedStatement PS = Con.
-                prepareStatement("SELECT friend.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
-                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
-                        "LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND ATTR_ID = ? " + // Только ссылки на друзей attrId = 12
-                        "LEFT JOIN OBJECTS friend ON re.REFERENCE = friend.OBJECT_ID " +
-                        "LEFT JOIN PARAMS pa1 ON friend.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " + // -- name
-                        "LEFT JOIN PARAMS pa2 ON friend.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " + // -- suname
-                        "LEFT JOIN PARAMS pa3 ON friend.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " + // -- middleName
-                        "LEFT JOIN PARAMS pa4 ON friend.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " + // -- nickname
-                        "LEFT JOIN PARAMS pa5 ON friend.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " + // -- ageDate
-                        "LEFT JOIN PARAMS pa6 ON friend.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " + // -- email
-                        "LEFT JOIN PARAMS pa7 ON friend.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " + // -- bcryptPass
-                        "LEFT JOIN PARAMS pa8 ON friend.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " + // -- sex
-                        "LEFT JOIN PARAMS pa9 ON friend.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " + // -- country
-                        "LEFT JOIN PARAMS pa10 ON friend.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " + // -- additional_field
-                        "LEFT JOIN PARAMS pa11 ON friend.OBJECT_ID = pa11.OBJECT_ID AND pa10.ATTR_ID = 11 " + // -- picture
-                        "WHERE ob.OBJECT_TYPE_ID = ? " + // -- Только тип Пользователи userTypeID = 1001
-                        "AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID"); // id юзера, кому ищем друзей
-
-        PS.setInt(1, attrId); // В качестве параметра id ссылки на друга
-        PS.setInt(2, userTypeID); // В качестве параметра id типа Пользователь
-        PS.setInt(3, userID); // В качестве параметра id юзера, для которого ищем друзей
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        while (RS.next()) {
-            User friend = new User();
-            friend.setId(RS.getInt(1));
-            friend.setName(RS.getString(2));
-            friend.setSurname(RS.getString(3));
-            friend.setMiddleName(RS.getString(4));
-            friend.setLogin(RS.getString(5));
-            friend.setAgeDate(RS.getString(6));
-            friend.setEmail(RS.getString(7));
-            friend.setPassword(RS.getString(8));
-            friend.setSex(RS.getString(9));
-            friend.setCountry(RS.getString(10));
-            friend.setAdditional_field(RS.getString(11));
-            Res.add(friend);
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
     }
 
 

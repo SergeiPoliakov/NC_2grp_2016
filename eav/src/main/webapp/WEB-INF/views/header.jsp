@@ -99,13 +99,15 @@
                 <li><a href="/main-login">Расписание</a></li>
                 <li><a href="/meeting">Встречи</a></li>
                 <li><a href="/allEvent">События</a></li>
-                <li><a href="/allUser">Друзья</a></li>
+                <li><a href="/allFriends">Друзья</a></li>
+                <li><a href="/allUser">Пользователи</a></li>
 
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Меню <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li ><a href="/addEvent">Добавить событие</a></li>
                         <li ><a href="/allEvent">Список событий</a></li>
+                        <li><a href="/allFriends">Список друзей</a></li>
                         <li ><a href="/allUser">Все пользователи</a></li>
                     </ul>
                 </li>

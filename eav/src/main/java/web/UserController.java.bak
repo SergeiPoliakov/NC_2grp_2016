@@ -190,7 +190,7 @@ public class UserController {
         map.put("allObject", new DBHelp().getFriendListCurrentUser()); //new DBHelp().getUserList()); //
         return "allFriends";
     }
-
+    
     // Добавление пользователя в друзья (по его ID)
     @RequestMapping("/addFriend/{objectId}")
     public String addFriend(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
