@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import service.UserService;
+import service.EventServiceImp;
+import service.UserServiceImp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,8 +33,9 @@ import java.util.TreeMap;
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(EventController.class);
 
-    UserService userService = new UserService();
+    private UserServiceImp userService = UserServiceImp.getInstance();
 
+    private EventServiceImp eventService = EventServiceImp.getInstance();
 
     @RequestMapping(value = {"/", "main"})
     public ModelAndView index() {
@@ -44,11 +46,11 @@ public class UserController {
 
     @RequestMapping(value = "/main-login", method = RequestMethod.GET)
     public String getUserPage(User user, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        user = new DBHelp().getCurrentUser(); // Получаем Объект текущего пользователя
+        user = userService.getCurrentUser(); // Получаем Объект текущего пользователя
         logger.info("User = " + user.toString());
-        Integer idUser = new DBHelp().getObjID(userService.getCurrentUsername());
+        Integer idUser = userService.getObjID(userService.getCurrentUsername());
         m.addAttribute(user);
-        m.addAttribute("allEvents", new DBHelp().getEventList(idUser));
+        m.addAttribute("allEvents", eventService.getEventList(idUser));
         return "main-login";
     }
 
@@ -86,7 +88,7 @@ public class UserController {
 
     @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
     public String searchUser(@RequestParam("name") String name, Map<String, Object> map) throws SQLException {
-        map.put("allObject", new DBHelp().searchUser(name));
+        map.put("allObject", userService.searchUser(name));
         return "/searchUser";
     }
 
@@ -94,14 +96,14 @@ public class UserController {
     @Deprecated
     @RequestMapping("/allUser")
     public String listObjects(Map<String, Object> map) throws SQLException {
-        map.put("allObject", new DBHelp().getUserList());
+        map.put("allObject",userService.getUserList());
         return "allUser";
     }
 
 
     @RequestMapping("/delete/{objectId}")
     public String deleteObject(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        new DBHelp().deleteObject(objectId);
+        userService.deleteObject(objectId);
         return "redirect:/allUser";
     }
 
@@ -137,12 +139,12 @@ public class UserController {
         mapAttr.put(9, null);
         mapAttr.put(10, null);
         mapAttr.put(11, null);
-        mapAttr.put(12, null);
+       // mapAttr.put(12, null);
         // mapAttr.put(13, null); не нужно, иначе потом пустая ссылка на событие висит, и при добавлении новой задачи она так и остается висеть. Иначе надо будет при добавлении эту обновлять
 
 
 
-        new DBHelp().addNewUser(1001, full_name, mapAttr);
+        userService.setNewUser(1001, full_name, mapAttr);
 
         return "/main";
     }
@@ -150,7 +152,7 @@ public class UserController {
     // Выводим данные о пользователе на форму редактирования профиля
     @RequestMapping("/profile")
     public String getProfileUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        User user = new DBHelp().getCurrentUser(); // Получаем Объект текущего пользователя
+        User user = userService.getCurrentUser(); // Получаем Объект текущего пользователя
         logger.info("User = " + user.toString());
         m.addAttribute(user);
         return "/profile";
@@ -180,28 +182,28 @@ public class UserController {
         mapAttr.put(9, country);
         mapAttr.put(10, additional_field);
 
-        new DBHelp().updateUser(userId, full_name, mapAttr);
+        userService.updateUser(userId, full_name, mapAttr);
 
         return "redirect:/main-login";
     }
 
     @RequestMapping("/allFriends")
     public String friendList(Map<String, Object> map) throws SQLException {
-        map.put("allObject", new DBHelp().getFriendListCurrentUser()); //new DBHelp().getUserList()); //
+        map.put("allObject", userService.getFriendListCurrentUser()); //new DBHelp().getUserList()); //
         return "allFriends";
     }
 
     // Добавление пользователя в друзья (по его ID)
     @RequestMapping("/addFriend/{objectId}")
     public String addFriend(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        new DBHelp().addFriend(objectId);
+        userService.setFriend(objectId);
         return "/addFriend";
     }
 
     // Удаление пользователя из друзей (по его ID)
     @RequestMapping("/deleteFriend/{objectId}")
     public String deleteFriend(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        new DBHelp().deleteFriend(objectId);
+        userService.deleteFriend(objectId);
         return "/deleteFriend";
     }
 
@@ -209,9 +211,9 @@ public class UserController {
     @RequestMapping(value = "/viewProfile/{id}")
     public String viewUser(@PathVariable("id") int userId,
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-        User user = new DBHelp().getUserByUserID(userId);
+        User user = userService.getUserByUserID(userId);
         m.addAttribute(user);
-        m.addAttribute("allEvents", new DBHelp().getEventList(userId));
+        m.addAttribute("allEvents", eventService.getEventList(userId));
         return "/viewProfile";
     }
 

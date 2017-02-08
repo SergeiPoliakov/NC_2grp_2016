@@ -1,7 +1,6 @@
 package web;
 
 import dbHelp.DBHelp;
-import entities.Event;
 import entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import service.UserService;
+import service.EventServiceImp;
+import service.UserServiceImp;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -28,15 +25,17 @@ public class KKUserController {
 
     private static final Logger logger = LoggerFactory.getLogger(EventController.class);
 
-    UserService userService = new UserService();
+    private UserServiceImp userService = UserServiceImp.getInstance();
+
+    private EventServiceImp eventService = EventServiceImp.getInstance();
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public String getUserPage(User user, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        user = new DBHelp().getCurrentUser(); // Получаем Объект текущего пользователя
+        user = userService.getCurrentUser(); // Получаем Объект текущего пользователя
         logger.info("User = " + user.toString());
-        Integer idUser = new DBHelp().getObjID(userService.getCurrentUsername());
+        Integer idUser = userService.getObjID(userService.getCurrentUsername());
         m.addAttribute(user);
-        m.addAttribute("allEvents", new DBHelp().getEventList(idUser));
+        m.addAttribute("allEvents", eventService.getEventList(idUser));
         return "user";
     }
 
@@ -57,7 +56,7 @@ public class KKUserController {
         mapAttr.put(105, priority);
 
 
-        new DBHelp().addNewEvent(1002, name, mapAttr); // Передаем в хелпер задачу со всеми атрибутами
+        eventService.setNewEvent(1002, name, mapAttr); // Передаем в хелпер задачу со всеми атрибутами
 
         return "redirect:/main-login";
     }
@@ -79,13 +78,13 @@ public class KKUserController {
 
 
         // mapAttr.put(103, date_begin - date_end); // Продолжительность, потом вставить ее расчет
-        new DBHelp().updateEvent(eventId, name, mapAttr);
+        eventService.updateEvent(eventId, name, mapAttr);
         return "redirect:/main-login";
     }
 
     @RequestMapping(value = "/userRemoveEvent/{eventId}", method = RequestMethod.POST)
     public String removeEvent(@PathVariable("eventId") Integer eventId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        new DBHelp().deleteEvent(eventId);
+        eventService.deleteEvent(eventId);
         return "redirect:/main-login";
     }
 

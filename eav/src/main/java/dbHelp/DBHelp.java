@@ -6,15 +6,13 @@ import entities.User;
 import entities.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.UserService;
+import service.UserServiceImp;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.*;
 
@@ -25,6 +23,8 @@ import java.util.*;
 public class DBHelp {
 
     private static final Logger logger = LoggerFactory.getLogger(DBHelp.class);
+
+    private UserServiceImp userService = UserServiceImp.getInstance();
 
     private static Connection getConnection() throws SQLException {
         Locale.setDefault(Locale.ENGLISH);
@@ -137,7 +137,6 @@ public class DBHelp {
 
 
 
-    // Получение всех пользователей
     public ArrayList<Object> getObjectsIDbyObjectTypeID(int ObjectTypeID)
             throws SQLException {
         ArrayList<Object> Res = new ArrayList<>();
@@ -155,7 +154,7 @@ public class DBHelp {
         return Res;
     }
 
-    // Получение всех пользователей
+
     public ArrayList<User> getUserList() throws SQLException {
         ArrayList<User> Res = new ArrayList<>();
         Connection Con = getConnection();
@@ -197,14 +196,13 @@ public class DBHelp {
         return Res;
     }
 
-    // Получение объекта текущего авторизованного пользователя
+
     public User getCurrentUser() throws SQLException {
-        Integer userID = new DBHelp().getObjID(new UserService().getCurrentUsername());
+        Integer userID = new DBHelp().getObjID(userService.getCurrentUsername());
         User user = getUserByUserID(userID);
         return user;
     }
 
-    // Получение объекта одного конкретного пользователя по id этого пользователя
     public User getUserByUserID(int userID) throws SQLException {
         Connection Con = getConnection();
         Integer userTypeID = 1001; // ID типа Пользователь
@@ -247,7 +245,7 @@ public class DBHelp {
     }
 
     public User getUserAndEventByUserID(int userID) throws SQLException {
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
         ArrayList<Event> events = new ArrayList<>();
         Integer userTypeID = 1001; // ID типа Пользователь
         PreparedStatement PS = Con.
@@ -318,7 +316,6 @@ public class DBHelp {
         return user;
     }
 
-    // Получение ВСЕХ событий данного пользователя
     public ArrayList<Event> getEventList(int ObjectID) throws SQLException {
         ArrayList<Event> Res = new ArrayList<>();
         Connection Con = getConnection();
@@ -353,11 +350,11 @@ public class DBHelp {
         return Res;
     }
 
-    // Получение одного конкретного события данного пользователя по id этого события
+
     public Event getEventByEventID(int EventID) throws SQLException {
         Connection Con = getConnection();
 
-        Integer idUser = new DBHelp().getObjID(new UserService().getCurrentUsername());
+        Integer idUser = new DBHelp().getObjID(userService.getCurrentUsername());
 
         PreparedStatement PS = Con.prepareStatement("SELECT ev.OBJECT_ID, ob.OBJECT_ID, ev.OBJECT_NAME," +
                 "pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE FROM OBJECTS ob LEFT JOIN REFERENCES re " +
@@ -457,7 +454,7 @@ public class DBHelp {
     }
 
 
-    // Удаление пользователя
+
     public void deleteObject(Integer ID) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException
     {
         Connection Con = getConnection();
@@ -479,7 +476,7 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    // Удаление события:
+
     public void deleteEvent(Integer eventId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException
     {
         Connection Con = getConnection();
@@ -504,7 +501,7 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    public void addNewUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
+    public void setNewUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         Connection Con = getConnection();
@@ -538,8 +535,8 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    // Метод добавления события со всеми его атрибутами (2017-01-31)
-    public void addNewEvent(int ObjTypeID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
+
+    public void setNewEvent(int ObjTypeID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
@@ -571,7 +568,6 @@ public class DBHelp {
         PS1.close();
 
         // 3) Добавление ссылки Юзер - Событие (связывание):
-        UserService userService = new UserService();
         int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
         int attrId = 13;
         PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
@@ -610,7 +606,7 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    // Обновление события
+
     public void updateEvent(int ObjID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
@@ -661,13 +657,13 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    // Добавление юзера в список друзей по его ID (2017-02-03) (испр. 2017-02-07)
-    public void addFriend(int idFriend) throws SQLException,
+
+    public void setFriend(int idFriend) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
 
-        UserService userService = new UserService();
+
         int idUser = getObjID(userService.getCurrentUsername()); // Получаем id текущего авторизованного пользователя
         int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
 
@@ -675,7 +671,7 @@ public class DBHelp {
         String fullNameUser = user.getMiddleName() + " " +  user.getName() + " " + user.getSurname(); // Формируем полное имя друга
 
         User friend = getUserByUserID(idFriend); // Получаем объект друга
-        String fullNameFriend = friend.getMiddleName() + " " +  friend.getName() + " " + friend.getSurname(); // Формируем полное имя друга
+        String fullNameFriend = friend.getSurname() + " " +  friend.getName() + " " + friend.getMiddleName(); // Формируем полное имя друга
 
         // 1) Проверяем, находится ли данный пользователь у нас в друзьях:
         // SELECT COUNT(*) FROM REFERENCES WHERE (OBJECT_ID = 10003 AND REFERENCE = 10002 OR OBJECT_ID = 10002 AND REFERENCE = 10003) AND ATTR_ID = 12;
@@ -750,13 +746,12 @@ public class DBHelp {
     }
 
 
-    // Удаление юзера из списка друзей по его ID (2017-02-07)
+
     public void deleteFriend(int idFriend) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
 
-        UserService userService = new UserService();
         int idUser = getObjID(userService.getCurrentUsername()); // Получаем id текущего авторизованного пользователя
         int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
 
@@ -777,17 +772,17 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    // Получение всех друзей текущего пользователя (2017-02-07)
+
     public ArrayList<User> getFriendListCurrentUser() throws SQLException {
-        Integer userID = new DBHelp().getObjID(new UserService().getCurrentUsername());
+        Integer userID = new DBHelp().getObjID(userService.getCurrentUsername());
         ArrayList<User> friendList = getFriendListByUserId(userID);
         return friendList;
     }
 
-    // Получение всех друзей пользователя по его id (2017-02-07)
+
     public ArrayList<User> getFriendListByUserId(int userID) throws SQLException {
         ArrayList<User> Res = new ArrayList<>();
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
         Integer userTypeID = 1001; // ID типа Пользователь
         int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
 
@@ -836,11 +831,11 @@ public class DBHelp {
     }
 
 
-    // Метод добавления сообщения со всеми его атрибутами (2017-02-04)
-    public void addNewMessage(int ObjTypeID, TreeMap<Integer, Object> massAttr) throws SQLException,
+
+    public void setNewMessage(int ObjTypeID, TreeMap<Integer, Object> massAttr) throws SQLException,
            NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
 
         // 1) Добавление сообщения:
         PreparedStatement PS = Con.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
@@ -871,7 +866,6 @@ public class DBHelp {
         PS1.close();
 
         // 3) Добавление ссылки Юзер - Сообщение (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '30', '30001');
-        UserService userService = new UserService();
         int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
         int attrId = 30;
         PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
@@ -884,7 +878,7 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    // Удаление сообщения:
+
     public void deleteMessage(Integer messageId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException
     {
         Connection Con = getConnection();
@@ -910,7 +904,7 @@ public class DBHelp {
     }
 
 
-    // Получение ВСЕХ соообщений данного пользователя
+
     public ArrayList<Message> getMessageList(int from_id, int to_id) throws SQLException {
         // from_id = 10001; to_id = 10002; // ТОЛЬКО ДЛЯ ОТЛАДКИ!!!
         ArrayList<Message> Res = new ArrayList<>();
@@ -956,10 +950,9 @@ public class DBHelp {
 
     //region Meeting
 
-    // Получение списка всех существующих встреч
     public ArrayList<Meeting> getAllMeetingsList() throws SQLException {
         ArrayList<Meeting> Res = new ArrayList<>();
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
         Integer objTypeID = new Meeting().objTypeID; // ID типа Встреча
         PreparedStatement PS = Con.
                 prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
@@ -992,10 +985,10 @@ public class DBHelp {
         return Res;
     }
 
-    // Получение списка всех существующих встреч конкретного пользователя
+
     public ArrayList<Meeting> getUserMeetingsList(int userID) throws SQLException {
         ArrayList<Meeting> Res = new ArrayList<>();
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
         // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
 
         PreparedStatement PS = Con.prepareStatement("SELECT  ev.OBJECT_ID, " +
@@ -1042,10 +1035,10 @@ public class DBHelp {
         return Res;
     }
 
-    // Добавление встречи
-    public void addMeeting(Meeting meeting) throws SQLException{
 
-        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+    public void setMeeting(Meeting meeting) throws SQLException{
+
+        Connection connection = getConnection();
         int meetingID = 40000;
         TreeMap<Integer, Object> attributeArray = meeting.getArrayWithAttributes();
 
@@ -1087,7 +1080,7 @@ public class DBHelp {
         CloseConnection(connection);
     }
 
-    // Обновление встречи, meeting - обновленные данные события (ИДЕЯ С ОБЪЕКТАМИ ПОХОДУ ХУЙНЯ)
+
     public void updateEvent(String meetingID, Meeting newmeeting) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
@@ -1108,9 +1101,9 @@ public class DBHelp {
         CloseConnection(connection);
     }
 
-    // Добавление пользователей на встречу
-    public void addUsersToMeeting(String meetingID, String... userIDs) throws SQLException{
-        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+
+    public void setUsersToMeeting(String meetingID, String... userIDs) throws SQLException{
+        Connection connection = getConnection();
         int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
         PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
 
@@ -1125,7 +1118,7 @@ public class DBHelp {
         CloseConnection(connection);
     }
 
-    // Удаление пользователей со встречи
+
     public void removeUsersFromMeeting(String meetingID, String... userIDs) throws SQLException{
         Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
         PreparedStatement PS2 = connection.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ? AND OBJECT_ID = ?");
@@ -1139,10 +1132,11 @@ public class DBHelp {
         CloseConnection(connection);
     }
 
-    // Просмотр участников встречи
-    public ArrayList<User> getUsersAtMeeting(String meetingID) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException, NullPointerException{
+
+    public ArrayList<User> getUsersAtMeeting(String meetingID) throws IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException, NoSuchMethodException, SecurityException, SQLException, NullPointerException{
         ArrayList<User> Res = new ArrayList<>();
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
         // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
 
         PreparedStatement PS = Con.prepareStatement("SELECT DISTINCT " +
@@ -1165,10 +1159,10 @@ public class DBHelp {
         return  Res;
     }
 
-    // Получение конкретной встречи
+
     public Meeting getMeeting(int meetingID) throws SQLException {
 
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
         PreparedStatement PS = Con.prepareStatement("SELECT  ob.OBJECT_ID, " +
                 "        pa1.VALUE as PA1, " +
                 "        pa2.VALUE as PA2, " +
