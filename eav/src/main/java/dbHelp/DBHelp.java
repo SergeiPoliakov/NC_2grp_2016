@@ -41,10 +41,8 @@ public class DBHelp {
 
 
     private static void CloseConnection(Connection Con) throws SQLException {
-
         Con.close();
     }
-
 
     public int getObjID(String username) throws SQLException
     {

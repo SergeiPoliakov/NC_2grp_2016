@@ -15,6 +15,7 @@
 <html lang="en">
 <head>
     <%@include file='header.jsp'%>
+    <%@include file='leftMenu.jsp'%>
     <title>Список встреч</title>
 
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">

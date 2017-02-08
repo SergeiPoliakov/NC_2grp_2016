@@ -1,91 +1,79 @@
 <%--
   Created by IntelliJ IDEA.
-  User: Lawrence
-  Date: 04.02.2017
-  Time: 20:03
+  User: Hroniko
+  Date: 08.02.2017
+  Time: 15:25
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=utf8"
          pageEncoding="utf8" %>
-<%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
-<!doctype html>
-<!--[if IE 8]><html class="ie8 lt-ie10"><![endif]-->
-<!--[if IE 9]><html class="ie9 lt-ie10"><![endif]-->
-<!--[if gt IE 9]><!--><html lang="en"><!--<![endif]-->
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="cleartype" content="on">
-    <meta name="MobileOptimized" content="320">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/1.13.0/mocha.min.css">
-    <link rel="stylesheet" href="/resources/dist/test.css">
-    <link rel="stylesheet" href="/resources/dist/index.css">
-    <title>Slideout tests</title>
-    <!--%@include file='header.jsp'%>-->
+    <title>Меню</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="/resources/menu/css/normalize.css">
+    <link rel="stylesheet" href="/resources/menu/css/demo.css">
+    <link rel="stylesheet" href="/resources/menu/css/pushy.css">
+
 </head>
+
 <body>
 
-<nav id="menu" class="menu">
-    <a href="https://github.com/mango/slideout" target="_blank">
-        <header class="menu-header">
-            <span class="menu-header-title">Tests</span>
-        </header>
-    </a>
-
-    <section class="menu-section">
-        <h3 class="menu-section-title">Docs</h3>
-        <ul class="menu-section-list">
-            <li><a href="https://github.com/mango/slideout#installation" target="_blank">Installation</a></li>
-            <li><a href="https://github.com/mango/slideout#usage" target="_blank">Usage</a></li>
-            <li><a href="https://github.com/mango/slideout#api" target="_blank">API</a></li>
-            <li><a href="https://github.com/mango/slideout#npm-scripts" target="_blank">npm-scripts</a></li>
+<nav class="pushy pushy-left" data-focus="#first-link">
+    <div class="pushy-content">
+        <ul>
+            <li class="pushy-submenu">
+                <button id="first-link"><span class="glyphicon glyphicon-comment"></span>  События</button>
+                <ul>
+                    <li class="pushy-link"><a href="#">Расписание</a></li>
+                    <li class="pushy-link"><a href="#">Добавить</a></li>
+                    <li class="pushy-link"><a href="#">Поиск</a></li>
+                </ul>
+            </li>
+            <li class="pushy-submenu">
+                <button><span class="glyphicon glyphicon-user"></span>  Мои друзья</button>
+                <ul>
+                    <li class="pushy-link"><a href="#">Список друзей</a></li>
+                    <li class="pushy-link"><a href="#">Запросы на добавление</a></li>
+                    <li class="pushy-link"><a href="#">Черный список</a></li>
+                </ul>
+            </li>
+            <li class="pushy-submenu">
+                <button><span class="glyphicon glyphicon-envelope"></span>  Сообщения</button>
+                <ul>
+                    <li class="pushy-link"><a href="#">Входящие</a></li>
+                    <li class="pushy-link"><a href="#">Исходящие</a></li>
+                    <li class="pushy-link"><a href="#">Срочные</a></li>
+                </ul>
+            </li>
+            <li class="pushy-submenu">
+                <button><span class="glyphicon glyphicon-star"></span>  Встречи</button>
+                <ul>
+                    <li class="pushy-link"><a href="#">Расписание</a></li>
+                    <li class="pushy-link"><a href="#">Приглашения</a></li>
+                    <li class="pushy-link"><a href="#">Отказы</a></li>
+                </ul>
+            </li>
+            <li class="pushy-link"><a href="#"><span class="glyphicon glyphicon-home"></span>  Профиль</a></li>
+            <li class="pushy-link"><a href="#"><span class="glyphicon glyphicon-film"></span>  Обучение</a></li>
+            <li class="pushy-link"><a href="#"><span class="glyphicon glyphicon-cog"></span>  Настройки</a></li>
+            <li class="pushy-link"><a href="#"><span class="glyphicon glyphicon-off"></span>  Выход</a></li>
         </ul>
-    </section>
-
+    </div>
 </nav>
 
-<main id="panel" class="panel">
-    <header class="panel-header">
-        <button class="btn-hamburger js-slideout-toggle"></button>
+<div class="site-overlay"></div>
 
+<div id="container">
+    <!-- Кнопочка менюшки -->
+    <button class="menu-btn">&#9776; Меню</button>
 
+    <!-- Свои данные -->
+</div>
 
-    </header>
+<script src="/resources/menu/js/pushy.min.js"></script>
 
-
-
-
-</main>
-
-
-<script>
-    mocha.setup('bdd');
-    var exports = null;
-    function assert(expr, msg) {
-        if (!expr) throw new Error(msg || 'failed');
-    }
-</script>
-<script src="/resources/dist/slideout.js"></script>
-<script src="/resources/dist/test.js"></script>
-<script>
-    window.onload = function() {
-        document.querySelector('.js-slideout-toggle').addEventListener('click', function() {
-            slideout.toggle();
-        });
-
-        document.querySelector('.menu').addEventListener('click', function(eve) {
-            if (eve.target.nodeName === 'A') { slideout.close(); }
-        });
-
-        var runner = mocha.run();
-    };
-</script>
 </body>
 </html>

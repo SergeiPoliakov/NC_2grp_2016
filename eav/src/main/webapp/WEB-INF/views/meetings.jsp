@@ -18,6 +18,7 @@
 <head>
     <title>Ваши встречи</title>
     <%@include file='header.jsp'%>
+    <%@include file='leftMenu.jsp'%>
 
     <link rel="stylesheet" type="text/css" href="resources\css\bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="resources\css\bootstrap-datetimepicker.min.css">

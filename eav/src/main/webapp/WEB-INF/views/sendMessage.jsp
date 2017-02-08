@@ -87,6 +87,7 @@
 <body>
 
 <%@include file='header.jsp'%>
+<%@include file='leftMenu.jsp'%>
 
 <%--<div class="thumbnail">
     <h4>${to_id} </h4>

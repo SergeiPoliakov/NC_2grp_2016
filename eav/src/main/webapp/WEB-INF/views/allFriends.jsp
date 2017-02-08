@@ -18,6 +18,7 @@
 <head>
     <title>Ваши друзья</title>
     <%@include file='header.jsp'%>
+    <%@include file='leftMenu.jsp'%>
     <meta charset="UTF-8">
 
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">

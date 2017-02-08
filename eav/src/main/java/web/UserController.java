@@ -234,7 +234,6 @@ public class UserController {
 
     }
 
-    /// 2017-02-06
     @RequestMapping(value = "/meeting", method = RequestMethod.GET)
     public String getMeeting() throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         return "meeting";

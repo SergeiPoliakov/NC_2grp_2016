@@ -28,6 +28,7 @@
 
 
 <%@include file='header.jsp'%>
+<%@include file='leftMenu.jsp'%>
 
 
 <h2 id="faq">Результаты поиска:</h2>
