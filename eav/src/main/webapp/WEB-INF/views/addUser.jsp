@@ -72,8 +72,7 @@
     </form>
 </div>
 
-<footer class="navbar-static-bottom navbar-inverse">
-    <small>&copy; NetCracker</small>
-</footer>
+<%@include file='footer.jsp'%>
+
 </body>
 </html>

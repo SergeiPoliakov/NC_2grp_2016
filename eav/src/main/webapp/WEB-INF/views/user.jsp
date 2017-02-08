@@ -194,6 +194,8 @@
     <div id="log"></div>
 </div>
 
+<%@include file='footer.jsp'%>
+
 <script type="text/javascript">
     // Поле дополнительная информация eventID : info
     var addInfoArray = {

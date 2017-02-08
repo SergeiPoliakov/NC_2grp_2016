@@ -48,7 +48,7 @@
                         <a href="/deleteFriend/${object.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
                     </div>
                     <ul class="list-group list-group-my list-group-flush">
-                        <li class="list-group-item">Дата родения: ${object.ageDate}</li>
+                        <li class="list-group-item">Дата рождения: ${object.ageDate}</li>
                         <li class="list-group-item">Страна: ${object.country}</li>
                         <li class="list-group-item">Пол: ${object.sex}</li>
                         <li class="list-group-item">О себе: ${object.additional_field}</li>
@@ -60,6 +60,7 @@
     </div>
 </div>
 
+<%@include file='footer.jsp'%>
 
 <script type="text/javascript">
 

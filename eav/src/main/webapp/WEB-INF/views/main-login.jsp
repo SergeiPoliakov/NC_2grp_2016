@@ -18,6 +18,7 @@
 <head>
     <title>${user.name} ${user.surname}</title>
     <%@include file='header.jsp'%>
+
     <meta charset="UTF-8">
 
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">
@@ -194,6 +195,8 @@
     </div>
     <div id="log"></div>
 </div>
+
+<%@include file='footer.jsp'%>
 
 <script type="text/javascript">
     // Поле дополнительная информация eventID : info

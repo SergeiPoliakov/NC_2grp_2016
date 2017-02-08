@@ -164,6 +164,7 @@
     </div>
 </div>
 
+<%@include file='footer.jsp'%>
 
 <script type="text/javascript">
     // Лимит числа символов в сообщении

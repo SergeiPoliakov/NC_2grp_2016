@@ -255,6 +255,8 @@
     <div id="log"></div>
 </div>
 
+<%@include file='footer.jsp'%>
+
 <script type="text/javascript">
 
     // Управление кнопками

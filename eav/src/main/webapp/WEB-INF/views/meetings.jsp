@@ -123,6 +123,8 @@
     </div>
 </div>
 
+<%@include file='footer.jsp'%>
+
 <script type="text/javascript">
 
     // datetimepickers настройка

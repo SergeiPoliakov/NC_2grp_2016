@@ -9,5 +9,8 @@
 <body>
 		<h1>Доступ закрыт!</h1>
 	<h2>${errorMsg}</h2>
+
+<%@include file='footer.jsp'%>
+
 </body>
 </html>
