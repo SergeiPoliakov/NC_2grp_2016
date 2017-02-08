@@ -1,5 +1,7 @@
 package entities;
 
+import java.util.ArrayList;
+
 /**
  * Created by Lawrence on 29.01.2017.
  */
@@ -27,6 +29,8 @@ public class User {
     private String sex;
 
     private String additional_field;
+
+    private ArrayList<Event> eventsUser;
 
     public Integer getId() {
         return id;
@@ -116,32 +120,15 @@ public class User {
         this.additional_field = additional_field;
     }
 
+    public ArrayList<Event> getEventsUser() {
+        return eventsUser;
+    }
+
+    public void setEventsUser(ArrayList<Event> eventsUser) {
+        this.eventsUser = eventsUser;
+    }
+
     public User() {}
-
-    public User(String name, String surname, String middleName, String login, String ageDate, String email,
-                String password,  String sex, String country, String additional_field) {
-        this.name = name;
-        this.surname = surname;
-        this.middleName = middleName;
-        this.ageDate = ageDate;
-        this.sex = sex;
-        this.country = country;
-        this.login = login;
-        this.email = email;
-        this.password = password;
-        this.additional_field = additional_field;
-    }
-
-    public User(String name, String surname, String middleName, String login, String ageDate,
-                 String email, String password) {
-        this.name = name;
-        this.surname = surname;
-        this.middleName = middleName;
-        this.ageDate = ageDate;
-        this.login = login;
-        this.email = email;
-        this.password = password;
-    }
 
 
 }

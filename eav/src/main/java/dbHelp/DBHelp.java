@@ -246,6 +246,78 @@ public class DBHelp {
         return user;
     }
 
+    public User getUserAndEventByUserID(int userID) throws SQLException {
+        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        ArrayList<Event> events = new ArrayList<>();
+        Integer userTypeID = 1001; // ID типа Пользователь
+        PreparedStatement PS = Con.
+                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
+                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
+                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
+                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
+                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
+                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
+                        "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " +
+                        "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " +
+                        "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " +
+                        "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
+                        "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
+                        "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
+                        "WHERE ob.OBJECT_TYPE_ID = ? AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID");
+        PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
+        PS.setInt(2, userID); // В качестве параметра id пользователя
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+        User user = null;
+        while (RS.next()) {
+            user = new User();
+            user.setId(RS.getInt(1));
+            user.setName(RS.getString(2));
+            user.setSurname(RS.getString(3));
+            user.setMiddleName(RS.getString(4));
+            user.setLogin(RS.getString(5));
+            user.setAgeDate(RS.getString(6));
+            user.setEmail(RS.getString(7));
+            user.setPassword(RS.getString(8));
+            user.setSex(RS.getString(9));
+            user.setCountry(RS.getString(10));
+            user.setAdditional_field(RS.getString(11));
+        }
+        RS.close();
+        PS.close();
+
+        PreparedStatement PS1 = Con.prepareStatement("SELECT ev.OBJECT_ID, ob.OBJECT_ID, ev.OBJECT_NAME," +
+                "pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE FROM OBJECTS ob LEFT JOIN REFERENCES re " +
+                "ON ob.OBJECT_ID = re.OBJECT_ID LEFT JOIN OBJECTS ev  ON re.REFERENCE = ev.OBJECT_ID " +
+                "LEFT JOIN PARAMS pa1 ON ev.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 103 LEFT JOIN PARAMS pa2 " +
+                "ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 101   LEFT JOIN PARAMS pa3 " +
+                "ON ev.OBJECT_ID = pa3.OBJECT_ID AND  pa3.ATTR_ID = 102 LEFT JOIN PARAMS pa4 " +
+                "ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 105 LEFT JOIN PARAMS pa5 " +
+                "ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 104 WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 13 ORDER BY ev.OBJECT_ID");
+        PS1.setInt(1, userID);
+        ResultSet RS1 = PS1.executeQuery();
+        while (RS1.next()) {
+            Event event = new Event();
+            event.setId( RS1.getInt(1));
+            event.setHost_id( RS1.getInt(2));
+            event.setName( RS1.getString(3));
+            event.setDate_begin( RS1.getString(4));
+            event.setDate_end( RS1.getString(5));
+            event.setPriority( RS1.getString(6));
+            event.setInfo( RS1.getString(7));
+
+            events.add(event);
+        }
+        try {
+            assert user != null;
+            user.setEventsUser(events);
+        } catch (NullPointerException e) {
+            System.out.println("У данного пользователя нет событий или такой пользователь не найден");
+        }
+
+        CloseConnection(Con);
+        return user;
+    }
+
     // Получение ВСЕХ событий данного пользователя
     public ArrayList<Event> getEventList(int ObjectID) throws SQLException {
         ArrayList<Event> Res = new ArrayList<>();
@@ -1068,34 +1140,23 @@ public class DBHelp {
     }
 
     // Просмотр участников встречи
-    public ArrayList<User> getUsersAtMeeting(String meetingID) throws SQLException{
+    public ArrayList<User> getUsersAtMeeting(String meetingID) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException, NullPointerException{
         ArrayList<User> Res = new ArrayList<>();
         Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
         // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
 
         PreparedStatement PS = Con.prepareStatement("SELECT DISTINCT " +
-                "        re.REFERENCE, " +
-                "        pa1.VALUE as PA1, " +
-                "        pa2.VALUE as PA2, " +
-                "        pa3.VALUE as PA3 " +
+                "        re.REFERENCE " +
                 " FROM  OBJECTS ob " +
                 "      LEFT JOIN REFERENCES re " +
                 "        ON ob.OBJECT_ID = re.OBJECT_ID " +
                 "      LEFT JOIN PARAMS pa1 " +
                 "        ON re.REFERENCE = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
-                "      LEFT JOIN PARAMS pa2\n" +
-                "        ON re.REFERENCE = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
-                "      LEFT JOIN PARAMS pa3\n" +
-                "        ON re.REFERENCE = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
                 "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 307 ORDER BY re.OBJECT_ID");
         PS.setString(1, meetingID); // В качестве параметра id встречи
         ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         while (RS.next()) {
-            User user = new User();
-            user.setId(RS.getInt(1));
-            user.setName(RS.getString(2));
-            user.setSurname(RS.getString(3));
-            user.setMiddleName(RS.getString(4));
+            User user = this.getUserAndEventByUserID(RS.getInt(1));
             Res.add(user);
         }
         RS.close();
@@ -1153,14 +1214,15 @@ public class DBHelp {
 
     public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-        Meeting ms = new DBHelp().getMeeting(28);
-        System.out.println(ms.getTitle());
+        ArrayList<User> oldusers = new DBHelp().getUsersAtMeeting("28"); // ID
+
+        System.out.print("dsd");
+
+        //Meeting ms = new DBHelp().getMeeting(28);
+        //System.out.println(ms.getTitle());
         /*ArrayList<User> ms = new DBHelp().getUsersAtMeeting("28");
         for (int i=0; i < ms.size(); i++){
             System.out.println(ms.get(i).getId());
-            System.out.println(ms.get(i).getName());
-            System.out.println(ms.get(i).getSurname());
-            System.out.println(ms.get(i).getMiddleName());
         }*/
         //new DBHelp().addUsersToMeeting("28", "10002", "10001");
         /*ArrayList<Meeting> ms = new DBHelp().getUserMeetingsList(10003);

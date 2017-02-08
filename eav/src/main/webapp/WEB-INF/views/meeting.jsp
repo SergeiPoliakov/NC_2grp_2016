@@ -38,6 +38,7 @@
 </head>
 <body>
 <div class="container top-buffer-20">
+
     <!-- Информация о встрече -->
     <div class="row">
         <div class="col-md-6">
@@ -321,99 +322,39 @@
     // Группы элементов (1 группа - 1 пользователь)
     var groups = new vis.DataSet();
     groups.add([
-        {
-            id: 1,
-            content: "<a href='#'>Геннадий Токарев</a>",
-        },
-        {
-            id: 2,
-            content: "<a href='#'>Иванов Иван</a>",
-        },
-        {
-            id: 3,
-            content: "<a href='#'>Василий Пупкин</a>",
-        },
-        {
-            id: 4,
-            content: "<a href='#'>Дмитрий Семёнов</a>"
-        },
+
+        <c:forEach items="${users}" var="user">
+            {
+                id: ${user.id},
+                content: "<a href='/user${user.id}'>${user.name} ${user.middleName} ${user.surname}</a>",
+            },
+        </c:forEach>
         {
             id: 1000,
             content: "<b>Расписание встречи</b>"
-        },
+        }
     ]);
 
 
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
+
+        <c:forEach items="${users}" var="user">
+            <c:forEach items="${user.eventsUser}" var="event">
+                {
+                    id: ${event.id},
+                    group: ${user.id},
+                    editable: false,
+                    content: '${event.name}',
+                    start: new Date(getDateFromString('${event.date_begin}')),
+                    end: new Date(getDateFromString('${event.date_end}')),
+                    className: '${event.priority}'
+                },
+            </c:forEach>
+        </c:forEach>
         {id: 'A', group: 1000, type: 'background', start: new Date(2017, 1, 2), end: new Date(2017, 1, 2, 8)}, // Фоновая картинка на таймлайне
-        {id: 'B', group: 1000, type: 'background', start: new Date(2017, 1, 2, 4), end: new Date(2017, 1, 2, 10)}, // Фоновая картинка на таймлайне
+        {id: 'B', group: 1000, type: 'background', start: new Date(2017, 1, 2, 4), end: new Date(2017, 1, 2, 10)} // Фоновая картинка на таймлайне
 
-        {
-            id: 1,
-            group: 1,
-            editable: false,
-            content: 'Работа',
-            start: new Date(2017, 1, 2),
-            end: new Date(2017, 1, 2, 8),
-            className: 'Style3'
-        },
-        {
-            id: 2,
-            group: 1,
-            editable: false,
-            content: 'Сон',
-            start: new Date(2017, 1, 2, 9),
-            end: new Date(2017, 1, 2, 13),
-            className: 'Style2'
-        },
-
-        {
-            id: 3,
-            group: 2,
-            editable: false,
-            content: 'Сон',
-            start: new Date(2017, 1, 2, 8),
-            end: new Date(2017, 1, 2, 17, 30),
-            className: 'Style1'
-        },
-        {
-            id: 4,
-            group: 2,
-            editable: false,
-            content: 'Прогулка',
-            start: new Date(2017, 1, 2, 18),
-            end: new Date(2017, 1, 2, 19, 30),
-            className: 'Style3'
-        },
-        {
-            id: 5,
-            group: 2,
-            editable: false,
-            content: 'Работа',
-            start: new Date(2017, 1, 2, 20),
-            end: new Date(2017, 1, 2, 23, 50),
-            className: 'Style2'
-        },
-
-        {
-            id: 6,
-            group: 3,
-            editable: false,
-            content: 'Прогулка',
-            start: new Date(2017, 1, 2, 18),
-            end: new Date(2017, 1, 2, 21, 50),
-            className: 'Style2'
-        },
-        {
-            id: 7,
-            group: 4,
-            editable: false,
-            content: 'Еще что то',
-            start: new Date(2017, 1, 2, 21, 50, 1),
-            end: new Date(2017, 1, 2, 24),
-            className: 'Style3'
-        }
     ]);
 
     // Configuration for the Timeline

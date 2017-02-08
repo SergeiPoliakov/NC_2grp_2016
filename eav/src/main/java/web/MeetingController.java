@@ -44,9 +44,9 @@ public class MeetingController {
     @RequestMapping(value = "/meeting{meetingID}", method = RequestMethod.GET)
     public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         // Тут нужно подгрузить данные о пользователях, их расписании, а так же информацию о встрече
-        ArrayList<User> users = new DBHelp().getUsersAtMeeting("28"); // ID, name, surname, middlename
-        m.addAttribute(users); // Добавление пользователей
-        m.addAttribute(new DBHelp().getMeeting(meetingID)); // Информация о событии
+        ArrayList<User> users = new DBHelp().getUsersAtMeeting("28"); // ID
+        m.addAttribute("users", users); // Добавление пользователей
+        m.addAttribute("meeting", new DBHelp().getMeeting(meetingID)); // Информация о событии
         //m.addAttribute("allEvents", new DBHelp().getEventList(users));
         return "/meeting";
     }
