@@ -19,7 +19,10 @@
 
     <style>
         body{
-            background:url('http://www.wallpaperup.com/uploads/wallpapers/2012/10/21/20181/cad2441dd3252cf53f12154412286ba0.jpg');
+            background:url('/resources/assets/images/nature-seasons-summer-starry-sky-in-the-mountains-in-summer-065456-2000x1250.jpg');
+        <%--background:url('http://www.wallpaperup.com/uploads/wallpapers/2012/10/21/20181/cad2441dd3252cf53f12154412286ba0.jpg');--%>
+
+
         }
 
         #login-dp{

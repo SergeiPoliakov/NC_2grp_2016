@@ -1,18 +1,19 @@
 <%--
   Created by IntelliJ IDEA.
-  User: Lawrence
-  Date: 05.02.2017
-  Time: 17:47
+  User: Hroniko
+  Date: 08.02.2017
+  Time: 23:02
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=utf8"
          pageEncoding="utf8" %>
+
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
 <html lang="en">
 <head>
     <title>Netcracker</title>
@@ -21,9 +22,58 @@
 
     <%@include file='headerGuest.jsp'%>
 
+    <link rel="stylesheet" href="/resources/assets/tether/tether.min.css">
+    <link rel="stylesheet" href="/resources/assets/animate.css/animate.min.css">
+    <link rel="stylesheet" href="/resources/assets/theme/css/style.css">
+
+
+
 </head>
 <body>
+<section class="mbr-section mbr-parallax-background" id="msg-box4-e" style="padding-top: 120px; padding-bottom: 120px;">
+    <div class="container">
+        <div class="row">
+            <div class="mbr-table-md-up">
 
+                <div class="mbr-table-cell mbr-right-padding-md-up mbr-valign-top col-md-7 image-size" style="width: 50%;">
+                    <div class="mbr-figure"><iframe class="mbr-embedded-video" src="https://www.youtube.com/embed/1Q5tfgkjws4?rel=0&amp;amp;showinfo=0&amp;autoplay=0&amp;loop=0" width="1280" height="720" frameborder="0" allowfullscreen></iframe></div>
+                </div>
+                <div class="mbr-table-cell col-md-5 text-xs-center text-md-left content-size">
+                    <h3 class="mbr-section-title display-2">БЫСТРЫЙ СТАРТ: ВИДЕО</h3>
+                    <div><a class="btn btn-black" href="#">ПОДРОБНЕЕ</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="engine"></section><section class="mbr-section" id="msg-box5-f" style="padding-top: 0px; padding-bottom: 0px;">
+    <div class="container">
+        <div class="row">
+            <div class="mbr-table-md-up">
+                <div class="mbr-table-cell col-md-5 text-xs-center text-md-right content-size">
+                    <h3 class="mbr-section-title display-2">ПРИСОЕДИНЯЙТЕСЬ УЖЕ СЕГОДНЯ!</h3>
+                    <div class="lead">
+                        <p></p>
+                    </div>
+                    <div><a class="btn btn-black" href="/addUser">РЕГИСТРАЦИЯ</a></div>
+                </div>
+                <div class="mbr-table-cell mbr-left-padding-md-up mbr-valign-top col-md-7 image-size" style="width: 50%;">
+                    <div class="mbr-figure"><img src="/resources/assets/images/desktop.jpg"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="/resources/assets/tether/tether.min.js"></script>
+<script src="/resources/assets/smooth-scroll/SmoothScroll.js"></script>
+<script src="/resources/assets/jarallax/jarallax.js"></script>
+<script src="/resources/assets/viewportChecker/jquery.viewportchecker.js"></script>
+<script src="/resources/assets/theme/js/script.js"></script>
+
+
+<input name="animation" type="hidden">
 
 <%@include file='footer.jsp'%>
 
