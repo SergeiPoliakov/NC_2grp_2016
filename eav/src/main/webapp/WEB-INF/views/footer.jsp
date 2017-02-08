@@ -30,7 +30,6 @@
         }
         #left { text-align: left; }
         #right { text-align: right; }
-        #right2 { text-align: right; }
         #center { text-align: center; }
 
         .footer {
@@ -54,23 +53,19 @@
                 <h3>Netcracker</h3>
             </div>
             <div id="center" class="col-sm-4">
-                <h5><br>© 2 группа УНЦ "Инфотех" 2017</h5>
+                <h5><br>© 2 группа УНЦ "Инфотех" <%= new java.text.SimpleDateFormat("dd.MM.yyyy").format( new java.util.Date()) %></h5>
             </div>
             <div class="col-sm-4">
-                <div id="right" class="row">
+                <div class="row">
                     <br>
-                    <div class="col-md-12 hidden-lg hidden-md hidden-sm text-left"><a href="#"><i
-                            class="fa fa-2x fa-fw fa-instagram text-inverse"></i></a> <a href="#"><i
-                            class="fa fa-2x fa-fw fa-twitter text-inverse"></i></a> <a href="#"><i
-                            class="fa fa-2x fa-fw fa-facebook text-inverse"></i></a> <a href="#"><i
-                            class="fa fa-2x fa-fw fa-github text-inverse"></i></a></div>
                 </div>
-                <div id="right2" class="row">
-                    <div class="col-md-12 hidden-xs text-right"><a href="#"><i
-                            class="fa fa-2x fa-fw fa-instagram text-inverse"></i></a> <a href="#"><i
-                            class="fa fa-2x fa-fw fa-twitter text-inverse"></i></a> <a href="#"><i
-                            class="fa fa-2x fa-fw fa-facebook text-inverse"></i></a> <a href="#"><i
-                            class="fa fa-2x fa-fw fa-github text-inverse"></i></a></div>
+                <div id="right" class="row">
+                    <div class="col-md-12 hidden-xs text-right">
+                        <a href="https://www.instagram.com/" target="_blank"><i class="fa fa-2x fa-fw fa-instagram text-inverse"></i></a>
+                        <a href="https://twitter.com/" target="_blank"><i class="fa fa-2x fa-fw fa-twitter text-inverse"></i></a>
+                        <a href="https://www.facebook.com/" target="_blank"><i class="fa fa-2x fa-fw fa-facebook text-inverse"></i></a>
+                        <a href="https://github.com/SergeiPoliakov/NC_2grp_2016/" target="_blank"><i class="fa fa-2x fa-fw fa-github text-inverse"></i></a>
+                    </div>
                 </div>
             </div>
         </div>
