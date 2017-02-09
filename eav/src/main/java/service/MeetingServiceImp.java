@@ -57,8 +57,14 @@ public class MeetingServiceImp implements MeetingService {
         new DBHelp().removeUsersFromMeeting(meetingID, userIDs);
     }
 
+    @Override
+    public ArrayList<User> getUsersAtMeeting(String meetingID) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException, NullPointerException {
+        return null;
+    }
+
+
     // Просмотр участников встречи
-    public ArrayList<User> getUsersAtMeeting(String meetingID) throws IllegalAccessException, IllegalArgumentException,
+    public ArrayList<User> getUsersAtMeeting(int meetingID) throws IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, NoSuchMethodException, SecurityException, SQLException, NullPointerException {
         return new DBHelp().getUsersAtMeeting(meetingID);
     }
@@ -66,6 +72,14 @@ public class MeetingServiceImp implements MeetingService {
     // Получение конкретной встречи
     public Meeting getMeeting(int meetingID) throws SQLException {
         return new DBHelp().getMeeting(meetingID);
+    }
+
+    // Получение конкретной с пользователями
+    public Meeting getMeetingWithUsers(int meetingID) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        Meeting meeting = new DBHelp().getMeeting(meetingID);
+        meeting.setUsers(new DBHelp().getUsersAtMeeting( meetingID));
+        meeting.setEvents(new DBHelp().getEventList(meetingID));
+        return meeting;
     }
 
 }

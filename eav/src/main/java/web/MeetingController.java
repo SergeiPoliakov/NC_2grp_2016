@@ -1,6 +1,7 @@
 package web;
 
 import dbHelp.DBHelp;
+import entities.Meeting;
 import entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import service.MeetingServiceImp;
 import service.UserServiceImp;
 
@@ -34,19 +36,32 @@ public class MeetingController {
 
         user = userService.getCurrentUser(); // Получаем Объект текущего пользователя
         Integer idUser = userService.getObjID(userService.getCurrentUsername());
-        m.addAttribute(user);
-        m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser));
+        m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser)); // m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser));
         return "meetings";
     }
 
     // Просмотр встречи
     @RequestMapping(value = "/meeting{meetingID}", method = RequestMethod.GET)
     public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-        // Тут нужно подгрузить данные о пользователях, их расписании, а так же информацию о встрече
-        ArrayList<User> users = meetingService.getUsersAtMeeting("28"); // ID
-        m.addAttribute("users", users); // Добавление пользователей
-        m.addAttribute("meeting", meetingService.getMeeting(meetingID)); // Информация о событии
-        //m.addAttribute("allEvents", new DBHelp().getEventList(users));
+
+        Meeting meeting = meetingService.getMeetingWithUsers(meetingID);
+        m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
+
         return "/meeting";
+    }
+
+    //Добавление встречи
+    @RequestMapping(value = "/addMeeting", method = RequestMethod.POST)
+    public String addMeeting(ModelMap m,
+                             @RequestParam("title") String title,
+                             @RequestParam("tag") String tag,
+                             @RequestParam("date_start") String date_start,
+                             @RequestParam("date_end") String date_end,
+                             @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
+        Meeting meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), tag, "");
+        meetingService.setMeeting(meeting);
+
+        return "redirect:/meetings";
     }
 }

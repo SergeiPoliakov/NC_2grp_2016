@@ -15,8 +15,7 @@
 <html lang="en">
 <head>
     <%@include file='header.jsp'%>
-    <%@include file='leftMenu.jsp'%>
-    <title>Список встреч</title>
+    <title>${meeting.title}</title>
 
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-select.min.css">
@@ -46,7 +45,7 @@
             <div class="card" style="width: 30rem;">
                 <h3 class="card-title text-center">${meeting.title}</h3>
                 <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item">Организатор: <a href='/user${meeting.organizer}'>${meeting.organizer}</a></li>
+                    <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>
                     <li class="list-group-item">Начало: ${meeting.date_start}</li>
                     <li class="list-group-item">Окончание: ${meeting.date_end}</li>
                     <li class="list-group-item">Описание: ${meeting.info}</li>
@@ -326,14 +325,14 @@
     var groups = new vis.DataSet();
     groups.add([
 
-        <c:forEach items="${users}" var="user">
+        <c:forEach items="${meeting.users}" var="user">
             {
                 id: ${user.id},
                 content: "<a href='/user${user.id}'>${user.name} ${user.middleName} ${user.surname}</a>",
             },
         </c:forEach>
         {
-            id: 1000,
+            id: 0,
             content: "<b>Расписание встречи</b>"
         }
     ]);
@@ -342,7 +341,7 @@
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
 
-        <c:forEach items="${users}" var="user">
+        <c:forEach items="${meeting.users}" var="user">
             <c:forEach items="${user.eventsUser}" var="event">
                 {
                     id: ${event.id},
@@ -355,8 +354,7 @@
                 },
             </c:forEach>
         </c:forEach>
-        {id: 'A', group: 1000, type: 'background', start: new Date(2017, 1, 2), end: new Date(2017, 1, 2, 8)}, // Фоновая картинка на таймлайне
-        {id: 'B', group: 1000, type: 'background', start: new Date(2017, 1, 2, 4), end: new Date(2017, 1, 2, 10)} // Фоновая картинка на таймлайне
+        {id: 'A', group: 0, type: 'background', start: new Date(getDateFromString('${meeting.date_start}')), end: new Date(getDateFromString('${meeting.date_end}'))} // Подсветка времени встречи
 
     ]);
 

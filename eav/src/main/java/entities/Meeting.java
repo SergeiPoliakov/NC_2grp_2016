@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 /**
@@ -22,9 +23,35 @@ public class Meeting {
     private  String date_start; // 302
     private  String date_end; // 303
     private  String info; // 304
-    private  String organizer; // 305
+    private  User organizer; // 305
     private  String tag; // 306
     private  String members; // 307
+    private ArrayList<User> users;
+    private  ArrayList<Event> events;
+
+    public ArrayList<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(ArrayList<Event> events) {
+        this.events = events;
+    }
+
+    public User getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(User organizer) {
+        this.organizer = organizer;
+    }
+
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(ArrayList<User> users) {
+        this.users = users;
+    }
 
     public String getId() {
         return id;
@@ -66,14 +93,6 @@ public class Meeting {
         this.info = info;
     }
 
-    public String getOrganizer() {
-        return organizer;
-    }
-
-    public void setOrganizer(String organizer) {
-        this.organizer = organizer;
-    }
-
     public String getTag() {
         return tag;
     }
@@ -92,7 +111,7 @@ public class Meeting {
 
     public Meeting(){}
 
-    public Meeting(String id, String title, String date_start, String date_end, String info, String organizer, String tag, String members) {
+    public Meeting(String id, String title, String date_start, String date_end, String info, User organizer, String tag, String members) {
         this.id = id;
         this.title = title;
         this.date_start = date_start;
@@ -103,7 +122,7 @@ public class Meeting {
         this.members = members;
     }
 
-    public Meeting(String title, String date_start, String date_end, String info, String organizer, String tag, String members) {
+    public Meeting(String title, String date_start, String date_end, String info, User organizer, String tag, String members) {
         this.title = title;
         this.date_start = date_start;
         this.date_end = date_end;
@@ -119,7 +138,7 @@ public class Meeting {
         map.put(302, date_start);
         map.put(303, date_end);
         map.put(304, info);
-        map.put(305, organizer);
+        map.put(305, organizer.getId());
         map.put(306, tag);
         map.put(307, members);
         return map;

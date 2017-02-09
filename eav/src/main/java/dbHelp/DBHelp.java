@@ -946,6 +946,8 @@ public class DBHelp {
         return Res;
     }
 
+
+
     //region Meeting
 
     public ArrayList<Meeting> getAllMeetingsList() throws SQLException {
@@ -972,7 +974,7 @@ public class DBHelp {
             meeting.setDate_start(RS.getString(3));
             meeting.setDate_end(RS.getString(4));
             meeting.setInfo(RS.getString(5));
-            meeting.setOrganizer(RS.getString(6));
+            meeting.setOrganizer(this.getUserByUserID(RS.getInt(6)));
             meeting.setTag(RS.getString(7));
             meeting.setMembers(RS.getString(8));
             Res.add(meeting);
@@ -1023,7 +1025,7 @@ public class DBHelp {
             meeting.setDate_start(RS.getString(3));
             meeting.setDate_end(RS.getString(4));
             meeting.setInfo(RS.getString(5));
-            meeting.setOrganizer(RS.getString(6));
+            meeting.setOrganizer(this.getUserByUserID(RS.getInt(6)));
             meeting.setTag(RS.getString(7));
             Res.add(meeting);
         }
@@ -1034,9 +1036,10 @@ public class DBHelp {
     }
 
 
+    // Добавить встречу (id у обьекта Meeting указывать не нужно)
     public void setMeeting(Meeting meeting) throws SQLException{
 
-        Connection connection = getConnection();
+        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
         int meetingID = 40000;
         TreeMap<Integer, Object> attributeArray = meeting.getArrayWithAttributes();
 
@@ -1066,12 +1069,12 @@ public class DBHelp {
         PS1.close();
 
         // 3) Добавление ссылки Встреча - Участники (админ в анном случае):
-        String  idUser = meeting.getOrganizer();
+        Integer  idUser = meeting.getOrganizer().getId();
         int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
         PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
         PS2.setInt(1, meetingID ); // ID встречи
         PS2.setInt(2, referenceAttrId); // ID параметра(307)
-        PS2.setString(3, idUser); // ID организатора
+        PS2.setInt(3, idUser); // ID организатора
         PS2.executeQuery(); //PS2.executeBatch();
         PS2.close();
 
@@ -1131,7 +1134,7 @@ public class DBHelp {
     }
 
 
-    public ArrayList<User> getUsersAtMeeting(String meetingID) throws IllegalAccessException, IllegalArgumentException,
+    public ArrayList<User> getUsersAtMeeting(int meetingID) throws IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, NoSuchMethodException, SecurityException, SQLException, NullPointerException{
         ArrayList<User> Res = new ArrayList<>();
         Connection Con = getConnection();
@@ -1145,7 +1148,7 @@ public class DBHelp {
                 "      LEFT JOIN PARAMS pa1 " +
                 "        ON re.REFERENCE = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
                 "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 307 ORDER BY re.OBJECT_ID");
-        PS.setString(1, meetingID); // В качестве параметра id встречи
+        PS.setInt(1, meetingID); // В качестве параметра id встречи
         ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         while (RS.next()) {
             User user = this.getUserAndEventByUserID(RS.getInt(1));
@@ -1192,7 +1195,7 @@ public class DBHelp {
         meeting.setDate_start(RS.getString(3));
         meeting.setDate_end(RS.getString(4));
         meeting.setInfo(RS.getString(5));
-        meeting.setOrganizer(RS.getString(6));
+        meeting.setOrganizer(this.getUserByUserID(RS.getInt(6)));
         meeting.setTag(RS.getString(7));
 
         RS.close();
@@ -1206,9 +1209,14 @@ public class DBHelp {
 
     public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-        ArrayList<User> oldusers = new DBHelp().getUsersAtMeeting("28"); // ID
+        User user = new User();
+        user.setId(10003);
+        Meeting meeting = new Meeting("Название", "02.02.2017 16:45", "02.02.2017 22:45", "Информация я написал", user, "Привяу", "");
+        System.out.println();
+        new DBHelp().setMeeting(meeting);
+        //ArrayList<User> oldusers = new DBHelp().getUsersAtMeeting("28"); // ID
 
-        System.out.print("dsd");
+        //System.out.print("dsd");
 
         //Meeting ms = new DBHelp().getMeeting(28);
         //System.out.println(ms.getTitle());

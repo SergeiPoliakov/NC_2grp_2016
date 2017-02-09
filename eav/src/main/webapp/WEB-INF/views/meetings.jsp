@@ -18,7 +18,6 @@
 <head>
     <title>Ваши встречи</title>
     <%@include file='header.jsp'%>
-    <%@include file='leftMenu.jsp'%>
 
     <link rel="stylesheet" type="text/css" href="resources\css\bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="resources\css\bootstrap-datetimepicker.min.css">
@@ -47,7 +46,7 @@
                     <a href="/leaveMeeting${meeting.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Покинуть</span></button></a>
                 </div>
                 <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item">Организатор: <a href='/user${meeting.organizer}'>${meeting.organizer}</a></li>
+                    <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>
                     <li class="list-group-item">Начало: ${meeting.date_start}</li>
                     <li class="list-group-item">Окончание: ${meeting.date_end}</li>
                     <li class="list-group-item">Описание: ${meeting.info}</li>
@@ -60,7 +59,7 @@
     <!-- Форма для создания новой встречи -->
     <div id="meetingmodal" class="modal fade">
         <div class="modal-dialog">
-            <form id="eventForm" name="creation" action="/userAddEvent" method="post">
+            <form id="eventForm" name="creation" action="/addMeeting" method="post">
                 <div class="modal-content">
                     <!-- Заголовок модального окна -->
                     <div class="modal-header">

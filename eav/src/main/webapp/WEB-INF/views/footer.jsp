@@ -9,7 +9,6 @@
          pageEncoding="utf8" %>
 <html>
 <head>
-    <title>Title</title>
 
     <style>
         html, body {
@@ -24,7 +23,7 @@
             min-height: 100%;
         }
 
-        div {
+        footer {
 
             color: #337AB7;
         }

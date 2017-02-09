@@ -18,7 +18,6 @@
 <head>
     <title>${user.name} ${user.surname}</title>
     <%@include file='header.jsp'%>
-    <%@include file='leftMenu.jsp'%>
 
     <meta charset="UTF-8">
 
@@ -46,19 +45,25 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card" style="width: 30rem;">
-                <h3 class="card-title text-center">${user.name} ${user.surname}</h3>
-                <a href="#" class="thumbnail thumbnail-my card-img-top">
-                    <img src="http://s5.postimg.org/4xpbh5oo3/user_000000_128.png" alt='Изображение'>
-                </a>
+                <h4 class="card-title text-center">${user.name} ${user.middleName} ${user.surname}</h4>
+                <div class="card-title text-center">
+                    <small class=" text-muted"><span
+                            class="glyphicon glyphicon-user"></span> ${user.login} </small>
+                </div>
+                <div class="profile-userpic">
+                    <img src="https://fshoke.com/wp-content/uploads/2016/01/Sean-Penn-mixed-with-Leonardo-DiCaprio.jpg" class="img-responsive"  alt='Изображение' >
+                </div>
+                <div class="profile-userbuttons">
+                    <a href="/viewProfile/${user.id}"><button type="button" class="btn btn-primary btn-xs"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>
+                    <a href="/sendMessage/${user.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
+                    <a href="/deleteFriend/${user.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
+                </div>
                 <ul class="list-group list-group-my list-group-flush">
                     <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
-                    <li class="list-group-item">Город: ${user.country}</li>
-                    <li class="list-group-item">Пол: ${user.sex.toLowerCase()}</li>
+                    <li class="list-group-item">Страна: ${user.country}</li>
+                    <li class="list-group-item">Пол: ${user.sex}</li>
                     <li class="list-group-item">О себе: ${user.additional_field}</li>
                 </ul>
-                <button id="inviteButton" type="button" class="btn btn-success btn-group-justified">
-                    <span class="glyphicon glyphicon glyphicon-user" aria-hidden="true"></span> Добавить в друзья
-                </button>
             </div>
         </div>
         <!-- Список шаблонов задач -->
@@ -243,7 +248,7 @@
 
     // Открытие полной картинки при нажатии
     $(function() {
-        $('.thumbnail').on('click', function() {
+        $('.profile-userpic').on('click', function() {
             $('.imagepreview').attr('src', $(this).find('img').attr('src'));
             $('#imagemodal').modal('show');
         });

@@ -9,8 +9,6 @@
          pageEncoding="utf8" %>
 <html lang="en">
 <head>
-    <title>Title</title>
-
 
 
     <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
