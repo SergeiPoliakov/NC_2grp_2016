@@ -48,7 +48,7 @@ public class MeetingServiceImp implements MeetingService {
     }
 
     // Добавление пользователей на встречу
-    public void setUsersToMeeting(String meetingID, String... userIDs) throws SQLException {
+    public void setUsersToMeeting(int meetingID, String... userIDs) throws SQLException {
         new DBHelp().setUsersToMeeting(meetingID, userIDs);
     }
 

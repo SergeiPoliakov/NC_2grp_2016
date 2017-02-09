@@ -32,6 +32,17 @@ public class User {
 
     private ArrayList<Event> eventsUser;
 
+    private ArrayList<User> friends;
+
+    public ArrayList<User> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(ArrayList<User> friends) {
+        this.friends = friends;
+    }
+
+
     public Integer getId() {
         return id;
     }

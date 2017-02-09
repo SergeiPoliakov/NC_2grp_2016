@@ -1103,13 +1103,13 @@ public class DBHelp {
     }
 
 
-    public void setUsersToMeeting(String meetingID, String... userIDs) throws SQLException{
+    public void setUsersToMeeting(int meetingID, String... userIDs) throws SQLException{
         Connection connection = getConnection();
         int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
         PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
 
         for (int i = 0; i < userIDs.length; i++) {
-            PS2.setString(1, meetingID); // ID встречи
+            PS2.setInt(1, meetingID); // ID встречи
             PS2.setInt(2, referenceAttrId); // ID параметра(307)
             PS2.setString(3, userIDs[i]); // ID пользователя
             PS2.addBatch();

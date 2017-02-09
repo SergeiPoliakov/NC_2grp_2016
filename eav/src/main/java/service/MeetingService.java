@@ -33,7 +33,7 @@ interface MeetingService {
             IllegalArgumentException, InvocationTargetException;
 
     @WebMethod
-    void setUsersToMeeting(String meetingID, String... userIDs) throws SQLException;
+    void setUsersToMeeting(int meetingID, String... userIDs) throws SQLException;
 
     @WebMethod
     void removeUsersFromMeeting(String meetingID, String... userIDs) throws SQLException;

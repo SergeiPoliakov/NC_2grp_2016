@@ -45,9 +45,11 @@ public class MeetingController {
     public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
         Meeting meeting = meetingService.getMeetingWithUsers(meetingID);
+        meeting.getOrganizer().setFriends(userService.getFriendListCurrentUser());
         m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
-
-        return "/meeting";
+        if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername()))
+            return "/meetingAdmin";
+        else return "/meetingAdmin";
     }
 
     //Добавление встречи
@@ -61,7 +63,14 @@ public class MeetingController {
 
         Meeting meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), tag, "");
         meetingService.setMeeting(meeting);
-
         return "redirect:/meetings";
+    }
+    @RequestMapping(value = "/inviteUserAtMeeting{meetingID}", method = RequestMethod.POST)
+    public String inviteUserAtMeeting(@RequestParam("userIDs") String userIDs,
+                                      @PathVariable("meetingID") Integer meetingID) throws SQLException {
+
+        String[] users = userIDs.split(",");
+        meetingService.setUsersToMeeting(meetingID, users);
+        return "redirect:/meeting{meetingID}";
     }
 }
