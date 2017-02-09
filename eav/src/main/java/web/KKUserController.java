@@ -1,15 +1,13 @@
 package web;
 
 import dbHelp.DBHelp;
+import entities.Event;
 import entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import service.EventServiceImp;
 import service.UserServiceImp;
 
@@ -40,23 +38,11 @@ public class KKUserController {
     }
 
     @RequestMapping(value = "/userAddEvent", method = RequestMethod.POST)
-    public String addEvent(@RequestParam("name") String name,
-                           @RequestParam("date_begin") String date_begin,
-                           @RequestParam("date_end") String date_end,
-                           @RequestParam("priority") String priority,
-                           @RequestParam("info") String info
-        ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    public String addEvent(@ModelAttribute("setEvent") Event event
+    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
 
-        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
-        mapAttr.put(101, date_begin);
-        mapAttr.put(102, date_end);
-        mapAttr.put(103, null); // Продолжительность события. Пока что так, потом исправить, вставить расчет
-        mapAttr.put(104, info);
-        mapAttr.put(105, priority);
-
-
-        eventService.setNewEvent(1002, name, mapAttr); // Передаем в хелпер задачу со всеми атрибутами
+        eventService.setNewEvent(event); // Передаем в хелпер задачу со всеми атрибутами
 
         return "redirect:/main-login";
     }
@@ -64,21 +50,9 @@ public class KKUserController {
     // Редактирование события
     @RequestMapping(value = "/userChangeEvent/{eventId}", method = RequestMethod.POST)
     public String changeEvent(@PathVariable("eventId") Integer eventId,
-                              @RequestParam("name") String name,
-                              @RequestParam("date_begin") String date_begin,
-                              @RequestParam("date_end") String date_end,
-                              @RequestParam("priority") String priority,
-                              @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+                              @ModelAttribute("updateEvent") Event event) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
-        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
-        mapAttr.put(101, date_begin);
-        mapAttr.put(102, date_end);
-        mapAttr.put(104, info);
-        mapAttr.put(105, priority);
-
-
-        // mapAttr.put(103, date_begin - date_end); // Продолжительность, потом вставить ее расчет
-        eventService.updateEvent(eventId, name, mapAttr);
+        eventService.updateEvent(eventId, event);
         return "redirect:/main-login";
     }
 

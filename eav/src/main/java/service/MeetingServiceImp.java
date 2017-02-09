@@ -44,7 +44,7 @@ public class MeetingServiceImp implements MeetingService {
     public void updateEvent(String meetingID, Meeting newmeeting) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        new DBHelp().updateEvent(meetingID, newmeeting);
+        new DBHelp().updateMeeting(meetingID, newmeeting);
     }
 
     // Добавление пользователей на встречу

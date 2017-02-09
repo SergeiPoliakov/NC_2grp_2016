@@ -34,6 +34,8 @@ public class User {
 
     private ArrayList<User> friends;
 
+    private ArrayList<User> message;
+
     public ArrayList<User> getFriends() {
         return friends;
     }
@@ -42,6 +44,13 @@ public class User {
         this.friends = friends;
     }
 
+    public ArrayList<User> getMessage() {
+        return message;
+    }
+
+    public void setMessage(ArrayList<User> message) {
+        this.message = message;
+    }
 
     public Integer getId() {
         return id;

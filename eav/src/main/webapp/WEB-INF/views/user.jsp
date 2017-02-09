@@ -18,7 +18,7 @@
 <head>
     <title>${user.name} ${user.surname}</title>
     <%@include file='header.jsp'%>
-    <%@include file='leftMenu.jsp'%>
+
 
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="resources\css\bootstrap4.min.css">

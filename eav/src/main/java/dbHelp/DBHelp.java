@@ -534,29 +534,29 @@ public class DBHelp {
     }
 
 
-    public void setNewEvent(int ObjTypeID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
+    public void setNewEvent(Event event) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
-
+        Connection Con = getConnection();
+        TreeMap<Integer, Object> attributeArray = event.getArrayWithAttributes();
         // 1) Добавление события:
         PreparedStatement PS = Con.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
         Statement st = Con.createStatement();
-        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + ObjTypeID);
+        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + event.objTypeID);
         int newID = 0;
         while (RS.next()) {
             newID = RS.getInt(1) + 1;
         }
         PS.setInt(1, newID);
-        PS.setInt(2, ObjTypeID);
-        PS.setObject(3, name);
+        PS.setInt(2, event.objTypeID);
+        PS.setObject(3, event.getName());
         PS.executeUpdate();
         PS.close();
 
         // 2) Добавление атрибутов события (параметры со страницы создания события):
         PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
-        while (!massAttr.isEmpty()) {
-            java.util.Map.Entry<Integer, Object> En = massAttr.pollFirstEntry();
+        while (!attributeArray.isEmpty()) {
+            java.util.Map.Entry<Integer, Object> En = attributeArray.pollFirstEntry();
             PS1.setObject(1, En.getValue());
             PS1.setInt(2, newID);
             PS1.setInt(3, En.getKey());
@@ -566,7 +566,7 @@ public class DBHelp {
         PS1.close();
 
         // 3) Добавление ссылки Юзер - Событие (связывание):
-        int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
+        int idUser = userService.getObjID(userService.getCurrentUsername());
         int attrId = 13;
         PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
         PS2.setInt(1, idUser); // System.out.println(idUser);
@@ -605,13 +605,14 @@ public class DBHelp {
     }
 
 
-    public void updateEvent(int ObjID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
+    public void updateEvent(int ObjID, Event event) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         Connection Con = getConnection();
+        TreeMap<Integer, Object> attributeArray = event.getArrayWithAttributes();
         PreparedStatement PS = Con.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
-        while (!massAttr.isEmpty()) {
-            java.util.Map.Entry<Integer, Object> En = massAttr.pollFirstEntry();
+        while (!attributeArray.isEmpty()) {
+            java.util.Map.Entry<Integer, Object> En = attributeArray.pollFirstEntry();
             PS.setObject(1, En.getValue());
             PS.setInt(2, ObjID);
             PS.setInt(3, En.getKey());
@@ -621,8 +622,8 @@ public class DBHelp {
         PS.close();
 
         PreparedStatement PS1 = Con.prepareStatement("UPDATE OBJECTS SET OBJECT_NAME = ? WHERE OBJECT_ID = ?");
-        PS1.setString(1, name);
-        PS1.setInt(2, ObjID); //
+        PS1.setString(1, event.getName());
+        PS1.setInt(2, ObjID);
         PS1.executeUpdate();
         PS1.close();
 
@@ -1082,11 +1083,11 @@ public class DBHelp {
     }
 
 
-    public void updateEvent(String meetingID, Meeting newmeeting) throws SQLException,
+    public void updateMeeting(String meetingID, Meeting newmeeting) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
 
-        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection connection = getConnection();
         PreparedStatement PS = connection.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
         TreeMap<Integer, Object> arrayAttrib = newmeeting.getArrayWithAttributes();
 

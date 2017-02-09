@@ -6,8 +6,11 @@ package entities;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TreeMap;
 
 public class Event {
+
+    public static final int objTypeID = 1002;
 
     private int id;
     private int host_id;
@@ -69,14 +72,23 @@ public class Event {
 
     public Event() {}
 
-    public Event(int host_id, String name, String date_begin, String date_end, String priority, String info) {
-        this.host_id = host_id;
+    public Event(String name, String date_begin, String date_end, String priority, String info) {
         this.name = name;
         this.date_begin = date_begin;
         this.date_end = date_end;
         this.priority = priority;
         this.info = info;
 
+    }
+
+    public TreeMap<Integer, Object> getArrayWithAttributes(){
+        TreeMap<Integer, Object> map = new TreeMap<>();
+        map.put(101, date_begin);
+        map.put(102, date_end);
+        map.put(103, null); // Продолжительность события. Пока что так, потом исправить, вставить расчет
+        map.put(104, info);
+        map.put(105, priority);
+        return map;
     }
 
 }

@@ -38,7 +38,6 @@
 
 
     <%@include file='header.jsp'%>
-    <%@include file='leftMenu.jsp'%>
 
 </head>
 <body>

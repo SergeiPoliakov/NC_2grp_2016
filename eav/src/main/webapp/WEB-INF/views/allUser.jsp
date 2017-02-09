@@ -74,7 +74,7 @@
 <body>
 
 <%@include file='header.jsp' %>
-<%@include file='leftMenu.jsp'%>
+
 
 <div class="container">
     <div class="row">

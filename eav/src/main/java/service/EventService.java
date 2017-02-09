@@ -26,13 +26,13 @@ interface EventService {
 
 
     @WebMethod
-    void setNewEvent(int ObjTypeID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
+    void setNewEvent(Event event) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException;
 
 
     @WebMethod
-    void updateEvent(int ObjID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
+    void updateEvent(int ObjID, Event event) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException;
 

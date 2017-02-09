@@ -35,17 +35,17 @@ public class EventServiceImp implements EventService {
     }
 
     // Метод добавления события со всеми его атрибутами
-    public void setNewEvent(int ObjTypeID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
+    public void setNewEvent(Event event) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        new DBHelp().setNewEvent(ObjTypeID, name, massAttr);
+        new DBHelp().setNewEvent(event);
     }
 
     // Обновление события
-    public void updateEvent(int ObjID, String name, TreeMap<Integer, Object> massAttr) throws SQLException,
+    public void updateEvent(int ObjID, Event event) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        new  DBHelp().updateEvent(ObjID, name, massAttr);
+        new  DBHelp().updateEvent(ObjID, event);
     }
 
     // Получение одного конкретного события данного пользователя по id этого события
