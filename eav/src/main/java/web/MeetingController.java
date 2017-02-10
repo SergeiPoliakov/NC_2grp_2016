@@ -47,9 +47,12 @@ public class MeetingController {
         Meeting meeting = meetingService.getMeetingWithUsers(meetingID);
         meeting.getOrganizer().setFriends(userService.getFriendListCurrentUser());
         m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
-        if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername()))
+        if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
             return "/meetingAdmin";
-        else return "/meetingAdmin";
+        else
+            if (meetingService.isMeetingMember(userService.getObjID(userService.getCurrentUsername()), meeting)) // Страницу запрашивает участник встречи
+                return "/meetingMember";
+        return "/main-login";
     }
 
     //Добавление встречи
@@ -73,4 +76,5 @@ public class MeetingController {
         meetingService.setUsersToMeeting(meetingID, users);
         return "redirect:/meeting{meetingID}";
     }
+
 }

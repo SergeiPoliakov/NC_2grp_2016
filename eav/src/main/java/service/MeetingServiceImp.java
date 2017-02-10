@@ -82,4 +82,12 @@ public class MeetingServiceImp implements MeetingService {
         return meeting;
     }
 
+    public boolean isMeetingMember(int userID, Meeting meeting){
+        for (User usr:meeting.getUsers()) {
+            if (usr.getId() == userID)
+                return true;
+        }
+        return false;
+    }
+
 }
