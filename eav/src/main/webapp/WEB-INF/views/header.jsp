@@ -13,7 +13,7 @@
 
     <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/resources/font-awesome/css/font-awesome.css" rel="stylesheet">
 
     <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
 

@@ -556,9 +556,11 @@
 }
 .fa-twitter-square:before {
   content: "\f081";
+  color: #66696b;
 }
 .fa-facebook-square:before {
   content: "\f082";
+  color: #66696b;
 }
 .fa-camera-retro:before {
   content: "\f083";
@@ -605,6 +607,7 @@
 }
 .fa-github-square:before {
   content: "\f092";
+  color: #66696b;
 }
 .fa-upload:before {
   content: "\f093";
@@ -626,13 +629,16 @@
 }
 .fa-twitter:before {
   content: "\f099";
+  color: #66696b;
 }
 .fa-facebook-f:before,
 .fa-facebook:before {
   content: "\f09a";
+  color: #66696b;
 }
 .fa-github:before {
   content: "\f09b";
+  color: #66696b;
 }
 .fa-unlock:before {
   content: "\f09c";
@@ -951,6 +957,7 @@
 }
 .fa-github-alt:before {
   content: "\f113";
+  color: #66696b;
 }
 .fa-folder-o:before {
   content: "\f114";
@@ -1217,6 +1224,7 @@
 }
 .fa-instagram:before {
   content: "\f16d";
+  color: #66696b;
 }
 .fa-flickr:before {
   content: "\f16e";
@@ -1786,6 +1794,7 @@
 }
 .fa-facebook-official:before {
   content: "\f230";
+  color: #66696b;
 }
 .fa-pinterest-p:before {
   content: "\f231";

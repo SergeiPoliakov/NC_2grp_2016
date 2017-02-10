@@ -26,8 +26,11 @@
     <link rel="stylesheet" href="/resources/assets/animate.css/animate.min.css">
     <link rel="stylesheet" href="/resources/assets/theme/css/style.css">
 
-
-
+    <style>
+        h2 {
+            color: #aaadaf;
+        }
+    </style>
 </head>
 <body>
 <section class="mbr-section mbr-parallax-background" id="msg-box4-e" style="padding-top: 120px; padding-bottom: 120px;">
@@ -39,8 +42,8 @@
                     <div class="mbr-figure"><iframe class="mbr-embedded-video" src="https://www.youtube.com/embed/1Q5tfgkjws4?rel=0&amp;amp;showinfo=0&amp;autoplay=0&amp;loop=0" width="1280" height="720" frameborder="0" allowfullscreen></iframe></div>
                 </div>
                 <div class="mbr-table-cell col-md-5 text-xs-center text-md-left content-size">
-                    <h3 class="mbr-section-title display-2">БЫСТРЫЙ СТАРТ: ВИДЕО</h3>
-                    <div><a class="btn btn-black" href="#">ПОДРОБНЕЕ</a></div>
+                    <h2>БЫСТРЫЙ СТАРТ: ВИДЕО</h2>
+                    <button class="btn btn-info btn-sm" id="btn-read">ПОДРОБНЕЕ</button>
                 </div>
             </div>
         </div>
@@ -52,11 +55,11 @@
         <div class="row">
             <div class="mbr-table-md-up">
                 <div class="mbr-table-cell col-md-5 text-xs-center text-md-right content-size">
-                    <h3 class="mbr-section-title display-2">ПРИСОЕДИНЯЙТЕСЬ УЖЕ СЕГОДНЯ!</h3>
+                    <h2>ПРИСОЕДИНЯЙТЕСЬ УЖЕ СЕГОДНЯ!</h2>
                     <div class="lead">
                         <p></p>
                     </div>
-                    <div><a class="btn btn-black" href="/addUser">РЕГИСТРАЦИЯ</a></div>
+                    <button class="btn btn-info btn-sm" href="/addUser" id="btn-add">РЕГИСТРАЦИЯ</button>
                 </div>
                 <div class="mbr-table-cell mbr-left-padding-md-up mbr-valign-top col-md-7 image-size" style="width: 50%;">
                     <div class="mbr-figure"><img src="/resources/assets/images/desktop.jpg"></div>

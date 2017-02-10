@@ -25,7 +25,7 @@
 
         footer {
 
-            color: #337AB7;
+            color: #66696b;
         }
         #left { text-align: left; }
         #right { text-align: right; }
