@@ -153,6 +153,26 @@ public class DBHelp {
     }
 
 
+    public ArrayList<Object> getEmail(String email)
+            throws SQLException {
+        ArrayList<Object> Res = new ArrayList<>();
+        Connection Con = getConnection();
+        PreparedStatement PS = Con
+                .prepareStatement("SELECT p.VALUE " +
+                        "FROM PARAMS p " +
+                        "WHERE p.ATTR_ID = 6 and p.VALUE = ?" );
+        PS.setString(1, email);
+        ResultSet RS = PS.executeQuery();
+        while (RS.next()) {
+            Res.add(RS.getObject(1));
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return Res;
+    }
+
+
     public ArrayList<User> getUserList() throws SQLException {
         ArrayList<User> Res = new ArrayList<>();
         Connection Con = getConnection();
@@ -434,7 +454,7 @@ public class DBHelp {
 
     public String getValue(int ObjID, int AttrId) throws SQLException
     {
-        Connection Con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection Con = getConnection();
         PreparedStatement PS = Con
                 .prepareStatement("SELECT VALUE FROM PARAMS WHERE OBJECT_ID = ? and ATTR_ID = ?");
         PS.setInt(1, ObjID);
@@ -1040,7 +1060,7 @@ public class DBHelp {
     // Добавить встречу (id у обьекта Meeting указывать не нужно)
     public void setMeeting(Meeting meeting) throws SQLException{
 
-        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection connection = getConnection();
         int meetingID = 40000;
         TreeMap<Integer, Object> attributeArray = meeting.getArrayWithAttributes();
 
@@ -1122,7 +1142,7 @@ public class DBHelp {
 
 
     public void removeUsersFromMeeting(String meetingID, String... userIDs) throws SQLException{
-        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+        Connection connection = getConnection();
         PreparedStatement PS2 = connection.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ? AND OBJECT_ID = ?");
 
         for (int i = 0; i < userIDs.length; i++) {
@@ -1141,7 +1161,7 @@ public class DBHelp {
         Connection Con = getConnection();
         // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
 
-        PreparedStatement PS = Con.prepareStatement("SELECT DISTINCT " +
+        PreparedStatement PS = Con.prepareStatement("SELECT " +
                 "        re.REFERENCE " +
                 " FROM  OBJECTS ob " +
                 "      LEFT JOIN REFERENCES re " +

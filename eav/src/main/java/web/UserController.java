@@ -2,6 +2,7 @@ package web;
 
 import dbHelp.DBHelp;
 import entities.User;
+import exception.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -121,7 +122,7 @@ public class UserController {
                                @RequestParam("ageUser") String ageDate,
                                @RequestParam("email") String email,
                                @RequestParam("password") String password
-    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, CustomException {
 
         String full_name = name + " " + surname + " " + middle_name;
 

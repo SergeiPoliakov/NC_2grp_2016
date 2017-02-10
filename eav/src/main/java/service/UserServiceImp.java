@@ -3,6 +3,7 @@ package service;
 import dbHelp.DBHelp;
 import entities.Event;
 import entities.User;
+import exception.CustomException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -75,8 +76,12 @@ public class UserServiceImp implements UserService {
     // Добавление нового пользователя
     public void setNewUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        new DBHelp().setNewUser(ObjTypeID, name, massAttr);
+            IllegalArgumentException, InvocationTargetException, CustomException {
+        if (new DBHelp().getEmail(massAttr.get(6)) == null) {
+            new DBHelp().setNewUser(ObjTypeID, name, massAttr);
+        } else {
+            throw new CustomException("Пользователь с таким email'ом уже существует");
+        }
     }
 
     // Обновление профиля пользователя
@@ -109,5 +114,7 @@ public class UserServiceImp implements UserService {
     public ArrayList<User> getFriendListByUserId(int userID) throws SQLException {
         return new DBHelp().getFriendListByUserId(userID);
     }
+
+
 
 }

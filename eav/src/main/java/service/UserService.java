@@ -2,6 +2,7 @@ package service;
 
 import entities.Event;
 import entities.User;
+import exception.CustomException;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -51,7 +52,7 @@ interface UserService {
     @WebMethod
     void setNewUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException;
+            IllegalArgumentException, InvocationTargetException, CustomException;
 
 
     @WebMethod
