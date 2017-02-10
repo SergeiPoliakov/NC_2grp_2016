@@ -45,7 +45,7 @@
             <div class="card" style="width: 30rem;">
                 <h3 class="card-title text-center">${meeting.title}</h3>
                 <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>Вы</a></li>
+                    <li class="list-group-item">Организатор: <a href='/profile'>Вы</a></li>
                     <li class="list-group-item">Начало: ${meeting.date_start}</li>
                     <li class="list-group-item">Окончание: ${meeting.date_end}</li>
                     <li class="list-group-item">Описание: ${meeting.info}</li>
@@ -295,7 +295,7 @@
         <c:forEach items="${meeting.users}" var="user">
         {
             id: ${user.id},
-            content: "<a href='/user${user.id}'>${user.name} ${user.middleName} ${user.surname}</a>",
+            content: "<a href='/viewProfile/${user.id}'>${user.name} ${user.middleName} ${user.surname}</a>",
         },
         </c:forEach>
         {
