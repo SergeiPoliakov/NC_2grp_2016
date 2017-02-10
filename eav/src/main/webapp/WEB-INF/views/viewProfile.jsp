@@ -1,67 +1,92 @@
 <%--
   Created by IntelliJ IDEA.
-  User: Hroniko
-  Date: 01.02.2017
-  Time: 14:57
+  User: Костя
+  Date: 02.02.2017
+  Time: 0:42
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=utf8"
-         pageEncoding="utf8"%>
-<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<html lang="en">
+         pageEncoding="utf8" %>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- 249 СТРОКА, ДОБАВЛЕНИЕ ЗАДАЧИ -->
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>${user.name} ${user.surname}</title>
+    <%@include file='header.jsp'%>
 
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-select.min.css">
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="/resources/css/tipped.css">
     <link rel="stylesheet" type="text/css" href="/resources/css/vis.min.css">
-
     <link rel="stylesheet" type="text/css" href="/resources/css/tlmain.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/jquery.mCustomScrollbar.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
-
     <script type="text/javascript" src="/resources/js/moment-with-locales.min.js"> </script>
-    <script type="text/javascript" src="/resources/js/enscroll-0.6.2.min.js"> </script>
     <script type="text/javascript" src="/resources/js/tipped.js"> </script>
     <script type="text/javascript" src="/resources/js/vis.js"> </script>
-
+    <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/resources/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="/resources/js/bootstrap-select.min.js"> </script>
-
-
-    <%@include file='header.jsp'%>
-
+    <script type="text/javascript" src="/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 </head>
 <body>
-
 <div class="container top-buffer-20">
     <!-- Информация о пользователе -->
     <div class="row">
         <div class="col-md-6">
             <div class="card" style="width: 30rem;">
-                <h3 class="card-title text-center">${user.name} ${user.surname}</h3>
-                <a href="#" class="thumbnail thumbnail-my card-img-top">
-                    <img src="http://s5.postimg.org/4xpbh5oo3/user_000000_128.png" alt='Изображение'>
-                </a>
+                <h4 class="card-title text-center">${user.name} ${user.middleName} ${user.surname}</h4>
+                <div class="card-title text-center">
+                    <small class=" text-muted"><span
+                            class="glyphicon glyphicon-user"></span> ${user.login} </small>
+                </div>
+                <div class="profile-userpic">
+                    <img src="https://fshoke.com/wp-content/uploads/2016/01/Sean-Penn-mixed-with-Leonardo-DiCaprio.jpg" class="img-responsive"  alt='Изображение' >
+                </div>
+                <div class="profile-userbuttons">
+                    <a href="/viewProfile/${user.id}"><button type="button" class="btn btn-primary btn-xs"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>
+                    <a href="/sendMessage/${user.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
+                    <a href="/deleteFriend/${user.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
+                </div>
                 <ul class="list-group list-group-my list-group-flush">
                     <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
-                    <li class="list-group-item">Город: ${user.country}</li>
-                    <li class="list-group-item">Пол: ${user.sex.toLowerCase()}</li>
+                    <li class="list-group-item">Страна: ${user.country}</li>
+                    <li class="list-group-item">Пол: ${user.sex}</li>
                     <li class="list-group-item">О себе: ${user.additional_field}</li>
                 </ul>
-                <button type="button" class="btn btn-success btn-block">Отслеживать</button>
             </div>
         </div>
         <!-- Список шаблонов задач -->
-
+        <div class="col-md-6">
+            <div class="card pull-right" style="width: 30rem;">
+                <div class="card-title">
+                    <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>
+                </div>
+                <ul class="list-group list-group-my list-group-flush text-center navi mCustomScrollbar" data-mcs-theme="minimal-dark" id="cardsholderItems">
+                    <li class="list-group-item list-group-item-info">РАЗ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-danger">ДВА ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-info">ТРИ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-info">ЧЕТЫРЕ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-danger">ПЯТЬ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-warning">ШЕСТЬ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-danger">СЕМЬ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-warning">ВОСЕМЬ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-info">ДЕВЯТЬ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-warning">ДЕСЯТЬ ШАБЛОН</li>
+                </ul>
+                <button type="button" class="btn btn-primary btn-block" id="templateAddButton">Добавить</button>
+            </div>
+        </div>
     </div>
     <!-- Timeline и кнопки -->
     <div class="row">
@@ -96,24 +121,134 @@
         </div>
     </div>
     <!-- Форма для создания новой задачи -->
-
+    <div id="taskmodal" class="modal fade">
+        <div class="modal-dialog">
+            <form id="eventForm" name="creation" action="/userAddEvent" method="post">
+                <div class="modal-content">
+                    <!-- Заголовок модального окна -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title text-center">Создание новой задачи</h4>
+                    </div>
+                    <!-- Основное содержимое модального окна -->
+                    <div class="modal-body">
+                        <div class='row '>
+                            <div class='col-md-6'>
+                                <div class="input-group">
+                                    <span class="input-group-addon">Название</span>
+                                    <input type="text" class="form-control" name="name" id="taskName" placeholder="Введите название задачи">
+                                </div>
+                            </div>
+                            <div class='col-md-6'>
+                                <div class="input-group">
+                                    <div type="text" class="hidden" name="eventId" id="taskID" value = "eventId"></div>
+                                    <span class="input-group-addon">Приоритет</span>
+                                    <select type="text" id="taskPriority" name="priority" class="selectpicker form-control" title="Выберите приоритет">
+                                        <option style="background: #d9534f; color: #fff;" value="Style1">Высокий</option>
+                                        <option style="background: #f0ad4e; color: #fff;" value="Style2">Средний</option>
+                                        <option style="background: #5bc0de; color: #fff;" value="Style3" selected>Низкий</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- DateTime Pickers -->
+                        <div class='row top-buffer-2'>
+                            <div class='col-md-6'>
+                                <div class='input-group date' id='datetimepicker1'>
+                                    <span class="input-group-addon">Начало</span>
+                                    <input type='text' name="date_begin" class="form-control" id="taskStartTime" />
+                                    <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                </div>
+                            </div>
+                            <div class='col-md-6'>
+                                <div class='input-group date' id='datetimepicker2'>
+                                    <span class="input-group-addon">Окончание</span>
+                                    <input type='text' name="date_end" class="form-control" id="taskEndTime" />
+                                    <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top-buffer-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="input-group-addon textarea-addon">Дополнительная информация</div>
+                                    <textarea type='text' name="info" class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-my">
+                            <li class="list-group-item">
+                                Сохранить шаблон
+                                <div class="material-switch pull-right">
+                                    <input id="SaveTemplateCheckBox" type="checkbox"/>
+                                    <label for="SaveTemplateCheckBox" class="label-primary"></label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Футер модального окна -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary" id="modalAddButton">Добавить</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="log"></div>
 </div>
 
 <%@include file='footer.jsp'%>
 
 <script type="text/javascript">
-
-    // Scrollbar для кардхолдера
-
+    // Поле дополнительная информация eventID : info
+    var addInfoArray = {
+    <c:forEach items="${allEvents}" var="event">${event.id}:'${event.info}',</c:forEach>
+    };
+    // Настройка кастомного скроллбара
+    $("#cardsholderItems").mCustomScrollbar({
+        scrollInertia: 275
+    });
     // Modal datetimepickers для создания новой задачи
-
+    $(function () {
+        $('#datetimepicker1').datetimepicker({
+            locale: 'ru'
+            //format: "DD/MM/YYYY hh:mm"
+        });
+        $('#datetimepicker2').datetimepicker({
+            locale: 'ru',
+            useCurrent: false
+        });
+        $("#datetimepicker1").on("dp.change", function (e) {
+            $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
+        });
+        $("#datetimepicker2").on("dp.change", function (e) {
+            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+        });
+    });
     // Нажатие кнопки под шаблонами
-
-
+    document.getElementById('templateAddButton').onclick = function() {
+        $("#modalAddButton").html('Добавить');
+        $('#taskmodal').modal('show');
+        $('#taskmodal').on('shown.bs.modal', function () {
+            $("#SaveTemplateCheckBox").prop("checked", true);
+            $('#taskName').val("Новая задача");
+            $('#taskName').focus();
+            $('#taskName').select();
+        })
+    };
+    // Нажатие кнопки "Добавить" в всплывающем окне
+    document.getElementById('modalAddButton').onclick = function() {
+        $('#taskmodal').modal('hide');
+    };
 
     // Открытие полной картинки при нажатии
     $(function() {
-        $('.thumbnail').on('click', function() {
+        $('.profile-userpic').on('click', function() {
             $('.imagepreview').attr('src', $(this).find('img').attr('src'));
             $('#imagemodal').modal('show');
         });
@@ -134,15 +269,83 @@
     // Configuration for the Timeline
     var options = {
         locale: 'RU',
-        editable: false,
-        selectable: false,
+        editable: true,
+        selectable: true,
         stack: false,
         multiselect: true,
         dataAttributes: 'all',
-        itemsAlwaysDraggable: false,
+        itemsAlwaysDraggable: true,
         zoomMin: 60000, // 1 минута
         zoomMax: 157700000000, //5 лет
 
+        // Добавление задачи
+        onAdd: function (item, callback) {
+            $('#eventForm').attr('action', '/userAddEvent');
+            $('#taskName').val("Новая задача");
+            $("#modalAddButton").html('Добавить');
+            document.getElementById('taskStartTime').value = toLocaleDateTimeString(item.start);
+            document.getElementById('taskEndTime').value = toLocaleDateTimeString(item.start);
+            $('#taskmodal').modal('show');
+            document.getElementById('modalAddButton').onclick = function() {
+                $('#taskmodal').modal('hide');
+                // Изменение элемента на таймлайне, наверное уже не нужно, т.к. сервер сам перегружает данные, но на всякий пусть останется
+                /*item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
+                 item.start = getDateFromString(document.getElementById('taskStartTime').value);
+                 item.end = getDateFromString(document.getElementById('taskEndTime').value);
+                 item.content = document.getElementById('taskName').value;
+                 $('#taskmodal').modal('hide');
+                 callback(item);
+                 createTooltip();*/
+            };
+            callback(null);
+        },
+
+        // Удаление задачи
+        onRemove: function (item, callback) {
+            $('#eventForm').attr('action', '/userRemoveEvent/'+item.id);
+            $( "#eventForm" ).submit();
+            callback(item);
+        },
+
+        // Обновление задачи
+        onUpdate: function (item, callback) {
+            $('#eventForm').attr('action', '/userChangeEvent/'+item.id);
+            $("#modalAddButton").html('Сохранить');
+            $('#taskStartTime').val(toLocaleDateTimeString(item.start));
+            $('#taskEndTime').val(toLocaleDateTimeString(item.end));
+            $('#taskID').val(item.id);
+            $('#taskName').val(item.content);
+            $('#taskAddInfo').val(addInfoArray[item.id]);
+            $('#taskPriority').val(item.className);
+            $('#taskPriority').selectpicker('refresh');
+            $('#taskmodal').modal('show');
+            document.getElementById('modalAddButton').onclick = function() {
+                $('#taskmodal').modal('hide');
+                // Изменение элемента на таймлайне, наверное уже не нужно, т.к. сервер сам перегружает данные, но на всякий пусть останется
+                /*item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
+                 item.start = getDateFromString(document.getElementById('taskStartTime').value);
+                 item.end = getDateFromString(document.getElementById('taskEndTime').value);
+                 item.content = document.getElementById('taskName').value;
+                 $('#taskmodal').modal('hide');
+                 callback(item);
+                 createTooltip();*/
+            };
+            callback(null);
+        },
+
+        // Перемещение задачи
+        onMove: function (item, callback) {
+            $('#eventForm').attr('action', '/userChangeEvent/'+item.id);
+            $("#modalAddButton").html('Сохранить');
+            $('#taskStartTime').val(toLocaleDateTimeString(item.start));
+            $('#taskEndTime').val(toLocaleDateTimeString(item.end));
+            $('#taskID').val(item.id);
+            $('#taskName').val(item.content);
+            $('#taskPriority').val(item.className);
+            $('#taskPriority').selectpicker('refresh');
+            $( "#eventForm" ).submit();
+            callback(item);
+        }
     };
     // Create a Timeline
     var timeline = new vis.Timeline(container, items, options);
@@ -150,18 +353,18 @@
     // Вывод информации, при наведении на элемент
     function createTooltip(){
         Tipped.create('.vis-item', function(element) {
-                    var itemId = $(element).attr('data-id');
-                    var item = items.get(itemId);
-                    return {
-                        title: item.content,
-                        content: toLocaleDateTimeString(item.start) + ' - ' + toLocaleDateTimeString(item.end)
-                    }
-                },
-                {
-                    position: 'bottom',
-                    behavior: 'hide',
-                    cache: false
+                var itemId = $(element).attr('data-id');
+                var item = items.get(itemId);
+                return {
+                    title: item.content,
+                    content: toLocaleDateTimeString(item.start) + ' - ' + toLocaleDateTimeString(item.end)
                 }
+            },
+            {
+                position: 'bottom',
+                behavior: 'hide',
+                cache: false
+            }
         );
     }
 
@@ -180,11 +383,11 @@
         var reggie = /(\d{2}).(\d{2}).(\d{4}) (\d{2}):(\d{2})/;
         var dateArray = reggie.exec(dateString);
         var dateObject = new Date(
-                (+dateArray[3]),
-                (+dateArray[2])-1, // Careful, month starts at 0!
-                (+dateArray[1]),
-                (+dateArray[4]),
-                (+dateArray[5])
+            (+dateArray[3]),
+            (+dateArray[2])-1, // Careful, month starts at 0!
+            (+dateArray[1]),
+            (+dateArray[4]),
+            (+dateArray[5])
         );
         return dateObject;
     }
@@ -200,7 +403,11 @@
         }
         return age;
     }
-
+    // Склонение существительных после числительных
+    function declOfNum(number, titles) {
+        cases = [2, 0, 1, 1, 1, 2];
+        return number + ' ' + titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
+    }
     // Просмотр сегодняшнего дня
     document.getElementById('showTodayButton').onclick = function() {
         var currentDate = new Date();
@@ -254,16 +461,12 @@
         var log = document.getElementById('log');
         var msg = document.createElement('div');
         msg.innerHTML = 'event=' + JSON.stringify(event) + ', ' +
-                'properties=' + JSON.stringify(properties);
+            'properties=' + JSON.stringify(properties);
         log.firstChild ? log.insertBefore(msg, log.firstChild) : log.appendChild(msg);
     }
     createTooltip();
     // Установка возраста
-    $("#userAge").html('Возраст: ' + getAge(getDateFromString('${user.ageDate}')));
+    $("#userAge").html('Возраст: ' + declOfNum(getAge(getDateFromString('${user.ageDate}')), ['год', 'года', 'лет']));
 </script>
 </body>
 </html>
-
-
-
-

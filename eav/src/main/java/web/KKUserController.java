@@ -27,14 +27,13 @@ public class KKUserController {
 
     private EventServiceImp eventService = EventServiceImp.getInstance();
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public String getUserPage(User user, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        user = userService.getCurrentUser(); // Получаем Объект текущего пользователя
-        logger.info("User = " + user.toString());
-        Integer idUser = userService.getObjID(userService.getCurrentUsername());
+    @RequestMapping(value = "/user{id}")
+    public String viewUser(@PathVariable("id") int userId,
+                           ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+        User user = userService.getUserByUserID(userId);
         m.addAttribute(user);
-        m.addAttribute("allEvents", eventService.getEventList(idUser));
-        return "user";
+        m.addAttribute("allEvents", eventService.getEventList(userId));
+        return "/user";
     }
 
     @RequestMapping(value = "/userAddEvent", method = RequestMethod.POST)
