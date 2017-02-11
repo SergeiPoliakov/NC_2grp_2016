@@ -1,5 +1,6 @@
 package service;
 
+import entities.DataObject;
 import entities.Event;
 import entities.User;
 import exception.CustomException;
@@ -50,7 +51,7 @@ interface UserService {
 
 
     @WebMethod
-    void setNewUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
+    void setNewUser(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException, CustomException;
 
@@ -75,6 +76,9 @@ interface UserService {
 
     @WebMethod
     ArrayList<User> getFriendListByUserId(int userID) throws SQLException;
+
+    @WebMethod
+    int generationID(int objTypeID) throws SQLException;
 }
 
 

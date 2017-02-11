@@ -1,9 +1,6 @@
 package dbHelp;
 
-import entities.Event;
-import entities.Meeting;
-import entities.User;
-import entities.Message;
+import entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.UserServiceImp;
@@ -42,6 +39,17 @@ public class DBHelp {
 
     private static void CloseConnection(Connection Con) throws SQLException {
         Con.close();
+    }
+
+    public int generationID(int objTypeID) throws SQLException {
+        Connection Con = getConnection();
+        Statement st = Con.createStatement();
+        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + objTypeID);
+        int newID = 0;
+        while (RS.next()) {
+            newID = RS.getInt(1) + 1;
+        }
+        return newID;
     }
 
     public int getObjID(String username) throws SQLException
@@ -519,28 +527,23 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    public void setNewUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
+    public void setNewUser(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         Connection Con = getConnection();
         PreparedStatement PS = Con
                 .prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
-        Statement st = Con.createStatement();
-        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = 1001");
-        int newID = 0;
-        while (RS.next()) {
-            newID = RS.getInt(1) + 1;
-        }
+        int newID = generationID(dataObject.getObjectTypeId());
         PS.setInt(1, newID);
-        PS.setInt(2, ObjTypeID);
-        PS.setObject(3, name);
+        PS.setInt(2, dataObject.getObjectTypeId());
+        PS.setObject(3, dataObject.getName());
         PS.executeUpdate();
         PS.close();
 
         PreparedStatement PS1 = Con
                 .prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
-        while (!massAttr.isEmpty()) {
-            java.util.Map.Entry<Integer, String> En = massAttr.pollFirstEntry();
+        while (!dataObject.getParams().isEmpty()) {
+            java.util.Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
             PS1.setObject(1, En.getValue());
             PS1.setInt(2, newID);
             PS1.setInt(3, En.getKey());
@@ -551,6 +554,48 @@ public class DBHelp {
 
 
         CloseConnection(Con);
+    }
+
+    ///////// Новое 2017-02-12
+    public TreeMap<Integer, Object> getUserById(int userID) throws SQLException {
+        Connection Con = getConnection();
+        Integer userTypeID = 1001; // ID типа Пользователь
+        PreparedStatement PS = Con.
+                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
+                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
+                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
+                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
+                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
+                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
+                        "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " +
+                        "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " +
+                        "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " +
+                        "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
+                        "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
+                        "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
+                        "WHERE ob.OBJECT_TYPE_ID = ? AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID");
+        PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
+        PS.setInt(2, userID); // В качестве параметра id пользователя
+        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+        TreeMap<Integer, Object> treeMap = null;
+        while (RS.next()) {
+            treeMap = new TreeMap<>();
+            // treeMap.put(1, RS.getInt(1)); // id уже не нужно
+            treeMap.put(1, RS.getString(2)); // name
+            treeMap.put(2, RS.getString(3)); // surname
+            treeMap.put(3, RS.getString(4)); // MiddleName
+            treeMap.put(4, RS.getString(5)); // Login
+            treeMap.put(5, RS.getString(6)); // AgeDate
+            treeMap.put(6, RS.getString(7)); // Email
+            treeMap.put(7, RS.getString(8)); // Password
+            treeMap.put(8, RS.getString(9)); // Sex
+            treeMap.put(9, RS.getString(10)); // Country
+            treeMap.put(10, RS.getString(11)); // Additional_field
+        }
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return treeMap;
     }
 
 

@@ -1,6 +1,7 @@
 package service;
 
 import dbHelp.DBHelp;
+import entities.DataObject;
 import entities.Event;
 import entities.User;
 import exception.CustomException;
@@ -74,14 +75,14 @@ public class UserServiceImp implements UserService {
 
 
     // Добавление нового пользователя
-    public void setNewUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
+    public void setNewUser(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException, CustomException {
-        if (new DBHelp().getEmail(massAttr.get(6)) == null) {
-            new DBHelp().setNewUser(ObjTypeID, name, massAttr);
-        } else {
-            throw new CustomException("Пользователь с таким email'ом уже существует");
-        }
+         if (new DBHelp().getEmail(dataObject.getParams().get(6)).isEmpty()) {
+        new DBHelp().setNewUser(dataObject);
+          } else {
+          throw new CustomException("Пользователь с таким email'ом уже существует");
+         }
     }
 
     // Обновление профиля пользователя
@@ -115,6 +116,7 @@ public class UserServiceImp implements UserService {
         return new DBHelp().getFriendListByUserId(userID);
     }
 
-
-
+    public int generationID(int objTypeID) throws SQLException {
+        return new DBHelp().generationID(objTypeID);
+    }
 }

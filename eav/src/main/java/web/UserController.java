@@ -1,6 +1,6 @@
 package web;
 
-import dbHelp.DBHelp;
+import entities.DataObject;
 import entities.User;
 import exception.CustomException;
 import org.slf4j.Logger;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import service.EventServiceImp;
+import service.LoadingServiceImp;
 import service.UserServiceImp;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,8 @@ import java.util.TreeMap;
 @Controller
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(EventController.class);
+
+    private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     private UserServiceImp userService = UserServiceImp.getInstance();
 
@@ -114,6 +117,7 @@ public class UserController {
         return "addUser";
     }
 
+
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
     public String registerUser(@RequestParam("name") String name,
                                @RequestParam("surname") String surname,
@@ -128,7 +132,7 @@ public class UserController {
 
         String bcryptPass = new BCryptPasswordEncoder().encode(password);
 
-        TreeMap<Integer, String> mapAttr = new TreeMap<>();
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
         mapAttr.put(1, name);
         mapAttr.put(2, surname);
         mapAttr.put(3, middle_name);
@@ -140,12 +144,15 @@ public class UserController {
         mapAttr.put(9, null);
         mapAttr.put(10, null);
         mapAttr.put(11, null);
-       // mapAttr.put(12, null);
+        // mapAttr.put(12, null);
         // mapAttr.put(13, null); не нужно, иначе потом пустая ссылка на событие висит, и при добавлении новой задачи она так и остается висеть. Иначе надо будет при добавлении эту обновлять
 
 
+        DataObject dataObject = loadingService.createDataObject(full_name, 1001, mapAttr);
 
-        userService.setNewUser(1001, full_name, mapAttr);
+        userService.setNewUser(dataObject);
+
+        //userService.setNewUser(1001, full_name, mapAttr);
 
         return "/main";
     }
@@ -153,9 +160,9 @@ public class UserController {
     // Выводим данные о пользователе на форму редактирования профиля
     @RequestMapping("/profile")
     public String getProfileUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        User user = userService.getCurrentUser(); // Получаем Объект текущего пользователя
-        logger.info("User = " + user.toString());
-        m.addAttribute(user);
+
+        DataObject dataObject = loadingService.getDataObjectById(userService.getObjID(userService.getCurrentUsername()));
+        m.addAttribute(dataObject);
         return "/profile";
     }
 
