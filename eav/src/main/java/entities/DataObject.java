@@ -27,7 +27,7 @@ public class DataObject {
         this.id = id;
         this.name = name;
         this.objectTypeId = objectTypeId;
-// Пробегаем по парам мапы и в зависимости от типа расталкиваем все двойки по integerTreeMap и stringTreeMap
+        // Пробегаем по парам мапы и в зависимости от типа расталкиваем все двойки по integerTreeMap и stringTreeMap
         for (Integer key : treeMap.keySet()) {
             if (treeMap.get(key) == null) {
                 setValue(key, "");
@@ -38,7 +38,7 @@ public class DataObject {
 
     // Метод установки параметра (добавление в подходящую мапу по ключу-значению)
     public void setValue(Integer key, Object value){
-// в зависимости от типа
+        // в зависимости от типа
         if (value instanceof Integer)
         {
             refParams.put(key, (Integer) value);

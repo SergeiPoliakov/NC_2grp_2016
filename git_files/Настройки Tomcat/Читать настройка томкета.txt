@@ -1,0 +1,17 @@
+apache-tomcat-9.0.0.M15\conf
+Открыть файл server.xml
+Найти строчки
+
+    <Connector port="8081" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" />
+			   
+Дописать maxSwallowSize="-1" 
+То есть должно получиться:
+
+    <Connector port="8081" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443"
+               maxSwallowSize="-1" />
+
+Этот параметр снимает ограничения на размер загружаемого файла в томкет (по умолчанию = 2 мб)

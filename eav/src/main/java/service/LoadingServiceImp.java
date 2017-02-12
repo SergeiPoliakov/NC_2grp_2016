@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 /**
  * Created by Hroniko on 11.02.2017.
+ * Работа с DataObjects
  */
 public class LoadingServiceImp implements LoadingService {
 
@@ -26,7 +27,7 @@ public class LoadingServiceImp implements LoadingService {
         DataObject dataObject = null;
         // Проверяем, в каком диапазоне у нас id, и в зависимости от этого тянем методы из dbhelp
         if ((id > 10000) & (id < 20000)){
-            // Тянем юзера
+            // Тянем юзера - получаем параметры из БД через DBHelp
             TreeMap<Integer, Object> treeMap = new DBHelp().getUserById(id);
             String name = (String) treeMap.get(3) + " " + (String) treeMap.get(1) + " " + (String) treeMap.get(2);
             // treeMap.remove(1);

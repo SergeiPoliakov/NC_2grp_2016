@@ -37,11 +37,17 @@
         <div class="row">
             <div class="container col-lg-5 pull-right">
 
-                <img src=".." class="img-polaroid ">
+                <img src="${dataObject.getValue(11)}" class="img-polaroid ">
 
                 <div class="form-group ">
-                    <label for="InputImg">Загрузить изображение</label>
-                    <input type="file" id="InputImg">
+                    <%--Загрузка картинки-аватара--%>
+                    <label for="InputImg">${dataObject.getValue(11)}</label>
+                    <form method="POST" action="/uploadAvatar" enctype="multipart/form-data">
+                        <input type="hidden" name="MAX_FILE_SIZE" value="20971520"><%--Ограничение на максимальный размер файла = 20 Мб со стороны клиента--%>
+                        Файл: <input name="file" type="file" id="InputImg">
+                        <input type="submit" value="Загрузить"> Загрузить
+                    </form>
+
                 </div>
             </div>
             <div class="container col-lg-5">

@@ -24,6 +24,13 @@
         <beans:property name="suffix" value=".jsp" />
     </beans:bean>
 
+    <!-- Загрузчик файлов и максимальный размер файла -->
+    <beans:bean id="multipartResolver"
+                class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- setting maximum upload size -->
+        <beans:property name="maxUploadSize" value="20971520" /><!-- Ограничение на максимальный размер файла = 20 Мб со стороны сервера -->
+    </beans:bean>
+
     <beans:bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <beans:property name="exceptionMappings">
             <beans:map>

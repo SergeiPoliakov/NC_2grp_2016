@@ -556,13 +556,13 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    ///////// Новое 2017-02-12
+    ///////// Новое 2017-02-12 (для DataObject)
     public TreeMap<Integer, Object> getUserById(int userID) throws SQLException {
         Connection Con = getConnection();
         Integer userTypeID = 1001; // ID типа Пользователь
         PreparedStatement PS = Con.
                 prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
-                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
+                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE, pa11.VALUE FROM OBJECTS ob " +
                         "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
                         "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
                         "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
@@ -573,6 +573,7 @@ public class DBHelp {
                         "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
                         "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
                         "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
+                        "LEFT JOIN PARAMS pa11 ON ob.OBJECT_ID = pa11.OBJECT_ID AND pa11.ATTR_ID = 11 " +
                         "WHERE ob.OBJECT_TYPE_ID = ? AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID");
         PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
         PS.setInt(2, userID); // В качестве параметра id пользователя
@@ -591,6 +592,7 @@ public class DBHelp {
             treeMap.put(8, RS.getString(9)); // Sex
             treeMap.put(9, RS.getString(10)); // Country
             treeMap.put(10, RS.getString(11)); // Additional_field
+            treeMap.put(11, RS.getString(12)); // Avatar
         }
         RS.close();
         PS.close();
@@ -1328,6 +1330,29 @@ public class DBHelp {
 
     }
 
+
+////// 2017-02-12 12-56 // Обновление ссылки на загруженный аватар:
+public void updateAvatar(int userId, String patch) throws SQLException,
+        NoSuchMethodException, IllegalAccessException,
+        IllegalArgumentException, InvocationTargetException {
+
+    //System.out.println(userId + " " + patch);
+    Connection Con = getConnection();
+    // Удаляем ту ссылку, которая уже имеется:
+    PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ?"); // DELETE FROM PARAMS WHERE OBJECT_ID = '10005' AND ATTR_ID = '11';
+    PS.setInt(1, userId);
+    PS.setInt(2, 11);
+    PS.executeUpdate();
+	// И создаем новую:
+    PS = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)"); // INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10005','11','\\upload\\10005\\avatar\\avatar_10005.png');
+    PS.setInt(1, userId);
+    PS.setInt(2, 11);
+    PS.setString(3, patch);
+    PS.executeUpdate();
+
+    PS.close();
+    CloseConnection(Con);
+}
 
 
 }

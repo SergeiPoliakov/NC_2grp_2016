@@ -16,7 +16,6 @@
         </param-value>
     </context-param>
 
-
 	<!-- Создаёт контейнер Spring, разделяемый всеми сервлетами и фильтрами -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
