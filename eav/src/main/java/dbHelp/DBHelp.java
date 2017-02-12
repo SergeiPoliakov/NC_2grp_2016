@@ -1277,11 +1277,11 @@ public class DBHelp {
 
     public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-        User user = new User();
+        /*User user = new User();
         user.setId(10003);
         Meeting meeting = new Meeting("Название", "02.02.2017 16:45", "02.02.2017 22:45", "Информация я написал", user, "Привяу", "");
         System.out.println();
-        new DBHelp().setMeeting(meeting);
+        new DBHelp().setMeeting(meeting);*/
         //ArrayList<User> oldusers = new DBHelp().getUsersAtMeeting("28"); // ID
 
         //System.out.print("dsd");
