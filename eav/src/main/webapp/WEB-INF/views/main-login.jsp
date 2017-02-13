@@ -338,6 +338,7 @@
             $('#taskName').val(item.content);
             $('#taskPriority').val(item.className);
             $('#taskPriority').selectpicker('refresh');
+            $('#taskAddInfo').val(addInfoArray[item.id]);
             $( "#eventForm" ).submit();
             callback(item);
         }
