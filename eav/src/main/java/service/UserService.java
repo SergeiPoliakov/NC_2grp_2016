@@ -57,7 +57,7 @@ interface UserService {
 
 
     @WebMethod
-    void updateUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
+    void updateUser(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException;
 

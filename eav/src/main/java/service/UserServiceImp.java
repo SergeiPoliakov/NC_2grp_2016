@@ -86,10 +86,10 @@ public class UserServiceImp implements UserService {
     }
 
     // Обновление профиля пользователя
-    public void updateUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
+    public void updateUser(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        new DBHelp().updateUser(ObjTypeID, name, massAttr);
+        new DBHelp().updateUser(dataObject);
     }
 
     // Добавление юзера в список друзей по его ID (2017-02-03) (испр. 2017-02-07)

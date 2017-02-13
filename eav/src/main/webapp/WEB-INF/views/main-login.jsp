@@ -16,7 +16,7 @@
 <!-- 249 СТРОКА, ДОБАВЛЕНИЕ ЗАДАЧИ -->
 <html>
 <head>
-    <title>${user.name} ${user.surname}</title>
+    <title>${dataObject.getValue(1)} ${dataObject.getValue(2)}</title>
     <%@include file='header.jsp'%>
 
     <meta charset="UTF-8">
@@ -45,19 +45,19 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card" style="width: 30rem;">
-                <h4 class="card-title text-center">${user.name} ${user.middleName} ${user.surname}</h4>
+                <h4 class="card-title text-center">${dataObject.getValue(1)} ${dataObject.getValue(3)} ${dataObject.getValue(2)}</h4>
                 <div class="card-title text-center">
                     <small class=" text-muted"><span
-                            class="glyphicon glyphicon-user"></span> ${user.login} </small>
+                            class="glyphicon glyphicon-user"></span> ${dataObject.getValue(4)} </small>
                 </div>
                 <div class="profile-userpic">
                     <img src="https://fshoke.com/wp-content/uploads/2016/01/Sean-Penn-mixed-with-Leonardo-DiCaprio.jpg" class="img-responsive"  alt='Изображение' >
                 </div>
                 <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
-                    <li class="list-group-item">Страна: ${user.country}</li>
-                    <li class="list-group-item">Пол: ${user.sex}</li>
-                    <li class="list-group-item">О себе: ${user.additional_field}</li>
+                    <li class="list-group-item" id="userAge">Дата рождения: ${dataObject.getValue(5)}</li>
+                    <li class="list-group-item">Страна: ${dataObject.getValue(9)}</li>
+                    <li class="list-group-item">Пол: ${dataObject.getValue(8)}</li>
+                    <li class="list-group-item">О себе: ${dataObject.getValue(10)}</li>
                 </ul>
             </div>
         </div>
@@ -202,7 +202,7 @@
 <script type="text/javascript">
     // Поле дополнительная информация eventID : info
     var addInfoArray = {
-    <c:forEach items="${allEvents}" var="event">${event.id}:'${event.info}',</c:forEach>
+    <c:forEach items="${allEvents}" var="event">${event.id}: '${event.getValue(4)}',</c:forEach>
     };
     // Настройка кастомного скроллбара
     $("#cardsholderItems").mCustomScrollbar({
@@ -257,7 +257,7 @@
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
         <c:forEach items="${allEvents}" var="event">
-        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}'},
+        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.getValue(1)}')), end: new Date(getDateFromString('${event.getValue(2)}')), className: '${event.getValue(3)}'},
         </c:forEach>
     ]);
 

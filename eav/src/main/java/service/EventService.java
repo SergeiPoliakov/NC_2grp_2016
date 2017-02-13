@@ -1,5 +1,6 @@
 package service;
 
+import entities.DataObject;
 import entities.Event;
 
 import javax.jws.WebMethod;
@@ -19,14 +20,14 @@ import java.util.TreeMap;
 interface EventService {
 
     @WebMethod
-    ArrayList<Event> getEventList(int ObjectID) throws SQLException;
+    ArrayList<DataObject> getEventList(int ObjectID) throws SQLException;
 
     @WebMethod
     void deleteEvent(Integer eventId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException;
 
 
     @WebMethod
-    void setNewEvent(Event event) throws SQLException,
+    void setNewEvent(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException;
 

@@ -4,6 +4,7 @@ import dbHelp.DBHelp;
 import entities.DataObject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 /**
@@ -13,6 +14,8 @@ import java.util.TreeMap;
 public class LoadingServiceImp implements LoadingService {
 
     UserServiceImp userService = UserServiceImp.getInstance();
+
+    private EventServiceImp eventService = EventServiceImp.getInstance();
 
     public static class ObjType{
 
@@ -29,7 +32,7 @@ public class LoadingServiceImp implements LoadingService {
         if ((id > 10000) & (id < 20000)){
             // Тянем юзера - получаем параметры из БД через DBHelp
             TreeMap<Integer, Object> treeMap = new DBHelp().getUserById(id);
-            String name = (String) treeMap.get(3) + " " + (String) treeMap.get(1) + " " + (String) treeMap.get(2);
+            String name = treeMap.get(3) + " " + treeMap.get(1) + " " + treeMap.get(2);
             // treeMap.remove(1);
             dataObject = new DataObject(id, name, ObjType.USER, treeMap);
         }
@@ -45,6 +48,29 @@ public class LoadingServiceImp implements LoadingService {
 
         // иначе что-то странное запросили, потому в dataObject останется null
         return dataObject;
+    }
+
+
+    @Override
+    public ArrayList<DataObject> getListDataObjectById(Integer id, String type) throws SQLException {
+        ArrayList<DataObject> listDataObject = null;
+        // Проверяем, в каком диапазоне у нас id, и в зависимости от этого тянем методы из dbhelp
+        if ("user".equals(type)){
+
+        }
+        else if ("event".equals(type)){
+            // Тянем  события
+            listDataObject = eventService.getEventList(id);
+        }
+        else if ("message".equals(type)){
+            // Тянем сообщения
+        }
+        else if ("meeting".equals(type)){
+            // Тянем встречи
+        }
+
+        // иначе что-то странное запросили, потому в dataObject останется null
+        return listDataObject;
     }
 
 

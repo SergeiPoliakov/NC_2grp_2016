@@ -49,12 +49,12 @@ public class UserController {
 
 
     @RequestMapping(value = "/main-login", method = RequestMethod.GET)
-    public String getUserPage(User user, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        user = userService.getCurrentUser(); // Получаем Объект текущего пользователя
-        logger.info("User = " + user.toString());
+    public String getUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        DataObject dataObject = loadingService.getDataObjectById(userService.getObjID(userService.getCurrentUsername())); // Получаем Объект текущего пользователя
+        //logger.info("User = " + user.toString());
         Integer idUser = userService.getObjID(userService.getCurrentUsername());
-        m.addAttribute(user);
-        m.addAttribute("allEvents", eventService.getEventList(idUser));
+        m.addAttribute(dataObject);
+        m.addAttribute("allEvents", loadingService.getListDataObjectById(idUser, "event"));
         return "main-login";
     }
 
@@ -176,10 +176,10 @@ public class UserController {
                              @RequestParam("sex") String sex,
                              @RequestParam("country") String country,
                              @RequestParam("info") String additional_field) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
         String full_name = name + " " + surname + " " + middle_name;
 
-
-        TreeMap<Integer, String> mapAttr = new TreeMap<>();
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
         mapAttr.put(1, name);
         mapAttr.put(2, surname);
         mapAttr.put(3, middle_name);
@@ -190,7 +190,9 @@ public class UserController {
         mapAttr.put(9, country);
         mapAttr.put(10, additional_field);
 
-        userService.updateUser(userId, full_name, mapAttr);
+        DataObject dataObject = new DataObject(userId, full_name, 1001, mapAttr);
+
+        userService.updateUser(dataObject);
 
         return "redirect:/main-login";
     }

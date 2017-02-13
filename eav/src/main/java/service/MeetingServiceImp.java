@@ -78,7 +78,7 @@ public class MeetingServiceImp implements MeetingService {
     public Meeting getMeetingWithUsers(int meetingID) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Meeting meeting = new DBHelp().getMeeting(meetingID);
         meeting.setUsers(new DBHelp().getUsersAtMeeting( meetingID));
-        meeting.setEvents(new DBHelp().getEventList(meetingID));
+      //  meeting.setEvents(new DBHelp().getEventList(meetingID));
         return meeting;
     }
 

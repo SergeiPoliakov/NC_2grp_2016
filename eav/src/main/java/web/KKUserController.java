@@ -1,6 +1,7 @@
 package web;
 
 import dbHelp.DBHelp;
+import entities.DataObject;
 import entities.Event;
 import entities.User;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import service.EventServiceImp;
+import service.LoadingServiceImp;
 import service.UserServiceImp;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +24,8 @@ import java.util.TreeMap;
 public class KKUserController {
 
     private static final Logger logger = LoggerFactory.getLogger(EventController.class);
+
+    private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     private UserServiceImp userService = UserServiceImp.getInstance();
 
@@ -37,11 +41,24 @@ public class KKUserController {
     }
 
     @RequestMapping(value = "/userAddEvent", method = RequestMethod.POST)
-    public String addEvent(@ModelAttribute("setEvent") Event event
+    public String addEvent(@ModelAttribute("name") String name,
+                           @ModelAttribute("priority") String priority,
+                           @ModelAttribute("date_begin") String date_begin,
+                           @ModelAttribute("date_end") String date_end,
+                           @ModelAttribute("info") String info
     ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
 
-        eventService.setNewEvent(event); // Передаем в хелпер задачу со всеми атрибутами
+        mapAttr.put(101, date_begin);
+        mapAttr.put(102, date_end);
+        mapAttr.put(103, null);
+        mapAttr.put(104, info);
+        mapAttr.put(105, priority);
+
+        DataObject dataObject = loadingService.createDataObject(name, 1002, mapAttr);
+
+        eventService.setNewEvent(dataObject);
 
         return "redirect:/main-login";
     }

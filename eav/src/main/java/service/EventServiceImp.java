@@ -1,6 +1,7 @@
 package service;
 
 import dbHelp.DBHelp;
+import entities.DataObject;
 import entities.Event;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,7 +26,7 @@ public class EventServiceImp implements EventService {
     }
 
     // Получение ВСЕХ событий данного пользователя
-    public ArrayList<Event> getEventList(int ObjectID) throws SQLException {
+    public ArrayList<DataObject> getEventList(int ObjectID) throws SQLException {
         return new DBHelp().getEventList(ObjectID);
     }
 
@@ -35,10 +36,10 @@ public class EventServiceImp implements EventService {
     }
 
     // Метод добавления события со всеми его атрибутами
-    public void setNewEvent(Event event) throws SQLException,
+    public void setNewEvent(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        new DBHelp().setNewEvent(event);
+        new DBHelp().setNewEvent(dataObject);
     }
 
     // Обновление события

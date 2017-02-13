@@ -342,8 +342,9 @@ public class DBHelp {
         return user;
     }
 
-    public ArrayList<Event> getEventList(int ObjectID) throws SQLException {
-        ArrayList<Event> Res = new ArrayList<>();
+    public ArrayList<DataObject> getEventList(int ObjectID) throws SQLException {
+        ArrayList<DataObject> Res = new ArrayList<>();
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
         Connection Con = getConnection();
         // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
 
@@ -358,16 +359,14 @@ public class DBHelp {
         PS.setInt(1, ObjectID); // В качестве параметра id пользователя
         ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         while (RS.next()) {
-            Event event = new Event();
-            event.setId( RS.getInt(1));
-            event.setHost_id( RS.getInt(2));
-            event.setName( RS.getString(3));
-            event.setDate_begin( RS.getString(4));
-            event.setDate_end( RS.getString(5));
-            event.setPriority( RS.getString(6));
-            event.setInfo( RS.getString(7));
+            mapAttr.put(1, RS.getString(4));
+            mapAttr.put(2, RS.getString(5));
+            mapAttr.put(3, RS.getString(6));
+            mapAttr.put(4, RS.getString(7));
 
-            Res.add(event); // Res.add(RS.getObject(1));
+            DataObject dataObject = new DataObject(RS.getInt(1), RS.getString(3), 1002, mapAttr);
+
+            Res.add(dataObject); // Res.add(RS.getObject(1));
             //Res.add(RS.getObject(2));
         }
         RS.close();
@@ -601,29 +600,28 @@ public class DBHelp {
     }
 
 
-    public void setNewEvent(Event event) throws SQLException,
+    public void setNewEvent(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         Connection Con = getConnection();
-        TreeMap<Integer, Object> attributeArray = event.getArrayWithAttributes();
         // 1) Добавление события:
         PreparedStatement PS = Con.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
         Statement st = Con.createStatement();
-        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + event.objTypeID);
+        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + dataObject.getObjectTypeId());
         int newID = 0;
         while (RS.next()) {
             newID = RS.getInt(1) + 1;
         }
         PS.setInt(1, newID);
-        PS.setInt(2, event.objTypeID);
-        PS.setObject(3, event.getName());
+        PS.setInt(2, dataObject.getObjectTypeId());
+        PS.setObject(3, dataObject.getName());
         PS.executeUpdate();
         PS.close();
 
         // 2) Добавление атрибутов события (параметры со страницы создания события):
         PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
-        while (!attributeArray.isEmpty()) {
-            java.util.Map.Entry<Integer, Object> En = attributeArray.pollFirstEntry();
+        while (!dataObject.getParams().isEmpty()) {
+            java.util.Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
             PS1.setObject(1, En.getValue());
             PS1.setInt(2, newID);
             PS1.setInt(3, En.getKey());
@@ -698,16 +696,16 @@ public class DBHelp {
     }
 
 
-    public void updateUser(int ObjTypeID, String name, TreeMap<Integer, String> massAttr) throws SQLException,
+    public void updateUser(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         Connection Con = getConnection();
         PreparedStatement PS = Con
                 .prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
-        while (!massAttr.isEmpty()) {
-            java.util.Map.Entry<Integer, String> En = massAttr.pollFirstEntry();
+        while (!dataObject.getParams().isEmpty()) {
+            java.util.Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
             PS.setObject(1, En.getValue());
-            PS.setInt(2, ObjTypeID);
+            PS.setInt(2, dataObject.getId());
             PS.setInt(3, En.getKey());
             PS.addBatch();
         }
@@ -716,8 +714,8 @@ public class DBHelp {
 
         PreparedStatement PS1 = Con
                 .prepareStatement("UPDATE OBJECTS SET OBJECT_NAME = ? WHERE OBJECT_ID = ?");
-        PS1.setString(1, name);
-        PS1.setInt(2, ObjTypeID);
+        PS1.setString(1, dataObject.getName());
+        PS1.setInt(2, dataObject.getId());
         PS1.executeUpdate();
         PS1.close();
         CloseConnection(Con);

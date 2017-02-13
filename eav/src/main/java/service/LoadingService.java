@@ -3,6 +3,7 @@ package service;
 import entities.DataObject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 /**
@@ -10,8 +11,12 @@ import java.util.TreeMap;
  */
 public interface LoadingService {
 
-    public DataObject getDataObjectById(Integer id) throws SQLException;
-    public DataObject createDataObject(String name, int objType, TreeMap<Integer, Object> mapAttr) throws SQLException;
-    public void deleteDataObjectById(Integer id);
+    DataObject getDataObjectById(Integer id) throws SQLException;
+
+    ArrayList<DataObject> getListDataObjectById(Integer id, String type) throws SQLException;
+
+    DataObject createDataObject(String name, int objType, TreeMap<Integer, Object> mapAttr) throws SQLException;
+
+    void deleteDataObjectById(Integer id);
 
 }
