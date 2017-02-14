@@ -117,6 +117,29 @@ public class LoadingServiceImp implements LoadingService {
 
 
     @Override
+    public ArrayList<DataObject> getListDataObjectByName(String name, String type) throws SQLException {
+        ArrayList<DataObject> listDataObject = null;
+        // Проверяем, в каком диапазоне у нас id, и в зависимости от этого тянем методы из dbhelp
+        if ("user".equals(type)){
+            listDataObject = userService.searchUser(name);
+        }
+        else if ("event".equals(type)){
+            // Тянем  события
+
+        }
+        else if ("message".equals(type)){
+            // Тянем сообщения
+        }
+        else if ("meeting".equals(type)){
+            // Тянем встречи
+        }
+
+        // иначе что-то странное запросили, потому в dataObject останется null
+        return listDataObject;
+    }
+
+
+    @Override
     public void deleteDataObjectById(Integer id) {
 
     }

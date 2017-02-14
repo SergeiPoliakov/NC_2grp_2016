@@ -108,8 +108,9 @@ public class DBHelp {
     }
 
 
-    public ArrayList<User> searchUser(String name) throws SQLException {
-        ArrayList<User> Res = new ArrayList<>();
+    public ArrayList<DataObject> searchUser(String name) throws SQLException {
+        ArrayList<DataObject> Res = new ArrayList<>();
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
         Connection Con = getConnection();
         Integer userTypeID = 1001; // ID типа Пользователь
         String sqlName = "%" + name + "%";
@@ -126,13 +127,15 @@ public class DBHelp {
         ResultSet RS = PS.executeQuery();
 
         while (RS.next()) {
-            User user = new User();
-            user.setId(RS.getInt(1));
-            user.setName(RS.getString(2));
-            user.setSurname(RS.getString(3));
-            user.setMiddleName(RS.getString(4));
-            user.setLogin(RS.getString(5));
-            Res.add(user);
+            mapAttr.put(1, RS.getString(2));
+            mapAttr.put(2, RS.getString(3));
+            mapAttr.put(3, RS.getString(4));
+            mapAttr.put(4, RS.getString(5));
+
+            String nameUser = RS.getString(2) + " " + RS.getString(3) + " " + RS.getString(4);
+
+            DataObject dataObject = new DataObject(RS.getInt(1), nameUser, 1001, mapAttr);
+            Res.add(dataObject);
 
             // System.out.println(user.getId() + " , " + user.getName());
         }

@@ -63,8 +63,8 @@ public class EventController {
     // Вытаскивание событий
     @RequestMapping("/allEvent")
     public String listObjects(Map<String, Object> map) throws SQLException {
-        Integer idUser = userService.getObjID(userService.getCurrentUsername());
-        map.put("allObject", eventService.getEventList(idUser));
+        Integer userId = userService.getObjID(userService.getCurrentUsername());
+        map.put("allObject", loadingService.getListDataObjectById(userId, "event"));
         return "allEvent";
     }
 

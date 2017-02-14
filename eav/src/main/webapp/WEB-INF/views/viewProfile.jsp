@@ -45,48 +45,27 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card" style="width: 30rem;">
-                <h4 class="card-title text-center">${user.name} ${user.middleName} ${user.surname}</h4>
+                <h4 class="card-title text-center">${dataObject.getValue(1)} ${dataObject.getValue(3)} ${dataObject.getValue(2)}</h4>
                 <div class="card-title text-center">
                     <small class=" text-muted"><span
-                            class="glyphicon glyphicon-user"></span> ${user.login} </small>
+                            class="glyphicon glyphicon-user"></span> ${dataObject.getValue(4)} </small>
                 </div>
                 <div class="profile-userpic">
                     <img src="https://fshoke.com/wp-content/uploads/2016/01/Sean-Penn-mixed-with-Leonardo-DiCaprio.jpg" class="img-responsive"  alt='Изображение' >
                 </div>
                 <div class="profile-userbuttons">
-                    <a href="/viewProfile/${user.id}"><button type="button" class="btn btn-primary btn-xs"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>
-                    <a href="/sendMessage/${user.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
-                    <a href="/deleteFriend/${user.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
+                    <a href="/sendMessage/${dataObject.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
                 </div>
                 <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
-                    <li class="list-group-item">Страна: ${user.country}</li>
-                    <li class="list-group-item">Пол: ${user.sex}</li>
-                    <li class="list-group-item">О себе: ${user.additional_field}</li>
+                    <li class="list-group-item" id="userAge">Дата рождения: ${dataObject.getValue(5)}</li>
+                    <li class="list-group-item">Страна: ${dataObject.getValue(9)}</li>
+                    <li class="list-group-item">Пол: ${dataObject.getValue(8)}</li>
+                    <li class="list-group-item">О себе: ${dataObject.getValue(10)}</li>
                 </ul>
             </div>
         </div>
         <!-- Список шаблонов задач -->
-        <div class="col-md-6">
-            <div class="card pull-right" style="width: 30rem;">
-                <div class="card-title">
-                    <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>
-                </div>
-                <ul class="list-group list-group-my list-group-flush text-center navi mCustomScrollbar" data-mcs-theme="minimal-dark" id="cardsholderItems">
-                    <li class="list-group-item list-group-item-info">РАЗ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-danger">ДВА ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-info">ТРИ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-info">ЧЕТЫРЕ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-danger">ПЯТЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-warning">ШЕСТЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-danger">СЕМЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-warning">ВОСЕМЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-info">ДЕВЯТЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-warning">ДЕСЯТЬ ШАБЛОН</li>
-                </ul>
-                <button type="button" class="btn btn-primary btn-block" id="templateAddButton">Добавить</button>
-            </div>
-        </div>
+
     </div>
     <!-- Timeline и кнопки -->
     <div class="row">
@@ -110,95 +89,9 @@
         </div>
     </div>
     <!-- Форма вывода полноразмерного изображения -->
-    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <img src="" class="imagepreview" style="width: 100%;" >
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!-- Форма для создания новой задачи -->
-    <div id="taskmodal" class="modal fade">
-        <div class="modal-dialog">
-            <form id="eventForm" name="creation" action="/userAddEvent" method="post">
-                <div class="modal-content">
-                    <!-- Заголовок модального окна -->
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title text-center">Создание новой задачи</h4>
-                    </div>
-                    <!-- Основное содержимое модального окна -->
-                    <div class="modal-body">
-                        <div class='row '>
-                            <div class='col-md-6'>
-                                <div class="input-group">
-                                    <span class="input-group-addon">Название</span>
-                                    <input type="text" class="form-control" name="name" id="taskName" placeholder="Введите название задачи">
-                                </div>
-                            </div>
-                            <div class='col-md-6'>
-                                <div class="input-group">
-                                    <div type="text" class="hidden" name="eventId" id="taskID" value = "eventId"></div>
-                                    <span class="input-group-addon">Приоритет</span>
-                                    <select type="text" id="taskPriority" name="priority" class="selectpicker form-control" title="Выберите приоритет">
-                                        <option style="background: #d9534f; color: #fff;" value="Style1">Высокий</option>
-                                        <option style="background: #f0ad4e; color: #fff;" value="Style2">Средний</option>
-                                        <option style="background: #5bc0de; color: #fff;" value="Style3" selected>Низкий</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- DateTime Pickers -->
-                        <div class='row top-buffer-2'>
-                            <div class='col-md-6'>
-                                <div class='input-group date' id='datetimepicker1'>
-                                    <span class="input-group-addon">Начало</span>
-                                    <input type='text' name="date_begin" class="form-control" id="taskStartTime" />
-                                    <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                </div>
-                            </div>
-                            <div class='col-md-6'>
-                                <div class='input-group date' id='datetimepicker2'>
-                                    <span class="input-group-addon">Окончание</span>
-                                    <input type='text' name="date_end" class="form-control" id="taskEndTime" />
-                                    <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row top-buffer-2">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="input-group-addon textarea-addon">Дополнительная информация</div>
-                                    <textarea type='text' name="info" class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <ul class="list-group list-group-my">
-                            <li class="list-group-item">
-                                Сохранить шаблон
-                                <div class="material-switch pull-right">
-                                    <input id="SaveTemplateCheckBox" type="checkbox"/>
-                                    <label for="SaveTemplateCheckBox" class="label-primary"></label>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- Футер модального окна -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                        <button type="submit" class="btn btn-primary" id="modalAddButton">Добавить</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+
     <div id="log"></div>
 </div>
 
@@ -207,52 +100,19 @@
 <script type="text/javascript">
     // Поле дополнительная информация eventID : info
     var addInfoArray = {
-    <c:forEach items="${allEvents}" var="event">${event.id}:'${event.info}',</c:forEach>
+    <c:forEach items="${allEvents}" var="event">${event.id}:'${event.getValue(4)}',</c:forEach>
     };
     // Настройка кастомного скроллбара
-    $("#cardsholderItems").mCustomScrollbar({
-        scrollInertia: 275
-    });
+
     // Modal datetimepickers для создания новой задачи
-    $(function () {
-        $('#datetimepicker1').datetimepicker({
-            locale: 'ru'
-            //format: "DD/MM/YYYY hh:mm"
-        });
-        $('#datetimepicker2').datetimepicker({
-            locale: 'ru',
-            useCurrent: false
-        });
-        $("#datetimepicker1").on("dp.change", function (e) {
-            $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
-        });
-        $("#datetimepicker2").on("dp.change", function (e) {
-            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
-        });
-    });
+
     // Нажатие кнопки под шаблонами
-    document.getElementById('templateAddButton').onclick = function() {
-        $("#modalAddButton").html('Добавить');
-        $('#taskmodal').modal('show');
-        $('#taskmodal').on('shown.bs.modal', function () {
-            $("#SaveTemplateCheckBox").prop("checked", true);
-            $('#taskName').val("Новая задача");
-            $('#taskName').focus();
-            $('#taskName').select();
-        })
-    };
+
     // Нажатие кнопки "Добавить" в всплывающем окне
-    document.getElementById('modalAddButton').onclick = function() {
-        $('#taskmodal').modal('hide');
-    };
+
 
     // Открытие полной картинки при нажатии
-    $(function() {
-        $('.profile-userpic').on('click', function() {
-            $('.imagepreview').attr('src', $(this).find('img').attr('src'));
-            $('#imagemodal').modal('show');
-        });
-    });
+
 </script>
 
 <script type="text/javascript">
@@ -261,91 +121,34 @@
     var container = document.getElementById('visualization');
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
-        <c:forEach items="${allEvents}" var="event">
-        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}'},
+        <c:forEach items="${allObject}" var="event">
+        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.getValue(1)}')), end: new Date(getDateFromString('${event.getValue(2)}')), className: '${event.getValue(3)}'},
         </c:forEach>
     ]);
 
     // Configuration for the Timeline
     var options = {
         locale: 'RU',
-        editable: true,
-        selectable: true,
+        editable: false,
+        selectable: false,
         stack: false,
-        multiselect: true,
+        multiselect: false,
         dataAttributes: 'all',
-        itemsAlwaysDraggable: true,
+        itemsAlwaysDraggable: false,
         zoomMin: 60000, // 1 минута
         zoomMax: 157700000000, //5 лет
 
         // Добавление задачи
-        onAdd: function (item, callback) {
-            $('#eventForm').attr('action', '/userAddEvent');
-            $('#taskName').val("Новая задача");
-            $("#modalAddButton").html('Добавить');
-            document.getElementById('taskStartTime').value = toLocaleDateTimeString(item.start);
-            document.getElementById('taskEndTime').value = toLocaleDateTimeString(item.start);
-            $('#taskmodal').modal('show');
-            document.getElementById('modalAddButton').onclick = function() {
-                $('#taskmodal').modal('hide');
-                // Изменение элемента на таймлайне, наверное уже не нужно, т.к. сервер сам перегружает данные, но на всякий пусть останется
-                /*item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
-                 item.start = getDateFromString(document.getElementById('taskStartTime').value);
-                 item.end = getDateFromString(document.getElementById('taskEndTime').value);
-                 item.content = document.getElementById('taskName').value;
-                 $('#taskmodal').modal('hide');
-                 callback(item);
-                 createTooltip();*/
-            };
-            callback(null);
-        },
+
 
         // Удаление задачи
-        onRemove: function (item, callback) {
-            $('#eventForm').attr('action', '/userRemoveEvent/'+item.id);
-            $( "#eventForm" ).submit();
-            callback(item);
-        },
+
 
         // Обновление задачи
-        onUpdate: function (item, callback) {
-            $('#eventForm').attr('action', '/userChangeEvent/'+item.id);
-            $("#modalAddButton").html('Сохранить');
-            $('#taskStartTime').val(toLocaleDateTimeString(item.start));
-            $('#taskEndTime').val(toLocaleDateTimeString(item.end));
-            $('#taskID').val(item.id);
-            $('#taskName').val(item.content);
-            $('#taskAddInfo').val(addInfoArray[item.id]);
-            $('#taskPriority').val(item.className);
-            $('#taskPriority').selectpicker('refresh');
-            $('#taskmodal').modal('show');
-            document.getElementById('modalAddButton').onclick = function() {
-                $('#taskmodal').modal('hide');
-                // Изменение элемента на таймлайне, наверное уже не нужно, т.к. сервер сам перегружает данные, но на всякий пусть останется
-                /*item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
-                 item.start = getDateFromString(document.getElementById('taskStartTime').value);
-                 item.end = getDateFromString(document.getElementById('taskEndTime').value);
-                 item.content = document.getElementById('taskName').value;
-                 $('#taskmodal').modal('hide');
-                 callback(item);
-                 createTooltip();*/
-            };
-            callback(null);
-        },
+
 
         // Перемещение задачи
-        onMove: function (item, callback) {
-            $('#eventForm').attr('action', '/userChangeEvent/'+item.id);
-            $("#modalAddButton").html('Сохранить');
-            $('#taskStartTime').val(toLocaleDateTimeString(item.start));
-            $('#taskEndTime').val(toLocaleDateTimeString(item.end));
-            $('#taskID').val(item.id);
-            $('#taskName').val(item.content);
-            $('#taskPriority').val(item.className);
-            $('#taskPriority').selectpicker('refresh');
-            $( "#eventForm" ).submit();
-            callback(item);
-        }
+
     };
     // Create a Timeline
     var timeline = new vis.Timeline(container, items, options);
@@ -448,13 +251,7 @@
         timeline.setWindow(firstDay, lastDay);
     };
 
-    timeline.on('itemover', function (event, properties) {
-        //logEvent(event, properties);
-    });
 
-    items.on('*', function (event, properties) {
-        logEvent(event, properties);
-    });
 
     // Запись в лог для отладки
     function logEvent(event, properties) {
@@ -466,7 +263,9 @@
     }
     createTooltip();
     // Установка возраста
-    $("#userAge").html('Возраст: ' + declOfNum(getAge(getDateFromString('${user.ageDate}')), ['год', 'года', 'лет']));
+    $("#userAge").html('Возраст: ' + declOfNum(getAge(getDateFromString('${dataObject.getValue(5)}')), ['год', 'года', 'лет']));
 </script>
 </body>
 </html>
+
+

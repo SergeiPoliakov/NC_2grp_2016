@@ -35,7 +35,7 @@ public class UserServiceImp implements UserService {
         return auth.getName();
     }
 
-    public ArrayList<User> searchUser(String name) throws SQLException {
+    public ArrayList<DataObject> searchUser(String name) throws SQLException {
         return new DBHelp().searchUser(name);
     }
 

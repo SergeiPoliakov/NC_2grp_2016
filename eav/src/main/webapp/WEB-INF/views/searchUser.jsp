@@ -21,7 +21,7 @@
 <head>
     <title>DB Test</title>
 
-        <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"> </script>
+    <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"> </script>
 
 </head>
 <body>
@@ -34,7 +34,7 @@
 <h2 id="faq">Результаты поиска:</h2>
 <c:forEach items="${allObject}" var="object">
     <div class="thumbnail">
-        <h4>${object.surname} ${object.name} ${object.middleName}, ник "${object.login}"</h4>
+        <h4>${object.getValue(2)} ${object.getValue(1)} ${object.getValue(3)}, ник "${object.getValue(4)}"</h4>
         <ul class="nav nav-pills">
                 <%--<li class="active pull-left"><a href="/delete/${object.id}">Удалить</a></li> Пока не будем тут удалять--%>
             <li class="active pull-left"><a href="/viewProfile/${object.id}">Смотреть профиль</a></li>

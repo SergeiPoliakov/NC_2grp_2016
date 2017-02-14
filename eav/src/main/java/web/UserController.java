@@ -93,7 +93,7 @@ public class UserController {
 
     @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
     public String searchUser(@RequestParam("name") String name, Map<String, Object> map) throws SQLException {
-        map.put("allObject", userService.searchUser(name));
+        map.put("allObject", loadingService.getListDataObjectByName(name, "user"));
         return "/searchUser";
     }
 
@@ -224,9 +224,9 @@ public class UserController {
     @RequestMapping(value = "/viewProfile/{id}")
     public String viewUser(@PathVariable("id") int userId,
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-        User user = userService.getUserByUserID(userId);
+        DataObject user = loadingService.getDataObjectById(userId);
         m.addAttribute(user);
-        m.addAttribute("allObject", userService.getFriendListByUserId(userId));
+        m.addAttribute("allObject",  loadingService.getListDataObjectById(userId, "event"));
         return "/viewProfile";
     }
 

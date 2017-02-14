@@ -25,7 +25,7 @@ interface UserService {
     String getCurrentUsername();
 
     @WebMethod
-    ArrayList<User> searchUser(String name) throws SQLException;
+    ArrayList<DataObject> searchUser(String name) throws SQLException;
 
     @WebMethod
     int getObjID(String username) throws SQLException;
