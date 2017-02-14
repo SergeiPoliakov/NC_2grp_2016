@@ -61,16 +61,8 @@ public class LoadingServiceImp implements LoadingService {
     // 2017-02-14 Метод получения списка самих датаобджектов, удовлетворяющих условиям примененных фильтров, фильры задаем списком Фильт1, Значение1, Фильтр2, Значение2 ... и т д
     @Override
     public ArrayList<DataObject> getListDataObjectFiltered(String... strings) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        for (String i:strings) {
-            System.out.print(i + ", ");
-
-        }
         // Сначала применяем фильтры и получем список подходящих айдишников:
         ArrayList<Integer> idList = getListIdFiltered(strings);
-        for (Integer i:idList) {
-            System.out.print(i + ", ");
-
-        }
         // А затем полученные айди кидаем в метод вывода списка датаобджектов по списку айди:
         ArrayList<DataObject> dataObjectList = getListDataObjectByListIdAlternative(idList);
         return dataObjectList;

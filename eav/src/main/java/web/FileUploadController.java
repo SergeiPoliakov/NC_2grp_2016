@@ -4,12 +4,10 @@ package web;
  * Created by Hroniko on 11.02.2017.
  */
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-
-
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -20,10 +18,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import service.UploadServiceImp;
 import service.UserServiceImp;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Random;
 
 
 @Controller
 public class FileUploadController {
+
+    final Random random = new Random();
 
     private static final Logger logger = LoggerFactory
             .getLogger(FileUploadController.class);
@@ -134,66 +140,103 @@ public class FileUploadController {
     public String uploadAvatarHandler(@RequestParam("file") MultipartFile file) throws SQLException {
 
         if (!file.isEmpty()) {
+            String server = "netcracker.hop.ru";
+            int port = 21;
+            String user = "w513022";
+            String pass = "oi4qe6l4";
+            FTPClient ftpClient = new FTPClient();
             try {
+
                 // Получаем id текущего пользователя для формирования пути к его папке с файлами
                 Integer currentUserId = new UserServiceImp().getCurrentUser().getId();
-
                 // Получаем расширение файла
-                // System.out.println(file.getOriginalFilename()); // Для отладки
                 String[] extFile = file.getOriginalFilename().split("\\.");
-                // System.out.println(extFile[extFile.length-1]); // Для отладки
-
                 // Формируем имя файла, пример: avatar_10005.png
-                String name = "avatar_" + currentUserId + "." + extFile[extFile.length-1];
+                String name = "avatar_" + random.nextInt(9) + "_" + currentUserId + "." + extFile[extFile.length-1]; // Пришлось так сделать, чтобы браузер реагировал на смену имени, а не тянул из своего кэша
 
 
-                byte[] bytes = file.getBytes();
-                //System.out.println(file.getSize());
+                // 2. Выполняем подключение к ФТП серверу:
+                ftpClient.connect(server, port);
+                ftpClient.login(user, pass);
+                ftpClient.enterLocalPassiveMode();
+                ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 
-                /* Проверяем есть ли такая папка (и создаем ее, если ее нет)  C:/ALL/apache-tomcat-9.0.0.M15/upload/10005/avatar*/
-                String rootPath = ""; //System.getProperty("catalina.home");
-                String relativePatchToFolder = File.separator + "upload" + File.separator + currentUserId  + File.separator + "avatar";
-                File dir = new File(rootPath + relativePatchToFolder);
-                if (!dir.exists())
-                    dir.mkdirs();
-                else{
-                    // иначе, если папка есть, удаляем в ней все файлы, которые уже не нужны (старый аватар)
-                    for (File oldFile : new File(rootPath + relativePatchToFolder).listFiles())
-                        if (oldFile.isFile()) oldFile.delete();
+
+                // 3. Проверяем, есть ли такая папка на сервере  /upload/10005/avatar*/
+                String relativePatchToFolder = "public_html/upload" + "/" + currentUserId  + "/" + "avatar";
+                ftpCreateDirectoryTree(ftpClient, relativePatchToFolder); // (и создаем ее, если ее нет)
+                ftpClient.changeWorkingDirectory("/"); // Переходим в корневую папку
+                ftpClient.changeWorkingDirectory(relativePatchToFolder); // Переходим в эту папку
+                ftpClient.deleteFile(name); // Удаляем файл с таким именем
+
+
+                // 4. Загружаем
+                String firstRemoteFile = name;
+                InputStream inputStream = file.getInputStream();
+
+                System.out.println("Запускаем загрузку");
+                boolean done = ftpClient.storeFile(firstRemoteFile, inputStream);
+                inputStream.close();
+                if (done) {
+                    System.out.println("Аватар загружен на ftp");
                 }
 
 
-                // Создаем файл на сервере
-                File serverFile = new File(dir.getAbsolutePath()
-                        + File.separator + name);
-                BufferedOutputStream stream = new BufferedOutputStream(
-                        new FileOutputStream(serverFile));
-                stream.write(bytes);
-                stream.close();
+                //5. Выполняем обновление ссылки в базе:
+                //String fullPatchToFolder = rootPath + relativePatchToFolder;
+                //String fullPatchToFile = fullPatchToFolder + File.separator + name;
 
-                logger.info("Файл загружен по адресу " + serverFile.getAbsolutePath());
-                System.out.println("Файл загружен по адресу " + serverFile.getAbsolutePath());
-
-
-                // Выполняем обновление ссылки в базе:
-                String fullPatchToFolder = rootPath + relativePatchToFolder;
-                String fullPatchToFile = fullPatchToFolder + File.separator + name;
-                uploadService.updateAvatar(currentUserId, serverFile.getAbsolutePath());
+                relativePatchToFolder = "http://netcracker.hop.ru/" + "upload" + "/" + currentUserId  + "/" + "avatar" + "/" + name;
+                uploadService.updateAvatar(currentUserId, relativePatchToFolder); // uploadService.updateAvatar(currentUserId, serverFile.getAbsolutePath());
 
 
 
-
-
-
-                //return "profile";
-            } catch (Exception e) {
-                //return "profile"; // return "Неудачная загрузка файла: " + e.getMessage(); // надо потом реализовать вывод ошибки во всплывающем сообщении или перенаправление на страницу ошибки
+            } catch (IOException ex) {
+                System.out.println("Ошибка: " + ex.getMessage());
+                ex.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (ftpClient.isConnected()) {
+                        ftpClient.logout();
+                        ftpClient.disconnect();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
-        } else {
-            //return "profile"; // return "Неудачная загрузка файла: файл пуст"; // надо потом реализовать вывод ошибки во всплывающем сообщении
+
         }
+
         return "redirect:/profile";
     }
 
+
+    // Создание иерархии папок по строке пути
+    private static void ftpCreateDirectoryTree( FTPClient client, String dirTree ) throws IOException {
+
+        boolean dirExists = true;
+        String[] directories = dirTree.split("/");
+        for (String dir : directories ) {
+            if (!dir.isEmpty() ) {
+                if (dirExists) {
+                    dirExists = client.changeWorkingDirectory(dir);
+                }
+                if (!dirExists) {
+                    if (!client.makeDirectory(dir)) {
+                        throw new IOException("Невозможно создать папку '" + dir + "'.  Ошибка ='" + client.getReplyString()+"'");
+                    }
+                    if (!client.changeWorkingDirectory(dir)) {
+                        throw new IOException("Невозможно сменить директорию '" + dir + "'.  Ошибка ='" + client.getReplyString()+"'");
+                    }
+                }
+            }
+        }
+    }
 
 }
