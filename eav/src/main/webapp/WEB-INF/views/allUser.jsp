@@ -95,18 +95,18 @@
 
                             <c:forEach items="${allObject}" var="object">
                                 <li class="right clearfix"><span class="chat-img pull-right">
-                                <a class="btn btn-primary btn-xs" href="/user${object.id}"><span class="glyphicon glyphicon-cog">  </span>Профиль </a>
+                                <a class="btn btn-primary btn-xs" href="/viewProfile/${object.id}"><span class="glyphicon glyphicon-cog">  </span>Профиль </a>
                                 <a class="btn btn-info btn-xs" href="/sendMessage/${object.id}"><span class="glyphicon glyphicon-envelope"></span>Написать</a>
                                 <a class="btn btn-success btn-xs" href="/addFriend/${object.id}"><span class="glyphicon glyphicon-plus">   </span>В друзья</a>
                                 </span>
                                     <div class="chat-body clearfix">
                                         <div class="header">
                                             <small class=" text-muted"><span
-                                                    class="glyphicon glyphicon-user"></span> ${object.login} </small>
+                                                    class="glyphicon glyphicon-user"></span> ${object.getValue(4)} </small>
 
                                         </div>
                                         <div class="text-left">
-                                                ${object.middleName} ${object.name} ${object.surname}
+                                                ${object.getValue(3)} ${object.getValue(2)} ${object.getValue(1)}
                                         </div>
                                     </div>
                                 </li>

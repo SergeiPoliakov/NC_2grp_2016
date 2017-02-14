@@ -3,6 +3,7 @@ package service;
 import dbHelp.DBHelp;
 import entities.DataObject;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -14,6 +15,7 @@ import java.util.TreeMap;
 public class LoadingServiceImp implements LoadingService {
 
     UserServiceImp userService = UserServiceImp.getInstance();
+    Filter filter = new Filter();
 
     private EventServiceImp eventService = EventServiceImp.getInstance();
 
@@ -23,6 +25,55 @@ public class LoadingServiceImp implements LoadingService {
         static final Integer EVENT = 1002;
         static final Integer MESSAGE = 1003;
         static final Integer MEETING = 1004;
+    }
+
+    // 2017-02-14 Альтернативный метод загрузки одного конкретного датаобджекта по его id
+    @Override
+    public DataObject getDataObjectByIdAlternative(Integer id) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        DataObject dataObject = new DBHelp().getObjectsByIdAlternative(id);
+        return dataObject;
+    }
+
+    // 2017-02-14 Альтернативный метод загрузки нескольких датаобджектов в виде списка по списку их id
+    @Override
+    public ArrayList<DataObject> getListDataObjectByListIdAlternative(ArrayList<Integer> ids) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        ArrayList<DataObject> dataObjectList = new DBHelp().getListObjectsByListIdAlternative(ids);
+        return dataObjectList;
+    }
+
+    // 2017-02-14 Альтернативный метод загрузки нескольких датаобджектов в виде списка по списку их id (для ручного ввода переменного количества id)
+    @Override
+    public ArrayList<DataObject> getListDataObjectByListIdAlternative(Integer... idx) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (Integer i: idx) {
+            ids.add(i);
+        }
+        return new DBHelp().getListObjectsByListIdAlternative(ids);
+    }
+
+    // 2017-02-14 Метод получения списка id датаобджектов, удовлетворяющих условиям примененных фильтров, фильры задаем списком Фильт1, Значение1, Фильтр2, Значение2 ...
+    @Override
+    public ArrayList<Integer> getListIdFiltered(String... strings) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        ArrayList<Integer> intList = new DBHelp().getListObjectsByListIdAlternative(strings);
+        return intList;
+    }
+
+    // 2017-02-14 Метод получения списка самих датаобджектов, удовлетворяющих условиям примененных фильтров, фильры задаем списком Фильт1, Значение1, Фильтр2, Значение2 ... и т д
+    @Override
+    public ArrayList<DataObject> getListDataObjectFiltered(String... strings) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        for (String i:strings) {
+            System.out.print(i + ", ");
+
+        }
+        // Сначала применяем фильтры и получем список подходящих айдишников:
+        ArrayList<Integer> idList = getListIdFiltered(strings);
+        for (Integer i:idList) {
+            System.out.print(i + ", ");
+
+        }
+        // А затем полученные айди кидаем в метод вывода списка датаобджектов по списку айди:
+        ArrayList<DataObject> dataObjectList = getListDataObjectByListIdAlternative(idList);
+        return dataObjectList;
     }
 
     @Override
@@ -49,7 +100,6 @@ public class LoadingServiceImp implements LoadingService {
         // иначе что-то странное запросили, потому в dataObject останется null
         return dataObject;
     }
-
 
     @Override
     public ArrayList<DataObject> getListDataObjectById(Integer id, String type) throws SQLException {

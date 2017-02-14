@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import service.EventServiceImp;
+import service.Filter;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
 
@@ -97,10 +98,11 @@ public class UserController {
     }
 
 
-    @Deprecated
+    // 2017-02-14 Анатолий, Проба работы фильтров и альтернативного лоадера
     @RequestMapping("/allUser")
-    public String listObjects(Map<String, Object> map) throws SQLException {
-        map.put("allObject",userService.getUserList());
+    public String listObjects(Map<String, Object> map) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        map.put("allObject", loadingService.getListDataObjectFiltered(Filter.OBJECT_TYPE, Filter.OBJECT_TYPE_USER)); // loadingService.getListDataObjectFiltered(Filter.OBJECT_TYPE, Filter.OBJECT_TYPE_USER));
+        // map.put("allObject",userService.getUserList());
         return "allUser";
     }
 
@@ -161,7 +163,8 @@ public class UserController {
     @RequestMapping("/profile")
     public String getProfileUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
 
-        DataObject dataObject = loadingService.getDataObjectById(userService.getObjID(userService.getCurrentUsername()));
+        DataObject dataObject = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
+        // DataObject dataObject = loadingService.getDataObjectById(userService.getObjID(userService.getCurrentUsername()));
         m.addAttribute(dataObject);
         return "/profile";
     }

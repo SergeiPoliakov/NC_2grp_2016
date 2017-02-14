@@ -3,6 +3,7 @@ package dbHelp;
 import entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.Filter;
 import service.UserServiceImp;
 
 import javax.naming.Context;
@@ -1272,7 +1273,7 @@ public class DBHelp {
 
     //endregion
 
-
+/*
     public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
         User user = new User();
@@ -1326,7 +1327,7 @@ public class DBHelp {
 
         //  System.out.println(getValue(10001, 6));
 
-    }
+  //  }
 
 
 ////// 2017-02-12 12-56 // Обновление ссылки на загруженный аватар:
@@ -1351,6 +1352,184 @@ public void updateAvatar(int userId, String patch) throws SQLException,
     PS.close();
     CloseConnection(Con);
 }
+
+    // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает все поля ДатаОбджекта, используя универсальный запрос в базу
+    public DataObject getObjectsByIdAlternative(int objectId) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+        Connection Con = getConnection();
+        PreparedStatement PS = Con.
+                prepareStatement("(SELECT -2 AS KEY, CAST(OBJECT_ID AS VARCHAR(70)) AS VALUE, 0 AS REF FROM OBJECTS WHERE OBJECT_ID = ?) " +
+                        "UNION (SELECT -1, OBJECT_NAME, 0 FROM OBJECTS WHERE OBJECT_ID = ?) " +
+                        "UNION (SELECT 0, CAST(OBJECT_TYPE_ID AS VARCHAR(70)), 0 FROM OBJECTS WHERE OBJECT_ID = ?) " +
+                        "UNION (SELECT ATTR_ID, listagg(VALUE, ' :: ') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) " +
+                        "AS VALUE_LIST, 0 FROM PARAMS pa WHERE OBJECT_ID = ? AND ATTR_ID != 12 AND ATTR_ID != 13) " +
+                        "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1 FROM REFERENCES WHERE OBJECT_ID = ?)");
+        // В качестве всех параметров id датаобджекта:
+        PS.setInt(1, objectId);
+        PS.setInt(2, objectId);
+        PS.setInt(3, objectId);
+        PS.setInt(4, objectId);
+        PS.setInt(5, objectId);
+
+        ResultSet RS = PS.executeQuery();
+        DataObject dataObject = new DataObject();
+
+        // Обходим всю полученную таблицу и формируем поля датаобджекта
+        while (RS.next()) {
+            Integer key = RS.getInt(1); // key
+            String value = RS.getString(2); // value
+            Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
+            // System.out.println(key + " : " + value); // для отладки
+
+            if (key == -2){ // Это пришел к нам айдишник
+                dataObject.setId(Integer.parseInt(value));
+            }
+            else if (key == -1){ // Это пришло к нам имя
+                dataObject.setName(value);
+            }
+            else if (key == 0){ // Это пришел к нам тип
+                dataObject.setObjectTypeId(Integer.parseInt(value));
+            }
+            else { // Иначе пришли параматры или ссылки
+                if (ref == 0){ // Значит, это пришли параметры
+                    dataObject.setParams(key, value);
+                }
+                else{ // Иначе пришли ссылки
+                    dataObject.setRefParams(key, Integer.parseInt(value));
+                }
+            }
+        }
+
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return dataObject;
+    }
+
+    // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает список ДатаОбджектов по списку id, используя универсальный запрос в базу
+    public ArrayList<DataObject> getListObjectsByListIdAlternative(ArrayList<Integer> objectIds) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+        ArrayList<DataObject> dataObjectList = new ArrayList<>();
+        if (objectIds.size() > 0) {
+            // Формируем вставку в запрос вида IN (10001, 10002, 10003) из переданного списка айдишников
+            String set = "IN (";
+            for (int i = 0; i < objectIds.size() - 1; i++){ // кроме последнего элемента
+                set += objectIds.get(i) + ", ";
+            }
+            set += objectIds.get(objectIds.size() - 1) + ")";
+
+            String sql = "SELECT * FROM((SELECT -2 AS KEY, CAST(OBJECT_ID AS VARCHAR(70)) AS VALUE, 0 AS REF, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
+            "UNION (SELECT -1, OBJECT_NAME, 0, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
+                    "UNION (SELECT 0, CAST(OBJECT_TYPE_ID AS VARCHAR(70)), 0, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
+                    "UNION (SELECT ATTR_ID, listagg(VALUE, ' :: ') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                    "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13) " +
+                    "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set + ")) ORDER BY OBJECT_ID, KEY";
+            Connection Con = getConnection();
+            PreparedStatement PS = Con.prepareStatement(sql);
+            ResultSet RS = PS.executeQuery();
+
+            // Обходим всю полученную таблицу и формируем поля датаобджектов
+            DataObject dataObject = null;
+            while (RS.next()) {
+                Integer key = RS.getInt(1); // key
+                String value = RS.getString(2); // value
+                Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
+                Integer id = RS.getInt(4); // object id
+
+                if (key == -2){ // Это пришел к нам айдишник
+                    if (dataObject != null) {
+                        dataObjectList.add(dataObject); // кладем предыдущий объект в лист
+                    }
+                    dataObject = new DataObject(); // создаем новый, и будем теперь в него писать
+                    dataObject.setId(Integer.parseInt(value));
+                }
+                else if (key == -1){ // Это пришло к нам имя
+                    dataObject.setName(value);
+                }
+                else if (key == 0){ // Это пришел к нам тип
+                    dataObject.setObjectTypeId(Integer.parseInt(value));
+                }
+                else { // Иначе пришли параматры или ссылки
+                    if (ref == 0){ // Значит, это пришли параметры
+                        dataObject.setParams(key, value);
+                    }
+                    else{ // Иначе пришли ссылки
+                        dataObject.setRefParams(key, Integer.parseInt(value));
+                    }
+                }
+            }
+            // и в конце надо дописать последний элемент, который из-за while не занесся в лист:
+            if (dataObject != null){ // если успели прочитать поля в объект, то есть он не просто пустая заготовка
+                dataObjectList.add(dataObject); // кладем объект в лист
+            }
+            //dataObjectList.add(dataObject); // кладем объект в лист
+            RS.close();
+            PS.close();
+            CloseConnection(Con);
+        }
+        return dataObjectList;
+    }
+
+    // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает список id подходящих под фильтры датаобджектов
+    public ArrayList<Integer> getListObjectsByListIdAlternative(String... strings) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+        ArrayList<Integer> idList = new ArrayList<>();
+        if (strings.length > 0) {
+            boolean fromFlag = false;
+            boolean tableFlag = false;
+            String sql = "SELECT OBJECT_ID FROM ";
+            for(int i = 0; i < strings.length; i++){
+                switch (strings[i]) {
+                    case Filter.OBJECT_TYPE: // Если выбран тип
+                        if ( ! tableFlag){
+                            sql += "OBJECTS ";
+                            tableFlag = ! tableFlag;
+                        }
+                        if ( ! fromFlag){
+                            sql += "WHERE ";
+                            fromFlag = ! fromFlag;
+                        }
+                        else {
+                            sql += "AND ";
+                        }
+                        i++;
+                        sql += Filter.OBJECT_TYPE + " = " + strings[i] + " ";
+                        break;
+
+                    case Filter.OBJECT_NAME:// Если выбрано имя
+                        if ( ! tableFlag){
+                            sql += "OBJECTS ";
+                            tableFlag = ! tableFlag;
+                        }
+                        if ( ! fromFlag){
+                            sql += "WHERE ";
+                            fromFlag = ! fromFlag;
+                        }
+                        else {
+                            sql += "AND ";
+                        }
+                        i++;
+                        sql += Filter.OBJECT_NAME + " = " + strings[i] + " ";
+                        break;
+                }
+            }
+            if ( ! tableFlag){
+                sql += "OBJECTS ";
+                tableFlag = ! tableFlag;
+            }
+            sql += "ORDER BY OBJECT_ID";
+
+            Connection Con = getConnection();
+            PreparedStatement PS = Con.prepareStatement(sql);
+            ResultSet RS = PS.executeQuery();
+            // Обходим всю полученную таблицу и формируем лист id-шек
+            while (RS.next()){
+                idList.add(RS.getInt(1));
+            }
+            RS.close();
+            PS.close();
+            CloseConnection(Con);
+        }
+        return idList;
+    }
+
 
 
 }
