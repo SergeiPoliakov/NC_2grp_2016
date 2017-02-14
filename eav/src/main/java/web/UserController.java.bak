@@ -226,7 +226,7 @@ public class UserController {
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         User user = userService.getUserByUserID(userId);
         m.addAttribute(user);
-        m.addAttribute("allObject", userService.getFriendListByUserId(userId));
+        m.addAttribute("allEvents", eventService.getEventList(userId));
         return "/viewProfile";
     }
 
