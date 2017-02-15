@@ -1363,7 +1363,7 @@ public void updateAvatar(int userId, String patch) throws SQLException,
                 prepareStatement("(SELECT -2 AS KEY, CAST(OBJECT_ID AS VARCHAR(70)) AS VALUE, 0 AS REF FROM OBJECTS WHERE OBJECT_ID = ?) " +
                         "UNION (SELECT -1, OBJECT_NAME, 0 FROM OBJECTS WHERE OBJECT_ID = ?) " +
                         "UNION (SELECT 0, CAST(OBJECT_TYPE_ID AS VARCHAR(70)), 0 FROM OBJECTS WHERE OBJECT_ID = ?) " +
-                        "UNION (SELECT ATTR_ID, listagg(VALUE, ' :: ') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) " +
+                        "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) " +
                         "AS VALUE_LIST, 0 FROM PARAMS pa WHERE OBJECT_ID = ? AND ATTR_ID != 12 AND ATTR_ID != 13) " +
                         "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1 FROM REFERENCES WHERE OBJECT_ID = ?)");
         // В качестве всех параметров id датаобджекта:
@@ -1380,6 +1380,7 @@ public void updateAvatar(int userId, String patch) throws SQLException,
         while (RS.next()) {
             Integer key = RS.getInt(1); // key
             String value = RS.getString(2); // value
+            value = (( (value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value );
             Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
             // System.out.println(key + " : " + value); // для отладки
 
@@ -1422,7 +1423,7 @@ public void updateAvatar(int userId, String patch) throws SQLException,
             String sql = "SELECT * FROM((SELECT -2 AS KEY, CAST(OBJECT_ID AS VARCHAR(70)) AS VALUE, 0 AS REF, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
             "UNION (SELECT -1, OBJECT_NAME, 0, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
                     "UNION (SELECT 0, CAST(OBJECT_TYPE_ID AS VARCHAR(70)), 0, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
-                    "UNION (SELECT ATTR_ID, listagg(VALUE, ' :: ') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                    "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
                     "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13) " +
                     "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set + ")) ORDER BY OBJECT_ID, KEY";
             Connection Con = getConnection();
@@ -1434,6 +1435,7 @@ public void updateAvatar(int userId, String patch) throws SQLException,
             while (RS.next()) {
                 Integer key = RS.getInt(1); // key
                 String value = RS.getString(2); // value
+                value = (( (value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value );
                 Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
                 Integer id = RS.getInt(4); // object id
 
