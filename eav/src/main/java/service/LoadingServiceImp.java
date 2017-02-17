@@ -2,6 +2,8 @@ package service;
 
 import dbHelp.DBHelp;
 import entities.DataObject;
+import service.filters.*;
+import service.filters.MeetingFilter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -57,6 +59,51 @@ public class LoadingServiceImp implements LoadingService {
         ArrayList<Integer> intList = new DBHelp().getListObjectsByListIdAlternative(strings);
         return intList;
     }
+
+
+
+
+
+
+
+
+
+    // 2017-02-16 Метод #2 получения списка id датаобджектов, удовлетворяющих условиям примененных фильтров, фильры задаем списком FilterAlternetive(Параметры), ...
+    // Переопределение методов
+    // С фильтром для юзера
+    public ArrayList<Integer> getListIdFilteredAlternative(UserFilter userFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        System.out.println("Запускаю getListIdFilteredAlternative c полученным фильтром");
+        ArrayList<Integer> il = new DBHelp().getListObjectsByFilters(userFilter);
+        System.out.print("Вывожу список id отфильтроанных пользователей: ");
+        for (int i = 0; i < il.size(); i++){
+            System.out.print(il.get(i) + ", ");
+        }
+        return il;
+    }
+    // с фильтром для событий
+    public ArrayList<Integer> getListIdFilteredAlternative(EventFilter eventFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return new DBHelp().getListObjectsByFilters(eventFilter);
+    }
+    // с фильтром для сообщений
+    public ArrayList<Integer> getListIdFilteredAlternative(MessageFilter messageFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return new DBHelp().getListObjectsByFilters(messageFilter);
+    }
+    // с фильтром для встреч
+    public ArrayList<Integer> getListIdFilteredAlternative(MeetingFilter meetingFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return new DBHelp().getListObjectsByFilters(meetingFilter);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     // 2017-02-14 Метод получения списка самих датаобджектов, удовлетворяющих условиям примененных фильтров, фильры задаем списком Фильт1, Значение1, Фильтр2, Значение2 ... и т д
     @Override

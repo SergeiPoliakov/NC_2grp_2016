@@ -1,7 +1,6 @@
 package web;
 
 import entities.DataObject;
-import entities.User;
 import exception.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import service.EventServiceImp;
-import service.Filter;
-import service.LoadingServiceImp;
-import service.UserServiceImp;
+import service.*;
+import service.filters.UserFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -97,7 +95,7 @@ public class UserController {
         return "/searchUser";
     }
 
-
+/*
     // 2017-02-14 Анатолий, Проба работы фильтров и альтернативного лоадера
     @RequestMapping("/allUser")
     public String listObjects(Map<String, Object> map) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -105,7 +103,17 @@ public class UserController {
         // map.put("allObject",userService.getUserList());
         return "allUser";
     }
+*/
 
+    // 2017-02-16 Анатолий, Проба работы новых фильтров и альтернативного лоадера
+    @RequestMapping("/allUser")
+    public String listObjects(Map<String, Object> map) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        //map.put("allObject", loadingService.getListDataObjectFiltered(Filter.OBJECT_TYPE, Filter.OBJECT_TYPE_USER)); // loadingService.getListDataObjectFiltered(Filter.OBJECT_TYPE, Filter.OBJECT_TYPE_USER));
+        // map.put("allObject",userService.getUserList());
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL));
+        map.put("allObject", loadingService.getListDataObjectByListIdAlternative(il));
+        return "allUser";
+    }
 
     @RequestMapping("/delete/{objectId}")
     public String deleteObject(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {

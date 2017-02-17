@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.*;
 
+import service.filters.*;
+
 /**
  * Created by Lawrence on 14.01.2017.
  */
@@ -28,8 +30,8 @@ public class DBHelp {
         Locale.setDefault(Locale.ENGLISH);
         try {
             InitialContext initContext = new InitialContext();
-            Context envContext = (Context)initContext.lookup("java:comp/env");
-            DataSource ds = (DataSource)envContext.lookup("jdbc/myoracle");
+            Context envContext = (Context) initContext.lookup("java:comp/env");
+            DataSource ds = (DataSource) envContext.lookup("jdbc/myoracle");
             return ds.getConnection();
         } catch (NamingException e) {
             e.printStackTrace();
@@ -53,17 +55,15 @@ public class DBHelp {
         return newID;
     }
 
-    public int getObjID(String username) throws SQLException
-    {
+    public int getObjID(String username) throws SQLException {
         Connection Con = getConnection();
         PreparedStatement PS = Con
                 .prepareStatement("SELECT OBJECT_ID FROM PARAMS WHERE VALUE = ?");
         PS.setString(1, username);
         ResultSet RS = PS.executeQuery();
         int objID = 0;
-        while(RS.next())
-        {
-            objID =  RS.getInt(1);
+        while (RS.next()) {
+            objID = RS.getInt(1);
         }
         RS.close();
         PS.close();
@@ -72,8 +72,7 @@ public class DBHelp {
     }
 
 
-    public ArrayList<String> getObjParamsByObjID(int objID) throws SQLException
-    {
+    public ArrayList<String> getObjParamsByObjID(int objID) throws SQLException {
         ArrayList<String> objParams = new ArrayList<>();
         Connection Con = getConnection();
         PreparedStatement PS = Con
@@ -90,8 +89,7 @@ public class DBHelp {
         return objParams;
     }
 
-    public ArrayList<Object> getEventParamsByObjID(int eventID) throws SQLException
-    {
+    public ArrayList<Object> getEventParamsByObjID(int eventID) throws SQLException {
         ArrayList<Object> eventParams = new ArrayList<>();
         Connection Con = getConnection();
         PreparedStatement PS = Con.prepareStatement("SELECT NVL(VALUE, ' ') FROM PARAMS WHERE OBJECT_ID = ? and ATTR_ID BETWEEN 101 and 105");
@@ -146,7 +144,6 @@ public class DBHelp {
     }
 
 
-
     public ArrayList<Object> getObjectsIDbyObjectTypeID(int ObjectTypeID)
             throws SQLException {
         ArrayList<Object> Res = new ArrayList<>();
@@ -172,7 +169,7 @@ public class DBHelp {
         PreparedStatement PS = Con
                 .prepareStatement("SELECT p.VALUE " +
                         "FROM PARAMS p " +
-                        "WHERE p.ATTR_ID = 6 and p.VALUE = ?" );
+                        "WHERE p.ATTR_ID = 6 and p.VALUE = ?");
         PS.setString(1, email);
         ResultSet RS = PS.executeQuery();
         while (RS.next()) {
@@ -325,13 +322,13 @@ public class DBHelp {
         ResultSet RS1 = PS1.executeQuery();
         while (RS1.next()) {
             Event event = new Event();
-            event.setId( RS1.getInt(1));
-            event.setHost_id( RS1.getInt(2));
-            event.setName( RS1.getString(3));
-            event.setDate_begin( RS1.getString(4));
-            event.setDate_end( RS1.getString(5));
-            event.setPriority( RS1.getString(6));
-            event.setInfo( RS1.getString(7));
+            event.setId(RS1.getInt(1));
+            event.setHost_id(RS1.getInt(2));
+            event.setName(RS1.getString(3));
+            event.setDate_begin(RS1.getString(4));
+            event.setDate_end(RS1.getString(5));
+            event.setPriority(RS1.getString(6));
+            event.setInfo(RS1.getString(7));
 
             events.add(event);
         }
@@ -443,18 +440,16 @@ public class DBHelp {
 
      */
 
-    public int getAttrID(int ObjID, int ObjRefID) throws SQLException
-    {
+    public int getAttrID(int ObjID, int ObjRefID) throws SQLException {
         Connection Con = getConnection();
         PreparedStatement PS = Con
                 .prepareStatement("SELECT ATTR_ID FROM REFERENCES WHERE OBJECT_ID = ? and REFERENCE = ?");
         PS.setInt(1, ObjID);
         PS.setInt(2, ObjRefID);
         ResultSet RS = PS.executeQuery();
-        int attrid=0;
-        while(RS.next())
-        {
-            attrid =  RS.getInt(1);
+        int attrid = 0;
+        while (RS.next()) {
+            attrid = RS.getInt(1);
         }
         RS.close();
         PS.close();
@@ -463,8 +458,7 @@ public class DBHelp {
     }
 
 
-    public String getValue(int ObjID, int AttrId) throws SQLException
-    {
+    public String getValue(int ObjID, int AttrId) throws SQLException {
         Connection Con = getConnection();
         PreparedStatement PS = Con
                 .prepareStatement("SELECT VALUE FROM PARAMS WHERE OBJECT_ID = ? and ATTR_ID = ?");
@@ -472,9 +466,8 @@ public class DBHelp {
         PS.setInt(2, AttrId);
         ResultSet RS = PS.executeQuery();
         String value = "";
-        while(RS.next())
-        {
-            value =  RS.getString(1);
+        while (RS.next()) {
+            value = RS.getString(1);
         }
         RS.close();
         PS.close();
@@ -483,9 +476,7 @@ public class DBHelp {
     }
 
 
-
-    public void deleteObject(Integer ID) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException
-    {
+    public void deleteObject(Integer ID) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
         Connection Con = getConnection();
         PreparedStatement PS = Con
                 .prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
@@ -506,8 +497,7 @@ public class DBHelp {
     }
 
 
-    public void deleteEvent(Integer eventId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException
-    {
+    public void deleteEvent(Integer eventId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
         Connection Con = getConnection();
         PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
         PS.setInt(1, eventId);
@@ -736,10 +726,10 @@ public class DBHelp {
         int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
 
         User user = getCurrentUser(); // Получаем объект текущего пользователя
-        String fullNameUser = user.getMiddleName() + " " +  user.getName() + " " + user.getSurname(); // Формируем полное имя друга
+        String fullNameUser = user.getMiddleName() + " " + user.getName() + " " + user.getSurname(); // Формируем полное имя друга
 
         User friend = getUserByUserID(idFriend); // Получаем объект друга
-        String fullNameFriend = friend.getSurname() + " " +  friend.getName() + " " + friend.getMiddleName(); // Формируем полное имя друга
+        String fullNameFriend = friend.getSurname() + " " + friend.getName() + " " + friend.getMiddleName(); // Формируем полное имя друга
 
         // 1) Проверяем, находится ли данный пользователь у нас в друзьях:
         // SELECT COUNT(*) FROM REFERENCES WHERE (OBJECT_ID = 10003 AND REFERENCE = 10002 OR OBJECT_ID = 10002 AND REFERENCE = 10003) AND ATTR_ID = 12;
@@ -751,15 +741,14 @@ public class DBHelp {
         PS.setInt(5, attrId);
         ResultSet RS = PS.executeQuery();
         int count = 0;
-        while(RS.next())
-        {
-            count =  RS.getInt(1);
+        while (RS.next()) {
+            count = RS.getInt(1);
         }
         RS.close();
         PS.close();
 
 
-        if ( (count == 0) & (idUser != idFriend) ){ // Если нет в друзьях и не добавляем пользователя к самому себе в друзья, то добавляем
+        if ((count == 0) & (idUser != idFriend)) { // Если нет в друзьях и не добавляем пользователя к самому себе в друзья, то добавляем
 
             // 1) Добавление 12-го параметра в PARAMS (user_id для текущего пользователя):
 
@@ -812,7 +801,6 @@ public class DBHelp {
 
         CloseConnection(Con);
     }
-
 
 
     public void deleteFriend(int idFriend) throws SQLException,
@@ -899,9 +887,8 @@ public class DBHelp {
     }
 
 
-
     public void setNewMessage(int ObjTypeID, TreeMap<Integer, Object> massAttr) throws SQLException,
-           NoSuchMethodException, IllegalAccessException,
+            NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         Connection Con = getConnection();
 
@@ -947,8 +934,7 @@ public class DBHelp {
     }
 
 
-    public void deleteMessage(Integer messageId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException
-    {
+    public void deleteMessage(Integer messageId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
         Connection Con = getConnection();
         PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
         PS.setInt(1, messageId);
@@ -970,7 +956,6 @@ public class DBHelp {
         PS.close();
         CloseConnection(Con);
     }
-
 
 
     public ArrayList<Message> getMessageList(int from_id, int to_id) throws SQLException {
@@ -998,14 +983,14 @@ public class DBHelp {
         ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         while (RS.next()) {
             Message message = new Message();
-            message.setId( RS.getInt(1) );
-            message.setFrom_id( RS.getInt(2) );
-            message.setTo_id( RS.getInt(3) );
-            message.setDate_send( RS.getString(4));
-            message.setRead_status( RS.getInt(5) );
-            message.setText( RS.getString(6));
-            message.setFrom_name( RS.getString(7));
-            message.setTo_name( RS.getString(8));
+            message.setId(RS.getInt(1));
+            message.setFrom_id(RS.getInt(2));
+            message.setTo_id(RS.getInt(3));
+            message.setDate_send(RS.getString(4));
+            message.setRead_status(RS.getInt(5));
+            message.setText(RS.getString(6));
+            message.setFrom_name(RS.getString(7));
+            message.setTo_name(RS.getString(8));
 
             Res.add(message); // Res.add(RS.getObject(1));
             //Res.add(RS.getObject(2));
@@ -1015,7 +1000,6 @@ public class DBHelp {
         CloseConnection(Con);
         return Res;
     }
-
 
 
     //region Meeting
@@ -1107,7 +1091,7 @@ public class DBHelp {
 
 
     // Добавить встречу (id у обьекта Meeting указывать не нужно)
-    public void setMeeting(Meeting meeting) throws SQLException{
+    public void setMeeting(Meeting meeting) throws SQLException {
 
         Connection connection = getConnection();
         int meetingID = 40000;
@@ -1139,10 +1123,10 @@ public class DBHelp {
         PS1.close();
 
         // 3) Добавление ссылки Встреча - Участники (админ в анном случае):
-        Integer  idUser = meeting.getOrganizer().getId();
+        Integer idUser = meeting.getOrganizer().getId();
         int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
         PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-        PS2.setInt(1, meetingID ); // ID встречи
+        PS2.setInt(1, meetingID); // ID встречи
         PS2.setInt(2, referenceAttrId); // ID параметра(307)
         PS2.setInt(3, idUser); // ID организатора
         PS2.executeQuery(); //PS2.executeBatch();
@@ -1173,7 +1157,7 @@ public class DBHelp {
     }
 
 
-    public void setUsersToMeeting(int meetingID, String... userIDs) throws SQLException{
+    public void setUsersToMeeting(int meetingID, String... userIDs) throws SQLException {
         Connection connection = getConnection();
         int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
         PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
@@ -1190,13 +1174,13 @@ public class DBHelp {
     }
 
 
-    public void removeUsersFromMeeting(String meetingID, String... userIDs) throws SQLException{
+    public void removeUsersFromMeeting(String meetingID, String... userIDs) throws SQLException {
         Connection connection = getConnection();
         PreparedStatement PS2 = connection.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ? AND OBJECT_ID = ?");
 
         for (int i = 0; i < userIDs.length; i++) {
             PS2.setString(1, userIDs[i]); // ID пользователя
-            PS2.setString(2, meetingID ); // ID встречи
+            PS2.setString(2, meetingID); // ID встречи
             PS2.executeUpdate();
         }
         PS2.close();
@@ -1205,7 +1189,7 @@ public class DBHelp {
 
 
     public ArrayList<User> getUsersAtMeeting(int meetingID) throws IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, NoSuchMethodException, SecurityException, SQLException, NullPointerException{
+            InvocationTargetException, NoSuchMethodException, SecurityException, SQLException, NullPointerException {
         ArrayList<User> Res = new ArrayList<>();
         Connection Con = getConnection();
         // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
@@ -1227,7 +1211,7 @@ public class DBHelp {
         RS.close();
         PS.close();
         CloseConnection(Con);
-        return  Res;
+        return Res;
     }
 
 
@@ -1294,7 +1278,7 @@ public class DBHelp {
         for (int i=0; i < ms.size(); i++){
             System.out.println(ms.get(i).getId());
         }*/
-        //new DBHelp().addUsersToMeeting("28", "10002", "10001");
+    //new DBHelp().addUsersToMeeting("28", "10002", "10001");
         /*ArrayList<Meeting> ms = new DBHelp().getUserMeetingsList(10003);
         for (int i=0; i < ms.size(); i++){
             System.out.println(ms.get(i).getId());
@@ -1322,42 +1306,42 @@ public class DBHelp {
             System.out.println(ms.get(i).getTag());
         }
         System.out.println("END");*/
-        //DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
-        //int attr = getAttrID(10001, 20004);
-        //System.out.println(attr);
-        // deleteObject(10001);
-        // addTask();
+    //DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
+    //int attr = getAttrID(10001, 20004);
+    //System.out.println(attr);
+    // deleteObject(10001);
+    // addTask();
 
-        //  System.out.println(getValue(10001, 6));
+    //  System.out.println(getValue(10001, 6));
 
-  //  }
+    //  }
 
 
-////// 2017-02-12 12-56 // Обновление ссылки на загруженный аватар:
-public void updateAvatar(int userId, String patch) throws SQLException,
-        NoSuchMethodException, IllegalAccessException,
-        IllegalArgumentException, InvocationTargetException {
+    ////// 2017-02-12 12-56 // Обновление ссылки на загруженный аватар:
+    public void updateAvatar(int userId, String patch) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
 
-    //System.out.println(userId + " " + patch);
-    Connection Con = getConnection();
-    // Удаляем ту ссылку, которая уже имеется:
-    PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ?"); // DELETE FROM PARAMS WHERE OBJECT_ID = '10005' AND ATTR_ID = '11';
-    PS.setInt(1, userId);
-    PS.setInt(2, 11);
-    PS.executeUpdate();
-	// И создаем новую:
-    PS = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)"); // INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10005','11','\\upload\\10005\\avatar\\avatar_10005.png');
-    PS.setInt(1, userId);
-    PS.setInt(2, 11);
-    PS.setString(3, patch);
-    PS.executeUpdate();
+        //System.out.println(userId + " " + patch);
+        Connection Con = getConnection();
+        // Удаляем ту ссылку, которая уже имеется:
+        PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ?"); // DELETE FROM PARAMS WHERE OBJECT_ID = '10005' AND ATTR_ID = '11';
+        PS.setInt(1, userId);
+        PS.setInt(2, 11);
+        PS.executeUpdate();
+        // И создаем новую:
+        PS = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)"); // INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10005','11','\\upload\\10005\\avatar\\avatar_10005.png');
+        PS.setInt(1, userId);
+        PS.setInt(2, 11);
+        PS.setString(3, patch);
+        PS.executeUpdate();
 
-    PS.close();
-    CloseConnection(Con);
-}
+        PS.close();
+        CloseConnection(Con);
+    }
 
     // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает все поля ДатаОбджекта, используя универсальный запрос в базу
-    public DataObject getObjectsByIdAlternative(int objectId) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+    public DataObject getObjectsByIdAlternative(int objectId) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Connection Con = getConnection();
         PreparedStatement PS = Con.
                 prepareStatement("(SELECT -2 AS KEY, CAST(OBJECT_ID AS VARCHAR(70)) AS VALUE, 0 AS REF FROM OBJECTS WHERE OBJECT_ID = ?) " +
@@ -1380,24 +1364,21 @@ public void updateAvatar(int userId, String patch) throws SQLException,
         while (RS.next()) {
             Integer key = RS.getInt(1); // key
             String value = RS.getString(2); // value
-            value = (( (value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value );
+            // Удаление дублирования строк (Вася Вася Вася):
+            value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
             Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
             // System.out.println(key + " : " + value); // для отладки
 
-            if (key == -2){ // Это пришел к нам айдишник
+            if (key == -2) { // Это пришел к нам айдишник
                 dataObject.setId(Integer.parseInt(value));
-            }
-            else if (key == -1){ // Это пришло к нам имя
+            } else if (key == -1) { // Это пришло к нам имя
                 dataObject.setName(value);
-            }
-            else if (key == 0){ // Это пришел к нам тип
+            } else if (key == 0) { // Это пришел к нам тип
                 dataObject.setObjectTypeId(Integer.parseInt(value));
-            }
-            else { // Иначе пришли параматры или ссылки
-                if (ref == 0){ // Значит, это пришли параметры
+            } else { // Иначе пришли параматры или ссылки
+                if (ref == 0) { // Значит, это пришли параметры
                     dataObject.setParams(key, value);
-                }
-                else{ // Иначе пришли ссылки
+                } else { // Иначе пришли ссылки
                     dataObject.setRefParams(key, Integer.parseInt(value));
                 }
             }
@@ -1410,18 +1391,18 @@ public void updateAvatar(int userId, String patch) throws SQLException,
     }
 
     // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает список ДатаОбджектов по списку id, используя универсальный запрос в базу
-    public ArrayList<DataObject> getListObjectsByListIdAlternative(ArrayList<Integer> objectIds) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+    public ArrayList<DataObject> getListObjectsByListIdAlternative(ArrayList<Integer> objectIds) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         ArrayList<DataObject> dataObjectList = new ArrayList<>();
         if (objectIds.size() > 0) {
             // Формируем вставку в запрос вида IN (10001, 10002, 10003) из переданного списка айдишников
             String set = "IN (";
-            for (int i = 0; i < objectIds.size() - 1; i++){ // кроме последнего элемента
+            for (int i = 0; i < objectIds.size() - 1; i++) { // кроме последнего элемента
                 set += objectIds.get(i) + ", ";
             }
             set += objectIds.get(objectIds.size() - 1) + ")";
 
             String sql = "SELECT * FROM((SELECT -2 AS KEY, CAST(OBJECT_ID AS VARCHAR(70)) AS VALUE, 0 AS REF, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
-            "UNION (SELECT -1, OBJECT_NAME, 0, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
+                    "UNION (SELECT -1, OBJECT_NAME, 0, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
                     "UNION (SELECT 0, CAST(OBJECT_TYPE_ID AS VARCHAR(70)), 0, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
                     "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
                     "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13) " +
@@ -1435,34 +1416,31 @@ public void updateAvatar(int userId, String patch) throws SQLException,
             while (RS.next()) {
                 Integer key = RS.getInt(1); // key
                 String value = RS.getString(2); // value
-                value = (( (value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value );
+                // Удаление дублирования строк (Вася Вася Вася):
+                value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
                 Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
                 Integer id = RS.getInt(4); // object id
 
-                if (key == -2){ // Это пришел к нам айдишник
+                if (key == -2) { // Это пришел к нам айдишник
                     if (dataObject != null) {
                         dataObjectList.add(dataObject); // кладем предыдущий объект в лист
                     }
                     dataObject = new DataObject(); // создаем новый, и будем теперь в него писать
                     dataObject.setId(Integer.parseInt(value));
-                }
-                else if (key == -1){ // Это пришло к нам имя
+                } else if (key == -1) { // Это пришло к нам имя
                     dataObject.setName(value);
-                }
-                else if (key == 0){ // Это пришел к нам тип
+                } else if (key == 0) { // Это пришел к нам тип
                     dataObject.setObjectTypeId(Integer.parseInt(value));
-                }
-                else { // Иначе пришли параматры или ссылки
-                    if (ref == 0){ // Значит, это пришли параметры
+                } else { // Иначе пришли параматры или ссылки
+                    if (ref == 0) { // Значит, это пришли параметры
                         dataObject.setParams(key, value);
-                    }
-                    else{ // Иначе пришли ссылки
+                    } else { // Иначе пришли ссылки
                         dataObject.setRefParams(key, Integer.parseInt(value));
                     }
                 }
             }
             // и в конце надо дописать последний элемент, который из-за while не занесся в лист:
-            if (dataObject != null){ // если успели прочитать поля в объект, то есть он не просто пустая заготовка
+            if (dataObject != null) { // если успели прочитать поля в объект, то есть он не просто пустая заготовка
                 dataObjectList.add(dataObject); // кладем объект в лист
             }
             //dataObjectList.add(dataObject); // кладем объект в лист
@@ -1474,24 +1452,23 @@ public void updateAvatar(int userId, String patch) throws SQLException,
     }
 
     // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает список id подходящих под фильтры датаобджектов
-    public ArrayList<Integer> getListObjectsByListIdAlternative(String... strings) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+    public ArrayList<Integer> getListObjectsByListIdAlternative(String... strings) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         ArrayList<Integer> idList = new ArrayList<>();
         if (strings.length > 0) {
             boolean fromFlag = false;
             boolean tableFlag = false;
             String sql = "SELECT OBJECT_ID FROM ";
-            for(int i = 0; i < strings.length; i++){
+            for (int i = 0; i < strings.length; i++) {
                 switch (strings[i]) {
                     case Filter.OBJECT_TYPE: // Если выбран тип
-                        if ( ! tableFlag){
+                        if (!tableFlag) {
                             sql += "OBJECTS ";
-                            tableFlag = ! tableFlag;
+                            tableFlag = !tableFlag;
                         }
-                        if ( ! fromFlag){
+                        if (!fromFlag) {
                             sql += "WHERE ";
-                            fromFlag = ! fromFlag;
-                        }
-                        else {
+                            fromFlag = !fromFlag;
+                        } else {
                             sql += "AND ";
                         }
                         i++;
@@ -1499,15 +1476,14 @@ public void updateAvatar(int userId, String patch) throws SQLException,
                         break;
 
                     case Filter.OBJECT_NAME:// Если выбрано имя
-                        if ( ! tableFlag){
+                        if (!tableFlag) {
                             sql += "OBJECTS ";
-                            tableFlag = ! tableFlag;
+                            tableFlag = !tableFlag;
                         }
-                        if ( ! fromFlag){
+                        if (!fromFlag) {
                             sql += "WHERE ";
-                            fromFlag = ! fromFlag;
-                        }
-                        else {
+                            fromFlag = !fromFlag;
+                        } else {
                             sql += "AND ";
                         }
                         i++;
@@ -1515,9 +1491,9 @@ public void updateAvatar(int userId, String patch) throws SQLException,
                         break;
                 }
             }
-            if ( ! tableFlag){
+            if (!tableFlag) {
                 sql += "OBJECTS ";
-                tableFlag = ! tableFlag;
+                tableFlag = !tableFlag;
             }
             sql += "ORDER BY OBJECT_ID";
 
@@ -1525,7 +1501,7 @@ public void updateAvatar(int userId, String patch) throws SQLException,
             PreparedStatement PS = Con.prepareStatement(sql);
             ResultSet RS = PS.executeQuery();
             // Обходим всю полученную таблицу и формируем лист id-шек
-            while (RS.next()){
+            while (RS.next()) {
                 idList.add(RS.getInt(1));
             }
             RS.close();
@@ -1535,6 +1511,365 @@ public void updateAvatar(int userId, String patch) throws SQLException,
         return idList;
     }
 
+/* ................................................................................................................... */
+    // 2017-02-16 Парсер-генератор строки SQL-запроса по переданному фильтру:
+    public String parseGenerate(BaseFilter filter) {
+        System.out.println("Запускаю parseGenerate");
+        Integer USER    = 1001;
+        Integer EVENT   = 1002;
+        Integer MESSAGE = 1003;
+        Integer MEETING = 1004;
+
+        String sql = "SELECT ob.OBJECT_ID FROM OBJECTS ob ";
+        TreeMap<String, ArrayList<String>> params = filter.getParams();
+
+        // в зависимости от типа фильтра
+        if (filter instanceof UserFilter)
+        {
+            //  начинаем вытаскивать параметры и формировать строку запроса:
+            if (params.get(UserFilter.ALL) != null){ // если надо получить IDs всех пользователей,
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + USER;
+                System.out.println("Формирую запрос " + sql);
+            }
+            else if (params.get(UserFilter.CURRENT) != null){ // если надо получить ID текущего пользователей,
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " ";
+                sql += "AND ob.OBJECT_NAME = " + userService.getCurrentUsername();
+            }
+            else if (params.get(UserFilter.WITH_NAME) != null) { // если надо получить ID пользователя по его имени,
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " ";
+                sql += "AND ob.OBJECT_NAME IN (";
+                ArrayList<String> names = params.get(UserFilter.WITH_NAME);
+                int i;
+                for(i = 0; i < names.size()-1; i++){
+                    sql += names.get(i) + ", ";
+                }
+                sql += names.get(i) + ") ";
+            }
+            else if (params.get(UserFilter.SEARCH_USER) != null){ // если надо найти пользователя через поиск,
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " ";
+                ArrayList<String> search = params.get(UserFilter.SEARCH_USER);
+                sql += "AND (lower(ob.OBJECT_NAME) LIKE lower("+ search.get(0) +")) " + userService.getCurrentUsername();
+            }
+            else if (params.get(UserFilter.WITH_EMAIL) != null){ // если надо получить ID пользователей по их e-mail'ам,
+                sql = "SELECT ob.OBJECT_ID FROM PARAMS ob WHERE ob.ATTR_ID = 6 and ob.VALUE IN (";
+                ArrayList<String> emails = params.get(UserFilter.WITH_NAME);
+                int i;
+                for(i = 0; i < emails.size()-1; i++){
+                    sql += emails.get(i) + ", ";
+                }
+                sql += emails.get(i) + ") ";
+
+            }
+            else{
+                return  null; // Иначе не нашли основного фильтра, не сможем составить запрос
+            }
+            // sql += "ORDER BY ob.OBJECT_ID";
+
+            if (params.get(UserFilter.WITH_ALL_EVENTS) != null){ // если к тому же надо получить IDs пользователя и всех его событий,
+                String sql1 = sql; // тут уже есть список пользовтельских айди
+                String sql2 = "SELECT re.REFERENCE FROM REFERENCES re WHERE re.ATTR_ID = 13 and re.OBJECT_ID IN (" + sql + ") ";
+                sql2 += "ORDER BY re.REFERENCE";
+                sql = "(" + sql1 +") UNION (" + sql2 +")";
+            }
+
+        }
+        else if (filter instanceof EventFilter)
+        {
+            // Работаем с событиями
+            if (params.get(EventFilter.ALL) != null){ // если надо получить IDs всех событий в системе,
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT;
+            }
+            else if (params.get(EventFilter.FOR_CURRENT_USER) != null){ // если надо получить ID всех событий текущего пользователей,
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT + " ";
+                sql += "AND ob2.OBJECT_NAME = " + userService.getCurrentUsername() + " ";
+            }
+            else if (params.get(EventFilter.FOR_USER_WITH_NAME) != null){ // если надо получить ID всех событий пользователя с конкретным именем,
+                ArrayList<String> user_name = params.get(EventFilter.FOR_USER_WITH_NAME);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT + " ";
+                sql += "AND ob2.OBJECT_NAME = " + user_name.get(0) + " ";
+            }
+            else if (params.get(EventFilter.FOR_USER_WITH_ID) != null){ // если надо получить ID всех событий пользователя с конкретным id,
+                ArrayList<String> user_id = params.get(EventFilter.FOR_USER_WITH_ID);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT + " ";
+                sql += "AND ob2.OBJECT_ID = " + user_id.get(0) + " ";
+            }
+            else if (params.get(EventFilter.BETWEEN_USERS_WITH_NAMES) != null){ // если надо получить ID всех событий между пользователями с конкретными именами (ПЕРЕСЕЧЕНИЕ),
+                ArrayList<String> user_names = params.get(EventFilter.BETWEEN_USERS_WITH_NAMES);
+                int i;
+                sql = "SELECT * FROM (";
+                for(i = 0; i < user_names.size(); i++){
+                    sql += "(SELECT ob.OBJECT_ID FROM OBJECTS ob ";
+                    sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
+                    sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                    sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT + " ";
+                    sql += "AND ob2.OBJECT_NAME = " + user_names.get(i) + ") ";
+                    if (i < user_names.size()-1) {
+                        sql += "INTERSECT ";
+                    }
+                }
+                sql += sql + ") ";
+
+            }
+            else if (params.get(EventFilter.BETWEEN_USERS_WITH_IDS) != null){ // если надо получить ID всех событий пользователя с конкретным id (ПЕРЕСЕЧЕНИЕ),
+                ArrayList<String> user_ids = params.get(EventFilter.BETWEEN_USERS_WITH_IDS);
+                int i;
+                sql = "SELECT * FROM (";
+                for(i = 0; i < user_ids.size(); i++){
+                    sql += "(SELECT ob.OBJECT_ID FROM OBJECTS ob ";
+                    sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
+                    sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                    sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT + " ";
+                    sql += "AND ob2.OBJECT_ID = " + user_ids.get(i) + ") ";
+                    if (i < user_ids.size()-1) {
+                        sql += "INTERSECT ";
+                    }
+                }
+                sql += sql + ") ";
+            }
+            else{
+                return  null; // Иначе не нашли основного фильтра, не сможем составить запрос
+            }
+            // Прикручиваем вспомогательные фильтры:
+            if (params.get(EventFilter.BEFORE_DATE) != null){ // если надо получить ID всех событий ДО какой-то даты,
+                ArrayList<String> before_date = params.get(EventFilter.BEFORE_DATE);
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 101 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + before_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
+            }
+            else if (params.get(EventFilter.AFTER_DATE) != null){ // если надо получить ID всех событий ПОСЛЕ какой-то даты,
+                ArrayList<String> after_date = params.get(EventFilter.AFTER_DATE);
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 101 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + after_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
+            }
+            else if (params.get(EventFilter.BETWEEN_TWO_DATES) != null){ // если надо получить ID всех событий МЕЖДУ двумя датами,
+                ArrayList<String> date = params.get(EventFilter.AFTER_DATE);
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 101 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') " +
+                        "BETWEEN TO_DATE(" + date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss') AND TO_DATE(" + date.get(1) + ", 'dd.mm.yyyy hh24:mi:ss'))";
+            }
+
+            //sql += "ORDER BY ob.OBJECT_ID"; // И группируем. Возможно придется сабрать в каждую else, если не сработает с INTERSECT
+
+        }
+        else if (filter instanceof MeetingFilter)
+        {
+            // Работаем со встречами
+            if (params.get(MeetingFilter.ALL) != null){ // если надо получить IDs всех встреч в системе,
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING;
+            }
+            else if (params.get(MeetingFilter.FOR_CURRENT_USER) != null){ // если надо получить ID всех встреч текущего пользователей,
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
+                sql += "AND ob2.OBJECT_NAME = " + userService.getCurrentUsername() + " ";
+            }
+            else if (params.get(MeetingFilter.FOR_USER_WITH_NAME) != null){ // если надо получить ID всех встреч пользователя по его имени,
+                ArrayList<String> user_name = params.get(MeetingFilter.FOR_USER_WITH_NAME);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
+                sql += "AND ob2.OBJECT_NAME = " + user_name.get(0) + " ";
+            }
+            else if (params.get(MeetingFilter.FOR_USER_WITH_ID) != null){ // если надо получить ID всех встреч пользователя по его ID,
+                ArrayList<String> user_id = params.get(MeetingFilter.FOR_USER_WITH_ID);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
+                sql += "AND ob2.OBJECT_ID = " + user_id.get(0) + " ";
+            }
+            else if (params.get(MeetingFilter.BETWEEN_USERS_WITH_NAMES) != null){ // если надо получить ID всех встреч между пользователями с конкретными именами (ПЕРЕСЕЧЕНИЕ),
+                ArrayList<String> user_names = params.get(MeetingFilter.BETWEEN_USERS_WITH_NAMES);
+                int i;
+                sql = "SELECT * FROM (";
+                for(i = 0; i < user_names.size(); i++){
+                    sql += "(SELECT ob.OBJECT_ID FROM OBJECTS ob ";
+                    sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                    sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
+                    sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
+                    sql += "AND ob2.OBJECT_NAME = " + user_names.get(i) + ") ";
+                    if (i < user_names.size()-1) {
+                        sql += "INTERSECT ";
+                    }
+                }
+                sql += sql + ") ";
+            }
+            else if (params.get(MeetingFilter.BETWEEN_USERS_WITH_IDS) != null){ // если надо получить ID всех встреч между пользователями с конкретными IDs (ПЕРЕСЕЧЕНИЕ),
+                ArrayList<String> user_ids = params.get(MeetingFilter.BETWEEN_USERS_WITH_IDS);
+                int i;
+                sql = "SELECT * FROM (";
+                for(i = 0; i < user_ids.size(); i++){
+                    sql += "(SELECT ob.OBJECT_ID FROM OBJECTS ob ";
+                    sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                    sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
+                    sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
+                    sql += "AND ob2.OBJECT_ID = " + user_ids.get(i) + ") ";
+                    if (i < user_ids.size()-1) {
+                        sql += "INTERSECT ";
+                    }
+                }
+                sql += sql + ") ";
+            }
+            else{
+                return  null; // Иначе не нашли основного фильтра, не сможем составить запрос
+            }
+
+            // Прикручиваем вспомогательные фильтры:
+            if (params.get(MeetingFilter.BEFORE_DATE) != null){ // если надо получить ID всех встреч, ЗАВЕРШАЮЩИХСЯ ДО какой-то даты,
+                ArrayList<String> before_date = params.get(MeetingFilter.BEFORE_DATE);
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 303 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + before_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
+            }
+            else if (params.get(MeetingFilter.AFTER_DATE) != null){ // если надо получить ID всех встреч, НАЧИНАЮЩИХСЯ ПОСЛЕ какой-то даты,
+                ArrayList<String> after_date = params.get(MeetingFilter.AFTER_DATE);
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 302 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + after_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
+            }
+            else if (params.get(MeetingFilter.BETWEEN_TWO_DATES) != null){ // если надо получить ID всех встреч МЕЖДУ двумя датами,
+                ArrayList<String> date = params.get(MeetingFilter.BETWEEN_TWO_DATES);
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob " +
+                        "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 301 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))"+
+                        "JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID " +
+                        "AND pa1.ATTR_ID = 302 AND (TO_DATE(pa1.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + date.get(1) + ", 'dd.mm.yyyy hh24:mi:ss'))";
+            }
+
+            //sql += "ORDER BY ob.OBJECT_ID"; // И группируем. Возможно придется сабрать в каждую else, если не сработает с INTERSECT
+        }
+        else if (filter instanceof MessageFilter)
+        {
+            // Работаем с сообщениями
+            if (params.get(MessageFilter.ALL) != null){ // если надо получить IDs всех сообщений в системе,
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE;
+            }
+            else if (params.get(MessageFilter.FOR_CURRENT_USER) != null){ // если надо получить ID всех отправленных сообщений текущего пользователей,
+
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 30 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
+                sql += "AND ob2.OBJECT_NAME = " + userService.getCurrentUsername() + " ";
+            }
+            else if (params.get(MessageFilter.FOR_USER_WITH_NAME) != null){ // если надо получить ID всех отправленных сообщений пользователя с конкретным именем,
+                ArrayList<String> user_name = params.get(MessageFilter.FOR_USER_WITH_NAME);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 30 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
+                sql += "AND ob2.OBJECT_NAME = " + user_name.get(0) + " ";
+            }
+            else if (params.get(MessageFilter.FOR_USER_WITH_ID) != null){ // если надо получить ID всех событий пользователя с конкретным id,
+                ArrayList<String> user_id = params.get(MessageFilter.FOR_USER_WITH_ID);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 30 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
+                sql += "AND ob2.OBJECT_ID = " + user_id.get(0) + " ";
+            }
+            else if (params.get(MessageFilter.BETWEEN_TWO_USERS_WITH_NAMES) != null){ // если надо получить ID всех сообщений между двумя пользователями с конкретными именами друг другу,
+                ArrayList<String> user_names = params.get(MessageFilter.BETWEEN_TWO_USERS_WITH_NAMES);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID AND re.ATTR_ID = 30 ";
+                sql += "JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 201 ";
+                sql += "JOIN OBJECTS user1 ON pa1.VALUE = user1.OBJECT_ID ";
+                sql += "JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 ";
+                sql += "JOIN OBJECTS user2 ON pa2.VALUE = user2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
+                sql += "AND (user1.OBJECT_NAME = " + user_names.get(0) + " AND user2.OBJECT_NAME = " + user_names.get(1) + " ";
+                sql += "OR user1.OBJECT_NAME = " + user_names.get(1) + " AND user2.OBJECT_NAME = " + user_names.get(0) + ") ";
+            }
+            else if (params.get(MessageFilter.BETWEEN_TWO_USERS_WITH_IDS) != null){ // если надо получить ID всех сообщений двух пользователей с конкретным id друг другу,
+                ArrayList<String> user_ids = params.get(MessageFilter.BETWEEN_TWO_USERS_WITH_IDS);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE  AND re.ATTR_ID = 30 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 201 ";
+                sql += "JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
+                sql += "AND (ob2.OBJECT_ID = " + user_ids.get(0) + " AND pa2.VALUE = " + user_ids.get(1) + " ";
+                sql += "OR ob2.OBJECT_ID = " + user_ids.get(1) + " AND pa2.VALUE = " + user_ids.get(0) + ") ";
+            }
+            else if (params.get(MessageFilter.FROM_TO_USERS_WITH_NAMES) != null){ // если надо получить ID всех сообщений от первого пользователя второму по их именам пользователей,
+                ArrayList<String> user_names = params.get(MessageFilter.FROM_TO_USERS_WITH_NAMES);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID AND re.ATTR_ID = 30 ";
+                sql += "JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 201 ";
+                sql += "JOIN OBJECTS user1 ON pa1.VALUE = user1.OBJECT_ID ";
+                sql += "JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 ";
+                sql += "JOIN OBJECTS user2 ON pa2.VALUE = user2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
+                sql += "AND user1.OBJECT_NAME = " + user_names.get(0) + " AND user2.OBJECT_NAME = " + user_names.get(1) + " ";
+            }
+            else if (params.get(MessageFilter.FROM_TO_USERS_WITH_IDS) != null){ // если надо получить ID всех сообщений от первого пользователя второму по их id пользователей,
+                ArrayList<String> user_ids = params.get(MessageFilter.FROM_TO_USERS_WITH_IDS);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE  AND re.ATTR_ID = 30 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 201 ";
+                sql += "JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
+                sql += "AND ob2.OBJECT_ID = " + user_ids.get(0) + " AND pa2.VALUE = " + user_ids.get(1) + " ";
+            }
+            else{
+                return  null; // Иначе не нашли основного фильтра, не сможем составить запрос
+            }
+
+            // Прикручиваем вспомогательные фильтры:
+            if (params.get(MessageFilter.BEFORE_DATE) != null){ // если надо получить ID всех сообщений, отправленных ДО какой-то даты,
+                ArrayList<String> before_date = params.get(MessageFilter.BEFORE_DATE);
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 203 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + before_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
+            }
+            else if (params.get(MessageFilter.AFTER_DATE) != null){ // если надо получить ID всех сообщений, отправленных ПОСЛЕ какой-то даты,
+                ArrayList<String> after_date = params.get(MessageFilter.AFTER_DATE);
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 203 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + after_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
+            }
+            else if (params.get(MessageFilter.BETWEEN_TWO_DATES) != null){ // если надо получить ID всех сообщений, отправленных МЕЖДУ двумя датами,
+                ArrayList<String> date = params.get(MessageFilter.BETWEEN_TWO_DATES);
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob " +
+                        "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 203 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss')) "+
+                        "AND (TO_DATE(pa1.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + date.get(1) + ", 'dd.mm.yyyy hh24:mi:ss'))"; // Можно сделать и between'ом, в принципе
+            }
+
+            //sql += "ORDER BY ob.OBJECT_ID"; // И группируем. Возможно придется сабрать в каждую else, если не сработает с INTERSECT
+        }
+
+
+        System.out.println("Итоговый запрос " + sql);
+        return sql;
+    }
+
+    // 2017-02-16 Исполнитель строки SQL-запроса, полученного от Парсер-генератора по переданному фильтру:
+    // вытаскивает список id подходящих под фильтры датаобджектов
+    public ArrayList<Integer> getListId_SQL_Executor(String sql) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        System.out.println("Выполняю запрос " + sql);
+        ArrayList<Integer> idList = new ArrayList<>();
+        if (sql != null) {
+
+            Connection Con = getConnection();
+            PreparedStatement PS = Con.prepareStatement(sql);
+            ResultSet RS = PS.executeQuery();
+            // Обходим всю полученную таблицу и формируем лист id-шек
+            while (RS.next()) {
+                idList.add(RS.getInt(1));
+            }
+            RS.close();
+            PS.close();
+            CloseConnection(Con);
+        }
+        System.out.println("Возвращаю список");
+        return idList;
+    }
+
+    // 2017-02-16 Все вместе: новый метод для полчения списка объектов, удовлетворяющих фильтрам:
+    // Альтернативный вспомогательный метод2, вытаскивает список id подходящих под фильтры датаобджектов
+    public ArrayList<Integer> getListObjectsByFilters(BaseFilter filter) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        System.out.println("Запускаю getListObjectsByFilters c полученным фильтром");
+        String sql = parseGenerate(filter);
+        ArrayList<Integer> idList = getListId_SQL_Executor(sql);
+        return idList;
+    }
 
 
 }

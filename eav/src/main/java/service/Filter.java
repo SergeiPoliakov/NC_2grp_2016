@@ -3,6 +3,7 @@ package service;
 /**
  * Created by Hroniko on 14.02.2017.
  * Класс фильтров для запросов в базу
+ * ЭТО СТАРЫЙ КЛАСС! Теперь все фильтры в пакете service.filters (2017-02-16)
  */
 public class Filter {
 
