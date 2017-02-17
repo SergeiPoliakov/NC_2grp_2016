@@ -12,7 +12,7 @@ public class UserFilter extends BaseFilter {
 
     public static final String WITH_EMAIL = "with_email";
     public static final String WITH_ALL_EVENTS = "with_all_events";
-    public static final String ALL_FRIENDS = "all_friends";
+    public static final String ALL_FRIENDS_FOR_USER_WITH_ID = "all_friends_for_user_with_id";
 
     public UserFilter(String... params) {
         super();
@@ -24,7 +24,7 @@ public class UserFilter extends BaseFilter {
         count_0.put(WITH_ALL_EVENTS, "");
 
         count_1.put(SEARCH_USER , "");
-        count_1.put(ALL_FRIENDS , "");
+        count_1.put(ALL_FRIENDS_FOR_USER_WITH_ID , "");
 
         count_var.put(WITH_NAME, "");
         count_var.put(WITH_EMAIL, "");

@@ -24,7 +24,7 @@ public class User {
 
     private String password;
 
-    private String country;
+    private String city;
 
     private String sex;
 
@@ -116,12 +116,12 @@ public class User {
         this.password = password;
     }
 
-    public String getCountry() {
-        return country;
+    public String getCity() {
+        return city;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getSex() {

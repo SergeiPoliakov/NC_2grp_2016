@@ -91,8 +91,8 @@
                     </div>
 
                     <div class="form-group  ">
-                        <label for="InputCountry1">Введите вашу страну</label>
-                        <input type="text" class="form-control" name="country" id="InputCountry1" value=${dataObject.getValue(9)}>
+                        <label for="InputCity1">Введите ваш город</label>
+                        <input type="text" class="form-control" name="city" id="InputCity1" value=${dataObject.getValue(9)}>
                     </div>
 
                     <div class="form-group  ">

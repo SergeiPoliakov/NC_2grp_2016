@@ -33,25 +33,25 @@
             <!-- Карточка пользователя -->
             <div class="col-md-3 col-sm-4" id="forCloning">
                 <div class="card style_prevu_kit">
-                    <h4 class="card-title text-center">${object.middleName} ${object.name}</h4>
+                    <h4 class="card-title text-center">${object.getValue(1)} ${object.getValue(3)} ${object.getValue(2)}</h4>
                     <div class="card-title text-center">
                         <small class=" text-muted"><span
-                                class="glyphicon glyphicon-user"></span> ${object.login} </small>
+                                class="glyphicon glyphicon-user"></span> ${object.getValue(4)} </small>
 
                     </div>
                     <div class="profile-userpic">
                         <img src="https://fshoke.com/wp-content/uploads/2016/01/Sean-Penn-mixed-with-Leonardo-DiCaprio.jpg" class="img-responsive"  alt='Изображение' >
                     </div>
                     <div class="profile-userbuttons">
-                        <a href="/user${object.id}"><button type="button" class="btn btn-primary btn-xs"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>
+                        <a href="/viewProfile/${object.id}"><button type="button" class="btn btn-primary btn-xs"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>
                         <a href="/sendMessage/${object.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
                         <a href="/deleteFriend/${object.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
                     </div>
                     <ul class="list-group list-group-my list-group-flush">
-                        <li class="list-group-item">Дата рождения: ${object.ageDate}</li>
-                        <li class="list-group-item">Страна: ${object.country}</li>
-                        <li class="list-group-item">Пол: ${object.sex}</li>
-                        <li class="list-group-item">О себе: ${object.additional_field}</li>
+                        <li class="list-group-item">Дата рождения: ${object.getValue(5)}</li>
+                        <li class="list-group-item">Город: ${object.getValue(9)}</li>
+                        <li class="list-group-item">Пол: ${object.getValue(8)}</li>
+                        <li class="list-group-item">О себе: ${object.getValue(10)}</li>
                     </ul>
                 </div>
             </div>

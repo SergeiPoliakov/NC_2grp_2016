@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import service.*;
+import service.filters.EventFilter;
 import service.filters.UserFilter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,11 +50,11 @@ public class UserController {
 
     @RequestMapping(value = "/main-login", method = RequestMethod.GET)
     public String getUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        DataObject dataObject = loadingService.getDataObjectById(userService.getObjID(userService.getCurrentUsername())); // Получаем Объект текущего пользователя
-        //logger.info("User = " + user.toString());
+        DataObject dataObject = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername())); // Получаем Объект текущего пользователя
         Integer idUser = userService.getObjID(userService.getCurrentUsername());
         m.addAttribute(dataObject);
-        m.addAttribute("allEvents", loadingService.getListDataObjectById(idUser, "event"));
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_USER_WITH_ID, String.valueOf(idUser)));
+        m.addAttribute("allEvents", loadingService.getListDataObjectByListIdAlternative(il));
         return "main-login";
     }
 
@@ -90,8 +91,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
-    public String searchUser(@RequestParam("name") String name, Map<String, Object> map) throws SQLException {
-        map.put("allObject", loadingService.getListDataObjectByName(name, "user"));
+    public String searchUser(@RequestParam("name") String name, Map<String, Object> map) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.SEARCH_USER, name));
+        map.put("allObject", loadingService.getListDataObjectByListIdAlternative(il));
         return "/searchUser";
     }
 
@@ -185,7 +187,7 @@ public class UserController {
                              @RequestParam("nickname") String nickname,
                              @RequestParam("ageDate") String ageDate,
                              @RequestParam("sex") String sex,
-                             @RequestParam("country") String country,
+                             @RequestParam("city") String city,
                              @RequestParam("info") String additional_field) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
         String full_name = name + " " + surname + " " + middle_name;
@@ -198,7 +200,7 @@ public class UserController {
         mapAttr.put(5, ageDate);
 
         mapAttr.put(8, sex);
-        mapAttr.put(9, country);
+        mapAttr.put(9, city);
         mapAttr.put(10, additional_field);
 
         DataObject dataObject = new DataObject(userId, full_name, 1001, mapAttr);
@@ -209,8 +211,10 @@ public class UserController {
     }
 
     @RequestMapping("/allFriends")
-    public String friendList(Map<String, Object> map) throws SQLException {
-        map.put("allObject", userService.getFriendListCurrentUser()); //new DBHelp().getUserList()); //
+    public String friendList(Map<String, Object> map) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Integer idUser = userService.getObjID(userService.getCurrentUsername());
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(idUser)));
+        map.put("allObject", loadingService.getListDataObjectByListIdAlternative(il)); //new DBHelp().getUserList()); //
         return "allFriends";
     }
 
@@ -232,9 +236,10 @@ public class UserController {
     @RequestMapping(value = "/viewProfile/{id}")
     public String viewUser(@PathVariable("id") int userId,
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-        DataObject user = loadingService.getDataObjectById(userId);
+        DataObject user = loadingService.getDataObjectByIdAlternative(userId);
         m.addAttribute(user);
-        m.addAttribute("allObject",  loadingService.getListDataObjectById(userId, "event"));
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_USER_WITH_ID, String.valueOf(userId)));
+        m.addAttribute("allObject", loadingService.getListDataObjectByListIdAlternative(il));
         return "/viewProfile";
     }
 

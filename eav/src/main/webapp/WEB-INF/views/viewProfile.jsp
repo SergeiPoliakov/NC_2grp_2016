@@ -58,7 +58,7 @@
                 </div>
                 <ul class="list-group list-group-my list-group-flush">
                     <li class="list-group-item" id="userAge">Дата рождения: ${dataObject.getValue(5)}</li>
-                    <li class="list-group-item">Страна: ${dataObject.getValue(9)}</li>
+                    <li class="list-group-item">Город: ${dataObject.getValue(9)}</li>
                     <li class="list-group-item">Пол: ${dataObject.getValue(8)}</li>
                     <li class="list-group-item">О себе: ${dataObject.getValue(10)}</li>
                 </ul>
@@ -100,7 +100,7 @@
 <script type="text/javascript">
     // Поле дополнительная информация eventID : info
     var addInfoArray = {
-    <c:forEach items="${allEvents}" var="event">${event.id}:'${event.getValue(4)}',</c:forEach>
+    <c:forEach items="${allEvents}" var="event">${event.id}:'${event.getValue(104)}',</c:forEach>
     };
     // Настройка кастомного скроллбара
 
@@ -122,7 +122,7 @@
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
         <c:forEach items="${allObject}" var="event">
-        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.getValue(1)}')), end: new Date(getDateFromString('${event.getValue(2)}')), className: '${event.getValue(3)}'},
+        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.getValue(101)}')), end: new Date(getDateFromString('${event.getValue(102)}')), className: '${event.getValue(105)}'},
         </c:forEach>
     ]);
 
