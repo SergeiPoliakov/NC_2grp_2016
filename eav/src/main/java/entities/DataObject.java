@@ -11,8 +11,8 @@ import java.util.TreeMap;
 
 public class DataObject {
     private Integer id;
-    private String name;
     private Integer objectTypeId;
+    private String name;
 
     // 2017-02-14 значения ссылок теперь хранятся в списке, так как ссылок может быть много
     private TreeMap<Integer, ArrayList<Integer>> refParams = new TreeMap<>();
@@ -85,12 +85,12 @@ public class DataObject {
         // и кладем в лист наше значение
         refParams.get(key).add(value);
     }
-    // 2017-02-14 Метод получения списка ссылок
+/*    // 2017-02-14 Метод получения списка ссылок
     public ArrayList<Integer> getRefParams(Integer key){
         return refParams.get(key);
     }
 
-
+*/
 
     public Integer getId() {
         return id;
