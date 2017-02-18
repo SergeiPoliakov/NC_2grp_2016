@@ -44,122 +44,29 @@
       <file leaf-file-name="UserController.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/web/UserController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1190">
-              <caret line="175" column="116" lean-forward="false" selection-start-line="175" selection-start-column="116" selection-end-line="175" selection-end-column="116" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DataObject.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/entities/DataObject.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="17" column="20" lean-forward="false" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="47" />
+            <state relative-caret-position="85">
+              <caret line="5" column="33" lean-forward="false" selection-start-line="5" selection-start-column="33" selection-end-line="5" selection-end-column="33" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DBHelp.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/dbHelp/DBHelp.java">
+      <file leaf-file-name="main-login.jsp" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main-login.jsp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-255">
-              <caret line="1922" column="123" lean-forward="false" selection-start-line="1922" selection-start-column="123" selection-end-line="1922" selection-end-column="123" />
-              <folding>
-                <marker date="1487418802853" expanded="true" signature="1414:1472" ph="Select max(O... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="1791:1835" ph="SELECT OBJEC... PARAMS" />
-                <marker date="1487418802853" expanded="true" signature="2362:2445" ph="SELECT NVL(V... PARAMS" />
-                <marker date="1487418802853" expanded="true" signature="2996:3082" ph="SELECT NVL(V... PARAMS" />
-                <marker date="1487418802853" expanded="true" signature="3810:4451" ph="SELECT ob.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="5494:5550" ph="SELECT OBJEC... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="6055:6177" ph="SELECT p.VAL... PARAMS" />
-                <marker date="1487418802853" expanded="true" signature="6712:7990" ph="SELECT ob.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="9287:10586" ph="SELECT ob.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="11798:13097" ph="SELECT ob.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="14008:14814" ph="SELECT ev.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="16038:16844" ph="SELECT ev.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="17756:18563" ph="SELECT ev.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="20678:20746" ph="SELECT ATTR_... REFERENCES" />
-                <marker date="1487418802853" expanded="true" signature="21235:21295" ph="SELECT VALUE... PARAMS" />
-                <marker date="1487418802853" expanded="true" signature="21896:21934" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="22044:22086" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="22179:22221" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="22314:22353" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="22750:22788" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="22886:22928" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="23026:23068" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="23166:23205" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="23385:23419" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="23917:23992" ph="INSERT INTO OBJECTS... " />
-                <marker date="1487418802853" expanded="true" signature="24308:24367" ph="INSERT INTO PARAMS... " />
-                <marker date="1487418802853" expanded="true" signature="25075:26492" ph="SELECT ob.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="27954:28029" ph="INSERT INTO OBJECTS... " />
-                <marker date="1487418802853" expanded="true" signature="28119:28177" ph="Select max(O... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="28627:28686" ph="INSERT INTO PARAMS... " />
-                <marker date="1487418802853" expanded="true" signature="29261:29330" ph="INSERT INTO REFERENCES... " />
-                <marker date="1487418802853" expanded="true" signature="29732:29793" ph="INSERT INTO PARAMS... " />
-                <marker date="1487418802853" expanded="true" signature="30241:30313" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="31307:31370" ph="UPDATE PARAM... " />
-                <marker date="1487418802853" expanded="true" signature="31760:31814" ph="UPDATE OBJEC... " />
-                <marker date="1487418802853" expanded="true" signature="32337:32400" ph="UPDATE PARAM... " />
-                <marker date="1487418802853" expanded="true" signature="32836:32890" ph="UPDATE OBJEC... " />
-                <marker date="1487418802853" expanded="true" signature="34223:34345" ph="SELECT COUNT... REFERENCES" />
-                <marker date="1487418802853" expanded="true" signature="34971:35032" ph="INSERT INTO PARAMS... " />
-                <marker date="1487418802853" expanded="true" signature="35426:35487" ph="INSERT INTO PARAMS... " />
-                <marker date="1487418802853" expanded="true" signature="35785:35854" ph="INSERT INTO REFERENCES... " />
-                <marker date="1487418802853" expanded="true" signature="36152:36221" ph="INSERT INTO REFERENCES... " />
-                <marker date="1487418802853" expanded="true" signature="36562:36634" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="36923:36995" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="37668:37741" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="37958:38071" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="39070:40988" ph="SELECT frien... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="42415:42490" ph="INSERT INTO OBJECTS... " />
-                <marker date="1487418802853" expanded="true" signature="42580:42638" ph="Select max(O... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="43105:43164" ph="INSERT INTO PARAMS... " />
-                <marker date="1487418802853" expanded="true" signature="43802:43871" ph="INSERT INTO REFERENCES... " />
-                <marker date="1487418802853" expanded="true" signature="44455:44493" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="44593:44635" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="44735:44777" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="44877:44916" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="45098:45132" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="45581:46703" ph="SELECT ms.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="48105:49053" ph="SELECT ob.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="50166:51593" ph="SELECT ev.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="52692:52750" ph="Select max(O... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="52915:52990" ph="INSERT INTO OBJECTS... " />
-                <marker date="1487418802853" expanded="true" signature="53307:53366" ph="INSERT INTO PARAMS... " />
-                <marker date="1487418802853" expanded="true" signature="54005:54074" ph="INSERT INTO REFERENCES... " />
-                <marker date="1487418802853" expanded="true" signature="54678:54741" ph="UPDATE PARAM... " />
-                <marker date="1487418802853" expanded="true" signature="55506:55575" ph="INSERT INTO REFERENCES... " />
-                <marker date="1487418802853" expanded="true" signature="56149:56209" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="56986:57400" ph="SELECT re.RE... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="57935:59151" ph="SELECT ob.OB... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="62865:62919" ph="DELETE FROM " />
-                <marker date="1487418802853" expanded="true" signature="63138:63201" ph="INSERT INTO PARAMS... " />
-                <marker date="1487418802853" expanded="true" signature="63921:64610" ph="(SELECT -2 A... " />
-                <marker date="1487418802853" expanded="true" signature="63922:64022" ph="SELECT -2 AS... " />
-                <marker date="1487418802853" expanded="true" signature="64060:64118" ph="SELECT -1, O... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="64156:64237" ph="SELECT 0, CA... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="64275:64486" ph="SELECT ATTR_... " />
-                <marker date="1487418802853" expanded="true" signature="64524:64609" ph="SELECT ATTR_... REFERENCES" />
-                <marker date="1487418802853" expanded="true" signature="67095:67898" ph="SELECT * FRO... OBJECT_NAME" />
-                <marker date="1487418802853" expanded="true" signature="67110:67218" ph="SELECT -2 AS... " />
-                <marker date="1487418802853" expanded="true" signature="67263:67329" ph="SELECT -1, O... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="67374:67463" ph="SELECT 0, CA... OBJECTS" />
-                <marker date="1487418802853" expanded="true" signature="67508:67734" ph="SELECT ATTR_... " />
-                <marker date="1487418802853" expanded="true" signature="67768:67861" ph="SELECT ATTR_... REFERENCES" />
-                <marker date="1487418802853" expanded="true" signature="70662:70683" ph="SELECT OBJEC... " />
-                <marker date="1487418802853" expanded="true" signature="97892:97969" ph="INSERT INTO OBJECTS... " />
-                <marker date="1487418802853" expanded="true" signature="98441:98504" ph="INSERT INTO PARAMS... " />
-                <marker date="1487418802853" expanded="true" signature="99205:99276" ph="INSERT INTO REFERENCES... " />
-                <marker date="1487418802853" expanded="true" signature="100729:100783" ph="UPDATE OBJEC... " />
-                <marker date="1487418802853" expanded="true" signature="101296:101359" ph="UPDATE PARAM... " />
-                <marker date="1487418802853" expanded="true" signature="102420:102491" ph="INSERT INTO REFERENCES... " />
-                <marker date="1487418802853" expanded="true" signature="102556:102614" ph="DELETE FROM " />
-              </folding>
+            <state relative-caret-position="578">
+              <caret line="57" column="53" lean-forward="false" selection-start-line="57" selection-start-column="53" selection-end-line="57" selection-end-column="53" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="KKUserController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/web/KKUserController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="25" column="29" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="29" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -167,29 +74,108 @@
       <file leaf-file-name="EventController.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/web/EventController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+            <state relative-caret-position="654">
+              <caret line="110" column="0" lean-forward="false" selection-start-line="110" selection-start-column="0" selection-end-line="110" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="profile.jsp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/profile.jsp">
+      <file leaf-file-name="DBHelp.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/dbHelp/DBHelp.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1598">
-              <caret line="94" column="74" lean-forward="false" selection-start-line="94" selection-start-column="74" selection-end-line="94" selection-end-column="74" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="UserFilter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/UserFilter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="34" column="1" lean-forward="false" selection-start-line="34" selection-start-column="1" selection-end-line="34" selection-end-column="1" />
-              <folding />
+            <state relative-caret-position="408">
+              <caret line="110" column="41" lean-forward="false" selection-start-line="110" selection-start-column="41" selection-end-line="110" selection-end-column="41" />
+              <folding>
+                <marker date="1487452738280" expanded="true" signature="1333:1391" ph="Select max(O... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="1710:1754" ph="SELECT OBJEC... PARAMS" />
+                <marker date="1487452738280" expanded="true" signature="2438:3079" ph="SELECT ob.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="4122:4178" ph="SELECT OBJEC... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="4683:4805" ph="SELECT p.VAL... PARAMS" />
+                <marker date="1487452738280" expanded="true" signature="5340:6618" ph="SELECT ob.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="7915:9214" ph="SELECT ob.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="10426:11725" ph="SELECT ob.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="12636:13442" ph="SELECT ev.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="14666:15472" ph="SELECT ev.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="16384:17191" ph="SELECT ev.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="19306:19374" ph="SELECT ATTR_... REFERENCES" />
+                <marker date="1487452738280" expanded="true" signature="19863:19923" ph="SELECT VALUE... PARAMS" />
+                <marker date="1487452738280" expanded="true" signature="20524:20562" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="20672:20714" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="20807:20849" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="20942:20981" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="21378:21416" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="21514:21556" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="21654:21696" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="21794:21833" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="22013:22047" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="23703:25120" ph="SELECT ob.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="26582:26657" ph="INSERT INTO OBJECTS... " />
+                <marker date="1487452738280" expanded="true" signature="26747:26805" ph="Select max(O... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="27255:27314" ph="INSERT INTO PARAMS... " />
+                <marker date="1487452738280" expanded="true" signature="27889:27958" ph="INSERT INTO REFERENCES... " />
+                <marker date="1487452738280" expanded="true" signature="28360:28421" ph="INSERT INTO PARAMS... " />
+                <marker date="1487452738280" expanded="true" signature="28869:28941" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="29935:29998" ph="UPDATE PARAM... " />
+                <marker date="1487452738280" expanded="true" signature="30388:30442" ph="UPDATE OBJEC... " />
+                <marker date="1487452738280" expanded="true" signature="32851:32973" ph="SELECT COUNT... REFERENCES" />
+                <marker date="1487452738280" expanded="true" signature="33599:33660" ph="INSERT INTO PARAMS... " />
+                <marker date="1487452738280" expanded="true" signature="34054:34115" ph="INSERT INTO PARAMS... " />
+                <marker date="1487452738280" expanded="true" signature="34413:34482" ph="INSERT INTO REFERENCES... " />
+                <marker date="1487452738280" expanded="true" signature="34780:34849" ph="INSERT INTO REFERENCES... " />
+                <marker date="1487452738280" expanded="true" signature="35190:35262" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="35551:35623" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="36296:36369" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="36586:36699" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="37698:39616" ph="SELECT frien... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="41043:41118" ph="INSERT INTO OBJECTS... " />
+                <marker date="1487452738280" expanded="true" signature="41208:41266" ph="Select max(O... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="41733:41792" ph="INSERT INTO PARAMS... " />
+                <marker date="1487452738280" expanded="true" signature="42430:42499" ph="INSERT INTO REFERENCES... " />
+                <marker date="1487452738280" expanded="true" signature="43083:43121" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="43221:43263" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="43363:43405" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="43505:43544" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="43726:43760" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="44209:45331" ph="SELECT ms.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="46733:47681" ph="SELECT ob.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="48794:50221" ph="SELECT ev.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="51320:51378" ph="Select max(O... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="51543:51618" ph="INSERT INTO OBJECTS... " />
+                <marker date="1487452738280" expanded="true" signature="51935:51994" ph="INSERT INTO PARAMS... " />
+                <marker date="1487452738280" expanded="true" signature="52633:52702" ph="INSERT INTO REFERENCES... " />
+                <marker date="1487452738280" expanded="true" signature="53306:53369" ph="UPDATE PARAM... " />
+                <marker date="1487452738280" expanded="true" signature="54134:54203" ph="INSERT INTO REFERENCES... " />
+                <marker date="1487452738280" expanded="true" signature="54777:54837" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="55614:56028" ph="SELECT re.RE... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="56563:57779" ph="SELECT ob.OB... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="61493:61547" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="61766:61829" ph="INSERT INTO PARAMS... " />
+                <marker date="1487452738280" expanded="true" signature="62549:63238" ph="(SELECT -2 A... " />
+                <marker date="1487452738280" expanded="true" signature="62550:62650" ph="SELECT -2 AS... " />
+                <marker date="1487452738280" expanded="true" signature="62688:62746" ph="SELECT -1, O... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="62784:62865" ph="SELECT 0, CA... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="62903:63114" ph="SELECT ATTR_... " />
+                <marker date="1487452738280" expanded="true" signature="63152:63237" ph="SELECT ATTR_... REFERENCES" />
+                <marker date="1487452738280" expanded="true" signature="65723:66526" ph="SELECT * FRO... OBJECT_NAME" />
+                <marker date="1487452738280" expanded="true" signature="65738:65846" ph="SELECT -2 AS... " />
+                <marker date="1487452738280" expanded="true" signature="65891:65957" ph="SELECT -1, O... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="66002:66091" ph="SELECT 0, CA... OBJECTS" />
+                <marker date="1487452738280" expanded="true" signature="66136:66362" ph="SELECT ATTR_... " />
+                <marker date="1487452738280" expanded="true" signature="66396:66489" ph="SELECT ATTR_... REFERENCES" />
+                <marker date="1487452738280" expanded="true" signature="69290:69311" ph="SELECT OBJEC... " />
+                <marker date="1487452738280" expanded="true" signature="96522:96599" ph="INSERT INTO OBJECTS... " />
+                <marker date="1487452738280" expanded="true" signature="97071:97134" ph="INSERT INTO PARAMS... " />
+                <marker date="1487452738280" expanded="true" signature="97819:97890" ph="INSERT INTO REFERENCES... " />
+                <marker date="1487452738280" expanded="true" signature="99332:99386" ph="UPDATE OBJEC... " />
+                <marker date="1487452738280" expanded="true" signature="99899:99962" ph="UPDATE PARAM... " />
+                <marker date="1487452738280" expanded="true" signature="101007:101078" ph="INSERT INTO REFERENCES... " />
+                <marker date="1487452738280" expanded="true" signature="101143:101201" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="103662:103700" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="103806:103848" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="103954:103996" ph="DELETE FROM " />
+                <marker date="1487452738280" expanded="true" signature="104102:104141" ph="DELETE FROM " />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -197,34 +183,8 @@
       <file leaf-file-name="LoadingServiceImp.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/service/LoadingServiceImp.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1139">
-              <caret line="75" column="56" lean-forward="false" selection-start-line="75" selection-start-column="56" selection-end-line="75" selection-end-column="56" />
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BaseFilter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/BaseFilter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="16" column="28" lean-forward="false" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
-              <folding>
-                <element signature="imports" expanded="false" />
-                <element signature="e#897#898#0" expanded="false" />
-                <element signature="e#926#927#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="EventFilter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/EventFilter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" column="69" lean-forward="false" selection-start-line="10" selection-start-column="50" selection-end-line="10" selection-end-column="69" />
+            <state relative-caret-position="535">
+              <caret line="116" column="33" lean-forward="false" selection-start-line="116" selection-start-column="16" selection-end-line="116" selection-end-column="33" />
               <folding />
             </state>
           </provider>
@@ -245,7 +205,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Вы</find>
       <find>&lt;%@include</find>
       <find>href</find>
       <find>display-2</find>
@@ -275,6 +234,7 @@
       <find>updateUser</find>
       <find>updateUse</find>
       <find>Frie</find>
+      <find>// А теперь смотрим, может, нужно какие-то ссылки удалить.</find>
     </findStrings>
   </component>
   <component name="GradleLocalSettings">
@@ -285,30 +245,17 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/header.jsp" />
-        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/footer.jsp" />
-        <option value="$PROJECT_DIR$/src/main/webapp/resources/assets/theme/css/style.css" />
-        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main.jsp" />
-        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetings.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/allFriends_old_List.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/allUser.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetingAdmin.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetingMember.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meeting.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/addUser.jsp" />
-        <option value="$PROJECT_DIR$/src/main/java/service/UploadServiceImp.java" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/spring/dispatcher-context.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/web/KKUserController.java" />
-        <option value="$PROJECT_DIR$/src/main/java/service/EventServiceImp.java" />
-        <option value="$PROJECT_DIR$/src/main/java/service/EventService.java" />
-        <option value="$PROJECT_DIR$/src/main/java/service/MeetingServiceImp.java" />
         <option value="$PROJECT_DIR$/src/main/java/web/FileUploadController.java" />
-        <option value="$PROJECT_DIR$/src/main/java/service/LoadingService.java" />
-        <option value="$PROJECT_DIR$/src/main/java/service/UserServiceImp.java" />
         <option value="$PROJECT_DIR$/src/main/java/service/UserService.java" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/searchUser.jsp" />
-        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/allEvent.jsp" />
         <option value="$PROJECT_DIR$/src/main/java/service/User.java" />
         <option value="$PROJECT_DIR$/src/main/java/FilterAlternative.java" />
         <option value="$PROJECT_DIR$/src/main/java/service/FilterAlternative.java" />
@@ -320,7 +267,6 @@
         <option value="$PROJECT_DIR$/src/main/java/service/BaseFilter.java" />
         <option value="$PROJECT_DIR$/src/main/java/service/Filter.java" />
         <option value="$PROJECT_DIR$/src/main/java/service/MeetingFilter.java" />
-        <option value="$PROJECT_DIR$/src/main/java/service/LoadingServiceImp.java" />
         <option value="$PROJECT_DIR$/src/main/java/service/filters/EventFilter.java" />
         <option value="$PROJECT_DIR$/src/main/java/service/filters/MeetingFilter.java" />
         <option value="$PROJECT_DIR$/src/main/java/service/filters/MessageFilter.java" />
@@ -331,11 +277,25 @@
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main-login.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/user.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/profile.jsp" />
-        <option value="$PROJECT_DIR$/src/main/java/web/UserController.java" />
-        <option value="$PROJECT_DIR$/src/main/java/web/EventController.java" />
         <option value="$PROJECT_DIR$/src/main/java/entities/User.java" />
         <option value="$PROJECT_DIR$/src/main/java/entities/DataObject.java" />
+        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/allEvent.jsp" />
+        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/editEvent.jsp" />
+        <option value="$PROJECT_DIR$/src/main/java/service/EventService.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$USER_HOME$/Downloads/DBHelp (1).java" />
+        <option value="$PROJECT_DIR$/src/main/java/service/LoadingServiceImp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/service/LoadingService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/web/EventController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/service/UserServiceImp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/service/MessageServiceImp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/service/EventServiceImp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/service/MeetingServiceImp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/web/KKUserController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/service/UploadServiceImp.java" />
         <option value="$PROJECT_DIR$/src/main/java/dbHelp/DBHelp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/service/cache/DataObjectCache.java" />
+        <option value="$PROJECT_DIR$/src/main/java/web/UserController.java" />
       </list>
     </option>
   </component>
@@ -360,9 +320,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-24" />
-    <option name="y" value="41" />
-    <option name="width" value="1924" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
     <option name="height" value="1056" />
   </component>
   <component name="ProjectView">
@@ -380,7 +340,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -390,6 +349,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="eav" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="eav" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="eav" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -653,6 +626,36 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="service" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cache" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="eav" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="eav" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="exception" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -711,8 +714,9 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -721,7 +725,7 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files (x86)\nodejs\node.exe" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../eav" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -1132,9 +1136,6 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
-      <method />
-    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -1155,6 +1156,8 @@
       <setting name="testName" value="" />
       <setting name="testKind" value="Class" />
       <setting name="showProgressMessages" value="true" />
+      <classRegexps />
+      <testRegexps />
       <envs />
       <method />
     </configuration>
@@ -1170,6 +1173,8 @@
       <setting name="testName" value="" />
       <setting name="testKind" value="Class" />
       <setting name="showProgressMessages" value="true" />
+      <classRegexps />
+      <testRegexps />
       <envs />
       <method />
     </configuration>
@@ -1207,6 +1212,19 @@
       <listeners />
       <method />
     </configuration>
+    <configuration default="true" type="executeSpecs" factoryName="Gauge Execution">
+      <setting name="environment" value="" />
+      <setting name="specsToExecute" value="" />
+      <setting name="tags" value="" />
+      <setting name="parallelNodes" value="" />
+      <setting name="execInParallel" value="false" />
+      <setting name="programParameters" value="" />
+      <setting name="workingDirectory" value="" />
+      <setting name="moduleName" value="" />
+      <envMap />
+      <setting name="rowsRange" value="" />
+      <method />
+    </configuration>
     <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
       <node-interpreter>project</node-interpreter>
       <node-options />
@@ -1221,19 +1239,6 @@
       <scripts />
       <node-interpreter value="project" />
       <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
-      <node-interpreter>project</node-interpreter>
-      <node-options />
-      <working-directory />
-      <pass-parent-env>true</pass-parent-env>
-      <envs />
-      <ui />
-      <extra-mocha-options />
-      <test-kind>DIRECTORY</test-kind>
-      <test-directory />
-      <recursive>false</recursive>
       <method />
     </configuration>
     <configuration default="true" type="osgi.bnd.run" factoryName="Run Launcher">
@@ -1254,6 +1259,8 @@
       <setting name="testName" value="" />
       <setting name="testKind" value="Class" />
       <setting name="showProgressMessages" value="true" />
+      <classRegexps />
+      <testRegexps />
       <envs />
       <method />
     </configuration>
@@ -1460,11 +1467,12 @@
       <workItem from="1487321517901" duration="5759000" />
       <workItem from="1487335240653" duration="16043000" />
       <workItem from="1487402985816" duration="14742000" />
+      <workItem from="1487420593087" duration="23980000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="522137000" />
+    <option name="totallyTimeSpent" value="546117000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1476,7 +1484,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-24" y="41" width="1924" height="1056" extended-state="1" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1492,19 +1500,19 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4130664" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4130664" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32987553" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3255814" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33192834" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3319239" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Persistence" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23874345" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23854166" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
@@ -1542,159 +1550,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/MeetingServiceImp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="80" column="8" lean-forward="false" selection-start-line="80" selection-start-column="8" selection-end-line="80" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/EventService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/UploadService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="14" column="17" lean-forward="false" selection-start-line="14" selection-start-column="17" selection-end-line="14" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/web/FileUploadController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="20" lean-forward="false" selection-start-line="21" selection-start-column="20" selection-end-line="21" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/UploadServiceImp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="12" column="54" lean-forward="false" selection-start-line="12" selection-start-column="54" selection-end-line="12" selection-end-column="54" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/LoadingService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="38" column="96" lean-forward="false" selection-start-line="38" selection-start-column="96" selection-end-line="38" selection-end-column="96" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/allEvent.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="562">
-          <caret line="114" column="40" lean-forward="false" selection-start-line="114" selection-start-column="40" selection-end-line="114" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/web/KKUserController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="47" column="59" lean-forward="false" selection-start-line="47" selection-start-column="59" selection-end-line="47" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/MessageService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="18" column="10" lean-forward="false" selection-start-line="18" selection-start-column="10" selection-end-line="18" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/UserFilter.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/User.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/e1.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/FilterAlternative.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/User.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/Events.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/EventServiceImp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="28" column="33" lean-forward="false" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/Filter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="5" column="77" lean-forward="false" selection-start-line="5" selection-start-column="77" selection-end-line="5" selection-end-column="77" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/entities/Event.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="17" column="30" lean-forward="true" selection-start-line="17" selection-start-column="30" selection-end-line="17" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/entities/Meeting.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="16" column="13" lean-forward="false" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/MeetingFilter.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/UserService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-722">
-          <caret line="27" column="70" lean-forward="false" selection-start-line="27" selection-start-column="70" selection-end-line="27" selection-end-column="70" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/MeetingFilter.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/MessageFilter.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/resources/applicationContext.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/UserServiceImp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="32" column="18" lean-forward="false" selection-start-line="32" selection-start-column="18" selection-end-line="32" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/LoadingServiceImp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1139">
-          <caret line="75" column="56" lean-forward="false" selection-start-line="75" selection-start-column="56" selection-end-line="75" selection-end-column="56" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/BaseFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="16" column="28" lean-forward="false" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#897#898#0" expanded="false" />
-            <element signature="e#926#927#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/addFriend.jsp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1727,34 +1582,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/allUser.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="739">
-          <caret line="109" column="46" lean-forward="true" selection-start-line="109" selection-start-column="46" selection-end-line="109" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/deleteFriend.jsp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/editEvent.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-306">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main-login.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="472">
-          <caret line="57" column="53" lean-forward="false" selection-start-line="57" selection-start-column="53" selection-end-line="57" selection-end-column="53" />
           <folding />
         </state>
       </provider>
@@ -1815,14 +1646,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/viewProfile.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="672">
-          <caret line="60" column="53" lean-forward="false" selection-start-line="60" selection-start-column="53" selection-end-line="60" selection-end-column="53" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/user.jsp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="738">
@@ -1850,6 +1673,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/entities/DataObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-519">
+          <caret line="17" column="20" lean-forward="false" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/viewProfile.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="672">
+          <caret line="60" column="53" lean-forward="false" selection-start-line="60" selection-start-column="53" selection-end-line="60" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/editEvent.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="30" column="10" lean-forward="true" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/BaseFilter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="16" column="28" lean-forward="false" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/service/filters/UserFilter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="578">
@@ -1858,128 +1713,342 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/web/UserController.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/EventService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1190">
-          <caret line="175" column="116" lean-forward="false" selection-start-line="175" selection-start-column="116" selection-end-line="175" selection-end-column="116" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="442">
+          <caret line="35" column="42" lean-forward="false" selection-start-line="35" selection-start-column="42" selection-end-line="35" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/web/MessageController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-85">
+          <caret line="28" column="13" lean-forward="false" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/18.0/guava-18.0.jar!/com/google/common/cache/CacheLoader.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="37" column="21" lean-forward="false" selection-start-line="37" selection-start-column="21" selection-end-line="37" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Downloads/DBHelp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="776">
+          <caret line="2020" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="2020" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Downloads/LoadingService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="50" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Downloads/LoadingServiceImp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="858">
+          <caret line="213" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="213" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/18.0/guava-18.0-sources.jar!/com/google/common/base/Preconditions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="207" column="22" lean-forward="false" selection-start-line="207" selection-start-column="22" selection-end-line="207" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/18.0/guava-18.0-sources.jar!/com/google/common/util/concurrent/Futures.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="245" column="40" lean-forward="false" selection-start-line="245" selection-start-column="40" selection-end-line="245" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/18.0/guava-18.0-sources.jar!/com/google/common/cache/LoadingCache.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="731">
+          <caret line="164" column="50" lean-forward="true" selection-start-line="163" selection-start-column="11" selection-end-line="164" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/allUser.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="97" column="76" lean-forward="true" selection-start-line="97" selection-start-column="76" selection-end-line="97" selection-end-column="76" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/allEvent.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="884">
+          <caret line="134" column="7" lean-forward="false" selection-start-line="134" selection-start-column="7" selection-end-line="134" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Downloads/DBHelp (1).java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="2021" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_111/src.zip!/java/lang/Iterable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="44" column="17" lean-forward="false" selection-start-line="44" selection-start-column="17" selection-end-line="44" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_111/src.zip!/java/util/List.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="110" column="37" lean-forward="false" selection-start-line="110" selection-start-column="37" selection-end-line="110" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_111/src.zip!/java/util/Collection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="143" column="17" lean-forward="false" selection-start-line="143" selection-start-column="17" selection-end-line="143" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_111/src.zip!/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="106" column="21" lean-forward="false" selection-start-line="106" selection-start-column="21" selection-end-line="106" selection-end-column="21" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/web/EventController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+        <state relative-caret-position="654">
+          <caret line="110" column="0" lean-forward="false" selection-start-line="110" selection-start-column="0" selection-end-line="110" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/entities/DataObject.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/LoadingService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="17" column="20" lean-forward="false" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="47" />
+        <state relative-caret-position="238">
+          <caret line="19" column="63" lean-forward="true" selection-start-line="19" selection-start-column="63" selection-end-line="19" selection-end-column="85" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/MessageServiceImp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="19" column="43" lean-forward="false" selection-start-line="19" selection-start-column="43" selection-end-line="19" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/MeetingServiceImp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="20" column="43" lean-forward="false" selection-start-line="20" selection-start-column="43" selection-end-line="20" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/EventServiceImp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="20" column="41" lean-forward="false" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/18.0/guava-18.0-sources.jar!/com/google/common/cache/CacheLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="93" column="29" lean-forward="false" selection-start-line="93" selection-start-column="29" selection-end-line="93" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/web/KKUserController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="25" column="29" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/UploadServiceImp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="16" column="42" lean-forward="false" selection-start-line="16" selection-start-column="42" selection-end-line="16" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/LoadingServiceImp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="535">
+          <caret line="116" column="33" lean-forward="false" selection-start-line="116" selection-start-column="16" selection-end-line="116" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/UserServiceImp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="47" column="28" lean-forward="false" selection-start-line="47" selection-start-column="28" selection-end-line="47" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/dbHelp/DBHelp.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-255">
-          <caret line="1922" column="123" lean-forward="false" selection-start-line="1922" selection-start-column="123" selection-end-line="1922" selection-end-column="123" />
+        <state relative-caret-position="408">
+          <caret line="110" column="41" lean-forward="false" selection-start-line="110" selection-start-column="41" selection-end-line="110" selection-end-column="41" />
           <folding>
-            <marker date="1487418802853" expanded="true" signature="1414:1472" ph="Select max(O... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="1791:1835" ph="SELECT OBJEC... PARAMS" />
-            <marker date="1487418802853" expanded="true" signature="2362:2445" ph="SELECT NVL(V... PARAMS" />
-            <marker date="1487418802853" expanded="true" signature="2996:3082" ph="SELECT NVL(V... PARAMS" />
-            <marker date="1487418802853" expanded="true" signature="3810:4451" ph="SELECT ob.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="5494:5550" ph="SELECT OBJEC... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="6055:6177" ph="SELECT p.VAL... PARAMS" />
-            <marker date="1487418802853" expanded="true" signature="6712:7990" ph="SELECT ob.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="9287:10586" ph="SELECT ob.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="11798:13097" ph="SELECT ob.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="14008:14814" ph="SELECT ev.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="16038:16844" ph="SELECT ev.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="17756:18563" ph="SELECT ev.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="20678:20746" ph="SELECT ATTR_... REFERENCES" />
-            <marker date="1487418802853" expanded="true" signature="21235:21295" ph="SELECT VALUE... PARAMS" />
-            <marker date="1487418802853" expanded="true" signature="21896:21934" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="22044:22086" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="22179:22221" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="22314:22353" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="22750:22788" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="22886:22928" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="23026:23068" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="23166:23205" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="23385:23419" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="23917:23992" ph="INSERT INTO OBJECTS... " />
-            <marker date="1487418802853" expanded="true" signature="24308:24367" ph="INSERT INTO PARAMS... " />
-            <marker date="1487418802853" expanded="true" signature="25075:26492" ph="SELECT ob.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="27954:28029" ph="INSERT INTO OBJECTS... " />
-            <marker date="1487418802853" expanded="true" signature="28119:28177" ph="Select max(O... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="28627:28686" ph="INSERT INTO PARAMS... " />
-            <marker date="1487418802853" expanded="true" signature="29261:29330" ph="INSERT INTO REFERENCES... " />
-            <marker date="1487418802853" expanded="true" signature="29732:29793" ph="INSERT INTO PARAMS... " />
-            <marker date="1487418802853" expanded="true" signature="30241:30313" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="31307:31370" ph="UPDATE PARAM... " />
-            <marker date="1487418802853" expanded="true" signature="31760:31814" ph="UPDATE OBJEC... " />
-            <marker date="1487418802853" expanded="true" signature="32337:32400" ph="UPDATE PARAM... " />
-            <marker date="1487418802853" expanded="true" signature="32836:32890" ph="UPDATE OBJEC... " />
-            <marker date="1487418802853" expanded="true" signature="34223:34345" ph="SELECT COUNT... REFERENCES" />
-            <marker date="1487418802853" expanded="true" signature="34971:35032" ph="INSERT INTO PARAMS... " />
-            <marker date="1487418802853" expanded="true" signature="35426:35487" ph="INSERT INTO PARAMS... " />
-            <marker date="1487418802853" expanded="true" signature="35785:35854" ph="INSERT INTO REFERENCES... " />
-            <marker date="1487418802853" expanded="true" signature="36152:36221" ph="INSERT INTO REFERENCES... " />
-            <marker date="1487418802853" expanded="true" signature="36562:36634" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="36923:36995" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="37668:37741" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="37958:38071" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="39070:40988" ph="SELECT frien... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="42415:42490" ph="INSERT INTO OBJECTS... " />
-            <marker date="1487418802853" expanded="true" signature="42580:42638" ph="Select max(O... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="43105:43164" ph="INSERT INTO PARAMS... " />
-            <marker date="1487418802853" expanded="true" signature="43802:43871" ph="INSERT INTO REFERENCES... " />
-            <marker date="1487418802853" expanded="true" signature="44455:44493" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="44593:44635" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="44735:44777" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="44877:44916" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="45098:45132" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="45581:46703" ph="SELECT ms.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="48105:49053" ph="SELECT ob.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="50166:51593" ph="SELECT ev.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="52692:52750" ph="Select max(O... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="52915:52990" ph="INSERT INTO OBJECTS... " />
-            <marker date="1487418802853" expanded="true" signature="53307:53366" ph="INSERT INTO PARAMS... " />
-            <marker date="1487418802853" expanded="true" signature="54005:54074" ph="INSERT INTO REFERENCES... " />
-            <marker date="1487418802853" expanded="true" signature="54678:54741" ph="UPDATE PARAM... " />
-            <marker date="1487418802853" expanded="true" signature="55506:55575" ph="INSERT INTO REFERENCES... " />
-            <marker date="1487418802853" expanded="true" signature="56149:56209" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="56986:57400" ph="SELECT re.RE... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="57935:59151" ph="SELECT ob.OB... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="62865:62919" ph="DELETE FROM " />
-            <marker date="1487418802853" expanded="true" signature="63138:63201" ph="INSERT INTO PARAMS... " />
-            <marker date="1487418802853" expanded="true" signature="63921:64610" ph="(SELECT -2 A... " />
-            <marker date="1487418802853" expanded="true" signature="63922:64022" ph="SELECT -2 AS... " />
-            <marker date="1487418802853" expanded="true" signature="64060:64118" ph="SELECT -1, O... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="64156:64237" ph="SELECT 0, CA... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="64275:64486" ph="SELECT ATTR_... " />
-            <marker date="1487418802853" expanded="true" signature="64524:64609" ph="SELECT ATTR_... REFERENCES" />
-            <marker date="1487418802853" expanded="true" signature="67095:67898" ph="SELECT * FRO... OBJECT_NAME" />
-            <marker date="1487418802853" expanded="true" signature="67110:67218" ph="SELECT -2 AS... " />
-            <marker date="1487418802853" expanded="true" signature="67263:67329" ph="SELECT -1, O... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="67374:67463" ph="SELECT 0, CA... OBJECTS" />
-            <marker date="1487418802853" expanded="true" signature="67508:67734" ph="SELECT ATTR_... " />
-            <marker date="1487418802853" expanded="true" signature="67768:67861" ph="SELECT ATTR_... REFERENCES" />
-            <marker date="1487418802853" expanded="true" signature="70662:70683" ph="SELECT OBJEC... " />
-            <marker date="1487418802853" expanded="true" signature="97892:97969" ph="INSERT INTO OBJECTS... " />
-            <marker date="1487418802853" expanded="true" signature="98441:98504" ph="INSERT INTO PARAMS... " />
-            <marker date="1487418802853" expanded="true" signature="99205:99276" ph="INSERT INTO REFERENCES... " />
-            <marker date="1487418802853" expanded="true" signature="100729:100783" ph="UPDATE OBJEC... " />
-            <marker date="1487418802853" expanded="true" signature="101296:101359" ph="UPDATE PARAM... " />
-            <marker date="1487418802853" expanded="true" signature="102420:102491" ph="INSERT INTO REFERENCES... " />
-            <marker date="1487418802853" expanded="true" signature="102556:102614" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="1333:1391" ph="Select max(O... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="1710:1754" ph="SELECT OBJEC... PARAMS" />
+            <marker date="1487452738280" expanded="true" signature="2438:3079" ph="SELECT ob.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="4122:4178" ph="SELECT OBJEC... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="4683:4805" ph="SELECT p.VAL... PARAMS" />
+            <marker date="1487452738280" expanded="true" signature="5340:6618" ph="SELECT ob.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="7915:9214" ph="SELECT ob.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="10426:11725" ph="SELECT ob.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="12636:13442" ph="SELECT ev.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="14666:15472" ph="SELECT ev.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="16384:17191" ph="SELECT ev.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="19306:19374" ph="SELECT ATTR_... REFERENCES" />
+            <marker date="1487452738280" expanded="true" signature="19863:19923" ph="SELECT VALUE... PARAMS" />
+            <marker date="1487452738280" expanded="true" signature="20524:20562" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="20672:20714" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="20807:20849" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="20942:20981" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="21378:21416" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="21514:21556" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="21654:21696" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="21794:21833" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="22013:22047" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="23703:25120" ph="SELECT ob.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="26582:26657" ph="INSERT INTO OBJECTS... " />
+            <marker date="1487452738280" expanded="true" signature="26747:26805" ph="Select max(O... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="27255:27314" ph="INSERT INTO PARAMS... " />
+            <marker date="1487452738280" expanded="true" signature="27889:27958" ph="INSERT INTO REFERENCES... " />
+            <marker date="1487452738280" expanded="true" signature="28360:28421" ph="INSERT INTO PARAMS... " />
+            <marker date="1487452738280" expanded="true" signature="28869:28941" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="29935:29998" ph="UPDATE PARAM... " />
+            <marker date="1487452738280" expanded="true" signature="30388:30442" ph="UPDATE OBJEC... " />
+            <marker date="1487452738280" expanded="true" signature="32851:32973" ph="SELECT COUNT... REFERENCES" />
+            <marker date="1487452738280" expanded="true" signature="33599:33660" ph="INSERT INTO PARAMS... " />
+            <marker date="1487452738280" expanded="true" signature="34054:34115" ph="INSERT INTO PARAMS... " />
+            <marker date="1487452738280" expanded="true" signature="34413:34482" ph="INSERT INTO REFERENCES... " />
+            <marker date="1487452738280" expanded="true" signature="34780:34849" ph="INSERT INTO REFERENCES... " />
+            <marker date="1487452738280" expanded="true" signature="35190:35262" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="35551:35623" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="36296:36369" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="36586:36699" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="37698:39616" ph="SELECT frien... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="41043:41118" ph="INSERT INTO OBJECTS... " />
+            <marker date="1487452738280" expanded="true" signature="41208:41266" ph="Select max(O... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="41733:41792" ph="INSERT INTO PARAMS... " />
+            <marker date="1487452738280" expanded="true" signature="42430:42499" ph="INSERT INTO REFERENCES... " />
+            <marker date="1487452738280" expanded="true" signature="43083:43121" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="43221:43263" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="43363:43405" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="43505:43544" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="43726:43760" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="44209:45331" ph="SELECT ms.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="46733:47681" ph="SELECT ob.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="48794:50221" ph="SELECT ev.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="51320:51378" ph="Select max(O... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="51543:51618" ph="INSERT INTO OBJECTS... " />
+            <marker date="1487452738280" expanded="true" signature="51935:51994" ph="INSERT INTO PARAMS... " />
+            <marker date="1487452738280" expanded="true" signature="52633:52702" ph="INSERT INTO REFERENCES... " />
+            <marker date="1487452738280" expanded="true" signature="53306:53369" ph="UPDATE PARAM... " />
+            <marker date="1487452738280" expanded="true" signature="54134:54203" ph="INSERT INTO REFERENCES... " />
+            <marker date="1487452738280" expanded="true" signature="54777:54837" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="55614:56028" ph="SELECT re.RE... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="56563:57779" ph="SELECT ob.OB... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="61493:61547" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="61766:61829" ph="INSERT INTO PARAMS... " />
+            <marker date="1487452738280" expanded="true" signature="62549:63238" ph="(SELECT -2 A... " />
+            <marker date="1487452738280" expanded="true" signature="62550:62650" ph="SELECT -2 AS... " />
+            <marker date="1487452738280" expanded="true" signature="62688:62746" ph="SELECT -1, O... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="62784:62865" ph="SELECT 0, CA... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="62903:63114" ph="SELECT ATTR_... " />
+            <marker date="1487452738280" expanded="true" signature="63152:63237" ph="SELECT ATTR_... REFERENCES" />
+            <marker date="1487452738280" expanded="true" signature="65723:66526" ph="SELECT * FRO... OBJECT_NAME" />
+            <marker date="1487452738280" expanded="true" signature="65738:65846" ph="SELECT -2 AS... " />
+            <marker date="1487452738280" expanded="true" signature="65891:65957" ph="SELECT -1, O... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="66002:66091" ph="SELECT 0, CA... OBJECTS" />
+            <marker date="1487452738280" expanded="true" signature="66136:66362" ph="SELECT ATTR_... " />
+            <marker date="1487452738280" expanded="true" signature="66396:66489" ph="SELECT ATTR_... REFERENCES" />
+            <marker date="1487452738280" expanded="true" signature="69290:69311" ph="SELECT OBJEC... " />
+            <marker date="1487452738280" expanded="true" signature="96522:96599" ph="INSERT INTO OBJECTS... " />
+            <marker date="1487452738280" expanded="true" signature="97071:97134" ph="INSERT INTO PARAMS... " />
+            <marker date="1487452738280" expanded="true" signature="97819:97890" ph="INSERT INTO REFERENCES... " />
+            <marker date="1487452738280" expanded="true" signature="99332:99386" ph="UPDATE OBJEC... " />
+            <marker date="1487452738280" expanded="true" signature="99899:99962" ph="UPDATE PARAM... " />
+            <marker date="1487452738280" expanded="true" signature="101007:101078" ph="INSERT INTO REFERENCES... " />
+            <marker date="1487452738280" expanded="true" signature="101143:101201" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="103662:103700" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="103806:103848" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="103954:103996" ph="DELETE FROM " />
+            <marker date="1487452738280" expanded="true" signature="104102:104141" ph="DELETE FROM " />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/cache/DataObjectCache.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="467">
+          <caret line="55" column="43" lean-forward="false" selection-start-line="55" selection-start-column="43" selection-end-line="55" selection-end-column="43" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/web/UserController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="33" lean-forward="false" selection-start-line="5" selection-start-column="33" selection-end-line="5" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main-login.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="57" column="53" lean-forward="false" selection-start-line="57" selection-start-column="53" selection-end-line="57" selection-end-column="53" />
+          <folding />
         </state>
       </provider>
     </entry>

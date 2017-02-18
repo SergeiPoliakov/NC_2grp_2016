@@ -105,7 +105,7 @@
                                             <br>
 
                                             <small class=" text-muted"><span
-                                                    class="glyphicon glyphicon-time"></span> ${object.getValue(1)} - ${object.getValue(2)} </small>
+                                                    class="glyphicon glyphicon-time"></span> ${object.getValue(101)} - ${object.getValue(102)} </small>
 
 
                                         </div>

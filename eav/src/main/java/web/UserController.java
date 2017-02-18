@@ -1,9 +1,9 @@
 package web;
 
+
+import com.google.common.cache.LoadingCache;
 import entities.DataObject;
 import exception.CustomException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import service.*;
+import service.cache.DataObjectCache;
 import service.filters.EventFilter;
 import service.filters.UserFilter;
 
@@ -27,19 +28,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Lawrence on 20.01.2017.
  */
 @Controller
 public class UserController {
-    private static final Logger logger = LoggerFactory.getLogger(EventController.class);
+
+    private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     private UserServiceImp userService = UserServiceImp.getInstance();
 
-    private EventServiceImp eventService = EventServiceImp.getInstance();
 
     @RequestMapping(value = {"/", "main"})
     public ModelAndView index() {
@@ -49,12 +51,35 @@ public class UserController {
 
 
     @RequestMapping(value = "/main-login", method = RequestMethod.GET)
-    public String getUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        DataObject dataObject = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername())); // Получаем Объект текущего пользователя
-        Integer idUser = userService.getObjID(userService.getCurrentUsername());
-        m.addAttribute(dataObject);
-        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_USER_WITH_ID, String.valueOf(idUser)));
-        m.addAttribute("allEvents", loadingService.getListDataObjectByListIdAlternative(il));
+    public String getUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException {
+        System.out.println("Размер кэша до обновления страницы " + doCache.size());
+        try {
+            System.out.println("Ищем в кэше текущего пользователя");
+            DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+            System.out.println("Размер кэша после добавления " + doCache.size());
+            m.addAttribute(dataObject);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        try {
+        System.out.println("Ищем в кэше события для текущего пользователя");
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER));
+
+        ArrayList<DataObject> list = new ArrayList<>();
+
+            Map<Integer, DataObject> map = doCache.getAll(il);
+
+            System.out.println("Размер кэша после добавления " + doCache.size());
+
+            for(Map.Entry<Integer, DataObject> e : map.entrySet()) {
+                list.add(e.getValue());
+            }
+
+        m.addAttribute("allEvents",list);
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return "main-login";
     }
 
@@ -110,17 +135,9 @@ public class UserController {
     // 2017-02-16 Анатолий, Проба работы новых фильтров и альтернативного лоадера
     @RequestMapping("/allUser")
     public String listObjects(Map<String, Object> map) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        //map.put("allObject", loadingService.getListDataObjectFiltered(Filter.OBJECT_TYPE, Filter.OBJECT_TYPE_USER)); // loadingService.getListDataObjectFiltered(Filter.OBJECT_TYPE, Filter.OBJECT_TYPE_USER));
-        // map.put("allObject",userService.getUserList());
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL));
         map.put("allObject", loadingService.getListDataObjectByListIdAlternative(il));
         return "allUser";
-    }
-
-    @RequestMapping("/delete/{objectId}")
-    public String deleteObject(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        userService.deleteObject(objectId);
-        return "redirect:/allUser";
     }
 
 
@@ -162,7 +179,7 @@ public class UserController {
 
         DataObject dataObject = loadingService.createDataObject(full_name, 1001, mapAttr);
 
-        userService.setNewUser(dataObject);
+        loadingService.setDataObjectToDB(dataObject);
 
         //userService.setNewUser(1001, full_name, mapAttr);
 
@@ -205,7 +222,11 @@ public class UserController {
 
         DataObject dataObject = new DataObject(userId, full_name, 1001, mapAttr);
 
-        userService.updateUser(dataObject);
+        loadingService.updateDataObject(dataObject);
+
+        doCache.refresh(userId);
+
+        System.out.println("Обновляем в кэше текущего пользователя");
 
         return "redirect:/main-login";
     }

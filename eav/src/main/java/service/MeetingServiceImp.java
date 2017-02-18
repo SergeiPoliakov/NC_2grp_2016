@@ -18,7 +18,7 @@ public class MeetingServiceImp implements MeetingService {
 
     public static MeetingServiceImp getInstance() {
         if (instance == null)
-            synchronized (DBHelp.class) {
+            synchronized (MeetingServiceImp.class) {
                 if (instance == null)
                     instance = new MeetingServiceImp();
             }

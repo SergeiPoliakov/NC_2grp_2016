@@ -33,7 +33,7 @@ interface EventService {
 
 
     @WebMethod
-    void updateEvent(int ObjID, Event event) throws SQLException,
+    void updateEvent(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException;
 

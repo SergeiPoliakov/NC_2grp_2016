@@ -17,7 +17,7 @@ public class MessageServiceImp implements MessageService {
 
     public static MessageServiceImp getInstance() {
         if (instance == null)
-            synchronized (DBHelp.class) {
+            synchronized (MessageServiceImp.class) {
                 if (instance == null)
                     instance = new MessageServiceImp();
             }

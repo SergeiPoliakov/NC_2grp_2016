@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import service.EventServiceImp;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
+import service.filters.EventFilter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -55,47 +57,62 @@ public class EventController {
 
         DataObject dataObject = loadingService.createDataObject(name, 1002, mapAttr);
 
-        eventService.setNewEvent(dataObject);
+        loadingService.setDataObjectToDB(dataObject);
 
         return "redirect:/main-login";
     }
 
     // Вытаскивание событий
     @RequestMapping("/allEvent")
-    public String listObjects(Map<String, Object> map) throws SQLException {
-        Integer userId = userService.getObjID(userService.getCurrentUsername());
-        map.put("allObject", loadingService.getListDataObjectById(userId, "event"));
+    public String listObjects(Map<String, Object> map) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER));
+        map.put("allObject", loadingService.getListDataObjectByListIdAlternative(il));
         return "allEvent";
     }
 
     // Удаление события по его id
     @RequestMapping("/deleteEvent/{objectId}")
     public String deleteEvent(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        eventService.deleteEvent(objectId);
+        loadingService.deleteDataObjectById(objectId);
         return "redirect:/allEvent";
     }
 
     // Выводим данные о событии на форму редактирования
     @RequestMapping("/editEvent/{objectId}")
     public String editEvent(@PathVariable("objectId") Integer eventId,
-                            Event event, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        event = eventService.getEventByEventID(eventId);
-        logger.info("Event = " + event.toString());
-        m.addAttribute(event);
+                            ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        DataObject dataObject = loadingService.getDataObjectByIdAlternative(eventId);
+        m.addAttribute(dataObject);
         return "/editEvent";
     }
 
     // Редактирование события
     @RequestMapping(value = "/changeEvent/{eventId}", method = RequestMethod.POST)
     public String changeEvent(@PathVariable("eventId") Integer eventId,
-                              @ModelAttribute("setEvent") Event event
+                              @ModelAttribute("name") String name,
+                              @ModelAttribute("priority") String priority,
+                              @ModelAttribute("date_begin") String date_begin,
+                              @ModelAttribute("date_end") String date_end,
+                              @ModelAttribute("info") String info
     ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
 
-        eventService.updateEvent(eventId, event);
+        mapAttr.put(101, date_begin);
+        mapAttr.put(102, date_end);
+        mapAttr.put(103, null);
+        mapAttr.put(104, info);
+        mapAttr.put(105, priority);
+
+        DataObject dataObject = new DataObject(eventId, name, 1002, mapAttr);
+
+        loadingService.updateDataObject(dataObject);
+
+
 
         return "redirect:/allEvent";
     }
 
 
 }
+

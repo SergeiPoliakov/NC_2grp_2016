@@ -18,7 +18,7 @@ public class EventServiceImp implements EventService {
 
     public static EventServiceImp getInstance() {
         if (instance == null)
-            synchronized (DBHelp.class) {
+            synchronized (EventServiceImp.class) {
                 if (instance == null)
                     instance = new EventServiceImp();
             }
@@ -43,10 +43,10 @@ public class EventServiceImp implements EventService {
     }
 
     // Обновление события
-    public void updateEvent(int ObjID, Event event) throws SQLException,
+    public void updateEvent(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        new  DBHelp().updateEvent(ObjID, event);
+       // new  DBHelp().updateEvent(dataObject);
     }
 
     // Получение одного конкретного события данного пользователя по id этого события

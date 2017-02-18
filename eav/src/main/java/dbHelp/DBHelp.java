@@ -22,8 +22,6 @@ import service.filters.*;
 
 public class DBHelp {
 
-    private static final Logger logger = LoggerFactory.getLogger(DBHelp.class);
-
     private UserServiceImp userService = UserServiceImp.getInstance();
 
     private static Connection getConnection() throws SQLException {
@@ -69,40 +67,6 @@ public class DBHelp {
         PS.close();
         CloseConnection(Con);
         return objID;
-    }
-
-
-    public ArrayList<String> getObjParamsByObjID(int objID) throws SQLException {
-        ArrayList<String> objParams = new ArrayList<>();
-        Connection Con = getConnection();
-        PreparedStatement PS = Con
-                .prepareStatement("SELECT NVL(VALUE, ' ') FROM PARAMS WHERE OBJECT_ID = ? and ATTR_ID BETWEEN 1 and 10");
-        PS.setInt(1, objID);
-        ResultSet RS = PS.executeQuery();
-        while (RS.next()) {
-            objParams.add(RS.getString(1));
-        }
-        logger.info("size = " + objParams.size());
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return objParams;
-    }
-
-    public ArrayList<Object> getEventParamsByObjID(int eventID) throws SQLException {
-        ArrayList<Object> eventParams = new ArrayList<>();
-        Connection Con = getConnection();
-        PreparedStatement PS = Con.prepareStatement("SELECT NVL(VALUE, ' ') FROM PARAMS WHERE OBJECT_ID = ? and ATTR_ID BETWEEN 101 and 105");
-        PS.setInt(1, eventID);
-        ResultSet RS = PS.executeQuery();
-        while (RS.next()) {
-            eventParams.add(RS.getString(1));
-        }
-        logger.info("size = " + eventParams.size());
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return eventParams;
     }
 
 
@@ -1583,9 +1547,9 @@ public class DBHelp {
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT;
             } else if (params.get(EventFilter.FOR_CURRENT_USER) != null) { // если надо получить ID всех событий текущего пользователей,
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
-                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "JOIN PARAMS pa ON re.OBJECT_ID = pa.OBJECT_ID ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT + " ";
-                sql += "AND ob2.OBJECT_NAME = " + userService.getCurrentUsername() + " ";
+                sql += "AND pa.VALUE = " + "'" + userService.getCurrentUsername() + "'" + " ";
             } else if (params.get(EventFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех событий пользователя с конкретным именем,
                 ArrayList<String> user_name = params.get(EventFilter.FOR_USER_WITH_NAME);
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
@@ -1876,19 +1840,19 @@ public class DBHelp {
         PS.executeBatch();
         PS.close();
 
-        // 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
-        // Получаем список параметров:
+// 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
+// Получаем список параметров:
         TreeMap<Integer, ArrayList<Integer>> references = dataObject.getRefParams();
         PS = Con
                 .prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
-        // Обходим все параметры в листе в датаобджекте и каждый
+// Обходим все параметры в листе в датаобджекте и каждый
         for (Map.Entry<Integer, ArrayList<Integer>> entry : references.entrySet()) {
             Integer key = entry.getKey(); // получаем ключ
             ArrayList<Integer> valueList = entry.getValue(); // получаем значение
             for (Integer value : valueList) {
                 PS.setInt(1, id);
                 PS.setInt(2, key);
-                PS.setObject(3, value);
+                PS.setInt(3, value);
                 PS.addBatch();
             }
         }
@@ -1929,10 +1893,10 @@ public class DBHelp {
             String valueOld = paramsOld.get(key);
             System.out.println("Старое значение ключа "+key + " = " + valueOld + ", новое значение ключа = " + value);
 
-                PS_upd.setString(1, value);
-                PS_upd.setInt(2, id);
-                PS_upd.setInt(3, key);
-                PS_upd.addBatch();
+            PS_upd.setString(1, value);
+            PS_upd.setInt(2, id);
+            PS_upd.setInt(3, key);
+            PS_upd.addBatch();
 
         }
         PS_upd.executeBatch();
@@ -1965,7 +1929,7 @@ public class DBHelp {
         PS_ref_ins.executeBatch();
         PS_ref_ins.close();
 
-        // А теперь смотрим, может, нужно какие-то ссылки удалить. Обходим все ссылки в листе в старом датаобджекте
+   /*     // А теперь смотрим, может, нужно какие-то ссылки удалить. Обходим все ссылки в листе в старом датаобджекте
         for (Map.Entry<Integer, ArrayList<Integer>> entry : referencesOld.entrySet()) {
             Integer keyOld = entry.getKey(); // получаем ключ
             ArrayList<Integer> valueListOld = entry.getValue(); // получаем значение
@@ -1983,8 +1947,38 @@ public class DBHelp {
         PS_ref_del.executeBatch();
         PS_ref_del.close();
 
+        CloseConnection(Con); */
+    }
+
+
+    /*...............................................................................................................*/
+    // 2017-02-18 Новый универсальный метод удаления датаобджекта из базы:
+    public void deleteDataObject(Integer id) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
+        Connection Con = getConnection();
+        PreparedStatement PS_del = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
+        PS_del.setInt(1, id);
+        PS_del.executeUpdate();
+
+        PS_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ?");
+        PS_del.setInt(1, id);
+        PS_del.executeUpdate();
+
+        PS_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ?");
+        PS_del.setInt(1, id);
+        PS_del.executeUpdate();
+
+        PS_del = Con.prepareStatement("DELETE FROM OBJECTS WHERE OBJECT_ID = ?");
+        PS_del.setInt(1, id);
+        PS_del.executeUpdate();
+
+        PS_del.close();
         CloseConnection(Con);
     }
 
+    // На всякий случай удаление по объекту, а не по айди
+    public void deleteDataObject(DataObject dataObject) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
+        Integer id = dataObject.getId();
+        deleteDataObject(id);
+    }
 
 }

@@ -1,5 +1,6 @@
 package web;
 
+import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.Event;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import service.EventServiceImp;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
+import service.cache.DataObjectCache;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -23,7 +25,7 @@ import java.util.TreeMap;
 @Controller
 public class KKUserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventController.class);
+    private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
@@ -31,7 +33,8 @@ public class KKUserController {
 
     private EventServiceImp eventService = EventServiceImp.getInstance();
 
-    @RequestMapping(value = "/user{id}")
+    @Deprecated
+    @RequestMapping(value = "/user/{id}")
     public String viewUser(@PathVariable("id") int userId,
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         User user = userService.getUserByUserID(userId);
@@ -66,15 +69,32 @@ public class KKUserController {
     // Редактирование события
     @RequestMapping(value = "/userChangeEvent/{eventId}", method = RequestMethod.POST)
     public String changeEvent(@PathVariable("eventId") Integer eventId,
-                              @ModelAttribute("updateEvent") Event event) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+                              @ModelAttribute("name") String name,
+                              @ModelAttribute("priority") String priority,
+                              @ModelAttribute("date_begin") String date_begin,
+                              @ModelAttribute("date_end") String date_end,
+                              @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
-        eventService.updateEvent(eventId, event);
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
+
+        mapAttr.put(101, date_begin);
+        mapAttr.put(102, date_end);
+        mapAttr.put(103, null);
+        mapAttr.put(104, info);
+        mapAttr.put(105, priority);
+
+        DataObject dataObject = new DataObject(eventId, name, 1002, mapAttr);
+
+        loadingService.updateDataObject(dataObject);
+
+        doCache.refresh(eventId);
+
         return "redirect:/main-login";
     }
 
     @RequestMapping(value = "/userRemoveEvent/{eventId}", method = RequestMethod.POST)
     public String removeEvent(@PathVariable("eventId") Integer eventId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        eventService.deleteEvent(eventId);
+        loadingService.deleteDataObjectById(eventId);
         return "redirect:/main-login";
     }
 

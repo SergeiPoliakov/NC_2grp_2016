@@ -23,7 +23,7 @@ public class UserServiceImp implements UserService {
 
     public static UserServiceImp getInstance() {
         if (instance == null)
-            synchronized (DBHelp.class) {
+            synchronized (UserServiceImp.class) {
                 if (instance == null)
                     instance = new UserServiceImp();
             }

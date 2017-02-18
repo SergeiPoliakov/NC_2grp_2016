@@ -14,7 +14,7 @@ public class UploadServiceImp implements UploadService {
 
     public static UploadServiceImp getInstance() {
         if (instance == null)
-            synchronized (DBHelp.class) {
+            synchronized (UploadServiceImp.class) {
                 if (instance == null)
                     instance = new UploadServiceImp();
             }

@@ -12,8 +12,6 @@ import java.util.TreeMap;
  */
 public interface LoadingService {
 
-    DataObject getDataObjectById(Integer id) throws SQLException;
-
     // 2017-02-14 Альтернативный метод загрузки датаобджекта по его id
     DataObject getDataObjectByIdAlternative(Integer id) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
@@ -34,14 +32,13 @@ public interface LoadingService {
     ArrayList<DataObject> getListDataObjectFiltered(String... strings) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
 
-    ArrayList<DataObject> getListDataObjectById(Integer id, String type) throws SQLException;
-
-    ArrayList<DataObject> getListDataObjectByName(String name, String type) throws SQLException;
-
-
     DataObject createDataObject(String name, int objType, TreeMap<Integer, Object> mapAttr) throws SQLException;
 
 
-    void deleteDataObjectById(Integer id);
+    void deleteDataObjectById(Integer id) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException;
+
+    void setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException;
+
+    void updateDataObject(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException;
 
 }
