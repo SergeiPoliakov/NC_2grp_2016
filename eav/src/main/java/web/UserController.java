@@ -42,6 +42,16 @@ public class UserController {
 
     private UserServiceImp userService = UserServiceImp.getInstance();
 
+    private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
+        ArrayList<DataObject> list = new ArrayList<>();
+
+        for(Map.Entry<Integer, DataObject> e : map.entrySet()) {
+            list.add(e.getValue());
+        }
+
+        return list;
+    }
+
 
     @RequestMapping(value = {"/", "main"})
     public ModelAndView index() {
@@ -54,7 +64,6 @@ public class UserController {
     public String getUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException {
         System.out.println("Размер кэша до обновления страницы " + doCache.size());
         try {
-            System.out.println("Ищем в кэше текущего пользователя");
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
             System.out.println("Размер кэша после добавления " + doCache.size());
             m.addAttribute(dataObject);
@@ -62,18 +71,11 @@ public class UserController {
             e.printStackTrace();
         }
         try {
-        System.out.println("Ищем в кэше события для текущего пользователя");
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER));
-
-        ArrayList<DataObject> list = new ArrayList<>();
-
+            System.out.println("Ищем в кэше список событий данной пользователя ");
             Map<Integer, DataObject> map = doCache.getAll(il);
-
+            ArrayList<DataObject> list = getListDataObject(map);
             System.out.println("Размер кэша после добавления " + doCache.size());
-
-            for(Map.Entry<Integer, DataObject> e : map.entrySet()) {
-                list.add(e.getValue());
-            }
 
         m.addAttribute("allEvents",list);
 
@@ -116,9 +118,20 @@ public class UserController {
     }
 
     @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
-    public String searchUser(@RequestParam("name") String name, Map<String, Object> map) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public String searchUser(@RequestParam("name") String name, Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.SEARCH_USER, name));
-        map.put("allObject", loadingService.getListDataObjectByListIdAlternative(il));
+
+        try {
+            System.out.println("Ищем в кэше список пользователей, подходящих под запрос");
+            Map<Integer, DataObject> map = doCache.getAll(il);
+            ArrayList<DataObject> list = getListDataObject(map);
+            System.out.println("Размер кэша после добавления " + doCache.size());
+
+            mapObjects.put("allUsers", list);
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return "/searchUser";
     }
 
@@ -134,17 +147,26 @@ public class UserController {
 
     // 2017-02-16 Анатолий, Проба работы новых фильтров и альтернативного лоадера
     @RequestMapping("/allUser")
-    public String listObjects(Map<String, Object> map) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public String listObjects(Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL));
-        map.put("allObject", loadingService.getListDataObjectByListIdAlternative(il));
+
+        try {
+            System.out.println("Ищем в кэше список пользователей");
+            Map<Integer, DataObject> map = doCache.getAll(il);
+            ArrayList<DataObject> list = getListDataObject(map);
+            System.out.println("Размер кэша после добавления " + doCache.size());
+
+            mapObjects.put("allUsers", list);
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
         return "allUser";
     }
 
-
     @RequestMapping(value = "/addUser", method = RequestMethod.GET)
-    public String getRegistrationUserPage() {
-        return "addUser";
-    }
+    public String getRegistrationUserPage() { return "addUser"; }
 
 
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
@@ -178,21 +200,24 @@ public class UserController {
 
 
         DataObject dataObject = loadingService.createDataObject(full_name, 1001, mapAttr);
-
         loadingService.setDataObjectToDB(dataObject);
-
-        //userService.setNewUser(1001, full_name, mapAttr);
+        doCache.invalidate(dataObject.getId());
+        doCache.put(dataObject.getId(), dataObject);
+        System.out.println("Размер кэша после добавления " + doCache.size());
 
         return "/main";
     }
 
     // Выводим данные о пользователе на форму редактирования профиля
     @RequestMapping("/profile")
-    public String getProfileUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+    public String getProfileUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException {
 
-        DataObject dataObject = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
-        // DataObject dataObject = loadingService.getDataObjectById(userService.getObjID(userService.getCurrentUsername()));
-        m.addAttribute(dataObject);
+        try {
+            DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+            m.addAttribute(dataObject);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return "/profile";
     }
 
@@ -221,21 +246,28 @@ public class UserController {
         mapAttr.put(10, additional_field);
 
         DataObject dataObject = new DataObject(userId, full_name, 1001, mapAttr);
-
         loadingService.updateDataObject(dataObject);
-
         doCache.refresh(userId);
-
         System.out.println("Обновляем в кэше текущего пользователя");
 
         return "redirect:/main-login";
     }
 
     @RequestMapping("/allFriends")
-    public String friendList(Map<String, Object> map) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public String friendList(Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Integer idUser = userService.getObjID(userService.getCurrentUsername());
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(idUser)));
-        map.put("allObject", loadingService.getListDataObjectByListIdAlternative(il)); //new DBHelp().getUserList()); //
+        try {
+            System.out.println("Ищем в кэше список друзей");
+            Map<Integer, DataObject> map = doCache.getAll(il);
+            ArrayList<DataObject> list = getListDataObject(map);
+            System.out.println("Размер кэша после добавления " + doCache.size());
+
+            mapObjects.put("allObject", list);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
         return "allFriends";
     }
 
@@ -257,10 +289,23 @@ public class UserController {
     @RequestMapping(value = "/viewProfile/{id}")
     public String viewUser(@PathVariable("id") int userId,
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-        DataObject user = loadingService.getDataObjectByIdAlternative(userId);
-        m.addAttribute(user);
-        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_USER_WITH_ID, String.valueOf(userId)));
-        m.addAttribute("allObject", loadingService.getListDataObjectByListIdAlternative(il));
+        try {
+            DataObject dataObject = doCache.get(userId);
+            m.addAttribute(dataObject);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        try {
+            ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_USER_WITH_ID, String.valueOf(userId)));
+            Map<Integer, DataObject> map = doCache.getAll(il);
+            ArrayList<DataObject> list = getListDataObject(map);
+            System.out.println("Размер кэша после добавления " + doCache.size());
+
+            m.addAttribute("allObject",list);
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return "/viewProfile";
     }
 

@@ -32,9 +32,9 @@
 
 
 <h2 id="faq">Результаты поиска:</h2>
-<c:forEach items="${allObject}" var="object">
+<c:forEach items="${allUsers}" var="user">
     <div class="thumbnail">
-        <h4>${object.getValue(2)} ${object.getValue(1)} ${object.getValue(3)}, ник "${object.getValue(4)}"</h4>
+        <h4>${user.getValue(2)} ${user.getValue(1)} ${user.getValue(3)}, ник "${user.getValue(4)}"</h4>
         <ul class="nav nav-pills">
                 <%--<li class="active pull-left"><a href="/delete/${object.id}">Удалить</a></li> Пока не будем тут удалять--%>
             <li class="active pull-left"><a href="/viewProfile/${object.id}">Смотреть профиль</a></li>

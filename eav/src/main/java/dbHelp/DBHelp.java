@@ -1513,7 +1513,8 @@ public class DBHelp {
             } else if (params.get(UserFilter.SEARCH_USER) != null) { // если надо найти пользователя через поиск,
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " ";
                 ArrayList<String> search = params.get(UserFilter.SEARCH_USER);
-                sql += "AND (lower(ob.OBJECT_NAME) LIKE lower(" + search.get(0) + ")) " + userService.getCurrentUsername();
+                String sqlName = "'%" + search.get(0) + "%'";
+                sql += "AND (lower(ob.OBJECT_NAME) LIKE lower(" + sqlName + ")) " ;
             } else if (params.get(UserFilter.WITH_EMAIL) != null) { // если надо получить ID пользователей по их e-mail'ам,
                 sql = "SELECT ob.OBJECT_ID FROM PARAMS ob WHERE ob.ATTR_ID = 6 and ob.VALUE IN (";
                 ArrayList<String> emails = params.get(UserFilter.WITH_NAME);
