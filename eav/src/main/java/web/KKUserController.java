@@ -25,6 +25,8 @@ import java.util.TreeMap;
 @Controller
 public class KKUserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(KKUserController.class);
+
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
@@ -33,11 +35,11 @@ public class KKUserController {
 
     private EventServiceImp eventService = EventServiceImp.getInstance();
 
-    @Deprecated
-    @RequestMapping(value = "/user/{id}")
+    @RequestMapping(value = "/user{id}")
     public String viewUser(@PathVariable("id") int userId,
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-        User user = userService.getUserByUserID(userId);
+        logger.info("STOP");
+        User user = new User(new DBHelp().getObjectsByIdAlternative(userId));//userService.getUserByUserID(userId);
         m.addAttribute(user);
         m.addAttribute("allEvents", eventService.getEventList(userId));
         return "/user";

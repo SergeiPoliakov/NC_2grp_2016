@@ -1,6 +1,11 @@
 package entities;
 
+import dbHelp.DBHelp;
+
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -130,6 +135,47 @@ public class Meeting {
         this.organizer = organizer;
         this.tag = tag;
         this.members = members;
+    }
+
+    public Meeting(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        this.users = new ArrayList<>();
+        this.organizer = new User();
+        this.events = new ArrayList<>();
+        this.id = dataObject.getId().toString();
+        // Поле params
+        for (Map.Entry<Integer, String> param : dataObject.getParams().entrySet() ) {
+            switch (param.getKey()){
+                case (301):
+                    this.title = param.getValue();
+                    break;
+                case (302):
+                    this.date_start = param.getValue();
+                    break;
+                case (303):
+                    this.date_end = param.getValue();
+                    break;
+                case (304):
+                    this.info = param.getValue();
+                    break;
+                case (305):
+                    User user =  new User(new DBHelp().getObjectsByIdAlternative(10003));
+                    this.organizer = user;
+                    break;
+                case (306):
+                    this.tag = param.getValue();
+                    break;
+            }
+        }
+        // Поле ссылок
+        for (Map.Entry<Integer, ArrayList<Integer>> reference : dataObject.getRefParams().entrySet() ) {
+            switch (reference.getKey()){
+                case (307):
+                    for (Integer refValue: reference.getValue()) {
+                        this.users.add(new DBHelp().getUserAndEventByUserID(refValue)); // Получение списка пользователей через старый метод
+                    }
+                    break;
+            }
+        }
     }
 
     public TreeMap<Integer, Object> getArrayWithAttributes(){

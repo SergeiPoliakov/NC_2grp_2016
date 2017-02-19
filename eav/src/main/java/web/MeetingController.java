@@ -1,6 +1,7 @@
 package web;
 
 import dbHelp.DBHelp;
+import entities.DataObject;
 import entities.Meeting;
 import entities.User;
 import org.slf4j.Logger;
@@ -43,8 +44,9 @@ public class MeetingController {
     // Просмотр встречи
     @RequestMapping(value = "/meeting{meetingID}", method = RequestMethod.GET)
     public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-
-        Meeting meeting = meetingService.getMeetingWithUsers(meetingID);
+        //logger.info("STOP");
+        Meeting meeting = new Meeting(new DBHelp().getObjectsByIdAlternative(meetingID));
+        //Meeting meeting = meetingService.getMeetingWithUsers(meetingID);
         meeting.getOrganizer().setFriends(userService.getFriendListCurrentUser());
         m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
         if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи

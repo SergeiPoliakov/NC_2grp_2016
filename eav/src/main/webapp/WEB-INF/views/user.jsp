@@ -60,7 +60,7 @@
                 </div>
                 <ul class="list-group list-group-my list-group-flush">
                     <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
-                    <li class="list-group-item">Город: ${user.country}</li>
+                    <li class="list-group-item">Город: ${user.city}</li>
                     <li class="list-group-item">Пол: ${user.sex}</li>
                     <li class="list-group-item">О себе: ${user.additional_field}</li>
                 </ul>

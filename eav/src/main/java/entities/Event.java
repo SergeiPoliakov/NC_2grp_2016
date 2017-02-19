@@ -3,9 +3,15 @@ package entities;
 /**
  * Created by Hroniko on 31.01.2017.
  */
+import dbHelp.DBHelp;
+
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class Event {
@@ -79,6 +85,30 @@ public class Event {
         this.priority = priority;
         this.info = info;
 
+    }
+
+    public Event(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        this.id = dataObject.getId();
+        // Поле params
+        for (Map.Entry<Integer, String> param : dataObject.getParams().entrySet() ) {
+            switch (param.getKey()){
+                case (101):
+                    this.date_begin = param.getValue();
+                    break;
+                case (102):
+                    this.date_end = param.getValue();
+                    break;
+                case (103):
+                    // duration
+                    break;
+                case (105):
+                    this.priority = param.getValue();
+                    break;
+                case (104):
+                    this.info = param.getValue();
+                    break;
+            }
+        }
     }
 
     public TreeMap<Integer, Object> getArrayWithAttributes(){
