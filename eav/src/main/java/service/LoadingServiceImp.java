@@ -4,6 +4,10 @@ import dbHelp.DBHelp;
 import entities.DataObject;
 import service.id_filters.*;
 import service.id_filters.MeetingFilter;
+import service.partition_filters.EventPartition;
+import service.partition_filters.MeetingPartition;
+import service.partition_filters.MessagePartition;
+import service.partition_filters.UserPartition;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -72,13 +76,7 @@ public class LoadingServiceImp implements LoadingService {
     // Переопределение методов
     // С фильтром для юзера
     public ArrayList<Integer> getListIdFilteredAlternative(UserFilter userFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        System.out.println("Запускаю getListIdFilteredAlternative c полученным фильтром");
-        ArrayList<Integer> il = new DBHelp().getListObjectsByFilters(userFilter);
-        System.out.print("Вывожу список id отфильтроанных пользователей: ");
-        for (int i = 0; i < il.size(); i++){
-            System.out.print(il.get(i) + ", ");
-        }
-        return il;
+        return new DBHelp().getListObjectsByFilters(userFilter);
     }
     // с фильтром для событий
     public ArrayList<Integer> getListIdFilteredAlternative(EventFilter eventFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -128,4 +126,24 @@ public class LoadingServiceImp implements LoadingService {
         new DBHelp().deleteDataObject(id);
 
     }
+
+    /*...............................................................................................................*/
+    /// 2017-02-19 Применение частичных фильтров:
+    // С фильтром для юзера
+    public ArrayList<DataObject> getListPartitionsDataObjects(ArrayList<Integer> idList, UserPartition userPartition) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return new DBHelp().getPartitionsDataObjectsList(idList, userPartition);
+    }
+    // с фильтром для событий
+    public ArrayList<DataObject> getListPartitionsDataObjects(ArrayList<Integer> idList, EventPartition eventPartition) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return new DBHelp().getPartitionsDataObjectsList(idList, eventPartition);
+    }
+    // с фильтром для сообщений
+    public ArrayList<DataObject> getListPartitionsDataObjects(ArrayList<Integer> idList, MessagePartition messagePartition) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return new DBHelp().getPartitionsDataObjectsList(idList, messagePartition);
+    }
+    // с фильтром для встреч
+    public ArrayList<DataObject> getListPartitionsDataObjects(ArrayList<Integer> idList, MeetingPartition meetingPartition) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return new DBHelp().getPartitionsDataObjectsList(idList, meetingPartition);
+    }
+
 }
