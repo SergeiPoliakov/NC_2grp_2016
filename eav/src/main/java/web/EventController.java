@@ -5,7 +5,6 @@ package web;
  */
 
 import entities.DataObject;
-import entities.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import service.EventServiceImp;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
-import service.filters.EventFilter;
+import service.id_filters.EventFilter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;

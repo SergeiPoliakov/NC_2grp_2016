@@ -19,6 +19,9 @@ public interface LoadingService {
     // 2017-02-14 Альтернативный метод загрузки нескольких датаобджектов в виде списка по списку их id
     ArrayList<DataObject> getListDataObjectByListIdAlternative(ArrayList<Integer> ids) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
+    // 2017-02-19 Альтернативный метод загрузки нескольких датаобджектов в виде списка по списку их id
+   // ArrayList<DataObject> getListDataObjectByListIdAlternative(ArrayList<Integer> ids, PartitionFilter... pfs) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+
 
     // 2017-02-14 Альтернативный метод загрузки нескольких датаобджектов в виде списка по списку их id (для ручного ввода переменного количества id)
     ArrayList<DataObject> getListDataObjectByListIdAlternative(Integer... idx) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;

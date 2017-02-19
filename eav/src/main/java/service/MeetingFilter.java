@@ -1,6 +1,6 @@
 package service;
 
-import service.filters.BaseFilter;
+import service.id_filters.BaseFilter;
 
 /**
  * Created by Hroniko on 16.02.2017.

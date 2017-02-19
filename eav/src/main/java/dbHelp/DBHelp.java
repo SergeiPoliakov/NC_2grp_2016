@@ -1,8 +1,6 @@
 package dbHelp;
 
 import entities.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import service.Filter;
 import service.UserServiceImp;
 
@@ -14,7 +12,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.*;
 
-import service.filters.*;
+import service.id_filters.*;
+import service.partition_filters.*;
 
 /**
  * Created by Lawrence on 14.01.2017.
@@ -1891,7 +1890,7 @@ public class DBHelp {
             Integer key = entry.getKey(); // получаем ключ
             String value = entry.getValue(); // получаем значение
             String valueOld = paramsOld.get(key);
-            System.out.println("Старое значение ключа "+key + " = " + valueOld + ", новое значение ключа = " + value);
+            System.out.println("Старое значение ключа " + key + " = " + valueOld + ", новое значение ключа = " + value);
 
             PS_upd.setString(1, value);
             PS_upd.setInt(2, id);
@@ -1981,4 +1980,377 @@ public class DBHelp {
         deleteDataObject(id);
     }
 
+
+    /*...............................................................................................................*/
+    // 2017-02-19 Новый универсальный метод частичной загрузки датаобджектов из базы с использованием Partitions-фильтров:
+    public ArrayList<DataObject> getPartitionsDataObjectsList(ArrayList<Integer> objectIds, BasePartitionFilter filter) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        ArrayList<DataObject> partitionDataObjectList = new ArrayList<>();
+        if (objectIds.size() > 0) { // Если список айдишников не пустой
+
+            TreeMap<String, ArrayList<String>> params = filter.getParams();
+
+            // Формируем вставку в запрос вида IN (10001, 10002, 10003) из переданного списка айдишников
+            String set = "IN (";
+            for (int i = 0; i < objectIds.size() - 1; i++) { // кроме последнего элемента
+                set += objectIds.get(i) + ", ";
+            }
+            set += objectIds.get(objectIds.size() - 1) + ")";
+            // Подготавливаем начало запроса:
+            String sql = "SELECT * FROM((SELECT -2 AS KEY, CAST(OBJECT_ID AS VARCHAR(70)) AS VALUE, 0 AS REF, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
+                    "UNION (SELECT -1, OBJECT_NAME, 0, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") " +
+                    "UNION (SELECT 0, CAST(OBJECT_TYPE_ID AS VARCHAR(70)), 0, OBJECT_ID FROM OBJECTS WHERE OBJECT_ID " + set + ") ";
+
+            // в зависимости от типа фильтра
+            // 1. Для пользователей
+            if (filter instanceof UserPartition) {
+                //  начинаем вытаскивать параметры и формировать строку запроса:
+                // Для основных фильтров:
+                if (params.get(UserPartition.FULL) != null) { // если надо получить объекты целиком,
+                    sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13) " +
+                            "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set + ")) ORDER BY OBJECT_ID, KEY";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(UserPartition.LITE) != null) { // если надо получить только заголовки для объектов (айди, имя, тип),
+                    sql += ") ";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(UserPartition.WITH_ALL_PARAMS) != null) { // если надо получить объекты только с заголовком и всеми параметрами,
+                    sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13) ";
+                    sql += ") ";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(UserPartition.WITH_ALL_REFERENCES) != null) { // если надо получить объекты только с заголовком и всеми ссылками,
+                    sql += "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set + ")) ORDER BY OBJECT_ID, KEY";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(UserPartition.WITH_PARAMS_OR_REFERENCES_LIST) != null) { // если надо получить объекты с определенными параметрами или ссылками
+                    // 1). Формируем вставку в запрос вида IN (AND ATTR_ID_1, AND ATTR_ID_2, AND ATTR_ID_3) в зависимости от набора аргументов
+                    String setParams = "IN (";
+
+                    // И проверяем аргумента параметра фильтра
+                    ArrayList<String> name = params.get(UserPartition.NAME);
+                    if (name != null) {
+                        setParams += "1, ";
+                    }
+                    ArrayList<String> surname = params.get(UserPartition.SURNAME);
+                    if (surname != null) {
+                        setParams += "2, ";
+                    }
+                    ArrayList<String> middlename = params.get(UserPartition.MIDDLENAME);
+                    if (middlename != null) {
+                        setParams += "3, ";
+                    }
+                    ArrayList<String> agedata = params.get(UserPartition.AGEDATA);
+                    if (agedata != null) {
+                        setParams += "5, ";
+                    }
+                    ArrayList<String> email = params.get(UserPartition.EMAIL);
+                    if (email != null) {
+                        setParams += "6, ";
+                    }
+                    ArrayList<String> password = params.get(UserPartition.PASSWORD);
+                    if (password != null) {
+                        setParams += "7, ";
+                    }
+                    ArrayList<String> sex = params.get(UserPartition.SEX);
+                    if (sex != null) {
+                        setParams += "8, ";
+                    }
+                    ArrayList<String> city = params.get(UserPartition.CITY);
+                    if (city != null) {
+                        setParams += "9, ";
+                    }
+                    ArrayList<String> additional = params.get(UserPartition.ADDITIONAL);
+                    if (additional != null) {
+                        setParams += "10, ";
+                    }
+                    ArrayList<String> avatar = params.get(UserPartition.AVATAR);
+                    if (avatar != null) {
+                        setParams += "11, ";
+                    }
+                    setParams += "0)"; //  в конце дописываем форматирующий ноль, чтобы не получилось ", )", а получилось ", 0)"
+                    // и дописываем запрос
+                    if (setParams.length() > "IN (0)".length()) { // Если положили хоть один параметр, то ставим условие в запрос
+                        sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                                "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 ";
+                        sql += "AND ATTR_ID " + setParams + ")";
+                    }
+
+                    // 2). Формируем вставку в запрос вида IN (AND ATTR_ID_1, AND ATTR_ID_2, AND ATTR_ID_3) в зависимости от набора аргументов
+                    String setReferences = "IN (";
+
+                    // И проверяем аргумента параметра-ссылки фильтра
+                    ArrayList<String> friends = params.get(UserPartition.FRIENDS);
+                    if (friends != null) {
+                        setReferences += "12, ";
+                    }
+                    ArrayList<String> messages = params.get(UserPartition.MESSAGES);
+                    if (messages != null) {
+                        setReferences += "13, ";
+                    }
+                    ArrayList<String> events = params.get(UserPartition.EVENTS);
+                    if (events != null) {
+                        setReferences += "30, ";
+                    }
+                    setReferences += "0)"; //  в конце дописываем форматирующий ноль, чтобы не получилось ", )", а получилось ", 0)"
+                    // и дописываем запрос
+                    if (setReferences.length() > "IN (0)".length()) { // Если положили хоть один параметр-ссылку, то ставим условие в запрос
+                        sql += "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set;
+                        sql += " AND ATTR_ID " + setReferences + ")";
+                        sql += ") ORDER BY OBJECT_ID, KEY";
+                    } else {
+                        sql += ") "; // Закрывающая скобка
+                    }
+                    System.out.println("Формирую запрос " + sql);
+                } else {
+                    System.out.println("Частичный фильтр задан неверно. Частичная загрузка отменена");
+                    return null;
+                }
+            }
+            // 2. Для событий
+            if (filter instanceof EventPartition) {
+                //  начинаем вытаскивать параметры и формировать строку запроса:
+                // Для основных фильтров:
+                if (params.get(EventPartition.FULL) != null) { // если надо получить объекты целиком,
+                    sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13) " +
+                            "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set + ")) ORDER BY OBJECT_ID, KEY";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(EventPartition.LITE) != null) { // если надо получить только заголовки для объектов (айди, имя, тип),
+                    sql += ") ";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(EventPartition.WITH_ALL_PARAMS) != null) { // если надо получить объекты только с заголовком и всеми параметрами,
+                    sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13) ";
+                    sql += ") ";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(EventPartition.WITH_PARAMS_LIST) != null) { // если надо получить объекты с определенными параметрами
+                    // 1). Формируем вставку в запрос вида IN (AND ATTR_ID_1, AND ATTR_ID_2, AND ATTR_ID_3) в зависимости от набора аргументов
+                    String setParams = "IN (";
+
+                    // И проверяем аргумента параметра фильтра
+                    ArrayList<String> date_begin = params.get(EventPartition.DATE_BEGIN);
+                    if (date_begin != null) {
+                        setParams += "101, ";
+                    }
+                    ArrayList<String> date_end = params.get(EventPartition.DATE_END);
+                    if (date_end != null) {
+                        setParams += "102, ";
+                    }
+                    ArrayList<String> duration = params.get(EventPartition.DURATION);
+                    if (duration != null) {
+                        setParams += "103, ";
+                    }
+                    ArrayList<String> info = params.get(EventPartition.INFO);
+                    if (info != null) {
+                        setParams += "104, ";
+                    }
+                    ArrayList<String> priority = params.get(EventPartition.PRIORITY);
+                    if (priority != null) {
+                        setParams += "105, ";
+                    }
+
+                    setParams += "0)"; //  в конце дописываем форматирующий ноль, чтобы не получилось ", )", а получилось ", 0)"
+                    // и дописываем запрос
+                    if (setParams.length() > "IN (0)".length()) { // Если положили хоть один параметр, то ставим условие в запрос
+                        sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                                "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 ";
+                        sql += "AND ATTR_ID " + setParams + ")";
+                    }
+                    sql += ") "; // Закрывающая скобка
+
+                    System.out.println("Формирую запрос " + sql);
+                } else {
+                    System.out.println("Частичный фильтр задан неверно. Частичная загрузка отменена");
+                    return null;
+                }
+            }
+            // 3. Для сообщений
+            if (filter instanceof MessagePartition) {
+                //  начинаем вытаскивать параметры и формировать строку запроса:
+                // Для основных фильтров:
+                if (params.get(MessagePartition.FULL) != null) { // если надо получить объекты целиком,
+                    sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13) " +
+                            "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set + ")) ORDER BY OBJECT_ID, KEY";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(MessagePartition.LITE) != null) { // если надо получить только заголовки для объектов (айди, имя, тип),
+                    sql += ") ";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(MessagePartition.WITH_ALL_PARAMS) != null) { // если надо получить объекты только с заголовком и всеми параметрами,
+                    sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13) ";
+                    sql += ") ";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(MessagePartition.WITH_PARAMS_LIST) != null) { // если надо получить объекты с определенными параметрами
+                    // 1). Формируем вставку в запрос вида IN (AND ATTR_ID_1, AND ATTR_ID_2, AND ATTR_ID_3) в зависимости от набора аргументов
+                    String setParams = "IN (";
+
+                    // И проверяем аргумента параметра фильтра
+                    ArrayList<String> from_id = params.get(MessagePartition.FROM_ID);
+                    if (from_id != null) {
+                        setParams += "201, ";
+                    }
+                    ArrayList<String> to_id = params.get(MessagePartition.TO_ID);
+                    if (to_id != null) {
+                        setParams += "202, ";
+                    }
+                    ArrayList<String> date_send = params.get(MessagePartition.DATE_SEND);
+                    if (date_send != null) {
+                        setParams += "203, ";
+                    }
+                    ArrayList<String> read_status = params.get(MessagePartition.READ_STATUS);
+                    if (read_status != null) {
+                        setParams += "204, ";
+                    }
+                    ArrayList<String> text = params.get(MessagePartition.TEXT);
+                    if (text != null) {
+                        setParams += "205, ";
+                    }
+                    ArrayList<String> from_name = params.get(MessagePartition.FROM_NAME);
+                    if (from_name != null) {
+                        setParams += "206, ";
+                    }
+                    ArrayList<String> to_name = params.get(MessagePartition.TO_NAME);
+                    if (to_name != null) {
+                        setParams += "207, ";
+                    }
+
+                    setParams += "0)"; //  в конце дописываем форматирующий ноль, чтобы не получилось ", )", а получилось ", 0)"
+                    // и дописываем запрос
+                    if (setParams.length() > "IN (0)".length()) { // Если положили хоть один параметр, то ставим условие в запрос
+                        sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                                "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 ";
+                        sql += "AND ATTR_ID " + setParams + ")";
+                    }
+                    sql += ") "; // Закрывающая скобка
+
+                    System.out.println("Формирую запрос " + sql);
+                } else {
+                    System.out.println("Частичный фильтр задан неверно. Частичная загрузка отменена");
+                    return null;
+                }
+            }
+            // 4. Для встреч
+            if (filter instanceof MeetingPartition) {
+                //  начинаем вытаскивать параметры и формировать строку запроса:
+                // Для основных фильтров:
+                if (params.get(MeetingPartition.FULL) != null) { // если надо получить объекты целиком,
+                    sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 AND ATTR_ID != 307) " +
+                            "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set + ")) ORDER BY OBJECT_ID, KEY";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(MeetingPartition.LITE) != null) { // если надо получить только заголовки для объектов (айди, имя, тип),
+                    sql += ") ";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(MeetingPartition.WITH_ALL_PARAMS) != null) { // если надо получить объекты только с заголовком и всеми параметрами,
+                    sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 AND ATTR_ID != 307) ";
+                    sql += ") ";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(MeetingPartition.WITH_ALL_REFERENCES) != null) { // если надо получить объекты только с заголовком и всеми ссылками,
+                    sql += "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set + ")) ORDER BY OBJECT_ID, KEY";
+                    System.out.println("Формирую запрос " + sql);
+                } else if (params.get(MeetingPartition.WITH_PARAMS_OR_REFERENCES_LIST) != null) { // если надо получить объекты с определенными параметрами или ссылками
+                    // 1). Формируем вставку в запрос вида IN (AND ATTR_ID_1, AND ATTR_ID_2, AND ATTR_ID_3) в зависимости от набора аргументов
+                    String setParams = "IN (";
+
+                    // И проверяем аргумента параметра фильтра
+                    ArrayList<String> title = params.get(MeetingPartition.TITLE);
+                    if (title != null) {
+                        setParams += "301, ";
+                    }
+                    ArrayList<String> date_start = params.get(MeetingPartition.DATE_START);
+                    if (date_start != null) {
+                        setParams += "302, ";
+                    }
+                    ArrayList<String> date_end = params.get(MeetingPartition.DATE_END);
+                    if (date_end != null) {
+                        setParams += "303, ";
+                    }
+                    ArrayList<String> info = params.get(MeetingPartition.INFO);
+                    if (info != null) {
+                        setParams += "304, ";
+                    }
+                    ArrayList<String> organizer = params.get(MeetingPartition.ORGANIZER);
+                    if (organizer != null) {
+                        setParams += "305, ";
+                    }
+                    ArrayList<String> tag = params.get(MeetingPartition.TAG);
+                    if (tag != null) {
+                        setParams += "306, ";
+                    }
+
+                    setParams += "0)"; //  в конце дописываем форматирующий ноль, чтобы не получилось ", )", а получилось ", 0)"
+                    // и дописываем запрос
+                    if (setParams.length() > "IN (0)".length()) { // Если положили хоть один параметр, то ставим условие в запрос
+                        sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
+                                "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 AND ATTR_ID != 307 ";
+                        sql += "AND ATTR_ID " + setParams + ")";
+                    }
+
+                    // 2). Формируем вставку в запрос вида IN (AND ATTR_ID_1, AND ATTR_ID_2, AND ATTR_ID_3) в зависимости от набора аргументов
+                    String setReferences = "IN (";
+
+                    // И проверяем аргумента параметра-ссылки фильтра
+                    ArrayList<String> members = params.get(MeetingPartition.MEMBERS);
+                    if (members != null) {
+                        setReferences += "307, ";
+                    }
+                    setReferences += "0)"; //  в конце дописываем форматирующий ноль, чтобы не получилось ", )", а получилось ", 0)"
+                    // и дописываем запрос
+                    if (setReferences.length() > "IN (0)".length()) { // Если положили хоть один параметр-ссылку, то ставим условие в запрос
+                        sql += "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set;
+                        sql += " AND ATTR_ID " + setReferences + ")";
+                        sql += ") ORDER BY OBJECT_ID, KEY ";
+                    } else {
+                        sql += ") "; // Закрывающая скобка
+                    }
+                    System.out.println("Формирую запрос " + sql);
+                } else {
+                    System.out.println("Частичный фильтр задан неверно. Частичная загрузка отменена");
+                    return null;
+                }
+            }
+
+            Connection Con = getConnection();
+            PreparedStatement PS = Con.prepareStatement(sql);
+            ResultSet RS = PS.executeQuery();
+
+            // Обходим всю полученную таблицу и формируем поля датаобджектов
+            DataObject partitionDataObject = null;
+            while (RS.next()) {
+                Integer key = RS.getInt(1); // key
+                String value = RS.getString(2); // value
+                // Удаление дублирования строк (Вася Вася Вася):
+                value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
+                Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
+                // Integer id = RS.getInt(4); // object id
+                if (key == -2) { // Это пришел к нам айдишник
+                    if (partitionDataObject != null) {
+                        partitionDataObjectList.add(partitionDataObject); // кладем предыдущий объект в лист
+                    }
+                    partitionDataObject = new DataObject(); // создаем новый, и будем теперь в него писать
+                    partitionDataObject.setId(Integer.parseInt(value));
+                } else if (key == -1) { // Это пришло к нам имя
+                    partitionDataObject.setName(value);
+                } else if (key == 0) { // Это пришел к нам тип
+                    partitionDataObject.setObjectTypeId(Integer.parseInt(value));
+                } else { // Иначе пришли параматры или ссылки
+                    if (ref == 0) { // Значит, это пришли параметры
+                        partitionDataObject.setParams(key, value);
+                    } else { // Иначе пришли ссылки
+                        partitionDataObject.setRefParams(key, Integer.parseInt(value));
+                    }
+                }
+            }
+            // и в конце надо дописать последний элемент, который из-за while не занесся в лист:
+            if (partitionDataObject != null) { // если успели прочитать поля в объект, то есть он не просто пустая заготовка
+                partitionDataObjectList.add(partitionDataObject); // кладем объект в лист
+            }
+            RS.close();
+            PS.close();
+            CloseConnection(Con);
+        }
+
+        return partitionDataObjectList;
+    }
 }

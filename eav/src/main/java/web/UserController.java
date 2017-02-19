@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import service.*;
 import service.cache.DataObjectCache;
-import service.filters.EventFilter;
-import service.filters.UserFilter;
+import service.id_filters.EventFilter;
+import service.id_filters.UserFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

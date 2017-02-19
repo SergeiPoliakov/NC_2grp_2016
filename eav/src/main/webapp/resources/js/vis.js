@@ -9927,7 +9927,7 @@ return /******/ (function(modules) { // webpackBootstrap
    *                             screen
    */
   Graph3d.prototype._getDataPoints = function (data) {
-    // TODO: store the created matrix dataPoints in the filters instead of
+    // TODO: store the created matrix dataPoints in the id_filters instead of
     //       reloading each time.
     var x, y, i, z, obj, point;
 
@@ -30319,7 +30319,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
   /**
    * This uses the DataAxis object to generate the correct X coordinate on the SVG window. It uses the
-   * util function toScreen to get the x coordinate from the timestamp. It also pre-filters the data and get the minMax ranges for
+   * util function toScreen to get the x coordinate from the timestamp. It also pre-id_filters the data and get the minMax ranges for
    * the yAxis.
    *
    * @param datapoints
@@ -30336,7 +30336,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
   /**
    * This uses the DataAxis object to generate the correct X coordinate on the SVG window. It uses the
-   * util function toScreen to get the x coordinate from the timestamp. It also pre-filters the data and get the minMax ranges for
+   * util function toScreen to get the x coordinate from the timestamp. It also pre-id_filters the data and get the minMax ranges for
    * the yAxis.
    *
    * @param datapoints

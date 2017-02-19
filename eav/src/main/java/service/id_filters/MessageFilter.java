@@ -1,4 +1,4 @@
-package service.filters;
+package service.id_filters;
 
 /**
  * Created by Hroniko on 16.02.2017.

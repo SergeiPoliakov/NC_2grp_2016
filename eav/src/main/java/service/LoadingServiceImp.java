@@ -2,8 +2,8 @@ package service;
 
 import dbHelp.DBHelp;
 import entities.DataObject;
-import service.filters.*;
-import service.filters.MeetingFilter;
+import service.id_filters.*;
+import service.id_filters.MeetingFilter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
