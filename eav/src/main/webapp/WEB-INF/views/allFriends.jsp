@@ -33,10 +33,10 @@
             <!-- Карточка пользователя -->
             <div class="col-md-3 col-sm-4" id="forCloning">
                 <div class="card style_prevu_kit">
-                    <h4 class="card-title text-center">${object.getValue(1)} ${object.getValue(3)} ${object.getValue(2)}</h4>
+                    <h4 class="card-title text-center">${object.surname} ${object.name} ${object.middleName}</h4>
                     <div class="card-title text-center">
                         <small class=" text-muted"><span
-                                class="glyphicon glyphicon-user"></span> ${object.getValue(4)} </small>
+                                class="glyphicon glyphicon-user"></span> ${object.login} </small>
 
                     </div>
                     <div class="profile-userpic">
@@ -48,10 +48,10 @@
                         <a href="/deleteFriend/${object.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
                     </div>
                     <ul class="list-group list-group-my list-group-flush">
-                        <li class="list-group-item">Дата рождения: ${object.getValue(5)}</li>
-                        <li class="list-group-item">Город: ${object.getValue(9)}</li>
-                        <li class="list-group-item">Пол: ${object.getValue(8)}</li>
-                        <li class="list-group-item">О себе: ${object.getValue(10)}</li>
+                        <li class="list-group-item">Дата рождения: ${object.ageDate}</li>
+                        <li class="list-group-item">Город: ${object.city}</li>
+                        <li class="list-group-item">Пол: ${object.sex}</li>
+                        <li class="list-group-item">О себе: ${object.additional_field}</li>
                     </ul>
                 </div>
             </div>

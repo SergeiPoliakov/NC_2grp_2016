@@ -26,7 +26,7 @@ public class DataObjectCache {
     static {
         doCache = CacheBuilder.newBuilder()
                 .maximumSize(100)
-                .expireAfterWrite(1, TimeUnit.MINUTES)
+                .expireAfterWrite(5, TimeUnit.MINUTES)
                 .build(
                         new CacheLoader<Integer, DataObject>() {
 

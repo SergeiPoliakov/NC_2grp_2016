@@ -1711,7 +1711,7 @@ public class DBHelp {
         PS2.close();
 
         // Если добавляем событие, то надо еще вручную создать ссылки:
-        if (dataObject.getObjectTypeId() == EVENT) { // Если это событие, то
+        if (dataObject.getObjectTypeId().equals(EVENT) ) { // Если это событие, то
             // 3) Добавление ссылки Юзер - Событие (связывание):
             int idUser = userService.getObjID(userService.getCurrentUsername());
             int attrId = 13;
@@ -1729,6 +1729,14 @@ public class DBHelp {
             PS4.setObject(3, id);
             PS4.executeQuery();
             PS4.close();
+
+            // 5) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 13-го параметра с VALUE = NULL в PARAMS (task_id для текущего пользователя):
+            PreparedStatement PS5 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
+            PS5.setInt(1, idUser); // = user_id
+            PS5.setInt(2, attrId); // = 13
+            PS5.executeUpdate();
+            PS5.close();
+
         }
 
         CloseConnection(Con);

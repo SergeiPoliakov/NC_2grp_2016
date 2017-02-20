@@ -152,13 +152,13 @@ public class EventController {
 
         DataObject dataObject = new DataObject(eventId, name, 1002, mapAttr);
 
-        // Работаем с кэшем:
-        // предварительно обновляем
-        doCache.refresh(eventId);
         System.out.println("Обновляем в кэше событие " + dataObject.getName());
 
         // и только потом обновляем объект в базе
         loadingService.updateDataObject(dataObject);
+        // Работаем с кэшем:
+        // обновляем
+        doCache.refresh(eventId);
 
         return "redirect:/allEvent";
     }

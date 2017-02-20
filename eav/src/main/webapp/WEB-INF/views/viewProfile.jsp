@@ -45,22 +45,22 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card" style="width: 30rem;">
-                <h4 class="card-title text-center">${dataObject.getValue(1)} ${dataObject.getValue(3)} ${dataObject.getValue(2)}</h4>
+                <h4 class="card-title text-center">${user.surname} ${user.name} ${user.middleName}</h4>
                 <div class="card-title text-center">
                     <small class=" text-muted"><span
-                            class="glyphicon glyphicon-user"></span> ${dataObject.getValue(4)} </small>
+                            class="glyphicon glyphicon-user"></span> ${user.login} </small>
                 </div>
                 <div class="profile-userpic">
                     <img src="https://fshoke.com/wp-content/uploads/2016/01/Sean-Penn-mixed-with-Leonardo-DiCaprio.jpg" class="img-responsive"  alt='Изображение' >
                 </div>
                 <div class="profile-userbuttons">
-                    <a href="/sendMessage/${dataObject.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
+                    <a href="/sendMessage/${user.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
                 </div>
                 <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item" id="userAge">Дата рождения: ${dataObject.getValue(5)}</li>
-                    <li class="list-group-item">Город: ${dataObject.getValue(9)}</li>
-                    <li class="list-group-item">Пол: ${dataObject.getValue(8)}</li>
-                    <li class="list-group-item">О себе: ${dataObject.getValue(10)}</li>
+                    <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
+                    <li class="list-group-item">Город: ${user.city}</li>
+                    <li class="list-group-item">Пол: ${user.city}</li>
+                    <li class="list-group-item">О себе: ${user.additional_field}</li>
                 </ul>
             </div>
         </div>
@@ -100,7 +100,7 @@
 <script type="text/javascript">
     // Поле дополнительная информация eventID : info
     var addInfoArray = {
-    <c:forEach items="${allEvents}" var="event">${event.id}:'${event.getValue(104)}',</c:forEach>
+    <c:forEach items="${allEvents}" var="event">${event.id}:'${event.info}',</c:forEach>
     };
     // Настройка кастомного скроллбара
 
@@ -122,7 +122,7 @@
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
         <c:forEach items="${allObject}" var="event">
-        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.getValue(101)}')), end: new Date(getDateFromString('${event.getValue(102)}')), className: '${event.getValue(105)}'},
+        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}'},
         </c:forEach>
     ]);
 

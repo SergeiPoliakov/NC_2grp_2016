@@ -31,13 +31,13 @@
 
 
     <div class="page-header">
-        <h1>Netcracker <small>Изменение профиля ${dataObject.getValue(6)}</small></h1>
+        <h1>Netcracker <small>Изменение профиля ${user.email}</small></h1>
     </div>
     <div class="container">
         <div class="row">
             <div class="container col-lg-5 pull-right">
 
-                <img src="${dataObject.getValue(11)}" class="img-polaroid" width="200">
+                <img src="${user.picture}" class="img-polaroid" width="200">
 
                 <div class="form-group ">
                     <%--Загрузка картинки-аватара--%>
@@ -52,26 +52,26 @@
                 </div>
             </div>
             <div class="container col-lg-5">
-                <form action="/changeProfile/${dataObject.id}" method="post">
+                <form action="/changeProfile/${user.id}" method="post">
 
                     <div class="form-group  ">
                         <label for="InputName1">Введите Имя</label>
-                        <input type="text" class="form-control " name="name" id="InputName1" value=${dataObject.getValue(1)}>
+                        <input type="text" class="form-control " name="name" id="InputName1" value=${user.name}>
                     </div>
 
                     <div class="form-group ">
                         <label for="InputSurname1">Введите фамилию</label>
-                        <input type="text" class="form-control" name="surname" id="InputSurname1" value=${dataObject.getValue(2)}>
+                        <input type="text" class="form-control" name="surname" id="InputSurname1" value=${user.surname}>
                     </div>
 
                     <div class="form-group ">
                         <label for="InputMiddleName1">Введите отчество</label>
-                        <input type="text" class="form-control" name="middle_name" id="InputMiddleName1" value=${dataObject.getValue(3)}>
+                        <input type="text" class="form-control" name="middle_name" id="InputMiddleName1" value=${user.middleName}>
                     </div>
 
                     <div class="form-group  ">
                         <label for="InputAge1">Введите вашу дату рождения</label>
-                        <input type="date" class="form-control" name="ageDate" id="InputAge1" value=${dataObject.getValue(5)}>
+                        <input type="date" class="form-control" name="ageDate" id="InputAge1" value=${user.ageDate}>
                     </div>
 
                     <div class="form-group  ">
@@ -92,17 +92,17 @@
 
                     <div class="form-group  ">
                         <label for="InputCity1">Введите ваш город</label>
-                        <input type="text" class="form-control" name="city" id="InputCity1" value=${dataObject.getValue(9)}>
+                        <input type="text" class="form-control" name="city" id="InputCity1" value=${user.city}>
                     </div>
 
                     <div class="form-group  ">
                         <label for="InputNickName1">Введите Никнейм</label>
-                        <input type="text" class="form-control " name="nickname" id="InputNickName1" value=${dataObject.getValue(4)}>
+                        <input type="text" class="form-control " name="nickname" id="InputNickName1" value=${user.login}>
                     </div>
 
                     <div class="form-group ">
                         <label for="TextArea1">Расскажите немного о себе</label>
-                        <textarea rows="3" class="form-control" name="info" id="TextArea1" >${dataObject.getValue(10)}</textarea>
+                        <textarea rows="3" class="form-control" name="info" id="TextArea1" >${user.additional_field}</textarea>
                     </div>
 
                     <button type="submit" class="btn-lg btn-success col-lg-5 col-lg-offset-4">Сохранить</button>

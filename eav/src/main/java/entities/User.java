@@ -35,6 +35,8 @@ public class User {
 
     private String additional_field;
 
+    private String picture;
+
     private ArrayList<Event> eventsUser;
 
     private ArrayList<User> friends;
@@ -141,6 +143,14 @@ public class User {
         return additional_field;
     }
 
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
     public void setAdditional_field(String additional_field) {
         this.additional_field = additional_field;
     }
@@ -195,7 +205,7 @@ public class User {
                     this.additional_field = param.getValue();
                     break;
                 case (11):
-                    // Picture
+                    this.picture = param.getValue();
                     break;
                 case (14):
                     // events, хотя есть поле Tasks

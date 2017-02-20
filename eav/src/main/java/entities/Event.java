@@ -108,6 +108,7 @@ public class Event {
                     this.info = param.getValue();
                     break;
             }
+            this.name = dataObject.getName();
         }
     }
 

@@ -3,6 +3,8 @@ package web;
 
 import com.google.common.cache.LoadingCache;
 import entities.DataObject;
+import entities.Event;
+import entities.User;
 import exception.CustomException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -66,7 +68,8 @@ public class UserController {
         try {
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
             System.out.println("Размер кэша после добавления " + doCache.size());
-            m.addAttribute(dataObject);
+            User user = new User(dataObject);
+            m.addAttribute(user);
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
@@ -75,9 +78,15 @@ public class UserController {
             System.out.println("Ищем в кэше список событий данной пользователя ");
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
+            ArrayList<Event> events = new ArrayList<>(list.size());
+            for (DataObject dataObject: list
+                 ) {
+                Event event = new Event(dataObject);
+                events.add(event);
+            }
             System.out.println("Размер кэша после добавления " + doCache.size());
 
-        m.addAttribute("allEvents",list);
+        m.addAttribute("allEvents", events);
 
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -125,9 +134,14 @@ public class UserController {
             System.out.println("Ищем в кэше список пользователей, подходящих под запрос");
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
+            ArrayList<User> users = new ArrayList<>(list.size());
+            for (DataObject dataObject : list) {
+                User user = new User(dataObject);
+                users.add(user);
+            }
             System.out.println("Размер кэша после добавления " + doCache.size());
 
-            mapObjects.put("allUsers", list);
+            mapObjects.put("allUsers", users);
 
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -154,9 +168,14 @@ public class UserController {
             System.out.println("Ищем в кэше список пользователей");
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
+            ArrayList<User> users = new ArrayList<>(list.size());
+            for (DataObject dataObject : list) {
+                User user = new User(dataObject);
+                users.add(user);
+            }
             System.out.println("Размер кэша после добавления " + doCache.size());
 
-            mapObjects.put("allUsers", list);
+            mapObjects.put("allUsers", users);
 
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -194,7 +213,7 @@ public class UserController {
         mapAttr.put(8, null);
         mapAttr.put(9, null);
         mapAttr.put(10, null);
-        mapAttr.put(11, null);
+       // mapAttr.put(11, null);
         // mapAttr.put(12, null);
         // mapAttr.put(13, null); не нужно, иначе потом пустая ссылка на событие висит, и при добавлении новой задачи она так и остается висеть. Иначе надо будет при добавлении эту обновлять
 
@@ -214,7 +233,8 @@ public class UserController {
 
         try {
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
-            m.addAttribute(dataObject);
+            User user = new User(dataObject);
+            m.addAttribute(user);
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
@@ -261,9 +281,14 @@ public class UserController {
             System.out.println("Ищем в кэше список друзей");
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
+            ArrayList<User> friends = new ArrayList<>(list.size());
+            for (DataObject dataObject : list) {
+                User user = new User(dataObject);
+                friends.add(user);
+            }
             System.out.println("Размер кэша после добавления " + doCache.size());
 
-            mapObjects.put("allObject", list);
+            mapObjects.put("allObject", friends);
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
@@ -291,7 +316,8 @@ public class UserController {
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         try {
             DataObject dataObject = doCache.get(userId);
-            m.addAttribute(dataObject);
+            User user = new User(dataObject);
+            m.addAttribute(user);
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
@@ -300,8 +326,13 @@ public class UserController {
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
             System.out.println("Размер кэша после добавления " + doCache.size());
-
-            m.addAttribute("allObject",list);
+            ArrayList<Event> events = new ArrayList<>(list.size());
+            for (DataObject dataObject: list
+                    ) {
+                Event event = new Event(dataObject);
+                events.add(event);
+            }
+            m.addAttribute("allObject", events);
 
         } catch (ExecutionException e) {
             e.printStackTrace();

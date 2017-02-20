@@ -63,7 +63,7 @@ public class KKUserController {
 
         DataObject dataObject = loadingService.createDataObject(name, 1002, mapAttr);
 
-        eventService.setNewEvent(dataObject);
+        loadingService.setDataObjectToDB(dataObject);
 
         return "redirect:/main-login";
     }

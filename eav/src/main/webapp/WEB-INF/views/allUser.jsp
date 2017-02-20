@@ -102,11 +102,11 @@
                                     <div class="chat-body clearfix">
                                         <div class="header">
                                             <small class=" text-muted"><span
-                                                    class="glyphicon glyphicon-user"></span> ${object.getValue(4)} </small>
+                                                    class="glyphicon glyphicon-user"></span> ${object.login} </small>
 
                                         </div>
                                         <div class="text-left">
-                                                ${object.getValue(3)} ${object.getValue(2)} ${object.getValue(1)}
+                                                ${object.surname} ${object.name} ${object.middleName}
                                         </div>
                                     </div>
                                 </li>

@@ -34,12 +34,12 @@
 <h2 id="faq">Результаты поиска:</h2>
 <c:forEach items="${allUsers}" var="user">
     <div class="thumbnail">
-        <h4>${user.getValue(2)} ${user.getValue(1)} ${user.getValue(3)}, ник "${user.getValue(4)}"</h4>
+        <h4>${user.surname} ${user.name} ${user.middleName}, ник "${user.login}"</h4>
         <ul class="nav nav-pills">
                 <%--<li class="active pull-left"><a href="/delete/${object.id}">Удалить</a></li> Пока не будем тут удалять--%>
-            <li class="active pull-left"><a href="/viewProfile/${object.id}">Смотреть профиль</a></li>
-            <li class="active pull-left"><a href="/sendMessage/${object.id}">Отправить сообщение</a></li>
-            <li class="active pull-left"><a href="/addFriend/${object.id}">Добавить в друзья</a></li>
+            <li class="active pull-left"><a href="/viewProfile/${user.id}">Смотреть профиль</a></li>
+            <li class="active pull-left"><a href="/sendMessage/${user.id}">Отправить сообщение</a></li>
+            <li class="active pull-left"><a href="/addFriend/${user.id}">Добавить в друзья</a></li>
         </ul>
     </div>
 </c:forEach>
