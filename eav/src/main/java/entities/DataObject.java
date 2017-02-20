@@ -85,6 +85,13 @@ public class DataObject {
         // и кладем в лист наше значение
         refParams.get(key).add(value);
     }
+
+    // 2017-02-20 Метод удаления ссылки из списка ссылок
+    public void deleteRefParams(Integer key, Integer value){
+        ArrayList<Integer> al = refParams.get(key);
+        al.remove((Object)value);
+    }
+
 /*    // 2017-02-14 Метод получения списка ссылок
     public ArrayList<Integer> getRefParams(Integer key){
         return refParams.get(key);

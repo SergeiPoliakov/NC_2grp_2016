@@ -483,6 +483,7 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
+    // Метод уже является только прослойкой, вызывает универсальный setDataObjectToDB
     public void setNewUser(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
@@ -559,74 +560,11 @@ public class DBHelp {
         return treeMap;
     }
 
-
+    // Обновленный метод добавления событий (работа через DO)
     public void setNewEvent(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        Connection Con = getConnection();
-        // 1) Добавление события:
-        PreparedStatement PS = Con.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
-        Statement st = Con.createStatement();
-        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + dataObject.getObjectTypeId());
-        int newID = 0;
-        while (RS.next()) {
-            newID = RS.getInt(1) + 1;
-        }
-        PS.setInt(1, newID);
-        PS.setInt(2, dataObject.getObjectTypeId());
-        PS.setObject(3, dataObject.getName());
-        PS.executeUpdate();
-        PS.close();
-
-        // 2) Добавление атрибутов события (параметры со страницы создания события):
-        PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
-        while (!dataObject.getParams().isEmpty()) {
-            java.util.Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
-            PS1.setObject(1, En.getValue());
-            PS1.setInt(2, newID);
-            PS1.setInt(3, En.getKey());
-            PS1.addBatch();
-        }
-        PS1.executeBatch();
-        PS1.close();
-
-        // 3) Добавление ссылки Юзер - Событие (связывание):
-        int idUser = userService.getObjID(userService.getCurrentUsername());
-        int attrId = 13;
-        PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-        PS2.setInt(1, idUser); // System.out.println(idUser);
-        PS2.setInt(2, attrId); // System.out.println(attrId);
-        PS2.setInt(3, newID); // System.out.println(newID);
-        PS2.executeQuery(); // PS2.executeBatch();
-        PS2.close();
-
-        // 4) Добавление 13-го параметра в PARAMS (task_id для текущего пользователя):
-        PreparedStatement PS3 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
-        PS3.setInt(1, idUser); // System.out.println(idUser); // = user_id
-        PS3.setInt(2, attrId); // System.out.println(attrId); // = 13
-        PS3.setObject(3, newID); // System.out.println(newID); // = task_id
-        PS3.executeQuery();
-        PS3.close();
-
-        // 5) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 13-го параметра с VALUE = NULL в PARAMS (task_id для текущего пользователя):
-        PreparedStatement PS4 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
-        PS4.setInt(1, idUser); // = user_id
-        PS4.setInt(2, attrId); // = 13
-        PS4.executeUpdate();
-        PS4.close();
-
-
-        /*
-        // Обновление существующего
-        PreparedStatement PS3 = Con.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
-        PS3.setObject(1, newID); System.out.println(newID); // = task_id
-        PS3.setInt(2, idUser); System.out.println(idUser); // = user_id
-        PS3.setInt(3, attrId); System.out.println(attrId); // = 13
-        PS3.executeUpdate();
-        PS3.close();
-        */
-
-        CloseConnection(Con);
+        setDataObjectToDB(dataObject);
     }
 
 
@@ -655,146 +593,61 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-
+    // Обновленный метод обновления пользователя (работа через DO)
     public void updateUser(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         updateDataObject(dataObject);
-        /*
-        Connection Con = getConnection();
-        PreparedStatement PS = Con
-                .prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
-        while (!dataObject.getParams().isEmpty()) {
-            java.util.Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
-            PS.setObject(1, En.getValue());
-            PS.setInt(2, dataObject.getId());
-            PS.setInt(3, En.getKey());
-            PS.addBatch();
-        }
-        PS.executeBatch();
-        PS.close();
-
-        PreparedStatement PS1 = Con
-                .prepareStatement("UPDATE OBJECTS SET OBJECT_NAME = ? WHERE OBJECT_ID = ?");
-        PS1.setString(1, dataObject.getName());
-        PS1.setInt(2, dataObject.getId());
-        PS1.executeUpdate();
-        PS1.close();
-        CloseConnection(Con);
-        */
     }
 
-
+    // 2017-02-20 Обновленный метод добавления в друзья (работа через DO)
     public void setFriend(int idFriend) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        Connection Con = getConnection();
-
 
         int idUser = getObjID(userService.getCurrentUsername()); // Получаем id текущего авторизованного пользователя
-        int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
+        if (idUser != idFriend) { // если не пытаемся добавить самого себя в друзья
+            int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
 
-        User user = getCurrentUser(); // Получаем объект текущего пользователя
-        String fullNameUser = user.getMiddleName() + " " + user.getName() + " " + user.getSurname(); // Формируем полное имя друга
+            DataObject currentUser = getObjectsByIdAlternative(idUser); // Получаем DO текущего пользователя
+            DataObject friendUser = getObjectsByIdAlternative(idFriend); // Получаем DO добавляемого в друзья пользователя
 
-        User friend = getUserByUserID(idFriend); // Получаем объект друга
-        String fullNameFriend = friend.getSurname() + " " + friend.getName() + " " + friend.getMiddleName(); // Формируем полное имя друга
-
-        // 1) Проверяем, находится ли данный пользователь у нас в друзьях:
-        // SELECT COUNT(*) FROM REFERENCES WHERE (OBJECT_ID = 10003 AND REFERENCE = 10002 OR OBJECT_ID = 10002 AND REFERENCE = 10003) AND ATTR_ID = 12;
-        PreparedStatement PS = Con.prepareStatement("SELECT COUNT(*) FROM REFERENCES WHERE (OBJECT_ID = ? AND REFERENCE = ? OR OBJECT_ID = ? AND REFERENCE = ?) AND ATTR_ID = ?");
-        PS.setInt(1, idUser);
-        PS.setInt(2, idFriend);
-        PS.setInt(3, idFriend);
-        PS.setInt(4, idUser);
-        PS.setInt(5, attrId);
-        ResultSet RS = PS.executeQuery();
-        int count = 0;
-        while (RS.next()) {
-            count = RS.getInt(1);
+            // Вытаскиваем нужную нам мапу со ссылками из текущего DO пользователя
+            TreeMap<Integer, ArrayList<Integer>> currentRef = currentUser.getRefParams();
+            // Вытаскиваем нужный лист со списком юзеров из мапы
+            ArrayList<Integer> al = currentRef.get(attrId);
+            // Если у текущего пользоателя нет списка друзей или такого пользователя нет в его списке друзей, то
+            if ((al == null) || (!al.contains(idFriend))) {
+                System.out.println("Добавили нового друга");
+                // Добавляем к себе пользователя в друзья
+                currentUser.setRefParams(attrId, idFriend);
+                // Добавляем себя пользователю в друзья
+                friendUser.setRefParams(attrId, idUser);
+                // и обновляем DO обоих пользователей в базе:
+                updateDataObject(currentUser);
+                updateDataObject(friendUser);
+            }
         }
-        RS.close();
-        PS.close();
-
-
-        if ((count == 0) & (idUser != idFriend)) { // Если нет в друзьях и не добавляем пользователя к самому себе в друзья, то добавляем
-
-            // 1) Добавление 12-го параметра в PARAMS (user_id для текущего пользователя):
-
-            PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
-            PS1.setInt(1, idUser); //  = current user_id
-            PS1.setInt(2, attrId); //  = 12
-            PS1.setObject(3, fullNameFriend); //  = new friend user_id
-            PS1.executeQuery();
-            PS1.close();
-
-            // 2) Добавление 12-го параметра в PARAMS (наоборот для друга - что вы у него в друзьях):
-            PreparedStatement PS2 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
-            PS2.setInt(1, idFriend);
-            PS2.setInt(2, attrId);
-            PS2.setObject(3, fullNameUser);
-            PS2.executeQuery();
-            PS2.close();
-
-            // 3) Добавление ссылки Юзер - Друг (связывание):
-            PreparedStatement PS3 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-            PS3.setInt(1, idUser);
-            PS3.setInt(2, attrId);
-            PS3.setInt(3, idFriend);
-            PS3.executeQuery();
-            PS3.close();
-
-            // 4) Добавление ссылки Друг - Юзер (обратное связывание):
-            PreparedStatement PS4 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-            PS4.setInt(1, idFriend);
-            PS4.setInt(2, attrId);
-            PS4.setInt(3, idUser);
-            PS4.executeQuery();
-            PS4.close();
-
-            // 5) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 12-го параметра с VALUE = NULL в PARAMS (для текущего пользователя)
-            PreparedStatement PS5 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
-            PS5.setInt(1, idUser);
-            PS5.setInt(2, attrId);
-            PS5.executeUpdate();
-            PS5.close();
-
-            // 6) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 12-го параметра с VALUE = NULL в PARAMS (для друга)
-            PreparedStatement PS6 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
-            PS6.setInt(1, idFriend);
-            PS6.setInt(2, attrId);
-            PS6.executeUpdate();
-            PS6.close();
-
-        }
-
-        CloseConnection(Con);
     }
 
-
+    // 2017-02-20 Обновленный метод удаления из друзей (работа через DO)
     public void deleteFriend(int idFriend) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        Connection Con = getConnection();
 
         int idUser = getObjID(userService.getCurrentUsername()); // Получаем id текущего авторизованного пользователя
+        // if (idUser != idFriend) { // если не пытаемся удалить самого себя из друзья
         int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
 
-        PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE (OBJECT_ID = ? OR OBJECT_ID = ?) AND ATTR_ID = ?");
-        PS.setInt(1, idUser);  //  = current user_id
-        PS.setInt(2, idFriend); //  = new friend user_id
-        PS.setInt(3, attrId); //  = 12
-        PS.executeUpdate();
-
-        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE (OBJECT_ID = ? AND REFERENCE = ? OR OBJECT_ID = ? AND REFERENCE = ?) AND ATTR_ID = ?");
-        PS.setInt(1, idUser);  //  = current user_id
-        PS.setInt(2, idFriend); //  = new friend user_id
-        PS.setInt(3, idFriend); //  = new friend user_id
-        PS.setInt(4, idUser);  //  = current user_id
-        PS.setInt(5, attrId); //  = 12
-        PS.executeUpdate();
-        PS.close();
-        CloseConnection(Con);
+        DataObject currentUser = getObjectsByIdAlternative(idUser); // Получаем DO текущего пользователя
+        DataObject friendUser = getObjectsByIdAlternative(idFriend); // Получаем DO добавляемого в друзья пользователя
+        System.out.println("Удалили одного друга");
+        // Удаляем у себя пользователя из друзей
+        currentUser.deleteRefParams(attrId, idFriend);
+        // Удаляем у пользователя себя из друзей
+        friendUser.deleteRefParams(attrId, idUser);
+        updateDataObject(currentUser);
+        updateDataObject(friendUser);
     }
 
 
@@ -1229,16 +1082,14 @@ public class DBHelp {
 
     //endregion
 
+/*
+    public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-    //public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-
-
-        //System.out.println();
-        /*User user = new User();
+        User user = new User();
         user.setId(10003);
         Meeting meeting = new Meeting("Название", "02.02.2017 16:45", "02.02.2017 22:45", "Информация я написал", user, "Привяу", "");
         System.out.println();
-        new DBHelp().setMeeting(meeting);*/
+        new DBHelp().setMeeting(meeting);
         //ArrayList<User> oldusers = new DBHelp().getUsersAtMeeting("28"); // ID
 
         //System.out.print("dsd");
@@ -1516,7 +1367,7 @@ public class DBHelp {
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " ";
                 ArrayList<String> search = params.get(UserFilter.SEARCH_USER);
                 String sqlName = "'%" + search.get(0) + "%'";
-                sql += "AND (lower(ob.OBJECT_NAME) LIKE lower(" + sqlName + ")) " ;
+                sql += "AND (lower(ob.OBJECT_NAME) LIKE lower(" + sqlName + ")) ";
             } else if (params.get(UserFilter.WITH_EMAIL) != null) { // если надо получить ID пользователей по их e-mail'ам,
                 sql = "SELECT ob.OBJECT_ID FROM PARAMS ob WHERE ob.ATTR_ID = 6 and ob.VALUE IN (";
                 ArrayList<String> emails = params.get(UserFilter.WITH_NAME);
@@ -1812,60 +1663,80 @@ public class DBHelp {
 
     /*...............................................................................................................*/
 
-    // 2017-02-18 Новый метод выгрузки датаобджекта в базу (создание DO):
+    // 2017-02-18 Новый метод выгрузки датаобджекта в базу (создание DO): (исправил 2017-02-20)
     public void setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        Integer USER = 1001;
+        Integer EVENT = 1002;
+        Integer MESSAGE = 1003;
+        Integer MEETING = 1004;
         Connection Con = getConnection();
         // 1. Подготавливаем и заполняем в базе строку таблицы OBJECTS
         PreparedStatement PS = Con
                 .prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?, ?, ?)");
         int id = generationID(dataObject.getObjectTypeId());
+        System.out.println(">> Новый объект с id =" + id);
         PS.setInt(1, id);
         PS.setInt(2, dataObject.getObjectTypeId());
-        PS.setObject(3, dataObject.getName());
+        PS.setString(3, dataObject.getName());
         PS.executeUpdate();
         PS.close();
 
         // 2. Подготавливаем и заполняем в базе новые строки таблицы PARAMS
         // Получаем список параметров:
-        TreeMap<Integer, String> params = dataObject.getParams();
-        PS = Con
-                .prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)");
-        // Обходим все параметры в листе в датаобджекте и каждый
-        for (Map.Entry<Integer, String> entry : params.entrySet()) {
-            Integer key = entry.getKey(); // получаем ключ
-            String value = entry.getValue(); // получаем значение
-            PS.setInt(1, id);
-            PS.setInt(2, key);
-            PS.setObject(3, value);
-            PS.addBatch();
+        PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)");
+        while (!dataObject.getParams().isEmpty()) {
+            java.util.Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
+            PS1.setInt(1, id);
+            PS1.setInt(2, En.getKey());
+            PS1.setObject(3, En.getValue());
+            PS1.addBatch();
         }
-        PS.executeBatch();
-        PS.close();
+        PS1.executeBatch();
+        PS1.close();
 
-// 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
-// Получаем список параметров:
-        TreeMap<Integer, ArrayList<Integer>> references = dataObject.getRefParams();
-        PS = Con
-                .prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
-// Обходим все параметры в листе в датаобджекте и каждый
-        for (Map.Entry<Integer, ArrayList<Integer>> entry : references.entrySet()) {
-            Integer key = entry.getKey(); // получаем ключ
-            ArrayList<Integer> valueList = entry.getValue(); // получаем значение
+        // 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
+        // Получаем список параметров:
+        PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
+        while (!dataObject.getRefParams().isEmpty()) {
+            java.util.Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
+            ArrayList<Integer> valueList = En.getValue(); // получаем значение
             for (Integer value : valueList) {
-                PS.setInt(1, id);
-                PS.setInt(2, key);
-                PS.setInt(3, value);
-                PS.addBatch();
+                PS2.setInt(1, id);
+                PS2.setInt(2, En.getKey());
+                PS2.setObject(3, value);
+                PS2.addBatch();
             }
         }
-        PS.executeBatch();
-        PS.close();
+        PS2.executeBatch();
+        PS2.close();
+
+        // Если добавляем событие, то надо еще вручную создать ссылки:
+        if (dataObject.getObjectTypeId() == EVENT) { // Если это событие, то
+            // 3) Добавление ссылки Юзер - Событие (связывание):
+            int idUser = userService.getObjID(userService.getCurrentUsername());
+            int attrId = 13;
+            PreparedStatement PS3 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+            PS3.setInt(1, idUser);
+            PS3.setInt(2, attrId);
+            PS3.setInt(3, id);
+            PS3.executeQuery();
+            PS3.close();
+
+            // 4) Добавление 13-го параметра в PARAMS (task_id для текущего пользователя):
+            PreparedStatement PS4 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
+            PS4.setInt(1, idUser);
+            PS4.setInt(2, attrId);
+            PS4.setObject(3, id);
+            PS4.executeQuery();
+            PS4.close();
+        }
 
         CloseConnection(Con);
     }
 
     /*...............................................................................................................*/
     // 2017-02-18 Новый метод обновления датаобджекта в базе:
+    // 2017-02-20 НАДО ПОПРАВИТЬ!
     public void updateDataObject(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Connection Con = getConnection();
         // 1. Подгружаем из базы текущее состояние DO:
@@ -1910,7 +1781,8 @@ public class DBHelp {
         TreeMap<Integer, ArrayList<Integer>> references = dataObject.getRefParams();
 
         PreparedStatement PS_ref_ins = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
-        PreparedStatement PS_ref_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ? AND ATTR_ID = ?");
+        PreparedStatement PS_ref_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ? AND ATTR_ID = ? AND REFERENCE = ?");
+        PreparedStatement PS_ref_del2 = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ? AND ATTR_ID = ?");
 
         // Обходим все параметры в листе в новом датаобджекте
         for (Map.Entry<Integer, ArrayList<Integer>> entry : references.entrySet()) {
@@ -1931,25 +1803,35 @@ public class DBHelp {
         PS_ref_ins.executeBatch();
         PS_ref_ins.close();
 
-   /*     // А теперь смотрим, может, нужно какие-то ссылки удалить. Обходим все ссылки в листе в старом датаобджекте
+        // А теперь смотрим, может, нужно какие-то ссылки удалить. Обходим все ссылки в листе в старом датаобджекте
         for (Map.Entry<Integer, ArrayList<Integer>> entry : referencesOld.entrySet()) {
             Integer keyOld = entry.getKey(); // получаем ключ
             ArrayList<Integer> valueListOld = entry.getValue(); // получаем значение
             ArrayList<Integer> valueList = references.get(keyOld);
 
-            for (Integer valueOld : valueListOld) {
-                // Если в новом объекте нет такого ключа или если есть ключ, но нет такого значения в новом датаобджекте, то надо удалить строку из базы
-                if ((valueList == null) || (valueList.contains(valueOld) == false)) {
-                    PS_ref_del.setInt(1, id);
-                    PS_ref_del.setInt(2, keyOld);
-                    PS_ref_del.addBatch();
-                } // иначе не трогаем
+            if (valueList == null) { // если вообще нет такого ключа
+                PS_ref_del2.setInt(1, id);
+                PS_ref_del2.setInt(2, keyOld);
+                PS_ref_del2.addBatch();
+            } else { // Ксли ключ есть, сравниваем значения
+                for (Integer valueOld : valueListOld) {
+                    // Если в новом объекте нет такого значения, то надо удалить строку из базы
+                    if (valueList.contains(valueOld) == false) {
+                        PS_ref_del.setInt(1, id);
+                        PS_ref_del.setInt(2, keyOld);
+                        PS_ref_del.setInt(3, valueOld);
+                        PS_ref_del.addBatch();
+                    } // иначе не трогаем
+                }
             }
         }
         PS_ref_del.executeBatch();
         PS_ref_del.close();
 
-        CloseConnection(Con); */
+        PS_ref_del2.executeBatch();
+        PS_ref_del2.close();
+
+        CloseConnection(Con);
     }
 
 
