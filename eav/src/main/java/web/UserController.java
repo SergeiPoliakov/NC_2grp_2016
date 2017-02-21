@@ -6,6 +6,8 @@ import entities.DataObject;
 import entities.Event;
 import entities.User;
 import exception.CustomException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -69,6 +71,7 @@ public class UserController {
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
             System.out.println("Размер кэша после добавления " + doCache.size());
             User user = new User(dataObject);
+            ArrayList<Event> event = user.getEventsUser();
             m.addAttribute(user);
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -91,6 +94,7 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
         return "main-login";
     }
 

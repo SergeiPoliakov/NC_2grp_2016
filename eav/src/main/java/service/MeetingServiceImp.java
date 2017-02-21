@@ -1,6 +1,7 @@
 package service;
 
 import dbHelp.DBHelp;
+import entities.DataObject;
 import entities.Meeting;
 import entities.User;
 
@@ -36,8 +37,18 @@ public class MeetingServiceImp implements MeetingService {
     }
 
     // Добавление встречи
-    public void setMeeting(Meeting meeting) throws SQLException {
-        new DBHelp().setMeeting(meeting);
+    public void setMeeting(Meeting meeting) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        //new DBHelp().setMeeting(meeting);
+        meeting.setId(0);
+
+        ArrayList<User> users = new ArrayList<>();
+        User user = new User();
+        user.setId(meeting.getOrganizer().getId());
+        users.add(user);
+        meeting.setUsers(users);
+
+        DataObject dataObject = meeting.toDataObject();
+        new DBHelp().setDataObjectToDB(dataObject);
     }
 
     // Обновление встречи, meeting - обновленные данные события (ИДЕЯ С ОБЪЕКТАМИ ПОХОДУ ХУЙНЯ)

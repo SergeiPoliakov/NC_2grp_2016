@@ -25,7 +25,7 @@ interface MeetingService {
     ArrayList<Meeting> getUserMeetingsList(int userID) throws SQLException;
 
     @WebMethod
-    void setMeeting(Meeting meeting) throws SQLException;
+    void setMeeting(Meeting meeting) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
     @WebMethod
     void updateEvent(String meetingID, Meeting newmeeting) throws SQLException,

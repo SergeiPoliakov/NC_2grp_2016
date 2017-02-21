@@ -845,7 +845,7 @@ public class DBHelp {
         ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         while (RS.next()) {
             Meeting meeting = new Meeting();
-            meeting.setId(RS.getString(1));
+            meeting.setId(RS.getInt(1));
             meeting.setTitle(RS.getString(2));
             meeting.setDate_start(RS.getString(3));
             meeting.setDate_end(RS.getString(4));
@@ -896,7 +896,7 @@ public class DBHelp {
         ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         while (RS.next()) {
             Meeting meeting = new Meeting();
-            meeting.setId(RS.getString(1));
+            meeting.setId(RS.getInt(1));
             meeting.setTitle(RS.getString(2));
             meeting.setDate_start(RS.getString(3));
             meeting.setDate_end(RS.getString(4));
@@ -1066,7 +1066,7 @@ public class DBHelp {
         ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         RS.next();
         Meeting meeting = new Meeting();
-        meeting.setId(RS.getString(1));
+        meeting.setId(RS.getInt(1));
         meeting.setTitle(RS.getString(2));
         meeting.setDate_start(RS.getString(3));
         meeting.setDate_end(RS.getString(4));

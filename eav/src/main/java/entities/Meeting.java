@@ -12,18 +12,11 @@ import java.util.TreeMap;
  * Created by Костя on 07.02.2017.
  */
 
-/*INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('301', 'title');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('302', 'date_start');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('303', 'date_end');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('304', 'info');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('305', 'organizer');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('306', 'tag');
-INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('307', 'member');*/
 public class Meeting {
 
     public static final int objTypeID = 1004;
 
-    private  String id;
+    private  int  id;
     private  String title; // 301
     private  String date_start; // 302
     private  String date_end; // 303
@@ -58,11 +51,11 @@ public class Meeting {
         this.users = users;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -116,7 +109,7 @@ public class Meeting {
 
     public Meeting(){}
 
-    public Meeting(String id, String title, String date_start, String date_end, String info, User organizer, String tag, String members) {
+    public Meeting(int id, String title, String date_start, String date_end, String info, User organizer, String tag, String members) {
         this.id = id;
         this.title = title;
         this.date_start = date_start;
@@ -141,7 +134,7 @@ public class Meeting {
         this.users = new ArrayList<>();
         this.organizer = new User();
         this.events = new ArrayList<>();
-        this.id = dataObject.getId().toString();
+        this.id = dataObject.getId();
         // Поле params
         for (Map.Entry<Integer, String> param : dataObject.getParams().entrySet() ) {
             switch (param.getKey()){
@@ -158,7 +151,7 @@ public class Meeting {
                     this.info = param.getValue();
                     break;
                 case (305):
-                    User user =  new User(new DBHelp().getObjectsByIdAlternative(10003));
+                    User user =  new User(new DBHelp().getObjectsByIdAlternative(Integer.parseInt(param.getValue())));
                     this.organizer = user;
                     break;
                 case (306):
@@ -176,6 +169,25 @@ public class Meeting {
                     break;
             }
         }
+    }
+
+    public DataObject toDataObject(){
+        DataObject dataObject = new DataObject();
+        dataObject.setId(this.id);
+        dataObject.setName("эммм");
+        dataObject.setObjectTypeId(1004);
+        dataObject.setParams(301, this.title);
+        dataObject.setParams(302, this.date_start);
+        dataObject.setParams(303, this.date_end);
+        dataObject.setParams(304, this.info);
+        dataObject.setParams(305, this.organizer.getId().toString());
+        dataObject.setParams(306, this.tag);
+
+        for (User user: this.users) {
+            dataObject.setRefParams(307, user.getId());
+        }
+
+        return dataObject;
     }
 
     public TreeMap<Integer, Object> getArrayWithAttributes(){

@@ -112,6 +112,18 @@ public class Event {
         }
     }
 
+    public DataObject toDataObject(){
+        DataObject dataObject = new DataObject();
+        dataObject.setId(this.id);
+        dataObject.setObjectTypeId(1002);
+        dataObject.setName(this.name);
+        dataObject.setParams(101, this.date_begin);
+        dataObject.setParams(102, this.date_end);
+        dataObject.setParams(104, this.info);
+        dataObject.setParams(105, this.priority);
+        return dataObject;
+    }
+
     public TreeMap<Integer, Object> getArrayWithAttributes(){
         TreeMap<Integer, Object> map = new TreeMap<>();
         map.put(101, date_begin);

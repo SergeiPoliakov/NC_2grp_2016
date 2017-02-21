@@ -2,6 +2,7 @@ package web;
 
 import dbHelp.DBHelp;
 import entities.DataObject;
+import entities.Event;
 import entities.Meeting;
 import entities.User;
 import org.slf4j.Logger;
@@ -26,9 +27,7 @@ import java.util.ArrayList;
 public class MeetingController {
 
     private static final Logger logger = LoggerFactory.getLogger(EventController.class);
-
     private UserServiceImp userService = UserServiceImp.getInstance();
-
     private MeetingServiceImp meetingService = MeetingServiceImp.getInstance();
 
     // Список встреч пользователя
@@ -47,7 +46,7 @@ public class MeetingController {
         //logger.info("STOP");
         Meeting meeting = new Meeting(new DBHelp().getObjectsByIdAlternative(meetingID));
         //Meeting meeting = meetingService.getMeetingWithUsers(meetingID);
-        meeting.getOrganizer().setFriends(userService.getFriendListCurrentUser());
+        meeting.getOrganizer().setFriends(userService.getFriendListCurrentUser()); // СТАРЫЙ
         m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
         if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
             return "/meetingAdmin";
@@ -57,7 +56,7 @@ public class MeetingController {
         return "/main-login";
     }
 
-    //Добавление встречи
+    //Добавление встречи DO
     @RequestMapping(value = "/addMeeting", method = RequestMethod.POST)
     public String addMeeting(ModelMap m,
                              @RequestParam("title") String title,
@@ -70,6 +69,8 @@ public class MeetingController {
         meetingService.setMeeting(meeting);
         return "redirect:/meetings";
     }
+
+    // Добавить пользователя на встречу
     @RequestMapping(value = "/inviteUserAtMeeting{meetingID}", method = RequestMethod.POST)
     public String inviteUserAtMeeting(@RequestParam("userIDs") String userIDs,
                                       @PathVariable("meetingID") Integer meetingID) throws SQLException {
