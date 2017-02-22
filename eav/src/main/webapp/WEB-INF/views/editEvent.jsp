@@ -30,31 +30,31 @@
         <h1>Netcracker <small>Редактирование события</small></h1>
     </div>
 
-    <form name="edit" action="/changeEvent/${dataObject.id}" method="post">
+    <form name="edit" action="/changeEvent/${event.id}" method="post">
 
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="InputName1">Введите название</label>
-            <textarea rows="1" class="form-control" name="name" id="InputName1">${dataObject.name}</textarea>
+            <textarea rows="1" class="form-control" name="name" id="InputName1">${event.name}</textarea>
         </div>
 
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="InputDateBegin1">Введите дату начала</label>
-            <textarea rows="1" class="form-control" name="date_begin" id="InputDateBegin1">${dataObject.getValue(101)}</textarea>
+            <textarea rows="1" class="form-control" name="date_begin" id="InputDateBegin1">${event.date_begin}</textarea>
         </div>
 
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="InputDateEnd1">Введите дату окончания</label>
-            <textarea rows="1" class="form-control" name="date_end" id="InputDateEnd1">${dataObject.getValue(102)}</textarea>
+            <textarea rows="1" class="form-control" name="date_end" id="InputDateEnd1">${event.date_end}</textarea>
         </div>
 
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="InputPriority1">Введите приоритет</label>
-            <input type="text" class="form-control" name="priority" id="InputPriority1" value=${dataObject.getValue(105)}>
+            <input type="text" class="form-control" name="priority" id="InputPriority1" value=${event.priority}>
         </div>
 
         <div class="form-group col-lg-offset-4 col-lg-5">
             <label for="TextArea1">Введите информацию о событии</label>
-            <textarea rows="3" class="form-control" name="info" id="TextArea1">${dataObject.getValue(104)}</textarea>
+            <textarea rows="3" class="form-control" name="info" id="TextArea1">${event.info}</textarea>
         </div>
 
 
@@ -62,6 +62,7 @@
 
     </form>
 </div>
+<footer>
 
 <%@include file='footer.jsp'%>
 

@@ -121,11 +121,11 @@
                                     <div class="chat-body clearfix">
                                         <div class="header">
 
-                                            <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>${object.date_send}</small>
-                                            <strong class="pull-right primary-font">${object.from_name} </strong>
+                                            <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>${object.getValue(203)}</small>
+                                            <strong class="pull-right primary-font">${object.getValue(206)} </strong>
                                         </div>
                                         <p>
-                                                ${object.text}
+                                                ${object.getValue(205)}
                                         </p>
                                     </div>
                                 </li>

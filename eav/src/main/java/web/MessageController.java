@@ -4,7 +4,9 @@ package web;
  * Created by Hroniko on 03.02.2017.
  */
 
+import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
+import entities.DataObject;
 import entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,27 +15,39 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import service.LoadingServiceImp;
 import service.MessageServiceImp;
 import service.UserServiceImp;
+import service.cache.DataObjectCache;
+import service.id_filters.MessageFilter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 
 @Controller
 public class MessageController {
-    private static final Logger logger = LoggerFactory.getLogger(EventController.class);
 
     private UserServiceImp userService = UserServiceImp.getInstance();
 
     private MessageServiceImp messageService = MessageServiceImp.getInstance();
 
+    private LoadingServiceImp loadingService = new LoadingServiceImp();
 
+    private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
+
+    private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
+        ArrayList<DataObject> list = new ArrayList<>();
+
+        for(Map.Entry<Integer, DataObject> e : map.entrySet()) {
+            list.add(e.getValue());
+        }
+
+        return list;
+    }
 
     // Отправка сообщения по нажатию кнопки
     @RequestMapping(value = "/sendMessage1/{to_id}", method = RequestMethod.POST)
@@ -45,45 +59,66 @@ public class MessageController {
         SimpleDateFormat dateFormat = null;
         dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss", Locale.ENGLISH);
 
-        String date_send = dateFormat.format( currentDate ).toString();
+        String date_send = dateFormat.format(currentDate);
 
         int read_status = 0; // старус прочтения - ноль, не прочитано еще
 
-        User user_from = userService.getCurrentUser();
-        User user_to = userService.getUserByUserID(to_id);
+        DataObject data_ObjectSender = loadingService.getDataObjectByIdAlternative(from_id);
+        DataObject data_ObjectRecipient = loadingService.getDataObjectByIdAlternative(to_id);
 
-        String from_name = user_from.getName() + " " + user_from.getSurname() + " " + user_from.getMiddleName();
+        String from_name = data_ObjectSender.getName();
 
-        String to_name = user_to.getName() + " " + user_to.getSurname() + " " + user_to.getMiddleName();
+        String to_name = data_ObjectRecipient.getName();
 
 
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
-        mapAttr.put(201, from_id); ////
-        mapAttr.put(202, to_id); ////
-        mapAttr.put(203, date_send); ////
-        mapAttr.put(204, read_status); /////
-        mapAttr.put(205, text); // Сам текст сообщения
+        mapAttr.put(201, from_id);
+        mapAttr.put(202, to_id);
+        mapAttr.put(203, date_send);
+        mapAttr.put(204, read_status);
+        mapAttr.put(205, text);
         mapAttr.put(206, from_name);
         mapAttr.put(207, to_name);
 
-        messageService.setNewMessage(1003, mapAttr); // Передаем в хелпер ообщение со всеми атрибутами // 1003 - тип Сообщение
+        String name = "Message_" + userService.generationID(1003);
+
+        //DataObject dataObject = loadingService.createDataObject(name, 1003, mapAttr);
+
+        //loadingService.setDataObjectToDB(dataObject);
+
+        messageService.setNewMessage(1003, mapAttr);
+
         return  "redirect: /sendMessage/{to_id}";
     }
 
 
     // Отрисовка истории сообщения для текущего пользователя и выбранного
     @RequestMapping("/sendMessage/{objectId}") //передаем все сообщения на страницу
-    public String listObjects(@PathVariable("objectId") Integer to_id, Map<String, Object> map) throws SQLException {
+    public String listObjects(@PathVariable("objectId") Integer to_id, Map<String, Object> mapAttr) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         int from_id = userService.getObjID(userService.getCurrentUsername());
-        map.put("to_id", to_id);
-        map.put("allObject", messageService.getMessageList(from_id, to_id));
+        try {
+            ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new MessageFilter(MessageFilter.BETWEEN_TWO_USERS_WITH_IDS, String.valueOf(from_id), String.valueOf(to_id)));
+            System.out.println("Ищем в кэше сообщения данного пользователя ");
+            Map<Integer, DataObject> map = doCache.getAll(al);
+            ArrayList<DataObject> list = getListDataObject(map);
+            System.out.println("Размер кэша после добавления " + doCache.size());
+
+            mapAttr.put("to_id", to_id);
+            mapAttr.put("allObject", list);
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
         return "sendMessage";
     }
 
     // Удаление сообщения по его id с перенаправлением обратно на историю сообщений
     @RequestMapping("/deleteMessage/{to_id}/{objectId}") // @RequestMapping(value = "/deleteMessage/{to_id}/{objectId}", method = RequestMethod.POST)
     public String deleteMessage(@PathVariable("to_id") int to_id, @PathVariable("objectId") int objectId) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-        messageService.deleteMessage(objectId);
+        loadingService.deleteDataObjectById(objectId);
+        doCache.invalidate(objectId);
         return "redirect: /sendMessage/{to_id}";
     }
 

@@ -6,6 +6,7 @@ package web;
 
 import com.google.common.cache.LoadingCache;
 import entities.DataObject;
+import entities.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -90,11 +91,16 @@ public class EventController {
             Map<Integer, DataObject> map = doCache.getAll(il);
             aldo = getListDataObject(map);
             System.out.println("Размер кэша после добавления " + doCache.size());
+            ArrayList<Event> events = new ArrayList<>(aldo.size());
+            for (DataObject dataObject: aldo
+                    ) {
+                Event event = new Event(dataObject);
+                events.add(event);
+            }
+            mapObjects.put("allObject", events);
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
-        mapObjects.put("allObject", aldo);
 
         return "allEvent";
     }
@@ -123,7 +129,8 @@ public class EventController {
             System.out.println("Ищем в кэше текущее событие");
             DataObject dataObject = doCache.get(eventId);
             System.out.println("Размер кэша после добавления " + doCache.size());
-            m.addAttribute(dataObject);
+            Event event = new Event(dataObject);
+            m.addAttribute(event);
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
