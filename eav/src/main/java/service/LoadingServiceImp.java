@@ -85,6 +85,7 @@ public class LoadingServiceImp implements LoadingService {
     // с фильтром для сообщений
     public ArrayList<Integer> getListIdFilteredAlternative(MessageFilter messageFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         return new DBHelp().getListObjectsByFilters(messageFilter);
+
     }
     // с фильтром для встреч
     public ArrayList<Integer> getListIdFilteredAlternative(MeetingFilter meetingFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {

@@ -21,6 +21,23 @@
 
     <meta charset="UTF-8">
 
+    <style>
+        .prokrutka {
+            height: 400px; /* высота нашего блока */
+            width: 100%; /* ширина нашего блока */
+            background: #fff; /* цвет фона, белый */
+            border: 1px solid #C1C1C1; /* размер и цвет границы блока */
+            overflow-x: auto; /* прокрутка по горизонтали */
+            overflow-y: auto; /* прокрутка по вертикали */
+        }
+        .prok {
+            height: 40px; /* высота нашего блока */
+            width: 100%; /* ширина нашего блока */
+            background: #fff; /* цвет фона, белый */
+            border: 1px solid #C1C1C1; /* размер и цвет границы блока */
+        }
+    </style>
+
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-select.min.css">
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-datetimepicker.min.css">
@@ -38,12 +55,41 @@
     <script type="text/javascript" src="/resources/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="/resources/js/bootstrap-select.min.js"> </script>
     <script type="text/javascript" src="/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {packages:['wordtree']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable(
+                [['+'],
+                <c:forEach items="${eventword}" var="eventstring">
+                    ${eventstring}
+                </c:forEach>
+                ]
+            );
+
+            var options = {
+                maxFontSize: 16,
+                wordtree: {
+                    format: 'implicit',
+                    word: '+'
+                }
+            };
+
+            var chart = new google.visualization.WordTree(document.getElementById('wordtree_basic'));
+            chart.draw(data, options);
+        }
+    </script>
 </head>
 <body>
+
+
 <div class="container top-buffer-20">
     <!-- Информация о пользователе -->
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card" style="width: 30rem;">
                 <h4 class="card-title text-center">${user.name} ${user.surname} ${user.middleName}</h4>
                 <div class="card-title text-center">
@@ -61,8 +107,17 @@
                 </ul>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card-title text-center">
+                <h4>Дерево событий:</h4>
+            </div>
+            <div class="card-title text-center">
+                <!-- Дерево задач -->
+                <div class="prokrutka" id="wordtree_basic"></div>
+            </div>
+        </div>
         <!-- Список шаблонов задач -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card pull-right" style="width: 30rem;">
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>

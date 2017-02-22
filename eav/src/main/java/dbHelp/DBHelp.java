@@ -483,38 +483,7 @@ public class DBHelp {
         CloseConnection(Con);
     }
 
-    // Метод уже является только прослойкой, вызывает универсальный setDataObjectToDB
-    public void setNewUser(DataObject dataObject) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        setDataObjectToDB(dataObject);
-        /*
-        Connection Con = getConnection();
-        PreparedStatement PS = Con
-                .prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
-        int newID = generationID(dataObject.getObjectTypeId());
-        PS.setInt(1, newID);
-        PS.setInt(2, dataObject.getObjectTypeId());
-        PS.setObject(3, dataObject.getName());
-        PS.executeUpdate();
-        PS.close();
 
-        PreparedStatement PS1 = Con
-                .prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
-        while (!dataObject.getParams().isEmpty()) {
-            java.util.Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
-            PS1.setObject(1, En.getValue());
-            PS1.setInt(2, newID);
-            PS1.setInt(3, En.getKey());
-            PS1.addBatch();
-        }
-        PS1.executeBatch();
-        PS1.close();
-
-
-        CloseConnection(Con);
-        */
-    }
 
     ///////// Новое 2017-02-12 (для DataObject)
     public TreeMap<Integer, Object> getUserById(int userID) throws SQLException {
@@ -560,12 +529,6 @@ public class DBHelp {
         return treeMap;
     }
 
-    // Обновленный метод добавления событий (работа через DO)
-    public void setNewEvent(DataObject dataObject) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        setDataObjectToDB(dataObject);
-    }
 
 
     public void updateEvent(int ObjID, Event event) throws SQLException,
@@ -591,63 +554,6 @@ public class DBHelp {
         PS1.close();
 
         CloseConnection(Con);
-    }
-
-    // Обновленный метод обновления пользователя (работа через DO)
-    public void updateUser(DataObject dataObject) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        updateDataObject(dataObject);
-    }
-
-    // 2017-02-20 Обновленный метод добавления в друзья (работа через DO)
-    public void setFriend(int idFriend) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-
-        int idUser = getObjID(userService.getCurrentUsername()); // Получаем id текущего авторизованного пользователя
-        if (idUser != idFriend) { // если не пытаемся добавить самого себя в друзья
-            int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
-
-            DataObject currentUser = getObjectsByIdAlternative(idUser); // Получаем DO текущего пользователя
-            DataObject friendUser = getObjectsByIdAlternative(idFriend); // Получаем DO добавляемого в друзья пользователя
-
-            // Вытаскиваем нужную нам мапу со ссылками из текущего DO пользователя
-            TreeMap<Integer, ArrayList<Integer>> currentRef = currentUser.getRefParams();
-            // Вытаскиваем нужный лист со списком юзеров из мапы
-            ArrayList<Integer> al = currentRef.get(attrId);
-            // Если у текущего пользоателя нет списка друзей или такого пользователя нет в его списке друзей, то
-            if ((al == null) || (!al.contains(idFriend))) {
-                System.out.println("Добавили нового друга");
-                // Добавляем к себе пользователя в друзья
-                currentUser.setRefParams(attrId, idFriend);
-                // Добавляем себя пользователю в друзья
-                friendUser.setRefParams(attrId, idUser);
-                // и обновляем DO обоих пользователей в базе:
-                updateDataObject(currentUser);
-                updateDataObject(friendUser);
-            }
-        }
-    }
-
-    // 2017-02-20 Обновленный метод удаления из друзей (работа через DO)
-    public void deleteFriend(int idFriend) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-
-        int idUser = getObjID(userService.getCurrentUsername()); // Получаем id текущего авторизованного пользователя
-        // if (idUser != idFriend) { // если не пытаемся удалить самого себя из друзья
-        int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
-
-        DataObject currentUser = getObjectsByIdAlternative(idUser); // Получаем DO текущего пользователя
-        DataObject friendUser = getObjectsByIdAlternative(idFriend); // Получаем DO добавляемого в друзья пользователя
-        System.out.println("Удалили одного друга");
-        // Удаляем у себя пользователя из друзей
-        currentUser.deleteRefParams(attrId, idFriend);
-        // Удаляем у пользователя себя из друзей
-        friendUser.deleteRefParams(attrId, idUser);
-        updateDataObject(currentUser);
-        updateDataObject(friendUser);
     }
 
 
@@ -1138,8 +1044,79 @@ public class DBHelp {
 
     //  }
 
+    //region DO Methods
 
-    ////// 2017-02-12 12-56 // Обновление ссылки на загруженный аватар:
+    // Метод уже является только прослойкой, вызывает универсальный setDataObjectToDB
+    public void setNewUser(DataObject dataObject) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        setDataObjectToDB(dataObject);
+    }
+    // Обновленный метод добавления событий (работа через DO)
+    public void setNewEvent(DataObject dataObject) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        setDataObjectToDB(dataObject);
+    }
+    // Обновленный метод обновления пользователя (работа через DO)
+    public void updateUser(DataObject dataObject) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        updateDataObject(dataObject);
+    }
+
+    // 2017-02-20 Обновленный метод добавления в друзья (работа через DO)
+    public void setFriend(int idFriend) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+
+        int idUser = getObjID(userService.getCurrentUsername()); // Получаем id текущего авторизованного пользователя
+        if (idUser != idFriend) { // если не пытаемся добавить самого себя в друзья
+            int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
+
+            DataObject currentUser = getObjectsByIdAlternative(idUser); // Получаем DO текущего пользователя
+            DataObject friendUser = getObjectsByIdAlternative(idFriend); // Получаем DO добавляемого в друзья пользователя
+
+            // Вытаскиваем нужную нам мапу со ссылками из текущего DO пользователя
+            TreeMap<Integer, ArrayList<Integer>> currentRef = currentUser.getRefParams();
+            // Вытаскиваем нужный лист со списком юзеров из мапы
+            ArrayList<Integer> al = currentRef.get(attrId);
+            // Если у текущего пользоателя нет списка друзей или такого пользователя нет в его списке друзей, то
+            if ((al == null) || (!al.contains(idFriend))) {
+                System.out.println("Добавили нового друга");
+                // Добавляем к себе пользователя в друзья
+                currentUser.setRefParams(attrId, idFriend);
+                // Добавляем себя пользователю в друзья
+                friendUser.setRefParams(attrId, idUser);
+                // и обновляем DO обоих пользователей в базе:
+                updateDataObject(currentUser);
+                updateDataObject(friendUser);
+            }
+        }
+    }
+
+    // 2017-02-20 Обновленный метод удаления из друзей (работа через DO)
+    public void deleteFriend(int idFriend) throws SQLException,
+            NoSuchMethodException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+
+        int idUser = getObjID(userService.getCurrentUsername()); // Получаем id текущего авторизованного пользователя
+        // if (idUser != idFriend) { // если не пытаемся удалить самого себя из друзья
+        int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
+
+        DataObject currentUser = getObjectsByIdAlternative(idUser); // Получаем DO текущего пользователя
+        DataObject friendUser = getObjectsByIdAlternative(idFriend); // Получаем DO добавляемого в друзья пользователя
+        System.out.println("Удалили одного друга");
+        // Удаляем у себя пользователя из друзей
+        currentUser.deleteRefParams(attrId, idFriend);
+        // Удаляем у пользователя себя из друзей
+        friendUser.deleteRefParams(attrId, idUser);
+        updateDataObject(currentUser);
+        updateDataObject(friendUser);
+    }
+
+
+    // 2017-02-12 12-56 // Обновление ссылки на загруженный аватар:
     public void updateAvatar(int userId, String patch) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
@@ -1272,7 +1249,6 @@ public class DBHelp {
         }
         return dataObjectList;
     }
-
     // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает список id подходящих под фильтры датаобджектов
     public ArrayList<Integer> getListObjectsByListIdAlternative(String... strings) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         ArrayList<Integer> idList = new ArrayList<>();
@@ -1662,7 +1638,6 @@ public class DBHelp {
     }
 
     /*...............................................................................................................*/
-
     // 2017-02-18 Новый метод выгрузки датаобджекта в базу (создание DO): (исправил 2017-02-20)
     public void setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Integer USER = 1001;
@@ -1670,36 +1645,35 @@ public class DBHelp {
         Integer MESSAGE = 1003;
         Integer MEETING = 1004;
         Connection Con = getConnection();
-// 1. Подготавливаем и заполняем в базе строку таблицы OBJECTS
+        // 1. Подготавливаем и заполняем в базе строку таблицы OBJECTS
         PreparedStatement PS = Con
                 .prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?, ?, ?)");
         int id = generationID(dataObject.getObjectTypeId());
-        System.out.println("» Новый объект с id =" + id);
+        System.out.println(">> Новый объект с id =" + id);
         PS.setInt(1, id);
         PS.setInt(2, dataObject.getObjectTypeId());
         PS.setString(3, dataObject.getName());
         PS.executeUpdate();
         PS.close();
 
-// 2. Подготавливаем и заполняем в базе новые строки таблицы PARAMS
-// Получаем список параметров:
+        // 2. Подготавливаем и заполняем в базе новые строки таблицы PARAMS
+        // Получаем список параметров:
         PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)");
         while (!dataObject.getParams().isEmpty()) {
-            java.util.Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
+            Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
             PS1.setInt(1, id);
             PS1.setInt(2, En.getKey());
-            PS1.setString(3, En.getValue());
+            PS1.setObject(3, En.getValue());
             PS1.addBatch();
         }
-
         PS1.executeBatch();
         PS1.close();
 
-// 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
-// Получаем список параметров:
+        // 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
+        // Получаем список параметров:
         PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
         while (!dataObject.getRefParams().isEmpty()) {
-            java.util.Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
+            Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
             ArrayList<Integer> valueList = En.getValue(); // получаем значение
             for (Integer value : valueList) {
                 PS2.setInt(1, id);
@@ -1713,9 +1687,9 @@ public class DBHelp {
 
         int idUser = userService.getObjID(userService.getCurrentUsername());
 
-// Если добавляем событие, то надо еще вручную создать ссылки:
+        // Если добавляем событие, то надо еще вручную создать ссылки:
         if (dataObject.getObjectTypeId().equals(EVENT) ) { // Если это событие, то
-// 3) Добавление ссылки Юзер - Событие (связывание):
+            // 3) Добавление ссылки Юзер - Событие (связывание):
 
             int attrId = 13;
             PreparedStatement PS3 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
@@ -1725,7 +1699,7 @@ public class DBHelp {
             PS3.executeQuery();
             PS3.close();
 
-// 4) Добавление 13-го параметра в PARAMS (task_id для текущего пользователя):
+            // 4) Добавление 13-го параметра в PARAMS (task_id для текущего пользователя):
             PreparedStatement PS4 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
             PS4.setInt(1, idUser);
             PS4.setInt(2, attrId);
@@ -1733,7 +1707,7 @@ public class DBHelp {
             PS4.executeQuery();
             PS4.close();
 
-// 5) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 13-го параметра с VALUE = NULL в PARAMS (task_id для текущего пользователя):
+            // 5) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 13-го параметра с VALUE = NULL в PARAMS (task_id для текущего пользователя):
             PreparedStatement PS5 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
             PS5.setInt(1, idUser); // = user_id
             PS5.setInt(2, attrId); // = 13
@@ -1742,14 +1716,15 @@ public class DBHelp {
 
         }
         else if(dataObject.getObjectTypeId().equals(MESSAGE) ) { // Если это событие, то
-// 1) Добавление ссылки Юзер - Сообщение (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '30', '30001');
-//int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
+
+            // 1) Добавление ссылки Юзер - Сообщение (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '30', '30001');
+            //int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
             int attrId = 30;
             PreparedStatement PS6 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-            PS6.setInt(1, idUser); // System.out.println(idUser);
-            PS6.setInt(2, attrId); // System.out.println(attrId);
-            PS6.setInt(3, id); // System.out.println(newID);
-            PS6.executeQuery(); // PS2.executeBatch();
+            PS6.setInt(1, idUser);
+            PS6.setInt(2, attrId);
+            PS6.setInt(3, id);
+            PS6.executeQuery();
             PS6.close();
         }
 
@@ -1758,7 +1733,6 @@ public class DBHelp {
 
     /*...............................................................................................................*/
     // 2017-02-18 Новый метод обновления датаобджекта в базе:
-    // 2017-02-20 НАДО ПОПРАВИТЬ!
     public void updateDataObject(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Connection Con = getConnection();
         // 1. Подгружаем из базы текущее состояние DO:
@@ -1832,9 +1806,9 @@ public class DBHelp {
             ArrayList<Integer> valueList = references.get(keyOld);
 
             if (valueList == null) { // если вообще нет такого ключа
-                PS_ref_del2.setInt(1, id);
-                PS_ref_del2.setInt(2, keyOld);
-                PS_ref_del2.addBatch();
+                //PS_ref_del2.setInt(1, id);
+                //PS_ref_del2.setInt(2, keyOld);
+                //PS_ref_del2.addBatch();
             } else { // Ксли ключ есть, сравниваем значения
                 for (Integer valueOld : valueListOld) {
                     // Если в новом объекте нет такого значения, то надо удалить строку из базы
@@ -1847,16 +1821,14 @@ public class DBHelp {
                 }
             }
         }
-        PS_ref_del.executeBatch();
-        PS_ref_del.close();
+        //PS_ref_del.executeBatch();
+        //PS_ref_del.close();
 
         PS_ref_del2.executeBatch();
         PS_ref_del2.close();
 
         CloseConnection(Con);
     }
-
-
     /*...............................................................................................................*/
     // 2017-02-18 Новый универсальный метод удаления датаобджекта из базы:
     public void deleteDataObject(Integer id) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
@@ -1886,7 +1858,6 @@ public class DBHelp {
         Integer id = dataObject.getId();
         deleteDataObject(id);
     }
-
 
     /*...............................................................................................................*/
     // 2017-02-19 Новый универсальный метод частичной загрузки датаобджектов из базы с использованием Partitions-фильтров:
@@ -2260,4 +2231,5 @@ public class DBHelp {
 
         return partitionDataObjectList;
     }
+    //endregion
 }

@@ -51,9 +51,9 @@ public class MessageController {
 
     // Отправка сообщения по нажатию кнопки
     @RequestMapping(value = "/sendMessage1/{to_id}", method = RequestMethod.POST)
-    public String sendNewMessage(@PathVariable("to_id") int to_id, @RequestParam("text") String text) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    public String sendNewMessage(@PathVariable("to_id") Integer to_id, @RequestParam("text") String text) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
-        int from_id = userService.getObjID(userService.getCurrentUsername());
+        Integer from_id = userService.getObjID(userService.getCurrentUsername());
 
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = null;
@@ -61,7 +61,7 @@ public class MessageController {
 
         String date_send = dateFormat.format(currentDate);
 
-        int read_status = 0; // старус прочтения - ноль, не прочитано еще
+        Integer read_status = 0; // старус прочтения - ноль, не прочитано еще
 
         DataObject data_ObjectSender = loadingService.getDataObjectByIdAlternative(from_id);
         DataObject data_ObjectRecipient = loadingService.getDataObjectByIdAlternative(to_id);
@@ -72,21 +72,21 @@ public class MessageController {
 
 
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
-        mapAttr.put(201, from_id);
-        mapAttr.put(202, to_id);
+        mapAttr.put(201, from_id.toString());
+        mapAttr.put(202, to_id.toString());
         mapAttr.put(203, date_send);
-        mapAttr.put(204, read_status);
+        mapAttr.put(204, read_status.toString());
         mapAttr.put(205, text);
         mapAttr.put(206, from_name);
         mapAttr.put(207, to_name);
 
         String name = "Message_" + userService.generationID(1003);
 
-        //DataObject dataObject = loadingService.createDataObject(name, 1003, mapAttr);
+        DataObject dataObject = loadingService.createDataObject(name, 1003, mapAttr);
 
-        //loadingService.setDataObjectToDB(dataObject);
+        loadingService.setDataObjectToDB(dataObject);
 
-        messageService.setNewMessage(1003, mapAttr);
+        // messageService.setNewMessage(1003, mapAttr);
 
         return  "redirect: /sendMessage/{to_id}";
     }
