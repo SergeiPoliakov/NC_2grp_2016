@@ -37,7 +37,9 @@
         <div class="row">
             <div class="container col-lg-5 pull-right">
 
-                <img src="${user.picture}" class="img-polaroid" width="200">
+                <img src="http://netcracker.hop.ru/upload/${user.id}/avatar/avatar_${user.id}.png"
+                     onerror="this.src = 'http://netcracker.hop.ru/upload/default/avatar.png'" class="img-polaroid" width="200">
+
 
                 <div class="form-group ">
                     <%--Загрузка картинки-аватара--%>

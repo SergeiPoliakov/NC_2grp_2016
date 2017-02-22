@@ -40,7 +40,7 @@
 
                     </div>
                     <div class="profile-userpic">
-                        <img src="https://fshoke.com/wp-content/uploads/2016/01/Sean-Penn-mixed-with-Leonardo-DiCaprio.jpg" class="img-responsive"  alt='Изображение' >
+                        <img src="${object.picture}" onerror="this.src = 'http://netcracker.hop.ru/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
                     </div>
                     <div class="profile-userbuttons">
                         <a href="/viewProfile/${object.id}"><button type="button" class="btn btn-primary btn-xs"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>

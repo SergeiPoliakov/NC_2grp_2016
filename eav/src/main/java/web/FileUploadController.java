@@ -152,7 +152,8 @@ public class FileUploadController {
                 // Получаем расширение файла
                 String[] extFile = file.getOriginalFilename().split("\\.");
                 // Формируем имя файла, пример: avatar_10005.png
-                String name = "avatar_" + random.nextInt(9) + "_" + currentUserId + "." + extFile[extFile.length-1]; // Пришлось так сделать, чтобы браузер реагировал на смену имени, а не тянул из своего кэша
+                ///String name = "avatar_" + random.nextInt(9) + "_" + currentUserId + "." + extFile[extFile.length-1]; // Пришлось так сделать, чтобы браузер реагировал на смену имени, а не тянул из своего кэша
+                String name = "avatar_"  + currentUserId + "." + "png";
 
 
                 // 2. Выполняем подключение к ФТП серверу:

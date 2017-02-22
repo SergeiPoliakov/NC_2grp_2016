@@ -143,7 +143,7 @@
                                     </form>
                                 </div>
                                 <div class="bottom text-center">
-                                    Впервые тут? <a href="/addUser"><b>Присоединиться</b></a>
+                                    Впервые тут? <a href="/addUser"><b>Регистрация</b></a>
                                 </div>
                             </div>
                         </li>
