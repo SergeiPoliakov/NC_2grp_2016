@@ -2,6 +2,7 @@ package web;
 
 
 import com.google.common.cache.LoadingCache;
+import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.Event;
 import entities.User;
@@ -248,11 +249,19 @@ public class UserController {
         // mapAttr.put(13, null); не нужно, иначе потом пустая ссылка на событие висит, и при добавлении новой задачи она так и остается висеть. Иначе надо будет при добавлении эту обновлять
 
 
+
+
         DataObject dataObject = loadingService.createDataObject(full_name, 1001, mapAttr);
-        loadingService.setDataObjectToDB(dataObject);
-        doCache.invalidate(dataObject.getId());
-        doCache.put(dataObject.getId(), dataObject);
-        System.out.println("Размер кэша после добавления " + doCache.size());
+
+        if (userService.getEmail(dataObject.getParams().get(6)).isEmpty()) {
+            loadingService.setDataObjectToDB(dataObject);
+            doCache.invalidate(dataObject.getId());
+            doCache.put(dataObject.getId(), dataObject);
+            System.out.println("Размер кэша после добавления " + doCache.size());
+        } else {
+            throw new CustomException("Пользователь с таким email'ом уже существует");
+        }
+
 
         return "/main";
     }

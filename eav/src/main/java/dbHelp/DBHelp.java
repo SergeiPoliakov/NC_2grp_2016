@@ -1,7 +1,6 @@
 package dbHelp;
 
 import entities.*;
-import service.Filter;
 import service.UserServiceImp;
 
 import javax.naming.Context;
@@ -69,60 +68,10 @@ public class DBHelp {
     }
 
 
-    public ArrayList<DataObject> searchUser(String name) throws SQLException {
-        ArrayList<DataObject> Res = new ArrayList<>();
-        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
-        Connection Con = getConnection();
-        Integer userTypeID = 1001; // ID типа Пользователь
-        String sqlName = "%" + name + "%";
-        PreparedStatement PS = Con.
-                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE " +
-                        " FROM OBJECTS ob " +
-                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
-                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
-                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
-                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
-                        " WHERE ob.OBJECT_TYPE_ID = ? AND (lower(ob.OBJECT_NAME) LIKE lower(?)) ORDER BY ob.OBJECT_NAME");
-        PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
-        PS.setString(2, sqlName);
-        ResultSet RS = PS.executeQuery();
-
-        while (RS.next()) {
-            mapAttr.put(1, RS.getString(2));
-            mapAttr.put(2, RS.getString(3));
-            mapAttr.put(3, RS.getString(4));
-            mapAttr.put(4, RS.getString(5));
-
-            String nameUser = RS.getString(2) + " " + RS.getString(3) + " " + RS.getString(4);
-
-            DataObject dataObject = new DataObject(RS.getInt(1), nameUser, 1001, mapAttr);
-            Res.add(dataObject);
-
-            // System.out.println(user.getId() + " , " + user.getName());
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
-    }
 
 
-    public ArrayList<Object> getObjectsIDbyObjectTypeID(int ObjectTypeID)
-            throws SQLException {
-        ArrayList<Object> Res = new ArrayList<>();
-        Connection Con = getConnection();
-        PreparedStatement PS = Con
-                .prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
-        PS.setInt(1, ObjectTypeID);
-        ResultSet RS = PS.executeQuery();
-        while (RS.next()) {
-            Res.add(RS.getObject(1));
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
-    }
+
+
 
 
     public ArrayList<Object> getEmail(String email)
@@ -145,40 +94,69 @@ public class DBHelp {
     }
 
 
-    public ArrayList<User> getUserList() throws SQLException {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public ArrayList<User> getFriendListCurrentUser() throws SQLException {
+        Integer userID = new DBHelp().getObjID(userService.getCurrentUsername());
+        ArrayList<User> friendList = getFriendListByUserId(userID);
+        return friendList;
+    }
+
+    public ArrayList<User> getFriendListByUserId(int userID) throws SQLException {
         ArrayList<User> Res = new ArrayList<>();
         Connection Con = getConnection();
         Integer userTypeID = 1001; // ID типа Пользователь
+        int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
+
         PreparedStatement PS = Con.
-                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
+                prepareStatement("SELECT friend.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
                         "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
-                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
-                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
-                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
-                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
-                        "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " +
-                        "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " +
-                        "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " +
-                        "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
-                        "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
-                        "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
-                        "WHERE ob.OBJECT_TYPE_ID = ? ORDER BY ob.OBJECT_ID");
-        PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
+                        "LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND ATTR_ID = ? " + // Только ссылки на друзей attrId = 12
+                        "LEFT JOIN OBJECTS friend ON re.REFERENCE = friend.OBJECT_ID " +
+                        "LEFT JOIN PARAMS pa1 ON friend.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " + // -- name
+                        "LEFT JOIN PARAMS pa2 ON friend.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " + // -- suname
+                        "LEFT JOIN PARAMS pa3 ON friend.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " + // -- middleName
+                        "LEFT JOIN PARAMS pa4 ON friend.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " + // -- nickname
+                        "LEFT JOIN PARAMS pa5 ON friend.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " + // -- ageDate
+                        "LEFT JOIN PARAMS pa6 ON friend.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " + // -- email
+                        "LEFT JOIN PARAMS pa7 ON friend.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " + // -- bcryptPass
+                        "LEFT JOIN PARAMS pa8 ON friend.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " + // -- sex
+                        "LEFT JOIN PARAMS pa9 ON friend.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " + // -- country
+                        "LEFT JOIN PARAMS pa10 ON friend.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " + // -- additional_field
+                        "LEFT JOIN PARAMS pa11 ON friend.OBJECT_ID = pa11.OBJECT_ID AND pa10.ATTR_ID = 11 " + // -- picture
+                        "WHERE ob.OBJECT_TYPE_ID = ? " + // -- Только тип Пользователи userTypeID = 1001
+                        "AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID"); // id юзера, кому ищем друзей
+
+        PS.setInt(1, attrId); // В качестве параметра id ссылки на друга
+        PS.setInt(2, userTypeID); // В качестве параметра id типа Пользователь
+        PS.setInt(3, userID); // В качестве параметра id юзера, для которого ищем друзей
         ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         while (RS.next()) {
-            User user = new User();
-            user.setId(RS.getInt(1));
-            user.setName(RS.getString(2));
-            user.setSurname(RS.getString(3));
-            user.setMiddleName(RS.getString(4));
-            user.setLogin(RS.getString(5));
-            user.setAgeDate(RS.getString(6));
-            user.setEmail(RS.getString(7));
-            user.setPassword(RS.getString(8));
-            user.setSex(RS.getString(9));
-            user.setCity(RS.getString(10));
-            user.setAdditional_field(RS.getString(11));
-            Res.add(user);
+            User friend = new User();
+            friend.setId(RS.getInt(1));
+            friend.setName(RS.getString(2));
+            friend.setSurname(RS.getString(3));
+            friend.setMiddleName(RS.getString(4));
+            friend.setLogin(RS.getString(5));
+            friend.setAgeDate(RS.getString(6));
+            friend.setEmail(RS.getString(7));
+            friend.setPassword(RS.getString(8));
+            friend.setSex(RS.getString(9));
+            friend.setCity(RS.getString(10));
+            friend.setAdditional_field(RS.getString(11));
+            Res.add(friend);
         }
         RS.close();
         PS.close();
@@ -187,11 +165,14 @@ public class DBHelp {
     }
 
 
+
+
     public User getCurrentUser() throws SQLException {
         Integer userID = new DBHelp().getObjID(userService.getCurrentUsername());
         User user = getUserByUserID(userID);
         return user;
     }
+
 
     public User getUserByUserID(int userID) throws SQLException {
         Connection Con = getConnection();
@@ -233,6 +214,12 @@ public class DBHelp {
         CloseConnection(Con);
         return user;
     }
+
+
+
+
+
+
 
     public User getUserAndEventByUserID(int userID) throws SQLException {
         Connection Con = getConnection();
@@ -306,428 +293,20 @@ public class DBHelp {
         return user;
     }
 
-    public ArrayList<DataObject> getEventList(int ObjectID) throws SQLException {
-        ArrayList<DataObject> Res = new ArrayList<>();
-        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
-        Connection Con = getConnection();
-        // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
-
-        PreparedStatement PS = Con.prepareStatement("SELECT ev.OBJECT_ID, ob.OBJECT_ID, ev.OBJECT_NAME," +
-                "pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE FROM OBJECTS ob LEFT JOIN REFERENCES re " +
-                "ON ob.OBJECT_ID = re.OBJECT_ID LEFT JOIN OBJECTS ev  ON re.REFERENCE = ev.OBJECT_ID " +
-                "LEFT JOIN PARAMS pa1 ON ev.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 103 LEFT JOIN PARAMS pa2 " +
-                "ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 101   LEFT JOIN PARAMS pa3 " +
-                "ON ev.OBJECT_ID = pa3.OBJECT_ID AND  pa3.ATTR_ID = 102 LEFT JOIN PARAMS pa4 " +
-                "ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 105 LEFT JOIN PARAMS pa5 " +
-                "ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 104 WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 13 ORDER BY ev.OBJECT_ID");
-        PS.setInt(1, ObjectID); // В качестве параметра id пользователя
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        while (RS.next()) {
-            mapAttr.put(1, RS.getString(4));
-            mapAttr.put(2, RS.getString(5));
-            mapAttr.put(3, RS.getString(6));
-            mapAttr.put(4, RS.getString(7));
-
-            DataObject dataObject = new DataObject(RS.getInt(1), RS.getString(3), 1002, mapAttr);
-
-            Res.add(dataObject); // Res.add(RS.getObject(1));
-            //Res.add(RS.getObject(2));
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
-    }
-
-
-    public Event getEventByEventID(int EventID) throws SQLException {
-        Connection Con = getConnection();
-
-        Integer idUser = new DBHelp().getObjID(userService.getCurrentUsername());
-
-        PreparedStatement PS = Con.prepareStatement("SELECT ev.OBJECT_ID, ob.OBJECT_ID, ev.OBJECT_NAME," +
-                "pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE FROM OBJECTS ob LEFT JOIN REFERENCES re " +
-                "ON ob.OBJECT_ID = re.OBJECT_ID LEFT JOIN OBJECTS ev  ON re.REFERENCE = ev.OBJECT_ID " +
-                "LEFT JOIN PARAMS pa1 ON ev.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 103 LEFT JOIN PARAMS pa2 " +
-                "ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 101   LEFT JOIN PARAMS pa3 " +
-                "ON ev.OBJECT_ID = pa3.OBJECT_ID AND  pa3.ATTR_ID = 102 LEFT JOIN PARAMS pa4 " +
-                "ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 105 LEFT JOIN PARAMS pa5 " +
-                "ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 104 WHERE ob.OBJECT_ID = ? AND ev.OBJECT_ID = ? ORDER BY ev.OBJECT_ID");
-        PS.setInt(1, idUser); // В качестве параметра id пользователя
-        PS.setInt(2, EventID); // В качестве параметра id пользователя
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        Event event = null;
-        while (RS.next()) {
-            event = new Event();
-            event.setId(RS.getInt(1));
-            event.setHost_id(RS.getInt(2));
-            event.setName(RS.getString(3));
-            event.setDate_begin(RS.getString(4));
-            event.setDate_end(RS.getString(5));
-            event.setPriority(RS.getString(6));
-            event.setInfo(RS.getString(7));
-        }
-
-
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return event;
-    }
-
-    /*
-        public ArrayList<Object> getEventsIDbyObjectID(int ObjectID) throws SQLException {
-        ArrayList<Object> Res = new ArrayList<>();
-        Connection Con = getConnection();
-        // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
-
-        PreparedStatement PS = Con.prepareStatement("SELECT ev.OBJECT_ID, NVL(ev.OBJECT_NAME, 'Нет событий') " +
-                "AS EVENT FROM OBJECTS ob LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID " +
-                "LEFT JOIN OBJECTS ev ON re.REFERENCE = ev.OBJECT_ID WHERE ob.OBJECT_ID =  ?");
-        PS.setInt(1, ObjectID); // В качестве параметра id пользователя
-        ResultSet RS = PS.executeQuery(); System.out.println(RS);
-        while (RS.next()) {
-            ArrayList<Object> arrayRS = new ArrayList<>();
-            Event event = new Event();
-            event.
-            arrayRS.add(RS.getObject(1));
-            arrayRS.add(RS.getObject(2));
-            Res.add(arrayRS); // Res.add(RS.getObject(1));
-            //Res.add(RS.getObject(2));
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
-    }
-
-     */
-
-    public int getAttrID(int ObjID, int ObjRefID) throws SQLException {
-        Connection Con = getConnection();
-        PreparedStatement PS = Con
-                .prepareStatement("SELECT ATTR_ID FROM REFERENCES WHERE OBJECT_ID = ? and REFERENCE = ?");
-        PS.setInt(1, ObjID);
-        PS.setInt(2, ObjRefID);
-        ResultSet RS = PS.executeQuery();
-        int attrid = 0;
-        while (RS.next()) {
-            attrid = RS.getInt(1);
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return attrid;
-    }
-
-
-    public String getValue(int ObjID, int AttrId) throws SQLException {
-        Connection Con = getConnection();
-        PreparedStatement PS = Con
-                .prepareStatement("SELECT VALUE FROM PARAMS WHERE OBJECT_ID = ? and ATTR_ID = ?");
-        PS.setInt(1, ObjID);
-        PS.setInt(2, AttrId);
-        ResultSet RS = PS.executeQuery();
-        String value = "";
-        while (RS.next()) {
-            value = RS.getString(1);
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return value;
-    }
-
-
-    public void deleteObject(Integer ID) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
-        Connection Con = getConnection();
-        PreparedStatement PS = Con
-                .prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
-        PS.setInt(1, ID);
-        PS.executeUpdate();
-        PS = Con
-                .prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ?");
-        PS.setInt(1, ID);
-        PS.executeUpdate();
-        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ?");
-        PS.setInt(1, ID);
-        PS.executeUpdate();
-        PS = Con.prepareStatement("DELETE FROM OBJECTS WHERE OBJECT_ID = ?");
-        PS.setInt(1, ID);
-        PS.executeUpdate();
-        PS.close();
-        CloseConnection(Con);
-    }
-
-
-    public void deleteEvent(Integer eventId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
-        Connection Con = getConnection();
-        PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
-        PS.setInt(1, eventId);
-        PS.executeUpdate();
-        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ?");
-        PS.setInt(1, eventId);
-        PS.executeUpdate();
-        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ?");
-        PS.setInt(1, eventId);
-        PS.executeUpdate();
-        PS = Con.prepareStatement("DELETE FROM OBJECTS WHERE OBJECT_ID = ?");
-        PS.setInt(1, eventId);
-        PS.executeUpdate();
-        // И удаляем 13-ый параметр в PARAMS (task_id для текущего пользователя):
-        PS = Con.prepareStatement("DELETE FROM PARAMS WHERE VALUE = ?");
-        PS.setString(1, String.valueOf(eventId));
-        PS.executeUpdate();
-
-        PS.close();
-        CloseConnection(Con);
-    }
 
 
 
-    ///////// Новое 2017-02-12 (для DataObject)
-    public TreeMap<Integer, Object> getUserById(int userID) throws SQLException {
-        Connection Con = getConnection();
-        Integer userTypeID = 1001; // ID типа Пользователь
-        PreparedStatement PS = Con.
-                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
-                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE, pa11.VALUE FROM OBJECTS ob " +
-                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
-                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
-                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
-                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
-                        "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " +
-                        "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " +
-                        "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " +
-                        "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
-                        "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
-                        "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
-                        "LEFT JOIN PARAMS pa11 ON ob.OBJECT_ID = pa11.OBJECT_ID AND pa11.ATTR_ID = 11 " +
-                        "WHERE ob.OBJECT_TYPE_ID = ? AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID");
-        PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
-        PS.setInt(2, userID); // В качестве параметра id пользователя
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        TreeMap<Integer, Object> treeMap = null;
-        while (RS.next()) {
-            treeMap = new TreeMap<>();
-            // treeMap.put(1, RS.getInt(1)); // id уже не нужно
-            treeMap.put(1, RS.getString(2)); // name
-            treeMap.put(2, RS.getString(3)); // surname
-            treeMap.put(3, RS.getString(4)); // MiddleName
-            treeMap.put(4, RS.getString(5)); // Login
-            treeMap.put(5, RS.getString(6)); // AgeDate
-            treeMap.put(6, RS.getString(7)); // Email
-            treeMap.put(7, RS.getString(8)); // Password
-            treeMap.put(8, RS.getString(9)); // Sex
-            treeMap.put(9, RS.getString(10)); // Country
-            treeMap.put(10, RS.getString(11)); // Additional_field
-            treeMap.put(11, RS.getString(12)); // Avatar
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return treeMap;
-    }
 
 
 
-    public void updateEvent(int ObjID, Event event) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        Connection Con = getConnection();
-        TreeMap<Integer, Object> attributeArray = event.getArrayWithAttributes();
-        PreparedStatement PS = Con.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
-        while (!attributeArray.isEmpty()) {
-            java.util.Map.Entry<Integer, Object> En = attributeArray.pollFirstEntry();
-            PS.setObject(1, En.getValue());
-            PS.setInt(2, ObjID);
-            PS.setInt(3, En.getKey());
-            PS.addBatch();
-        }
-        PS.executeBatch();
-        PS.close();
-
-        PreparedStatement PS1 = Con.prepareStatement("UPDATE OBJECTS SET OBJECT_NAME = ? WHERE OBJECT_ID = ?");
-        PS1.setString(1, event.getName());
-        PS1.setInt(2, ObjID);
-        PS1.executeUpdate();
-        PS1.close();
-
-        CloseConnection(Con);
-    }
 
 
-    public ArrayList<User> getFriendListCurrentUser() throws SQLException {
-        Integer userID = new DBHelp().getObjID(userService.getCurrentUsername());
-        ArrayList<User> friendList = getFriendListByUserId(userID);
-        return friendList;
-    }
 
 
-    public ArrayList<User> getFriendListByUserId(int userID) throws SQLException {
-        ArrayList<User> Res = new ArrayList<>();
-        Connection Con = getConnection();
-        Integer userTypeID = 1001; // ID типа Пользователь
-        int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
-
-        PreparedStatement PS = Con.
-                prepareStatement("SELECT friend.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
-                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
-                        "LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND ATTR_ID = ? " + // Только ссылки на друзей attrId = 12
-                        "LEFT JOIN OBJECTS friend ON re.REFERENCE = friend.OBJECT_ID " +
-                        "LEFT JOIN PARAMS pa1 ON friend.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " + // -- name
-                        "LEFT JOIN PARAMS pa2 ON friend.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " + // -- suname
-                        "LEFT JOIN PARAMS pa3 ON friend.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " + // -- middleName
-                        "LEFT JOIN PARAMS pa4 ON friend.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " + // -- nickname
-                        "LEFT JOIN PARAMS pa5 ON friend.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " + // -- ageDate
-                        "LEFT JOIN PARAMS pa6 ON friend.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " + // -- email
-                        "LEFT JOIN PARAMS pa7 ON friend.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " + // -- bcryptPass
-                        "LEFT JOIN PARAMS pa8 ON friend.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " + // -- sex
-                        "LEFT JOIN PARAMS pa9 ON friend.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " + // -- country
-                        "LEFT JOIN PARAMS pa10 ON friend.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " + // -- additional_field
-                        "LEFT JOIN PARAMS pa11 ON friend.OBJECT_ID = pa11.OBJECT_ID AND pa10.ATTR_ID = 11 " + // -- picture
-                        "WHERE ob.OBJECT_TYPE_ID = ? " + // -- Только тип Пользователи userTypeID = 1001
-                        "AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID"); // id юзера, кому ищем друзей
-
-        PS.setInt(1, attrId); // В качестве параметра id ссылки на друга
-        PS.setInt(2, userTypeID); // В качестве параметра id типа Пользователь
-        PS.setInt(3, userID); // В качестве параметра id юзера, для которого ищем друзей
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        while (RS.next()) {
-            User friend = new User();
-            friend.setId(RS.getInt(1));
-            friend.setName(RS.getString(2));
-            friend.setSurname(RS.getString(3));
-            friend.setMiddleName(RS.getString(4));
-            friend.setLogin(RS.getString(5));
-            friend.setAgeDate(RS.getString(6));
-            friend.setEmail(RS.getString(7));
-            friend.setPassword(RS.getString(8));
-            friend.setSex(RS.getString(9));
-            friend.setCity(RS.getString(10));
-            friend.setAdditional_field(RS.getString(11));
-            Res.add(friend);
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
-    }
 
 
-    public void setNewMessage(int ObjTypeID, TreeMap<Integer, Object> massAttr) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        Connection Con = getConnection();
-
-        // 1) Добавление сообщения:
-        PreparedStatement PS = Con.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
-        Statement st = Con.createStatement();
-        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + ObjTypeID);
-        int newID = 30001; // 30к - отсюда отсчет айди для сообщений
-        while (RS.next()) {
-            newID = RS.getInt(1) + 1;
-        }
-
-        String name = "Message_" + newID;
-        PS.setInt(1, newID);
-        PS.setInt(2, ObjTypeID);
-        PS.setObject(3, name);
-        PS.executeUpdate();
-        PS.close();
-
-        // 2) Добавление атрибутов со страницы создания сообщения:
-        PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
-        while (!massAttr.isEmpty()) {
-            java.util.Map.Entry<Integer, Object> En = massAttr.pollFirstEntry();
-            PS1.setObject(1, En.getValue());
-            PS1.setInt(2, newID);
-            PS1.setInt(3, En.getKey());
-            PS1.addBatch();
-        }
-        PS1.executeBatch();
-        PS1.close();
-
-        // 3) Добавление ссылки Юзер - Сообщение (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '30', '30001');
-        int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
-        int attrId = 30;
-        PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-        PS2.setInt(1, idUser); // System.out.println(idUser);
-        PS2.setInt(2, attrId); // System.out.println(attrId);
-        PS2.setInt(3, newID); // System.out.println(newID);
-        PS2.executeQuery(); // PS2.executeBatch();
-        PS2.close();
-
-        CloseConnection(Con);
-    }
 
 
-    public void deleteMessage(Integer messageId) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
-        Connection Con = getConnection();
-        PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
-        PS.setInt(1, messageId);
-        PS.executeUpdate();
-        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ?");
-        PS.setInt(1, messageId);
-        PS.executeUpdate();
-        PS = Con.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ?");
-        PS.setInt(1, messageId);
-        PS.executeUpdate();
-        PS = Con.prepareStatement("DELETE FROM OBJECTS WHERE OBJECT_ID = ?");
-        PS.setInt(1, messageId);
-        PS.executeUpdate();
-        // И удаляем 30-ый параметр в PARAMS (task_id для текущего пользователя):
-        PS = Con.prepareStatement("DELETE FROM PARAMS WHERE VALUE = ?");
-        PS.setString(1, String.valueOf(messageId));
-        PS.executeUpdate();
-
-        PS.close();
-        CloseConnection(Con);
-    }
-
-
-    public ArrayList<Message> getMessageList(int from_id, int to_id) throws SQLException {
-        // from_id = 10001; to_id = 10002; // ТОЛЬКО ДЛЯ ОТЛАДКИ!!!
-        ArrayList<Message> Res = new ArrayList<>();
-        Connection Con = getConnection();
-        PreparedStatement PS = Con.prepareStatement("SELECT ms.OBJECT_ID, ob.OBJECT_ID, pa2.VALUE, " +
-                "pa3.VALUE, pa4.VALUE, pa5.VALUE, pa6.VALUE, pa7.VALUE FROM OBJECTS ob " +
-                "LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID " +
-                "LEFT JOIN OBJECTS ms ON re.REFERENCE = ms.OBJECT_ID " +
-                "LEFT JOIN PARAMS pa1 ON ms.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 201 " +
-                "LEFT JOIN PARAMS pa2 ON ms.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 " +
-                "LEFT JOIN PARAMS pa3 ON ms.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 203 " +
-                "LEFT JOIN PARAMS pa4 ON ms.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 204 " +
-                "LEFT JOIN PARAMS pa5 ON ms.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 205 " +
-                "LEFT JOIN PARAMS pa6 ON ms.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 206 " +
-                "LEFT JOIN PARAMS pa7 ON ms.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 207 " +
-                "WHERE (ob.OBJECT_ID = ? AND pa2.VALUE = ? OR ob.OBJECT_ID = ? " +
-                "AND pa2.VALUE = ?) AND re.ATTR_ID = 30 ORDER BY ms.OBJECT_ID");
-        PS.setInt(1, from_id); // В качестве параметра id пользователя отправителя
-        PS.setInt(2, to_id); // В качестве параметра id пользователя получателя
-        // и наоборот:
-        PS.setInt(3, to_id); // В качестве параметра id пользователям
-        PS.setInt(4, from_id); // В качестве параметра id пользователя отправителя
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        while (RS.next()) {
-            Message message = new Message();
-            message.setId(RS.getInt(1));
-            message.setFrom_id(RS.getInt(2));
-            message.setTo_id(RS.getInt(3));
-            message.setDate_send(RS.getString(4));
-            message.setRead_status(RS.getInt(5));
-            message.setText(RS.getString(6));
-            message.setFrom_name(RS.getString(7));
-            message.setTo_name(RS.getString(8));
-
-            Res.add(message); // Res.add(RS.getObject(1));
-            //Res.add(RS.getObject(2));
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
-    }
 
 
     //region Meeting
@@ -988,61 +567,7 @@ public class DBHelp {
 
     //endregion
 
-/*
-    public static void main(String[] args) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-        User user = new User();
-        user.setId(10003);
-        Meeting meeting = new Meeting("Название", "02.02.2017 16:45", "02.02.2017 22:45", "Информация я написал", user, "Привяу", "");
-        System.out.println();
-        new DBHelp().setMeeting(meeting);
-        //ArrayList<User> oldusers = new DBHelp().getUsersAtMeeting("28"); // ID
-
-        //System.out.print("dsd");
-
-        //Meeting ms = new DBHelp().getMeeting(28);
-        //System.out.println(ms.getTitle());
-        /*ArrayList<User> ms = new DBHelp().getUsersAtMeeting("28");
-        for (int i=0; i < ms.size(); i++){
-            System.out.println(ms.get(i).getId());
-        }*/
-    //new DBHelp().addUsersToMeeting("28", "10002", "10001");
-        /*ArrayList<Meeting> ms = new DBHelp().getUserMeetingsList(10003);
-        for (int i=0; i < ms.size(); i++){
-            System.out.println(ms.get(i).getId());
-            System.out.println(ms.get(i).getTitle());
-            System.out.println(ms.get(i).getDate_start());
-            System.out.println(ms.get(i).getDate_end());
-            System.out.println(ms.get(i).getInfo());
-            System.out.println(ms.get(i).getOrganizer());
-            System.out.println(ms.get(i).getTag());
-        }*/
-       /*System.out.println("START");
-        addMeeting(new Meeting("Выпиваем2", "07.02.2017 12:00", "07.02.2017 19:30", "Всем ку, тут хранится информация",  "10003", "#ky", ""));
-        updateEvent("28", new Meeting("НЕ Выпиваем ters", "07.02.2017 14:40", "07.02.2017 14:32", "ЗДАРОВ",  "10003", "#ky", ""));
-        removeUsersFromMeeting("27",  "10003");
-
-        ArrayList<Meeting> mm = getAllMeetingsList();
-        ArrayList<Meeting> ms = getUserMeetingsList(10002);
-        for (int i=0; i < ms.size(); i++){
-            System.out.println(ms.get(i).getId());
-            System.out.println(ms.get(i).getTitle());
-            System.out.println(ms.get(i).getDate_start());
-            System.out.println(ms.get(i).getDate_end());
-            System.out.println(ms.get(i).getInfo());
-            System.out.println(ms.get(i).getOrganizer());
-            System.out.println(ms.get(i).getTag());
-        }
-        System.out.println("END");*/
-    //DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "nc","nc");
-    //int attr = getAttrID(10001, 20004);
-    //System.out.println(attr);
-    // deleteObject(10001);
-    // addTask();
-
-    //  System.out.println(getValue(10001, 6));
-
-    //  }
 
     //region DO Methods
 
@@ -1249,65 +774,9 @@ public class DBHelp {
         }
         return dataObjectList;
     }
+
     // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает список id подходящих под фильтры датаобджектов
-    public ArrayList<Integer> getListObjectsByListIdAlternative(String... strings) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        ArrayList<Integer> idList = new ArrayList<>();
-        if (strings.length > 0) {
-            boolean fromFlag = false;
-            boolean tableFlag = false;
-            String sql = "SELECT OBJECT_ID FROM ";
-            for (int i = 0; i < strings.length; i++) {
-                switch (strings[i]) {
-                    case Filter.OBJECT_TYPE: // Если выбран тип
-                        if (!tableFlag) {
-                            sql += "OBJECTS ";
-                            tableFlag = !tableFlag;
-                        }
-                        if (!fromFlag) {
-                            sql += "WHERE ";
-                            fromFlag = !fromFlag;
-                        } else {
-                            sql += "AND ";
-                        }
-                        i++;
-                        sql += Filter.OBJECT_TYPE + " = " + strings[i] + " ";
-                        break;
 
-                    case Filter.OBJECT_NAME:// Если выбрано имя
-                        if (!tableFlag) {
-                            sql += "OBJECTS ";
-                            tableFlag = !tableFlag;
-                        }
-                        if (!fromFlag) {
-                            sql += "WHERE ";
-                            fromFlag = !fromFlag;
-                        } else {
-                            sql += "AND ";
-                        }
-                        i++;
-                        sql += Filter.OBJECT_NAME + " = " + strings[i] + " ";
-                        break;
-                }
-            }
-            if (!tableFlag) {
-                sql += "OBJECTS ";
-                tableFlag = !tableFlag;
-            }
-            sql += "ORDER BY OBJECT_ID";
-
-            Connection Con = getConnection();
-            PreparedStatement PS = Con.prepareStatement(sql);
-            ResultSet RS = PS.executeQuery();
-            // Обходим всю полученную таблицу и формируем лист id-шек
-            while (RS.next()) {
-                idList.add(RS.getInt(1));
-            }
-            RS.close();
-            PS.close();
-            CloseConnection(Con);
-        }
-        return idList;
-    }
 
     /* ................................................................................................................... */
     // 2017-02-16 Парсер-генератор строки SQL-запроса по переданному фильтру:

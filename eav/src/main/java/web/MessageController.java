@@ -5,18 +5,13 @@ package web;
  */
 
 import com.google.common.cache.LoadingCache;
-import dbHelp.DBHelp;
 import entities.DataObject;
-import entities.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import service.LoadingServiceImp;
-import service.MessageServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.MessageFilter;
@@ -32,8 +27,6 @@ import java.util.concurrent.ExecutionException;
 public class MessageController {
 
     private UserServiceImp userService = UserServiceImp.getInstance();
-
-    private MessageServiceImp messageService = MessageServiceImp.getInstance();
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 

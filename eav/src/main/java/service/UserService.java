@@ -24,42 +24,29 @@ interface UserService {
     @WebMethod
     String getCurrentUsername();
 
-    @WebMethod
-    ArrayList<DataObject> searchUser(String name) throws SQLException;
+
 
     @WebMethod
     int getObjID(String username) throws SQLException;
 
-    @WebMethod
-    ArrayList<Object> getObjectsIDbyObjectTypeID(int ObjectTypeID) throws SQLException;
-
-    @WebMethod
-    ArrayList<User> getUserList() throws SQLException;
 
     @WebMethod
     User getCurrentUser() throws SQLException;
 
-    @WebMethod
-    User getUserByUserID(int userID) throws SQLException;
-
-    @WebMethod
-    User getUserAndEventByUserID(int userID) throws SQLException;
 
 
-    @WebMethod
-    void deleteObject(Integer ID) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException;
+
+
 
 
     @WebMethod
-    void setNewUser(DataObject dataObject) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, CustomException;
-
+    ArrayList<User> getFriendListCurrentUser() throws SQLException;
 
     @WebMethod
-    void updateUser(DataObject dataObject) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException;
+    ArrayList<Object> getEmail(String email) throws SQLException;
+
+
+
 
     @WebMethod
     void setFriend(int idFriend) throws SQLException,
@@ -71,11 +58,9 @@ interface UserService {
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException;
 
-    @WebMethod
-    ArrayList<User> getFriendListCurrentUser() throws SQLException;
 
-    @WebMethod
-    ArrayList<User> getFriendListByUserId(int userID) throws SQLException;
+
+
 
     @WebMethod
     int generationID(int objTypeID) throws SQLException;

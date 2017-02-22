@@ -1,18 +1,10 @@
 package web;
 
 import com.google.common.cache.LoadingCache;
-import dbHelp.DBHelp;
 import entities.DataObject;
-import entities.Event;
-import entities.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import service.EventServiceImp;
 import service.LoadingServiceImp;
-import service.UserServiceImp;
 import service.cache.DataObjectCache;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,25 +17,11 @@ import java.util.TreeMap;
 @Controller
 public class KKUserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(KKUserController.class);
-
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
-    private UserServiceImp userService = UserServiceImp.getInstance();
 
-    private EventServiceImp eventService = EventServiceImp.getInstance();
-
-    @RequestMapping(value = "/user{id}")
-    public String viewUser(@PathVariable("id") int userId,
-                           ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-        logger.info("STOP");
-        User user = new User(new DBHelp().getObjectsByIdAlternative(userId));//userService.getUserByUserID(userId);
-        m.addAttribute(user);
-        m.addAttribute("allEvents", eventService.getEventList(userId));
-        return "/user";
-    }
 
     @RequestMapping(value = "/userAddEvent", method = RequestMethod.POST)
     public String addEvent(@ModelAttribute("name") String name,

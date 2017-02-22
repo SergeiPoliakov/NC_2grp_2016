@@ -7,14 +7,10 @@ package web;
 import com.google.common.cache.LoadingCache;
 import entities.DataObject;
 import entities.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import service.EventServiceImp;
 import service.LoadingServiceImp;
-import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.EventFilter;
 
