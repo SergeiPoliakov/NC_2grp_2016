@@ -9,6 +9,11 @@ import entities.User;
 import exception.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,8 +30,12 @@ import service.cache.DataObjectCache;
 import service.id_filters.EventFilter;
 import service.id_filters.UserFilter;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.sql.SQLException;
@@ -43,6 +52,7 @@ import java.util.concurrent.ExecutionException;
  */
 @Controller
 public class UserController {
+
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
@@ -69,13 +79,23 @@ public class UserController {
 
 
     @RequestMapping(value = "/main-login", method = RequestMethod.GET)
-    public String getUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException {
+    public String getUserPage(HttpServletRequest request, HttpServletResponse response, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException {
+
+        DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
+        if (currentUser.getValue(15).equals("false")) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null){
+                new SecurityContextLogoutHandler().logout(request, response, auth);
+            }
+            throw new CustomException("Вы еще не подтвердили свой email!");
+
+        }
+
         System.out.println("Размер кэша до обновления страницы " + doCache.size());
         try {
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
             System.out.println("Размер кэша после добавления " + doCache.size());
             User user = new User(dataObject);
-            ArrayList<Event> event = user.getEventsUser();
             m.addAttribute(user);
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -116,9 +136,7 @@ public class UserController {
             m.addAttribute("allEvents", events);
             m.addAttribute("eventword", eventword);
 
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
+        } catch (ExecutionException | ParseException e) {
             e.printStackTrace();
         }
 
@@ -134,7 +152,6 @@ public class UserController {
         if (error != null) {
             model.addObject("error", "Invalid username or password!");
         }
-
         model.setViewName("main");
 
         return model;
@@ -227,7 +244,7 @@ public class UserController {
                                @RequestParam("ageUser") String ageDate,
                                @RequestParam("email") String email,
                                @RequestParam("password") String password
-    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, CustomException {
+    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, CustomException, MessagingException, UnsupportedEncodingException {
 
         String full_name = name + " " + surname + " " + middle_name;
 
@@ -245,6 +262,7 @@ public class UserController {
         mapAttr.put(9, null);
         mapAttr.put(10, null);
         mapAttr.put(11, "http://netcracker.hop.ru/upload/default/avatar.png");
+        mapAttr.put(15, "false");
         // mapAttr.put(12, null);
         // mapAttr.put(13, null); не нужно, иначе потом пустая ссылка на событие висит, и при добавлении новой задачи она так и остается висеть. Иначе надо будет при добавлении эту обновлять
 
@@ -255,8 +273,37 @@ public class UserController {
 
         if (userService.getEmail(dataObject.getParams().get(6)).isEmpty()) {
             loadingService.setDataObjectToDB(dataObject);
+            try (GenericXmlApplicationContext context = new GenericXmlApplicationContext()) {
+                context.load("classpath:applicationContext.xml");
+                context.refresh();
+                JavaMailSender mailSender = context.getBean("mailSender", JavaMailSender.class);
+
+
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper  =  new  MimeMessageHelper(message,  true);
+
+                message.setSubject(nickname, "UTF-8");
+
+                //TODO: Сюда напишите e-mail получателя.
+                helper.setTo(email);
+                helper.setFrom(new InternetAddress("netcracker.thesecondgroup@gmail.com", "NC", "UTF-8"));
+
+                String url = "http://localhost:8081/" + dataObject.getId() + "/varification_token/" + userService.generateToken(20);
+
+                helper.setText("Добро пожаловать! \n"+
+                        "Перейдите по ссылке, чтобы завершить регистрацию и получить полный доступ к приложению \n"+
+                        "<html><body><a href="+url+">"+"Завершение регистрации"+"</a></body></html> \n"+
+                        "Это сообщение создано автоматически, на него не нужно отвечать!", true) ;
+
+                try {
+                    mailSender.send(message);
+                    System.out.println("Mail sended");
+                } catch (MailException mailException) {
+                    System.out.println("Mail send failed.");
+                    mailException.printStackTrace();
+                }
+            }
             doCache.invalidate(dataObject.getId());
-            doCache.put(dataObject.getId(), dataObject);
             System.out.println("Размер кэша после добавления " + doCache.size());
         } else {
             throw new CustomException("Пользователь с таким email'ом уже существует");
@@ -265,6 +312,20 @@ public class UserController {
 
         return "/main";
     }
+
+    //Завершение регистрации пользователя
+    @RequestMapping(value="/{id}/varification_token/{token}", method=RequestMethod.GET)
+    public String verificationToken(@PathVariable("token") String token,
+                                    @PathVariable("id") Integer id) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+
+            DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
+            String confirmed = "true";
+            dataObject.setValue(15, confirmed);
+            loadingService.updateDataObject(dataObject);
+
+        return "/main";
+    }
+
 
     // Выводим данные о пользователе на форму редактирования профиля
     @RequestMapping("/profile")

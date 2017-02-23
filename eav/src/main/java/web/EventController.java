@@ -65,8 +65,7 @@ public class EventController {
         // Работаем с кэшем:
         // предварительно удаляем
         doCache.invalidate(dataObject.getId());
-        // и заносим
-        //doCache.put(dataObject.getId(), dataObject);
+
         System.out.println("Добавляем в кэш событие " + dataObject.getName());
 
         // и только потом обновляем объект в базе

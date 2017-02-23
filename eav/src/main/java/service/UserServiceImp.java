@@ -3,12 +3,14 @@ package service;
 import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.User;
+import org.springframework.mail.MailException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by Lawrence on 08.02.2017.
@@ -63,7 +65,18 @@ public class UserServiceImp implements UserService {
         return new DBHelp().getEmail(email);
     }
 
-
+    // Получение случайного токета для завершения регистрации
+    public String generateToken(int length)
+    {
+        String characters = "qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOASDFGHJKLZXCVBNM";
+        Random rnd = new Random();
+        char[] text = new char[length];
+        for (int i = 0; i < length; i++)
+        {
+            text[i] = characters.charAt(rnd.nextInt(characters.length()));
+        }
+        return new String(text);
+    }
 
     // Добавление юзера в список друзей по его ID (2017-02-03) (испр. 2017-02-07)
     public void setFriend(int idFriend) throws SQLException,
@@ -82,5 +95,9 @@ public class UserServiceImp implements UserService {
 
     public int generationID(int objTypeID) throws SQLException {
         return new DBHelp().generationID(objTypeID);
+    }
+
+    public void sendEmail(String text, DataObject dataObject) throws MailException {
+        //TODO: Здесь будем отправлять опощения пользователю.
     }
 }

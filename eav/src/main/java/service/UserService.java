@@ -4,6 +4,7 @@ import entities.DataObject;
 import entities.Event;
 import entities.User;
 import exception.CustomException;
+import org.springframework.mail.MailException;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -24,20 +25,11 @@ interface UserService {
     @WebMethod
     String getCurrentUsername();
 
-
-
     @WebMethod
     int getObjID(String username) throws SQLException;
 
-
     @WebMethod
     User getCurrentUser() throws SQLException;
-
-
-
-
-
-
 
     @WebMethod
     ArrayList<User> getFriendListCurrentUser() throws SQLException;
@@ -45,8 +37,8 @@ interface UserService {
     @WebMethod
     ArrayList<Object> getEmail(String email) throws SQLException;
 
-
-
+    @WebMethod
+    String generateToken(int length);
 
     @WebMethod
     void setFriend(int idFriend) throws SQLException,
@@ -58,12 +50,11 @@ interface UserService {
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException;
 
-
-
-
-
     @WebMethod
     int generationID(int objTypeID) throws SQLException;
+
+    @WebMethod
+    void sendEmail(String text, DataObject dataObject) throws MailException;
 }
 
 

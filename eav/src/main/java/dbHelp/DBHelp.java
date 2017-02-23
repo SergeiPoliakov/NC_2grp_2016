@@ -110,8 +110,7 @@ public class DBHelp {
 
     public ArrayList<User> getFriendListCurrentUser() throws SQLException {
         Integer userID = new DBHelp().getObjID(userService.getCurrentUsername());
-        ArrayList<User> friendList = getFriendListByUserId(userID);
-        return friendList;
+        return getFriendListByUserId(userID);
     }
 
     public ArrayList<User> getFriendListByUserId(int userID) throws SQLException {
@@ -169,8 +168,7 @@ public class DBHelp {
 
     public User getCurrentUser() throws SQLException {
         Integer userID = new DBHelp().getObjID(userService.getCurrentUsername());
-        User user = getUserByUserID(userID);
-        return user;
+        return getUserByUserID(userID);
     }
 
 
@@ -448,6 +446,7 @@ public class DBHelp {
             IllegalArgumentException, InvocationTargetException {
 
         Connection connection = getConnection();
+        assert connection != null;
         PreparedStatement PS = connection.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
         TreeMap<Integer, Object> arrayAttrib = newmeeting.getArrayWithAttributes();
 
@@ -467,12 +466,13 @@ public class DBHelp {
     public void setUsersToMeeting(int meetingID, String... userIDs) throws SQLException {
         Connection connection = getConnection();
         int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
+        assert connection != null;
         PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
 
-        for (int i = 0; i < userIDs.length; i++) {
+        for (String userID : userIDs) {
             PS2.setInt(1, meetingID); // ID встречи
             PS2.setInt(2, referenceAttrId); // ID параметра(307)
-            PS2.setString(3, userIDs[i]); // ID пользователя
+            PS2.setString(3, userID); // ID пользователя
             PS2.addBatch();
         }
         PS2.executeBatch();
@@ -483,10 +483,11 @@ public class DBHelp {
 
     public void removeUsersFromMeeting(String meetingID, String... userIDs) throws SQLException {
         Connection connection = getConnection();
+        assert connection != null;
         PreparedStatement PS2 = connection.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ? AND OBJECT_ID = ?");
 
-        for (int i = 0; i < userIDs.length; i++) {
-            PS2.setString(1, userIDs[i]); // ID пользователя
+        for (String userID : userIDs) {
+            PS2.setString(1, userID); // ID пользователя
             PS2.setString(2, meetingID); // ID встречи
             PS2.executeUpdate();
         }
@@ -501,6 +502,7 @@ public class DBHelp {
         Connection Con = getConnection();
         // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
 
+        assert Con != null;
         PreparedStatement PS = Con.prepareStatement("SELECT " +
                 "        re.REFERENCE " +
                 " FROM  OBJECTS ob " +
@@ -525,6 +527,7 @@ public class DBHelp {
     public Meeting getMeeting(int meetingID) throws SQLException {
 
         Connection Con = getConnection();
+        assert Con != null;
         PreparedStatement PS = Con.prepareStatement("SELECT  ob.OBJECT_ID, " +
                 "        pa1.VALUE as PA1, " +
                 "        pa2.VALUE as PA2, " +
@@ -649,6 +652,7 @@ public class DBHelp {
         //System.out.println(userId + " " + patch);
         Connection Con = getConnection();
         // Удаляем ту ссылку, которая уже имеется:
+        assert Con != null;
         PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ?"); // DELETE FROM PARAMS WHERE OBJECT_ID = '10005' AND ATTR_ID = '11';
         PS.setInt(1, userId);
         PS.setInt(2, 11);
@@ -667,6 +671,7 @@ public class DBHelp {
     // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает все поля ДатаОбджекта, используя универсальный запрос в базу
     public DataObject getObjectsByIdAlternative(int objectId) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Connection Con = getConnection();
+        assert Con != null;
         PreparedStatement PS = Con.
                 prepareStatement("(SELECT -2 AS KEY, CAST(OBJECT_ID AS VARCHAR(70)) AS VALUE, 0 AS REF FROM OBJECTS WHERE OBJECT_ID = ?) " +
                         "UNION (SELECT -1, OBJECT_NAME, 0 FROM OBJECTS WHERE OBJECT_ID = ?) " +
@@ -1083,6 +1088,7 @@ public class DBHelp {
         if (sql != null) {
 
             Connection Con = getConnection();
+            assert Con != null;
             PreparedStatement PS = Con.prepareStatement(sql);
             ResultSet RS = PS.executeQuery();
             // Обходим всю полученную таблицу и формируем лист id-шек
@@ -1102,8 +1108,7 @@ public class DBHelp {
     public ArrayList<Integer> getListObjectsByFilters(BaseFilter filter) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         System.out.println("Запускаю getListObjectsByFilters c полученным фильтром");
         String sql = parseGenerate(filter);
-        ArrayList<Integer> idList = getListId_SQL_Executor(sql);
-        return idList;
+        return getListId_SQL_Executor(sql);
     }
 
     /*...............................................................................................................*/
@@ -1115,6 +1120,7 @@ public class DBHelp {
         Integer MEETING = 1004;
         Connection Con = getConnection();
         // 1. Подготавливаем и заполняем в базе строку таблицы OBJECTS
+        assert Con != null;
         PreparedStatement PS = Con
                 .prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?, ?, ?)");
         int id = generationID(dataObject.getObjectTypeId());
@@ -1209,7 +1215,8 @@ public class DBHelp {
         DataObject dataObjectOld = getObjectsByIdAlternative(id);
 
         // 2. Подготавливаем и заполняем (если соотвествующие поля в базе и в памяти отличаются) в базе строку таблицы OBJECTS
-        if (dataObjectOld.getName().equals(dataObject.getName()) == false) { // Если имена различны, то обновляем имя
+        if (!dataObjectOld.getName().equals(dataObject.getName())) { // Если имена различны, то обновляем имя
+            assert Con != null;
             PreparedStatement PS = Con.prepareStatement("UPDATE OBJECTS SET OBJECT_NAME = ? WHERE OBJECT_ID = ?");
             PS.setString(1, dataObject.getName());
             PS.setInt(2, id);
@@ -1222,6 +1229,7 @@ public class DBHelp {
         TreeMap<Integer, String> paramsOld = dataObjectOld.getParams();
         TreeMap<Integer, String> params = dataObject.getParams();
 
+        assert Con != null;
         PreparedStatement PS_upd = Con.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? AND ATTR_ID = ?");
 
         // Обходим все параметры в листе в новом датаобджекте
@@ -1257,7 +1265,7 @@ public class DBHelp {
 
             for (Integer value : valueList) {
                 // Если в старом объекте нет такого ключа или если есть ключ, но нет такого значения в старом датаобджекте, то надо создать новую строку
-                if ((valueListOld == null) || (valueListOld.contains(value) == false)) {
+                if ((valueListOld == null) || (!valueListOld.contains(value))) {
                     PS_ref_ins.setInt(1, id);
                     PS_ref_ins.setInt(2, key);
                     PS_ref_ins.setInt(3, value);
@@ -1281,7 +1289,7 @@ public class DBHelp {
             } else { // Ксли ключ есть, сравниваем значения
                 for (Integer valueOld : valueListOld) {
                     // Если в новом объекте нет такого значения, то надо удалить строку из базы
-                    if (valueList.contains(valueOld) == false) {
+                    if (!valueList.contains(valueOld)) {
                         PS_ref_del.setInt(1, id);
                         PS_ref_del.setInt(2, keyOld);
                         PS_ref_del.setInt(3, valueOld);
@@ -1302,6 +1310,7 @@ public class DBHelp {
     // 2017-02-18 Новый универсальный метод удаления датаобджекта из базы:
     public void deleteDataObject(Integer id) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
         Connection Con = getConnection();
+        assert Con != null;
         PreparedStatement PS_del = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
         PS_del.setInt(1, id);
         PS_del.executeUpdate();
