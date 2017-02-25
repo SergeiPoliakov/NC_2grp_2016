@@ -63,6 +63,8 @@ public class MessageController {
 
         String to_name = data_ObjectRecipient.getName();
 
+        System.out.println(from_name + " --> " + to_name);
+
 
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
         mapAttr.put(201, from_id.toString());

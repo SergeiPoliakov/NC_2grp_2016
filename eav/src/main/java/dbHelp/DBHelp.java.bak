@@ -1001,17 +1001,6 @@ public class DBHelp {
                 sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
                 sql += "AND ob2.OBJECT_NAME = " + "'" + userService.getCurrentUsername() + "'" + " ";
-            } else if (params.get(MessageFilter.TO_CURRENT_USER) != null) { // если надо получить ID всех полученных сообщений текущего пользователей,
-                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 30 ";
-                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
-                sql += "JOIN PARAMS pa ON ob2.OBJECT_ID = pa.OBJECT_ID AND pa.ATTR_ID = 4 ";
-                sql += "JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 ";
-
-                sql += "JOIN OBJECTS ob3 ON pa2.VALUE = ob3.OBJECT_ID ";
-                sql += "JOIN PARAMS pa3 ON ob3.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 4 ";
-
-                sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
-                sql += "AND pa3.VALUE = " + "'" + userService.getCurrentUsername() + "'" + " ";
             } else if (params.get(MessageFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех отправленных сообщений пользователя с конкретным именем,
                 ArrayList<String> user_name = params.get(MessageFilter.FOR_USER_WITH_NAME);
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 30 ";
@@ -1069,22 +1058,18 @@ public class DBHelp {
             // Прикручиваем вспомогательные фильтры:
             if (params.get(MessageFilter.BEFORE_DATE) != null) { // если надо получить ID всех сообщений, отправленных ДО какой-то даты,
                 ArrayList<String> before_date = params.get(MessageFilter.BEFORE_DATE);
-                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
                         "AND pa.ATTR_ID = 203 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + before_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
             } else if (params.get(MessageFilter.AFTER_DATE) != null) { // если надо получить ID всех сообщений, отправленных ПОСЛЕ какой-то даты,
                 ArrayList<String> after_date = params.get(MessageFilter.AFTER_DATE);
-                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
                         "AND pa.ATTR_ID = 203 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + after_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
             } else if (params.get(MessageFilter.BETWEEN_TWO_DATES) != null) { // если надо получить ID всех сообщений, отправленных МЕЖДУ двумя датами,
                 ArrayList<String> date = params.get(MessageFilter.BETWEEN_TWO_DATES);
-                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob " +
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob " +
                         "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
                         "AND pa.ATTR_ID = 203 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss')) " +
                         "AND (TO_DATE(pa1.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + date.get(1) + ", 'dd.mm.yyyy hh24:mi:ss'))"; // Можно сделать и between'ом, в принципе
-            }
-            else if (params.get(MessageFilter.UNREAD) != null){ // если надо получить ID всех непрочитанных сообщений, отправленных текущему пользователю,
-                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
-                        "AND pa.ATTR_ID = 204 AND pa.VALUE = 0";
             }
 
             //sql += "ORDER BY ob.OBJECT_ID"; // И группируем. Возможно придется сабрать в каждую else, если не сработает с INTERSECT

@@ -7,8 +7,38 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=utf8"
          pageEncoding="utf8" %>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
+
+
+
+    <script type="text/javascript">
+        function doAjax() {
+
+            var inputText = "0";
+
+            $.ajax({
+                url : 'getCharNum',
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                mimeType: 'application/json',
+                data : ({
+                    text: inputText
+                }),
+                success: function (data) {
+
+                    var result = 'Новых сообщений нет';
+                    if (data.count > 0)
+                        result = data.text+': '+data.count;
+
+                    $("#result_text").text(result);
+                }
+            });
+        }
+        setInterval(doAjax, 1000);
+    </script>
 
 
     <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
@@ -100,6 +130,7 @@
                 <li><a href="/allFriends">Друзья</a></li>
                 <li><a href="/allUser">Пользователи</a></li>
 
+
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Меню <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
@@ -117,6 +148,7 @@
                 <button type="submit" class="btn btn-default">Поиск</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
+                <li><a href="/allMessage" id="result_text"></a></li>
                 <li>
                     <p class="navbar-text">Привет, </p>
                 </li>
