@@ -80,13 +80,13 @@
                         <label >Выберите ваш пол</label>
                         <div class="radio">
                             <label>
-                                <input type="radio" name="sex"  id="Gender1" value="М" checked>
+                                <input type="radio" name="sex"  id="Gender1" value="Мужской" checked>
                                 Мужской
                             </label>
                         </div>
                         <div class="radio">
                             <label>
-                                <input type="radio" name="sex" id="Gender2" value="Ж">
+                                <input type="radio" name="sex" id="Gender2" value="Женский">
                                 Женский
                             </label>
                         </div>

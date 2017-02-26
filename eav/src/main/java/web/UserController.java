@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import service.*;
 import service.cache.DataObjectCache;
+import service.converter.Converter;
 import service.id_filters.EventFilter;
 import service.id_filters.UserFilter;
 
@@ -59,6 +60,8 @@ public class UserController {
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     private UserServiceImp userService = UserServiceImp.getInstance();
+
+    private Converter converter = new Converter();
 
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
         ArrayList<DataObject> list = new ArrayList<>();
@@ -95,7 +98,7 @@ public class UserController {
         try {
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
             System.out.println("Размер кэша после добавления " + doCache.size());
-            User user = new User(dataObject);
+            User user = converter.ToUser(dataObject);
             m.addAttribute(user);
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -184,7 +187,7 @@ public class UserController {
             ArrayList<DataObject> list = getListDataObject(map);
             ArrayList<User> users = new ArrayList<>(list.size());
             for (DataObject dataObject : list) {
-                User user = new User(dataObject);
+                User user = converter.ToUser(dataObject);
                 users.add(user);
             }
             System.out.println("Размер кэша после добавления " + doCache.size());
@@ -218,7 +221,7 @@ public class UserController {
             ArrayList<DataObject> list = getListDataObject(map);
             ArrayList<User> users = new ArrayList<>(list.size());
             for (DataObject dataObject : list) {
-                User user = new User(dataObject);
+                User user = converter.ToUser(dataObject);
                 users.add(user);
             }
             System.out.println("Размер кэша после добавления " + doCache.size());
@@ -333,7 +336,7 @@ public class UserController {
 
         try {
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
-            User user = new User(dataObject);
+            User user = converter.ToUser(dataObject);
             m.addAttribute(user);
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -383,7 +386,7 @@ public class UserController {
             ArrayList<DataObject> list = getListDataObject(map);
             ArrayList<User> friends = new ArrayList<>(list.size());
             for (DataObject dataObject : list) {
-                User user = new User(dataObject);
+                User user = converter.ToUser(dataObject);
                 friends.add(user);
             }
             System.out.println("Размер кэша после добавления " + doCache.size());
@@ -416,7 +419,7 @@ public class UserController {
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         try {
             DataObject dataObject = doCache.get(userId);
-            User user = new User(dataObject);
+            User user = converter.ToUser(dataObject);
             m.addAttribute(user);
         } catch (ExecutionException e) {
             e.printStackTrace();
