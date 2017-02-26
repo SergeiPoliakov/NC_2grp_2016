@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import service.LoadingServiceImp;
 import service.MeetingServiceImp;
 import service.UserServiceImp;
 
@@ -29,6 +30,7 @@ public class MeetingController {
     private static final Logger logger = LoggerFactory.getLogger(EventController.class);
     private UserServiceImp userService = UserServiceImp.getInstance();
     private MeetingServiceImp meetingService = MeetingServiceImp.getInstance();
+    private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     // Список встреч пользователя
     @RequestMapping(value = "/meetings", method = RequestMethod.GET)
@@ -80,4 +82,24 @@ public class MeetingController {
         return "redirect:/meeting{meetingID}";
     }
 
+    // Редактирование встречи
+    @RequestMapping(value = "/updateMeeting{meetingID}", method = RequestMethod.POST)
+    public String inviteUserAtMeeting(@PathVariable("meetingID") Integer meetingID,
+                                      @RequestParam("title") String title,
+                                      @RequestParam("tag") String tag,
+                                      @RequestParam("date_start") String date_start,
+                                      @RequestParam("date_end") String date_end,
+                                      @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
+        Meeting meeting = meetingService.getMeeting(meetingID);
+        meeting.setTitle(title);
+        meeting.setTag(tag);
+        meeting.setDate_start(date_start);
+        meeting.setDate_end(date_end);
+        meeting.setInfo(info);
+        DataObject dataObject = meeting.toDataObject();
+        loadingService.updateDataObject(dataObject);
+
+        return "redirect:/meeting{meetingID}";
+    }
 }

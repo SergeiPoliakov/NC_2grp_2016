@@ -28,7 +28,7 @@ interface MeetingService {
     void setMeeting(Meeting meeting) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
     @WebMethod
-    void updateEvent(String meetingID, Meeting newmeeting) throws SQLException,
+    void updateMeeting(Integer meetingID, Meeting newmeeting) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException;
 

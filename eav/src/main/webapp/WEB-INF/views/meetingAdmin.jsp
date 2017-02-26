@@ -34,6 +34,17 @@
     <script type="text/javascript" src="/resources/js/bootstrap-select.min.js"> </script>
     <script type="text/javascript" src="/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 
+    <style type="text/css">
+        p{
+            margin: 0px;
+        }
+        .hideinput{
+            margin-bottom: 1rem;
+        }
+        .input-group-addon-my{
+            min-width: 9rem;
+        }
+    </style>
 
 </head>
 <body>
@@ -43,15 +54,51 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card" style="width: 30rem;">
-                <h3 class="card-title text-center">${meeting.title}</h3>
-                <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>Вы</a></li>
-                    <li class="list-group-item">Начало: ${meeting.date_start}</li>
-                    <li class="list-group-item">Окончание: ${meeting.date_end}</li>
-                    <li class="list-group-item">Описание: ${meeting.info}</li>
-                    <li class="list-group-item">Теги: ${meeting.tag}</li>
+                <h3 class="card-title text-center" id="pTitle">${meeting.title}</h3>
+                <ul class="list-group list-group-my list-group-flush" id="meetingInfo">
+                    <div class="list-group-item">
+                        <p id="pOrganizer">Организатор: <a href='/user${meeting.organizer.id}'>Вы</a></p>
+                    </div>
+                    <div class="list-group-item">
+                        <p id="pDate_start">Начало: ${meeting.date_start}</p>
+                    </div>
+                    <div class="list-group-item">
+                        <p id="pDate_end">Окончание: ${meeting.date_end}</p>
+                    </div>
+                    <div class="list-group-item">
+                        <p id="pDescription">Описание: ${meeting.info}</p>
+                    </div>
+                    <div class="list-group-item">
+                        <p id="pTag">Теги: ${meeting.tag}</p>
+                    </div>
                 </ul>
-                <form id="meetingForm" name="addUser" action="/inviteUserAtMeeting${meeting.id}" method="post">
+                <form id="meetingUpdateForm" name="update" action="/updateMeeting${meeting.id}" method="post" style="margin-bottom: 0px;">
+                    <div class="input-group hideinput">
+                        <span class="input-group-addon input-group-addon-my">Название</span>
+                        <input id="title" name="title" type="text" class="form-control">
+                    </div>
+                    <div class="input-group hideinput">
+                        <span class="input-group-addon input-group-addon-my">Начало</span>
+                        <input id="date_start" name="date_start" type="text" class="form-control">
+                    </div>
+                    <div class="input-group hideinput">
+                        <span class="input-group-addon input-group-addon-my">Окончание</span>
+                        <input id="date_end" name="date_end" type="text" class="form-control">
+                    </div>
+                    <div class="input-group hideinput">
+                        <span class="input-group-addon input-group-addon-my">Описание</span>
+                        <input id="description" name="info" type="text" class="form-control">
+                    </div>
+                    <div class="input-group hideinput">
+                        <span class="input-group-addon input-group-addon-my" id="basic-addon3">Теги</span>
+                        <input id="tag" name="tag" type="text" class="form-control">
+                    </div>
+                    <button type="button" class="btn btn-info btn-block" id="settingsButton" style="margin-top: 0px;">
+                        <span class='glyphicon glyphicon-cog' aria-hidden='true'></span> Настройки
+                    </button>
+                </form>
+                <!-- СВЕРХУ НОВОЕ -->
+                <form id="meetingForm" name="addUser" action="/inviteUserAtMeeting${meeting.id}" method="post" style="margin-bottom: 0px;">
                     <input type="text" class="hidden" name="userIDs" id="userIDs" value = "userIDs"></input>
                     <div class="form-inline" id="inviteAtMeetingForm">
                         <select class="selectpicker form-control" id="inviteAtMeetingSelectPicker"
@@ -225,14 +272,33 @@
 <%@include file='footer.jsp'%>
 
 <script type="text/javascript">
+    // Переключение между просмотром и редактированием
+    $(".hideinput").hide();
+    $("#settingsButton").click(function(){
+        var title = $("#pTitle").text();
 
-    // Управление кнопками
-    /*$( "#inviteButton").hide(); // Кнопка пригласить
-     $( "#inviteAtMeetingForm").hide(); // Список для приглашения
-     $( "#acceptDeclineForm").hide(); // Кнопки принять участие/откахаться
-     $( "#askToInviteButton").hide(); // Кнопка "попроситься"
-     $( "#leaveButton").hide(); // Кнопка "покинуть"
-     */
+        if ($(this).html() == '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Принять'){
+            $(this).html('<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>  Настройки');
+            $(this).prop("type", "submit");
+            $("#meetingInfo").toggle();
+            $(".hideinput").toggle();
+            return;
+        }
+        else {
+            $(this).html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Принять');
+            $(this).prop("type", "button");
+            $("#pTitle").text("Настройки");
+        }
+
+        $("#title").val(title);
+        $("#date_start").val($("#pDate_start").text().substring(8, $("#pDate_start").text().length));
+        $("#date_end").val($("#pDate_end").text().substring(11, $("#pDate_end").text().length));
+        $("#description").val($("#pDescription").text().substring(10, $("#pDescription").text().length));
+        $("#tag").val($("#pTag").text().substring(6, $("#pTag").text().length));
+
+        $("#meetingInfo").toggle();
+        $(".hideinput").toggle();
+    });
 
     $("#cardsholderItems").mCustomScrollbar({
         scrollInertia: 275

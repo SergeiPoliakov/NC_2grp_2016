@@ -59,26 +59,28 @@ p{
 						<p id="pTag">Теги: слова</p>						
 					</div>
 				</ul>
-				<div class="input-group hideinput">						
-					<span class="input-group-addon" id="basic-addon3">Название</span>
-					<input id="title" type="text" class="form-control">
-				</div>
-				<div class="input-group hideinput">						
-					<span class="input-group-addon" id="basic-addon3">Начало</span>
-					<input id="date_start" type="text" class="form-control">
-				</div>
-				<div class="input-group hideinput">						
-					<span class="input-group-addon" id="basic-addon3">Окончание</span>
-					<input id="date_end" type="text" class="form-control">
-				</div>
-				<div class="input-group hideinput">						
-					<span class="input-group-addon" id="basic-addon3">Описание</span>
-					<input id="description" type="text" class="form-control">
-				</div>
-				<div class="input-group hideinput">						
-					<span class="input-group-addon" id="basic-addon3">Теги</span>
-					<input id="tag" type="text" class="form-control">
-				</div>
+				<form id="meetingForm" name="update" action="/updateMeeting" method="post">
+					<div class="input-group hideinput">						
+						<span class="input-group-addon" id="basic-addon3">Название</span>
+						<input id="title" type="text" class="form-control">
+					</div>
+					<div class="input-group hideinput">						
+						<span class="input-group-addon" id="basic-addon3">Начало</span>
+						<input id="date_start" type="text" class="form-control">
+					</div>
+					<div class="input-group hideinput">						
+						<span class="input-group-addon" id="basic-addon3">Окончание</span>
+						<input id="date_end" type="text" class="form-control">
+					</div>
+					<div class="input-group hideinput">						
+						<span class="input-group-addon" id="basic-addon3">Описание</span>
+						<input id="description" type="text" class="form-control">
+					</div>
+					<div class="input-group hideinput">						
+						<span class="input-group-addon" id="basic-addon3">Теги</span>
+						<input id="tag" type="text" class="form-control">
+					</div>
+				</form>
 				<div class="btn-group btn-group-justified" id="acceptDeclineForm" role="group" aria-label="...">  
 				  <div class="btn-group" role="group">
 					<button type="button" class="btn btn-success btn-block"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Принять</span> </button>
@@ -274,10 +276,12 @@ $("#settingsButton").click(function(){
 
 	if ($(this).html() == '<span class="glyphicon glyphicon-ok" aria-hidden="true"> Принять</span>'){
 		$(this).html('<span class="glyphicon glyphicon-cog" aria-hidden="true"> Настройки</span>');
+		$(this).prop("type", "button");
 		$("#pTitle").html($("#title").val());
 	}
 	else {
 		$(this).html('<span class="glyphicon glyphicon-ok" aria-hidden="true"> Принять</span>');
+		$(this).prop("type", "submit");
 		$("#pTitle").text("Настройки");		
 	}
 	
@@ -289,10 +293,8 @@ $("#settingsButton").click(function(){
 	
     $("#meetingInfo").toggle();
 	$(".hideinput").toggle();
-	
-	
-	
 });
+
 // Управление кнопками
 //$( "#inviteButton").hide(); // Кнопка пригласить
 //$( "#inviteAtMeetingForm").hide(); // Список для приглашения

@@ -52,10 +52,15 @@ public class MeetingServiceImp implements MeetingService {
     }
 
     // Обновление встречи, meeting - обновленные данные события (ИДЕЯ С ОБЪЕКТАМИ ПОХОДУ ХУЙНЯ)
-    public void updateEvent(String meetingID, Meeting newmeeting) throws SQLException,
+    public void updateMeeting(Integer meetingID, Meeting meeting) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
-        new DBHelp().updateMeeting(meetingID, newmeeting);
+
+    }
+
+    // Получение встречи
+    public Meeting getMeeting(Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+        return new Meeting(new DBHelp().getObjectsByIdAlternative(meetingID));
     }
 
     // Добавление пользователей на встречу
