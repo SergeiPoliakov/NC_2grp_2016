@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Event {
+public class Event extends BaseEntitie{
 
     public static final int objTypeID = 1002;
 

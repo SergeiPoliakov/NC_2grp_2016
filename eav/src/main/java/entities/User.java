@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by Lawrence on 29.01.2017.
  */
 
-public class User {
+public class User extends BaseEntitie{
 
     private Integer id;
 

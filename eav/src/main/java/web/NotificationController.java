@@ -1,9 +1,10 @@
 package web;
 /**
  * Created by Hroniko on 23.02.2017.
- * Контролле для системы оповещения (новые события, сообщения, напоминания)
+ * Контроллер для системы оповещения (новые события, сообщения, напоминания)
  */
 import com.google.common.cache.LoadingCache;
+import dbHelp.DBHelp;
 import entities.DataObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import service.id_filters.MessageFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 
 import service.LoadingServiceImp;
 import service.UserServiceImp;
@@ -31,7 +33,8 @@ public class NotificationController {
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
 
-    @RequestMapping(value = "/getCharNum", method = RequestMethod.GET)
+    // 2017-02-24 Уведомления о новых сообщениях (вывод в хедер)
+    @RequestMapping(value = "/getNewMessage", method = RequestMethod.GET)
     public @ResponseBody
     Response getCharNum(@RequestParam String text) throws SQLException { // text для проверки тут, какую именно инфу вернуть. Потом сделаю ифы и ветвление по запросам ajax
         int count = 0;
@@ -42,11 +45,7 @@ public class NotificationController {
             // Нам даже обходить их не надо, достаточно знать количество новых:
             count = al.size();
 
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
@@ -55,4 +54,8 @@ public class NotificationController {
         result.setCount(count);
         return result;
     }
+
+
+
+
 }

@@ -5,15 +5,15 @@ package web;
  */
 
 import com.google.common.cache.LoadingCache;
+import dbHelp.DBHelp;
 import entities.DataObject;
+import entities.Message;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
+import service.converter.Converter;
 import service.id_filters.MessageFilter;
 
 import java.lang.reflect.InvocationTargetException;
@@ -21,6 +21,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutionException;
+import org.springframework.ui.Model;
+import service.id_filters.UserFilter;
 
 
 @Controller
@@ -31,6 +33,7 @@ public class MessageController {
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
+    private Converter converter = new Converter();
 
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
         ArrayList<DataObject> list = new ArrayList<>();
@@ -42,22 +45,30 @@ public class MessageController {
         return list;
     }
 
-    // Отправка сообщения по нажатию кнопки
-    @RequestMapping(value = "/sendMessage1/{to_id}", method = RequestMethod.POST)
-    public String sendNewMessage(@PathVariable("to_id") Integer to_id, @RequestParam("text") String text) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
+    // 2017-02-25 Отправка сообщения по нажатию кнопки
+    @RequestMapping(value = "/sendMessage3", method = RequestMethod.GET)
+    @ResponseBody
+    public Message sendNewMessage3(@RequestParam("text") String text) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
+        String[] msg = text.split("~"); // Разбиваем на массив слов
+
+        String to_id = msg[0];
+        text = msg[1];
 
         Integer from_id = userService.getObjID(userService.getCurrentUsername());
+        System.out.println("Передано новое сообщение: \'" + text + "\' , отправитель: " + from_id +" , получатель: " + to_id);
 
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = null;
-        dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss", Locale.ENGLISH);
+        dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH);
 
         String date_send = dateFormat.format(currentDate);
 
         Integer read_status = 0; // старус прочтения - ноль, не прочитано еще
 
         DataObject data_ObjectSender = loadingService.getDataObjectByIdAlternative(from_id);
-        DataObject data_ObjectRecipient = loadingService.getDataObjectByIdAlternative(to_id);
+        DataObject data_ObjectRecipient = loadingService.getDataObjectByIdAlternative(Integer.parseInt(to_id));
 
         String from_name = data_ObjectSender.getName();
 
@@ -68,7 +79,7 @@ public class MessageController {
 
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
         mapAttr.put(201, from_id.toString());
-        mapAttr.put(202, to_id.toString());
+        mapAttr.put(202, to_id);
         mapAttr.put(203, date_send);
         mapAttr.put(204, read_status.toString());
         mapAttr.put(205, text);
@@ -79,18 +90,37 @@ public class MessageController {
 
         DataObject dataObject = loadingService.createDataObject(name, 1003, mapAttr);
 
+
+
         loadingService.setDataObjectToDB(dataObject);
 
-        // messageService.setNewMessage(1003, mapAttr);
 
-        return  "redirect: /sendMessage/{to_id}";
+        Message message = new Message();
+        message.setFrom_name(from_name);
+        message.setDate_send(date_send);
+        message.setText(text);
+
+        return  message;
     }
 
 
-    // Отрисовка истории сообщения для текущего пользователя и выбранного
+    // 2017-02-26 Отдаем на страницу сообщений айди нужного пользователя, чтобы на странице была внедрена информация об id нужного для переписки юзера
     @RequestMapping("/sendMessage/{objectId}") //передаем все сообщения на страницу
-    public String listObjects(@PathVariable("objectId") Integer to_id, Map<String, Object> mapAttr) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        int from_id = userService.getObjID(userService.getCurrentUsername());
+    public String getIdForMessagePage(@PathVariable("objectId") Integer to_id, Map<String, Object> mapAttr) {
+        mapAttr.put("to_id", to_id);
+        return "sendMessage";
+    }
+
+    // 2017-02-26 Отрисовка истории сообщения для текущего пользователя и выбранного
+    @RequestMapping(value = "/getArray", method = RequestMethod.GET)
+    @ResponseBody
+    public ArrayList<Message> getArray(@RequestParam String text) throws SQLException { // text для проверки тут, какую именно инфу вернуть. Потом сделаю ифы и ветвление по запросам ajax
+
+        Integer to_id = Integer.parseInt(text); // ID выбранного пользователя
+        Integer from_id = userService.getObjID(userService.getCurrentUsername()); // ID второго пользователя (текущего)
+        ArrayList<Message> AR = new ArrayList<>();
+        ArrayList<Integer> flagUpRead = new ArrayList<>();
+
         try {
             ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new MessageFilter(MessageFilter.BETWEEN_TWO_USERS_WITH_IDS, String.valueOf(from_id), String.valueOf(to_id)));
             System.out.println("Ищем в кэше сообщения данного пользователя ");
@@ -98,16 +128,24 @@ public class MessageController {
             ArrayList<DataObject> list = getListDataObject(map);
             System.out.println("Размер кэша после добавления " + doCache.size());
 
-            mapAttr.put("to_id", to_id);
-            mapAttr.put("allObject", list);
+            for (DataObject DO : list) {
+                Message message = converter.ToMessage(DO);
+                AR.add(message);
+                // И проверяем, если это сообщение текущему пользователю, а не от текущего, можно выставить флаг о прочтении
+                if (message.getFrom_id() != from_id ){
+                    flagUpRead.add(message.getId());
+                }
+            }
+            // И выставляем флаги о прочтении:
+            new DBHelp().updateMessageReadStatus(flagUpRead);
 
-        } catch (ExecutionException e) {
+        } catch (ExecutionException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
-
-        return "sendMessage";
+        return AR;
     }
+
 
     // Удаление сообщения по его id с перенаправлением обратно на историю сообщений
     @RequestMapping("/deleteMessage/{to_id}/{objectId}") // @RequestMapping(value = "/deleteMessage/{to_id}/{objectId}", method = RequestMethod.POST)
@@ -116,5 +154,11 @@ public class MessageController {
         doCache.invalidate(objectId);
         return "redirect: /sendMessage/{to_id}";
     }
+
+    @RequestMapping("/sendMessage") // @RequestMapping(value = "/deleteMessage/{to_id}/{objectId}", method = RequestMethod.POST)
+    public String sendMess(){
+        return "sendMessage";
+    }
+
 
 }

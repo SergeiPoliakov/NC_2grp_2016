@@ -12,7 +12,7 @@ import java.util.TreeMap;
  * Created by Костя on 07.02.2017.
  */
 
-public class Meeting {
+public class Meeting extends BaseEntitie {
 
     public static final int objTypeID = 1004;
 

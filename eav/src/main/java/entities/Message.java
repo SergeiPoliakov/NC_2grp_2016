@@ -7,7 +7,7 @@ package entities;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-public class Message {
+public class Message extends BaseEntitie{
 
     private int id; // 1
     private int from_id; // 201

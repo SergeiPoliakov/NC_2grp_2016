@@ -11,15 +11,13 @@
 <html>
 <head>
 
-
-
     <script type="text/javascript">
         function doAjax() {
 
             var inputText = "0";
 
             $.ajax({
-                url : 'getCharNum',
+                url : 'http://localhost:8081/getNewMessage',
                 type: 'GET',
                 dataType: 'json',
                 contentType: 'application/json',
@@ -28,6 +26,7 @@
                     text: inputText
                 }),
                 success: function (data) {
+                    console.log(data);
 
                     var result = 'Новых сообщений нет';
                     if (data.count > 0)

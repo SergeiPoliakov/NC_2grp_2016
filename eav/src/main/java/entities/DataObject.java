@@ -9,7 +9,7 @@ import java.util.TreeMap;
  * 
  */
 
-public class DataObject {
+public class DataObject extends BaseEntitie{
     private Integer id;
     private Integer objectTypeId;
     private String name;
@@ -65,6 +65,10 @@ public class DataObject {
         return null;
     }
 
+    // 2017-02-26
+    public String getParameter(Integer key){
+        return params.get(key);
+    }
 
     // 2017-02-14 Метод установки параметра
     public void setParams(Integer key, String value){

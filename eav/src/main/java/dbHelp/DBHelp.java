@@ -42,13 +42,18 @@ public class DBHelp {
 
     public int generationID(int objTypeID) throws SQLException {
         Connection Con = getConnection();
-        Statement st = Con.createStatement();
-        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + objTypeID);
-        int newID = 0;
+        PreparedStatement PS = Con
+                .prepareStatement("SELECT MAX(OBJECT_ID) FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
+        PS.setInt(1, objTypeID);
+        ResultSet RS = PS.executeQuery();
+        int objID = 0;
         while (RS.next()) {
-            newID = RS.getInt(1) + 1;
+            objID = RS.getInt(1) + 1;
         }
-        return newID;
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+        return objID;
     }
 
     public int getObjID(String username) throws SQLException {
@@ -66,12 +71,6 @@ public class DBHelp {
         CloseConnection(Con);
         return objID;
     }
-
-
-
-
-
-
 
 
     public ArrayList<Object> getEmail(String email)
@@ -92,20 +91,6 @@ public class DBHelp {
         CloseConnection(Con);
         return Res;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public ArrayList<User> getFriendListCurrentUser() throws SQLException {
@@ -164,8 +149,6 @@ public class DBHelp {
     }
 
 
-
-
     public User getCurrentUser() throws SQLException {
         Integer userID = new DBHelp().getObjID(userService.getCurrentUsername());
         return getUserByUserID(userID);
@@ -212,11 +195,6 @@ public class DBHelp {
         CloseConnection(Con);
         return user;
     }
-
-
-
-
-
 
 
     public User getUserAndEventByUserID(int userID) throws SQLException {
@@ -290,21 +268,6 @@ public class DBHelp {
         CloseConnection(Con);
         return user;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //region Meeting
@@ -571,7 +534,6 @@ public class DBHelp {
     //endregion
 
 
-
     //region DO Methods
 
     // Метод уже является только прослойкой, вызывает универсальный setDataObjectToDB
@@ -580,12 +542,14 @@ public class DBHelp {
             IllegalArgumentException, InvocationTargetException {
         setDataObjectToDB(dataObject);
     }
+
     // Обновленный метод добавления событий (работа через DO)
     public void setNewEvent(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
         setDataObjectToDB(dataObject);
     }
+
     // Обновленный метод обновления пользователя (работа через DO)
     public void updateUser(DataObject dataObject) throws SQLException,
             NoSuchMethodException, IllegalAccessException,
@@ -716,6 +680,7 @@ public class DBHelp {
         RS.close();
         PS.close();
         CloseConnection(Con);
+        System.out.println("getObjectsByIdAlternative");
         return dataObject;
     }
 
@@ -802,8 +767,10 @@ public class DBHelp {
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + USER;
                 System.out.println("Формирую запрос " + sql);
             } else if (params.get(UserFilter.CURRENT) != null) { // если надо получить ID текущего пользователей,
+
+                sql += "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID AND pa.ATTR_ID = 4 ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " ";
-                sql += "AND ob.OBJECT_NAME = " + userService.getCurrentUsername();
+                sql += "AND pa.VALUE = \'" + userService.getCurrentUsername() + "\' ";
             } else if (params.get(UserFilter.WITH_NAME) != null) { // если надо получить ID пользователя по его имени,
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " ";
                 sql += "AND ob.OBJECT_NAME IN (";
@@ -1044,6 +1011,7 @@ public class DBHelp {
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
                 sql += "AND (ob2.OBJECT_ID = " + user_ids.get(0) + " AND pa2.VALUE = " + user_ids.get(1) + " ";
                 sql += "OR ob2.OBJECT_ID = " + user_ids.get(1) + " AND pa2.VALUE = " + user_ids.get(0) + ") ";
+                sql += "ORDER BY ob.OBJECT_ID"; // 2017-02-26, иначе сообщения выводились вразноброд
             } else if (params.get(MessageFilter.FROM_TO_USERS_WITH_NAMES) != null) { // если надо получить ID всех сообщений от первого пользователя второму по их именам пользователей,
                 ArrayList<String> user_names = params.get(MessageFilter.FROM_TO_USERS_WITH_NAMES);
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE ";
@@ -1081,8 +1049,7 @@ public class DBHelp {
                         "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
                         "AND pa.ATTR_ID = 203 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss')) " +
                         "AND (TO_DATE(pa1.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + date.get(1) + ", 'dd.mm.yyyy hh24:mi:ss'))"; // Можно сделать и between'ом, в принципе
-            }
-            else if (params.get(MessageFilter.UNREAD) != null){ // если надо получить ID всех непрочитанных сообщений, отправленных текущему пользователю,
+            } else if (params.get(MessageFilter.UNREAD) != null) { // если надо получить ID всех непрочитанных сообщений, отправленных текущему пользователю,
                 sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
                         "AND pa.ATTR_ID = 204 AND pa.VALUE = 0";
             }
@@ -1133,12 +1100,15 @@ public class DBHelp {
         Integer EVENT = 1002;
         Integer MESSAGE = 1003;
         Integer MEETING = 1004;
+        int id = generationID(dataObject.getObjectTypeId());
+
+
         Connection Con = getConnection();
         // 1. Подготавливаем и заполняем в базе строку таблицы OBJECTS
         assert Con != null;
         PreparedStatement PS = Con
                 .prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?, ?, ?)");
-        int id = generationID(dataObject.getObjectTypeId());
+
         System.out.println(">> Новый объект с id =" + id);
         PS.setInt(1, id);
         PS.setInt(2, dataObject.getObjectTypeId());
@@ -1178,7 +1148,7 @@ public class DBHelp {
         int idUser = userService.getObjID(userService.getCurrentUsername());
 
         // Если добавляем событие, то надо еще вручную создать ссылки:
-        if (dataObject.getObjectTypeId().equals(EVENT) ) { // Если это событие, то
+        if (dataObject.getObjectTypeId().equals(EVENT)) { // Если это событие, то
             // 3) Добавление ссылки Юзер - Событие (связывание):
 
             int attrId = 13;
@@ -1204,8 +1174,7 @@ public class DBHelp {
             PS5.executeUpdate();
             PS5.close();
 
-        }
-        else if(dataObject.getObjectTypeId().equals(MESSAGE) ) { // Если это событие, то
+        } else if (dataObject.getObjectTypeId().equals(MESSAGE)) { // Если это событие, то
 
             // 1) Добавление ссылки Юзер - Сообщение (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '30', '30001');
             //int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
@@ -1321,6 +1290,7 @@ public class DBHelp {
 
         CloseConnection(Con);
     }
+
     /*...............................................................................................................*/
     // 2017-02-18 Новый универсальный метод удаления датаобджекта из базы:
     public void deleteDataObject(Integer id) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
@@ -1723,6 +1693,26 @@ public class DBHelp {
         }
 
         return partitionDataObjectList;
+    }
+
+    // 2017-02-26 Новый метод выставвления флагов о прочтении для сообщений (по списку их айди) в базе:
+    public void updateMessageReadStatus(ArrayList<Integer> ids) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        // Подготавливаем запрос на выставление флагов о прочтении
+
+        String sql = "UPDATE PARAMS SET VALUE = '1' WHERE ATTR_ID = 204 AND OBJECT_ID IN (";
+        for (Integer id : ids) {
+            sql += id + ", ";
+        }
+        sql += "0)";
+
+        Connection Con = getConnection();
+        assert Con != null;
+        PreparedStatement PS = Con.prepareStatement(sql);
+        ResultSet RS = PS.executeQuery();
+        RS.close();
+        PS.close();
+        CloseConnection(Con);
+
     }
     //endregion
 }
