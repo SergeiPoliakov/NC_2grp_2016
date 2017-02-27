@@ -42,13 +42,11 @@ public class MeetingController {
         return "meetings";
     }
 
-    // Просмотр встречи
+    // Просмотр встречи DO
     @RequestMapping(value = "/meeting{meetingID}", method = RequestMethod.GET)
     public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-        //logger.info("STOP");
+
         Meeting meeting = new Meeting(new DBHelp().getObjectsByIdAlternative(meetingID));
-        //Meeting meeting = meetingService.getMeetingWithUsers(meetingID);
-        meeting.getOrganizer().setFriends(userService.getFriendListCurrentUser()); // СТАРЫЙ
         m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
         if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
             return "/meetingAdmin";
@@ -72,17 +70,24 @@ public class MeetingController {
         return "redirect:/meetings";
     }
 
-    // Добавить пользователя на встречу
+    // Добавить пользователя на встречу DO
     @RequestMapping(value = "/inviteUserAtMeeting{meetingID}", method = RequestMethod.POST)
     public String inviteUserAtMeeting(@RequestParam("userIDs") String userIDs,
-                                      @PathVariable("meetingID") Integer meetingID) throws SQLException {
+                                      @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         String[] users = userIDs.split(",");
-        meetingService.setUsersToMeeting(meetingID, users);
+        Meeting meeting = new Meeting(loadingService.getDataObjectByIdAlternative(meetingID));
+        ArrayList<User> userList = new ArrayList<>();
+        for (String userID: users) {
+            User user = new User(loadingService.getDataObjectByIdAlternative(Integer.parseInt(userID)));
+            userList.add(user);
+        }
+        meeting.setUsers(userList);
+        loadingService.updateDataObject(meeting.toDataObject());
         return "redirect:/meeting{meetingID}";
     }
 
-    // Редактирование встречи
+    // Редактирование встречи DO
     @RequestMapping(value = "/updateMeeting{meetingID}", method = RequestMethod.POST)
     public String inviteUserAtMeeting(@PathVariable("meetingID") Integer meetingID,
                                       @RequestParam("title") String title,
