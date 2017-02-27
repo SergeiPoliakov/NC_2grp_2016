@@ -34,6 +34,8 @@ public class User extends BaseEntitie{
 
     private String sex;
 
+    private String phone;
+
     private String additional_field;
 
     private String picture;
@@ -140,6 +142,14 @@ public class User extends BaseEntitie{
         this.sex = sex;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public String getAdditional_field() {
         return additional_field;
     }
@@ -210,6 +220,9 @@ public class User extends BaseEntitie{
                 case (14):
                     // events, хотя есть поле Tasks
                     break;
+                case (16):
+                    this.phone = param.getValue();
+                    break;
             }
         }
         // Поле ссылок
@@ -275,6 +288,9 @@ public class User extends BaseEntitie{
                     break;
                 case (14):
                     // events, хотя есть поле Tasks
+                    break;
+                case (16):
+                    this.phone = param.getValue();
                     break;
             }
         }

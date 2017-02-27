@@ -22,8 +22,6 @@
 
     <%@include file='header.jsp'%>
 
-
-
 </head>
 <body>
 
@@ -50,9 +48,15 @@
                                      accept="image/jpeg, image/png, image/gif"> <%--Ограничение на тип файла со стороны клиента--%>
                         <input type="submit" value="Загрузить"> Загрузить
                     </form>
-
                 </div>
+
+                <div class="form-group ">
+                    <a href="/advancedSettings"> Расширенные настройки </a>
+                </div>
+
             </div>
+
+
             <div class="container col-lg-5">
                 <form action="/changeProfile/${user.id}" method="post">
 
@@ -98,8 +102,8 @@
                     </div>
 
                     <div class="form-group  ">
-                        <label for="InputNickName1">Введите Никнейм</label>
-                        <input type="text" class="form-control " name="nickname" id="InputNickName1" value=${user.login}>
+                        <label for="InputPhone1">Введите ваш номер телефона</label>
+                        <input type="text" class="form-control" name="phone" id="InputPhone1" value=${user.phone}>
                     </div>
 
                     <div class="form-group ">

@@ -38,7 +38,10 @@ interface UserService {
     ArrayList<Object> getEmail(String email) throws SQLException;
 
     @WebMethod
-    String generateToken(int length);
+    String generateEmailToken(int length);
+
+    @WebMethod
+    String generatePhoneToken();
 
     @WebMethod
     void setFriend(int idFriend) throws SQLException,

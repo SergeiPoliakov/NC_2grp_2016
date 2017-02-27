@@ -36,7 +36,7 @@
                 }
             });
         }
-        setInterval(doAjax, 1000);
+        setInterval(doAjax, 100000);
     </script>
 
 

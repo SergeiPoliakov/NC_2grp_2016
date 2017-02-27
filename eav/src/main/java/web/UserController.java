@@ -63,6 +63,8 @@ public class UserController {
 
     private Converter converter = new Converter();
 
+    private String code = "";
+
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
         ArrayList<DataObject> list = new ArrayList<>();
 
@@ -246,6 +248,7 @@ public class UserController {
                                @RequestParam("nickname") String nickname,
                                @RequestParam("ageUser") String ageDate,
                                @RequestParam("email") String email,
+                               @RequestParam("phone") String phone,
                                @RequestParam("password") String password
     ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, CustomException, MessagingException, UnsupportedEncodingException {
 
@@ -266,6 +269,8 @@ public class UserController {
         mapAttr.put(10, null);
         mapAttr.put(11, "http://netcracker.hop.ru/upload/default/avatar.png");
         mapAttr.put(15, "false");
+        mapAttr.put(16, phone);
+        mapAttr.put(17, "false");
         // mapAttr.put(12, null);
         // mapAttr.put(13, null); не нужно, иначе потом пустая ссылка на событие висит, и при добавлении новой задачи она так и остается висеть. Иначе надо будет при добавлении эту обновлять
 
@@ -291,7 +296,7 @@ public class UserController {
                 helper.setTo(email);
                 helper.setFrom(new InternetAddress("netcracker.thesecondgroup@gmail.com", "NC", "UTF-8"));
 
-                String url = "http://localhost:8081/" + dataObject.getId() + "/varification_token/" + userService.generateToken(20);
+                String url = "http://localhost:8081/" + dataObject.getId() + "/varification_token/" + userService.generateEmailToken(20);
 
                 helper.setText("Добро пожаловать! \n"+
                         "Перейдите по ссылке, чтобы завершить регистрацию и получить полный доступ к приложению \n"+
@@ -322,8 +327,8 @@ public class UserController {
                                     @PathVariable("id") Integer id) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
             DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
-            String confirmed = "true";
-            dataObject.setValue(15, confirmed);
+            String confirmedEmail = "true";
+            dataObject.setValue(15, confirmedEmail);
             loadingService.updateDataObject(dataObject);
 
         return "/main";
@@ -344,12 +349,54 @@ public class UserController {
         return "/profile";
     }
 
+    @RequestMapping(value = "/advancedSettings", method = RequestMethod.GET)
+    public String getAdvancedSettingsPage(ModelMap m)  {
+        try {
+            DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+            User user = converter.ToUser(dataObject);
+            m.addAttribute(user);
+        } catch (ExecutionException | SQLException e) {
+            e.printStackTrace();
+        }
+        return "advancedSettings";
+    }
+
+
+    @RequestMapping(value = "/generatePhoneCode", method = RequestMethod.GET)
+    public String generatePhoneCode() {
+        String code = userService.generatePhoneToken();
+        this.code = code;
+        System.out.println("Сгенированыый код " + code);
+
+         //SMSCSender sd= new SMSCSender("Netcracker", "q7Sq2O_VqLhh", "utf-8", true);   //после теста закомментируйте обратно!!!!!
+         //sd.sendSms("7**********", "Код подтверждения: " + code, 0, "", "", 0, "NC", "");  // тут нужно указать ваш номер телефона
+         //sd.getBalance();
+
+        return "redirect:/advancedSettings";
+    }
+
+    @RequestMapping(value = "/confirmedPhone", method = RequestMethod.POST)
+    public String getAdvancedSettingsPage(@RequestParam("codeUser") String codeUser) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+        System.out.println("Код " + code);
+        System.out.println("Код юзера " + codeUser);
+
+        if (codeUser.equals(code)) {
+            DataObject dataObject = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
+            String confirmedPhone = "true";
+            dataObject.setValue(17, confirmedPhone);
+            loadingService.updateDataObject(dataObject);
+            return "redirect:/advancedSettings";
+        } else System.out.println("Неверный код подтверждения!");
+
+        return "redirect:/advancedSettings";
+    }
+
+
     @RequestMapping(value = "/changeProfile/{userId}", method = RequestMethod.POST)
     public String changeUser(@PathVariable("userId") Integer userId,
                              @RequestParam("name") String name,
                              @RequestParam("surname") String surname,
                              @RequestParam("middle_name") String middle_name,
-                             @RequestParam("nickname") String nickname,
                              @RequestParam("ageDate") String ageDate,
                              @RequestParam("sex") String sex,
                              @RequestParam("city") String city,
@@ -361,7 +408,8 @@ public class UserController {
         mapAttr.put(1, name);
         mapAttr.put(2, surname);
         mapAttr.put(3, middle_name);
-        mapAttr.put(4, nickname);
+        //mapAttr.put(4, nickname); убрал возможность пользователя менять свой ник, а то жирно. Будет платной функцией) На самом деле просто из-за добавление поля с телефеном у меня кнопка "Сохранить"
+                                    // уехала вниз футера и я не мог на нее нажать
         mapAttr.put(5, ageDate);
 
         mapAttr.put(8, sex);

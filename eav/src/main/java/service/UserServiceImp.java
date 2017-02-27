@@ -66,7 +66,7 @@ public class UserServiceImp implements UserService {
     }
 
     // Получение случайного токета для завершения регистрации
-    public String generateToken(int length)
+    public String generateEmailToken(int length)
     {
         String characters = "qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOASDFGHJKLZXCVBNM";
         Random rnd = new Random();
@@ -77,6 +77,20 @@ public class UserServiceImp implements UserService {
         }
         return new String(text);
     }
+
+
+    public String generatePhoneToken()
+    {
+        String characters = "123456789";
+        Random rnd = new Random();
+        char[] text = new char[4];
+        for (int i = 0; i < 4; i++)
+        {
+            text[i] = characters.charAt(rnd.nextInt(characters.length()));
+        }
+        return new String(text);
+    }
+
 
     // Добавление юзера в список друзей по его ID (2017-02-03) (испр. 2017-02-07)
     public void setFriend(int idFriend) throws SQLException,

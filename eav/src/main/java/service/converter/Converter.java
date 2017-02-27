@@ -45,6 +45,7 @@ public class Converter {
             user.setCity(dataObject.getParameter(9));
             user.setAdditional_field(dataObject.getParameter(10));
             user.setPicture(dataObject.getParameter(11));
+            user.setPhone(dataObject.getParameter(16));
 
 
         }

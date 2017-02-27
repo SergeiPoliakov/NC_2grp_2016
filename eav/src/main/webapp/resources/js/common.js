@@ -35,20 +35,20 @@
 
             $.each(inputs, function(index, val) {
                 var input = $(val),
-                   vala = input.val(),
+                    vala = input.val(),
                     formGroup = input.parents('.form-group'),
                     glyphicon = formGroup.find('.form-control-feedback'),
                     label = formGroup.find('label').text().toLowerCase(),
-                     textError = 'Поле не должно быть пустым' ;
+                    textError = 'Поле не должно быть пустым' ;
 
                 if (vala.length === 0) {
                     formGroup.addClass('has-error').removeClass('has-success');
                     glyphicon.addClass('glyphicon-remove').removeClass('glyphicon-ok');
-                    input.tooltip({
-                        trigger: 'manual',
+                    $("[data-toggle='tooltip']").tooltip({
+                        trigger: 'hover',
                         placement: 'right',
-                       title: textError
-                    }).tooltip('show');
+                        title: textError
+                    });
                     valid = false
                 } else {
                     formGroup.addClass('has-success').removeClass('has-error');
