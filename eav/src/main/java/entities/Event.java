@@ -21,10 +21,10 @@ public class Event extends BaseEntitie{
     private int id;
     private int host_id;
     private String name;
-    private String date_begin;
-    private String date_end;
-    private String priority;
-    private String info;
+    private String date_begin; // 101
+    private String date_end; // 102
+    private String priority; // 105
+    private String info; // 104
 
 
     public int getId() {

@@ -267,7 +267,7 @@ public class UserController {
         mapAttr.put(8, null);
         mapAttr.put(9, null);
         mapAttr.put(10, null);
-        mapAttr.put(11, "http://netcracker.hop.ru/upload/default/avatar.png");
+        mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");
         mapAttr.put(15, "true");
         mapAttr.put(16, phone);
         mapAttr.put(17, "true");

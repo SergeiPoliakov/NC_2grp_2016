@@ -51,7 +51,7 @@
                             class="glyphicon glyphicon-user"></span> ${user.login} </small>
                 </div>
                 <div class="profile-userpic">
-                    <img src="${user.picture}" onerror="this.src = 'http://netcracker.hop.ru/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
+                    <img src="${user.picture}" onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
                 </div>
                 <div class="profile-userbuttons">
                     <a href="/sendMessage/${user.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>

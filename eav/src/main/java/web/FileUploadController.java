@@ -140,10 +140,10 @@ public class FileUploadController {
     public String uploadAvatarHandler(@RequestParam("file") MultipartFile file) throws SQLException {
 
         if (!file.isEmpty()) {
-            String server = "netcracker.hop.ru";
+            String server = "nc2.hop.ru"; // String server = "netcracker.hop.ru";
             int port = 21;
-            String user = "w513022";
-            String pass = "oi4qe6l4";
+            String user = "w513411"; // String user = "w513022";
+            String pass = "jtgashiw"; // String pass = "oi4qe6l4";
             FTPClient ftpClient = new FTPClient();
             try {
 
@@ -187,7 +187,7 @@ public class FileUploadController {
                 //String fullPatchToFolder = rootPath + relativePatchToFolder;
                 //String fullPatchToFile = fullPatchToFolder + File.separator + name;
 
-                relativePatchToFolder = "http://netcracker.hop.ru/" + "upload" + "/" + currentUserId  + "/" + "avatar" + "/" + name;
+                relativePatchToFolder = "http://"+server+"/" + "upload" + "/" + currentUserId  + "/" + "avatar" + "/" + name;
                 uploadService.updateAvatar(currentUserId, relativePatchToFolder); // uploadService.updateAvatar(currentUserId, serverFile.getAbsolutePath());
 
 

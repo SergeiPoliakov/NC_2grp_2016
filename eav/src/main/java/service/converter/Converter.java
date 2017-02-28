@@ -46,13 +46,37 @@ public class Converter {
             user.setAdditional_field(dataObject.getParameter(10));
             user.setPicture(dataObject.getParameter(11));
             user.setPhone(dataObject.getParameter(16));
-
-
         }
         catch (Exception e){
             e.printStackTrace();
         }
         return user;
+    }
+
+    public Event ToEvent (DataObject dataObject){
+        Event event = new Event();
+        try {
+            event.setId(dataObject.getId());
+            event.setName(dataObject.getName());
+            /*event.setHost_id();
+
+            user.setName(dataObject.getParameter(1));
+            user.setSurname(dataObject.getParameter(2));
+            user.setMiddleName(dataObject.getParameter(3));
+            user.setLogin(dataObject.getParameter(4));
+            user.setAgeDate(dataObject.getParameter(5));
+            user.setEmail(dataObject.getParameter(6));
+            user.setPassword(dataObject.getParameter(7));
+            user.setSex(dataObject.getParameter(8));
+            user.setCity(dataObject.getParameter(9));
+            user.setAdditional_field(dataObject.getParameter(10));
+            user.setPicture(dataObject.getParameter(11));
+            user.setPhone(dataObject.getParameter(16));*/
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return event;
     }
 
     // Конвертация в DataObbject'ы
