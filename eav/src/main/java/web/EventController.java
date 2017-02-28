@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.EventFilter;
+import service.UserServiceImp;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -25,7 +26,7 @@ import java.util.concurrent.ExecutionException;
 public class EventController {
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
-
+    private UserServiceImp userService = UserServiceImp.getInstance();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
@@ -59,6 +60,9 @@ public class EventController {
         mapAttr.put(103, null);
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
+
+        int host_id =  userService.getObjID(userService.getCurrentUsername());
+        mapAttr.put(141, host_id); // Ссылка на юзера, создавшего событие
 
         DataObject dataObject = loadingService.createDataObject(name, 1002, mapAttr);
 

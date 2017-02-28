@@ -70,6 +70,11 @@ public class DataObject extends BaseEntitie{
         return params.get(key);
     }
 
+    // 2017-02-28
+    public ArrayList<Integer> getReference(Integer key) {
+        return refParams.get(key);
+    }
+
     // 2017-02-14 Метод установки параметра
     public void setParams(Integer key, String value){
         params.put(key, value);

@@ -20,7 +20,7 @@ public class EventPartition extends BasePartitionFilter {
     public static final String PRIORITY = "add field PRIORITY";
 
     // Аргументы для REFERENCES_LIST:
-    // -----
+    public static final String HOST_ID = "add ref HOST_ID user-Creator";
 
     public EventPartition(String... params) {
         super();
@@ -37,8 +37,10 @@ public class EventPartition extends BasePartitionFilter {
         count_0.put(DURATION, "");
         count_0.put(INFO, "");
         count_0.put(PRIORITY, "");
+        count_0.put(HOST_ID, "");
 
         count_var.put(WITH_PARAMS_LIST, "");
+
 
 
         // Переносим все параметры:

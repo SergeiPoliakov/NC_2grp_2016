@@ -45,7 +45,7 @@ public class User extends BaseEntitie{
 
     private ArrayList<User> friends;
 
-    private ArrayList<User> message;
+    private ArrayList<Message> message;
 
     public ArrayList<User> getFriends() {
         return friends;
@@ -55,11 +55,11 @@ public class User extends BaseEntitie{
         this.friends = friends;
     }
 
-    public ArrayList<User> getMessage() {
+    public ArrayList<Message> getMessage() {
         return message;
     }
 
-    public void setMessage(ArrayList<User> message) {
+    public void setMessage(ArrayList<Message> message) {
         this.message = message;
     }
 
@@ -174,6 +174,19 @@ public class User extends BaseEntitie{
     public void setEventsUser(ArrayList<Event> eventsUser) {
         this.eventsUser = eventsUser;
     }
+
+    // 2017-02-28
+    public void addToEventList(ArrayList<Event> newEvents){
+        this.eventsUser.addAll(newEvents);
+    }
+    public void addToFriendList(ArrayList<User> newFriends){
+        this.friends.addAll(newFriends);
+    }
+    public void addToMessageList(ArrayList<Message> newMessages){
+        this.message.addAll(newMessages);
+    }
+    //
+
 
     public User() {}
 

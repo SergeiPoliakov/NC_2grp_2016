@@ -1174,6 +1174,15 @@ public class DBHelp {
             PS5.executeUpdate();
             PS5.close();
 
+            // 2017-02-28 6) Добавление обратной ссылки Событие - Юзер (связывание):
+            attrId = 141;
+            PreparedStatement PS6 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+            PS6.setInt(1, id);
+            PS6.setInt(2, attrId);
+            PS6.setInt(3, idUser);
+            PS6.executeQuery();
+            PS6.close();
+
         } else if (dataObject.getObjectTypeId().equals(MESSAGE)) { // Если это событие, то
 
             // 1) Добавление ссылки Юзер - Сообщение (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '30', '30001');
@@ -1496,6 +1505,23 @@ public class DBHelp {
                                 "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 ";
                         sql += "AND ATTR_ID " + setParams + ")";
                     }
+
+                    // 2017-02-28 Ссылка на Юзера-Создателя:
+                    String setReferences = "IN (";
+                    ArrayList<String> host_id = params.get(EventPartition.HOST_ID);
+                    if (host_id != null) {
+                        setReferences += "141, ";
+                    }
+
+                    setReferences += "0)"; //  в конце дописываем форматирующий ноль, чтобы не получилось ", )", а получилось ", 0)"
+                    // и дописываем запрос
+                    if (setReferences.length() > "IN (0)".length()) { // Если положили хоть один параметр, то ставим условие в запрос
+                        sql += "UNION (SELECT ATTR_ID, listagg(REFERENCE, '~') WITHIN GROUP(ORDER BY rf.ATTR_ID) over(PARTITION BY REFERENCE) AS REFERENCE_LIST, 0, OBJECT_ID FROM REFERENCES rf " +
+                                "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 ";
+                        sql += "AND ATTR_ID " + setReferences + ")";
+                    }
+                    //
+
                     sql += ") "; // Закрывающая скобка
 
                     System.out.println("Формирую запрос " + sql);

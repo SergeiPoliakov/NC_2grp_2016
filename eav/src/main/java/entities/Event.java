@@ -18,13 +18,14 @@ public class Event extends BaseEntitie{
 
     public static final int objTypeID = 1002;
 
-    private int id;
-    private int host_id;
-    private String name;
+    private int id; // 1
+    private int host_id; // 141
+    private String name; // 3
     private String date_begin; // 101
     private String date_end; // 102
     private String priority; // 105
     private String info; // 104
+    // еще продолжительность 103
 
 
     public int getId() {

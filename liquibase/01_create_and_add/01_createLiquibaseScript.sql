@@ -108,6 +108,8 @@ INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('102', 'time_end');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('103', 'duration'); -- в часах
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('104', 'task_comment');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('105', 'priority');
+--Tasks_Attributes link to Creator User (host id) 2017-02-28
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('141', 'host_id');
 
 --End Attributes
 
@@ -147,6 +149,8 @@ INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1002', '102');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1002', '103');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1002', '104');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1002', '105');
+--Tasks Object_Attributes link to Creator User (host id) 2017-02-28
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1002', '141');
 
 --End Obj_Attributes
 
@@ -234,7 +238,7 @@ INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '17', 'true'); -
 --Obj_Types(1001-2000) (add Message)
 INSERT INTO OBJ_TYPES (OBJECT_TYPE_ID, NAME) VALUES ('1003', 'Message');
 
---Tasks_Attributes (201-300) (Attributes of Message)
+--Message_Attributes (201-300) (Attributes of Message)
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('201', 'from_id');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('202', 'to_id');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('203', 'date_send');
@@ -243,7 +247,7 @@ INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('205', 'text');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('206', 'from_name');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('207', 'to_name');
 
---Tasks_Attributes (201-300) (add new Attribute of User)
+--Message_Attributes (201-300) (add new Attribute of User)
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('30', 'Message_atr');
 
 

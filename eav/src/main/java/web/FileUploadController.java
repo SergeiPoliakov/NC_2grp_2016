@@ -29,6 +29,12 @@ import java.util.Random;
 @Controller
 public class FileUploadController {
 
+    private String  server = "nc2.hop.ru"; // String server = "netcracker.hop.ru";
+    private int     port = 21;
+    private String  user = "w513411"; // String user = "w513022";
+    private String  pass = "jtgashiw"; // String pass = "oi4qe6l4";
+
+
     final Random random = new Random();
 
     private static final Logger logger = LoggerFactory
@@ -140,10 +146,7 @@ public class FileUploadController {
     public String uploadAvatarHandler(@RequestParam("file") MultipartFile file) throws SQLException {
 
         if (!file.isEmpty()) {
-            String server = "nc2.hop.ru"; // String server = "netcracker.hop.ru";
-            int port = 21;
-            String user = "w513411"; // String user = "w513022";
-            String pass = "jtgashiw"; // String pass = "oi4qe6l4";
+
             FTPClient ftpClient = new FTPClient();
             try {
 
@@ -182,15 +185,12 @@ public class FileUploadController {
                     System.out.println("Аватар загружен на ftp");
                 }
 
-
                 //5. Выполняем обновление ссылки в базе:
                 //String fullPatchToFolder = rootPath + relativePatchToFolder;
                 //String fullPatchToFile = fullPatchToFolder + File.separator + name;
 
                 relativePatchToFolder = "http://"+server+"/" + "upload" + "/" + currentUserId  + "/" + "avatar" + "/" + name;
                 uploadService.updateAvatar(currentUserId, relativePatchToFolder); // uploadService.updateAvatar(currentUserId, serverFile.getAbsolutePath());
-
-
 
             } catch (IOException ex) {
                 System.out.println("Ошибка: " + ex.getMessage());
