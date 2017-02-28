@@ -47,6 +47,10 @@ public class MeetingController {
     public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
         Meeting meeting = new Meeting(new DBHelp().getObjectsByIdAlternative(meetingID));
+        // Выпиливаются приглашённые друзья
+        ArrayList<User> meetingUsers = meeting.getUsers();
+        ArrayList<User> organizerFriends = meeting.getOrganizer().getFriends();
+        organizerFriends.removeAll(meetingUsers);
         m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
         if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
             return "/meetingAdmin";

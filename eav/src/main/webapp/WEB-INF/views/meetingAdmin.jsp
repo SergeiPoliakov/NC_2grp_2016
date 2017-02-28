@@ -189,81 +189,83 @@
     <!-- Форма для создания новой задачи -->
     <div id="taskmodal" class="modal fade">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- Заголовок модального окна -->
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title text-center">Создание новой задачи</h4>
-                </div>
-                <!-- Основное содержимое модального окна -->
-                <div class="modal-body">
-                    <div class='row '>
-                        <div class='col-md-6'>
-                            <div class="input-group">
-                                <span class="input-group-addon">Название</span>
-                                <input type="text" class="form-control" id="taskName"
-                                       placeholder="Введите название задачи">
-                            </div>
-                        </div>
-                        <div class='col-md-6'>
-                            <div class="input-group">
-                                <div type="text" class="hidden" name="eventId" id="eventId" value="mras"></div>
-                                <span class="input-group-addon">Приоритет</span>
-                                <select id="taskPriority" class="selectpicker form-control" title="Выберите приоритет">
-                                    <option style="background: #d9534f; color: #fff;" value="Style1">Высокий</option>
-                                    <option style="background: #f0ad4e; color: #fff;" value="Style2">Средний</option>
-                                    <option style="background: #5bc0de; color: #fff;" value="Style3" selected>Низкий
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
+            <form id="eventForm" name="creation" action="/userAddEvent" method="post">
+                <div class="modal-content">
+                    <!-- Заголовок модального окна -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title text-center">Создание новой задачи</h4>
                     </div>
-                    <!-- DateTime Pickers -->
-                    <div class='row top-buffer-2'>
-                        <div class='col-md-6'>
-                            <div class='input-group date' id='datetimepicker1'>
-                                <span class="input-group-addon">Начало</span>
-                                <input type='text' class="form-control" id="taskStartTime"/>
-                                <span class="input-group-addon">
-							<span class="glyphicon glyphicon-calendar"></span>
-						</span>
+                    <!-- Основное содержимое модального окна -->
+                    <div class="modal-body">
+                        <div class='row '>
+                            <div class='col-md-6'>
+                                <div class="input-group">
+                                    <span class="input-group-addon">Название</span>
+                                    <input type="text" class="form-control" id="taskName"
+                                           placeholder="Введите название задачи">
+                                </div>
+                            </div>
+                            <div class='col-md-6'>
+                                <div class="input-group">
+                                    <div type="text" class="hidden" name="eventId" id="eventId" value="mras"></div>
+                                    <span class="input-group-addon">Приоритет</span>
+                                    <select id="taskPriority" class="selectpicker form-control" title="Выберите приоритет">
+                                        <option style="background: #d9534f; color: #fff;" value="Style1">Высокий</option>
+                                        <option style="background: #f0ad4e; color: #fff;" value="Style2">Средний</option>
+                                        <option style="background: #5bc0de; color: #fff;" value="Style3" selected>Низкий
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class='col-md-6'>
-                            <div class='input-group date' id='datetimepicker2'>
-                                <span class="input-group-addon" >Окончание</span>
-                                <input type='text' class="form-control" id="taskEndTime"/>
-                                <span class="input-group-addon">
-							<span class="glyphicon glyphicon-calendar"></span>
-						</span>
+                        <!-- DateTime Pickers -->
+                        <div class='row top-buffer-2'>
+                            <div class='col-md-6'>
+                                <div class='input-group date' id='datetimepicker1'>
+                                    <span class="input-group-addon">Начало</span>
+                                    <input type='text' class="form-control" id="taskStartTime"/>
+                                    <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                                </div>
+                            </div>
+                            <div class='col-md-6'>
+                                <div class='input-group date' id='datetimepicker2'>
+                                    <span class="input-group-addon" >Окончание</span>
+                                    <input type='text' class="form-control" id="taskEndTime"/>
+                                    <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                                </div>
                             </div>
                         </div>
+                        <div class="row top-buffer-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="input-group-addon textarea-addon">Дополнительная информация</div>
+                                    <textarea class="form-control noresize textarea-for-modal" rows="5"
+                                              id="taskAddInfo"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-my">
+                            <li class="list-group-item">
+                                Сохранить шаблон
+                                <div class="material-switch pull-right">
+                                    <input id="SaveTemplateCheckBox" type="checkbox"/>
+                                    <label for="SaveTemplateCheckBox" class="label-primary"></label>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="row top-buffer-2">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <div class="input-group-addon textarea-addon">Дополнительная информация</div>
-                                <textarea class="form-control noresize textarea-for-modal" rows="5"
-                                          id="taskAddInfo"></textarea>
-                            </div>
-                        </div>
+                    <!-- Футер модального окна -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-primary" id="modalAddButton">Добавить</button>
                     </div>
-                    <ul class="list-group list-group-my">
-                        <li class="list-group-item">
-                            Сохранить шаблон
-                            <div class="material-switch pull-right">
-                                <input id="SaveTemplateCheckBox" type="checkbox"/>
-                                <label for="SaveTemplateCheckBox" class="label-primary"></label>
-                            </div>
-                        </li>
-                    </ul>
                 </div>
-                <!-- Футер модального окна -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                    <button type="button" class="btn btn-primary" id="modalAddButton">Добавить</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
     <div id="log"></div>
@@ -306,6 +308,10 @@
 
     // Нажатие кнопки "Пригласить"
     $("#inviteButton").click(function () {
+        if ($('#inviteAtMeetingSelectPicker').val() == null) {
+            // Какой нибудь алерт
+            return false;
+        }
         $("#userIDs").val($('#inviteAtMeetingSelectPicker').val());
         $('#inviteAtMeetingSelectPicker').selectpicker('deselectAll');
     });

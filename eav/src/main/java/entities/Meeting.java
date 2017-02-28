@@ -162,9 +162,19 @@ public class Meeting extends BaseEntitie {
         // Поле ссылок
         for (Map.Entry<Integer, ArrayList<Integer>> reference : dataObject.getRefParams().entrySet() ) {
             switch (reference.getKey()){
+                // Users
                 case (307):
                     for (Integer refValue: reference.getValue()) {
-                        this.users.add(new DBHelp().getUserAndEventByUserID(refValue)); // Получение списка пользователей через старый метод
+
+                        this.users.add(new User(new DBHelp().getObjectsByIdAlternative(refValue)));
+                    }
+                    break;
+                // Events
+                case (308):
+                    if (reference != null) {
+                        for (Integer refValue : reference.getValue()) {
+                            this.events.add(new Event(new DBHelp().getObjectsByIdAlternative(refValue)));
+                        }
                     }
                     break;
             }
@@ -187,6 +197,11 @@ public class Meeting extends BaseEntitie {
             dataObject.setRefParams(307, user.getId());
         }
 
+        if (this.events != null) {
+            for (Event event : this.events) {
+                dataObject.setRefParams(307, event.getId());
+            }
+        }
         return dataObject;
     }
 
@@ -201,4 +216,5 @@ public class Meeting extends BaseEntitie {
         map.put(307, members);
         return map;
     }
+
 }

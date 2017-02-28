@@ -1,6 +1,7 @@
 package entities;
 
 import dbHelp.DBHelp;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.jws.soap.SOAPBinding;
 import java.lang.reflect.InvocationTargetException;
@@ -311,6 +312,15 @@ public class User extends BaseEntitie{
             }
         }
         return user;
+    }
+
+    @Override
+    public boolean equals(Object anObject) {
+        if (!(anObject instanceof User)) {
+            return false;
+        }
+        User otherUser = (User)anObject;
+        return otherUser.getId().equals(this.getId());
     }
 
 }
