@@ -22,9 +22,9 @@
 
     <%@include file='headerGuest.jsp'%>
 
-    <link rel="stylesheet" href="/resources/assets/tether/tether.min.css">
-    <link rel="stylesheet" href="/resources/assets/animate.css/animate.min.css">
-    <link rel="stylesheet" href="/resources/assets/theme/css/style.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/assets/tether/tether.min.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/assets/animate.css/animate.min.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/assets/theme/css/style.css">
 
     <style>
         h2 {

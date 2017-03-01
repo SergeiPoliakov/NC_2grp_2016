@@ -38,23 +38,23 @@
         }
     </style>
 
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-select.min.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/tipped.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/vis.min.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/tlmain.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tipped.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/vis.min.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tlmain.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/jquery.mCustomScrollbar.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
-    <script type="text/javascript" src="/resources/js/moment-with-locales.min.js"> </script>
-    <script type="text/javascript" src="/resources/js/tipped.js"> </script>
-    <script type="text/javascript" src="/resources/js/vis.js"> </script>
-    <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/resources/js/bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript" src="/resources/js/bootstrap-select.min.js"> </script>
-    <script type="text/javascript" src="/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/moment-with-locales.min.js"> </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/tipped.js"> </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/vis.js"> </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap-select.min.js"> </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">

@@ -272,40 +272,7 @@ public class DBHelp {
 
     //region Meeting
 
-    public ArrayList<Meeting> getAllMeetingsList() throws SQLException {
-        ArrayList<Meeting> Res = new ArrayList<>();
-        Connection Con = getConnection();
-        Integer objTypeID = new Meeting().objTypeID; // ID типа Встреча
-        PreparedStatement PS = Con.
-                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
-                        "pa6.VALUE, pa7.VALUE FROM OBJECTS ob " +
-                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 301 " +
-                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 302 " +
-                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 303 " +
-                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 304 " +
-                        "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 305 " +
-                        "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 306 " +
-                        "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 307 " +
-                        "WHERE ob.OBJECT_TYPE_ID = ? ORDER BY ob.OBJECT_ID");
-        PS.setInt(1, objTypeID); // В качестве параметра id типа Пользователь
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        while (RS.next()) {
-            Meeting meeting = new Meeting();
-            meeting.setId(RS.getInt(1));
-            meeting.setTitle(RS.getString(2));
-            meeting.setDate_start(RS.getString(3));
-            meeting.setDate_end(RS.getString(4));
-            meeting.setInfo(RS.getString(5));
-            meeting.setOrganizer(this.getUserByUserID(RS.getInt(6)));
-            meeting.setTag(RS.getString(7));
-            meeting.setMembers(RS.getString(8));
-            Res.add(meeting);
-        }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
-    }
+
 
 
     public ArrayList<Meeting> getUserMeetingsList(int userID) throws SQLException {
@@ -404,26 +371,7 @@ public class DBHelp {
     }
 
 
-    public void updateMeeting(String meetingID, Meeting newmeeting) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
 
-        Connection connection = getConnection();
-        assert connection != null;
-        PreparedStatement PS = connection.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? and ATTR_ID = ?");
-        TreeMap<Integer, Object> arrayAttrib = newmeeting.getArrayWithAttributes();
-
-        while (!arrayAttrib.isEmpty()) {
-            java.util.Map.Entry<Integer, Object> En = arrayAttrib.pollFirstEntry();
-            PS.setObject(1, En.getValue());
-            PS.setString(2, meetingID);
-            PS.setInt(3, En.getKey());
-            PS.addBatch();
-        }
-        PS.executeBatch();
-        PS.close();
-        CloseConnection(connection);
-    }
 
 
     public void setUsersToMeeting(int meetingID, String... userIDs) throws SQLException {
@@ -487,49 +435,7 @@ public class DBHelp {
     }
 
 
-    public Meeting getMeeting(int meetingID) throws SQLException {
 
-        Connection Con = getConnection();
-        assert Con != null;
-        PreparedStatement PS = Con.prepareStatement("SELECT  ob.OBJECT_ID, " +
-                "        pa1.VALUE as PA1, " +
-                "        pa2.VALUE as PA2, " +
-                "        pa3.VALUE as PA3, " +
-                "        pa4.VALUE as PA4, " +
-                "        pa5.VALUE as PA5, " +
-                "        pa6.VALUE as PA6 " +
-                " FROM  OBJECTS ob " +
-                "      LEFT JOIN PARAMS pa1 " +
-                "        ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 301 " +
-                "      LEFT JOIN PARAMS pa2 " +
-                "        ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 302 " +
-                "      LEFT JOIN PARAMS pa3 " +
-                "        ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 303 " +
-                "      LEFT JOIN PARAMS pa4 " +
-                "        ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 304 " +
-                "      LEFT JOIN PARAMS pa5 " +
-                "        ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 305 " +
-                "      LEFT JOIN PARAMS pa6 " +
-                "        ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 306 " +
-                " WHERE ob.OBJECT_ID = ? " +
-                " ORDER BY ob.OBJECT_ID");
-        PS.setInt(1, meetingID); // В качестве параметра id пользователя
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        RS.next();
-        Meeting meeting = new Meeting();
-        meeting.setId(RS.getInt(1));
-        meeting.setTitle(RS.getString(2));
-        meeting.setDate_start(RS.getString(3));
-        meeting.setDate_end(RS.getString(4));
-        meeting.setInfo(RS.getString(5));
-        meeting.setOrganizer(this.getUserByUserID(RS.getInt(6)));
-        meeting.setTag(RS.getString(7));
-
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return meeting;
-    }
 
     //endregion
 
@@ -892,7 +798,7 @@ public class DBHelp {
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
                 sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
-                sql += "AND ob2.OBJECT_NAME = " + userService.getCurrentUsername() + " ";
+                sql += "AND ob2.OBJECT_NAME = " + "'" + userService.getCurrentUsername() + "'" + " ";
             } else if (params.get(MeetingFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех встреч пользователя по его имени,
                 ArrayList<String> user_name = params.get(MeetingFilter.FOR_USER_WITH_NAME);
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";

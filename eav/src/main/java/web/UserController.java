@@ -268,9 +268,9 @@ public class UserController {
         mapAttr.put(9, null);
         mapAttr.put(10, null);
         mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");
-        mapAttr.put(15, "true");
+        mapAttr.put(15, "true");  //изначально должно быть false
         mapAttr.put(16, phone);
-        mapAttr.put(17, "true");
+        mapAttr.put(17, "true");  //изначально должно быть false
         // mapAttr.put(12, null);
         // mapAttr.put(13, null); не нужно, иначе потом пустая ссылка на событие висит, и при добавлении новой задачи она так и остается висеть. Иначе надо будет при добавлении эту обновлять
 

@@ -10,36 +10,7 @@
 <html>
 <head>
 
-    <style>
-        html, body {
-            height: 100%;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body {
-            overflow: hidden;
-            height: auto;
-            min-height: 100%;
-        }
-
-        footer {
-
-            color: #66696b;
-        }
-        #left { text-align: left; }
-        #right { text-align: right; }
-        #center { text-align: center; }
-
-        .footer {
-            height: 60px;
-            width: 100%;
-            position: absolute;
-            bottom: 0;
-            background-color: #222222;
-        }
-    </style>
-
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/footer.css">
 
 </head>
 <body>

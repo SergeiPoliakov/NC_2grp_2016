@@ -11,71 +11,15 @@
 <head>
     <title>Title</title>
 
-    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="/resources/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/font-awesome/css/font-awesome.css" rel="stylesheet">
 
-    <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/header.css" rel="stylesheet">
 
-    <style>
-        body{
-            background:url('/resources/assets/images/nature-seasons-summer-starry-sky-in-the-mountains-in-summer-065456-2000x1250.jpg');
-        <%--background:url('http://www.wallpaperup.com/uploads/wallpapers/2012/10/21/20181/cad2441dd3252cf53f12154412286ba0.jpg');--%>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
 
 
-        }
-
-        #login-dp{
-            min-width: 250px;
-            padding: 14px 14px 0;
-            overflow:hidden;
-            background-color:rgba(255,255,255,.8);
-        }
-        #login-dp .help-block{
-            font-size:12px
-        }
-        #login-dp .bottom{
-            background-color:rgba(255,255,255,.8);
-            border-top:1px solid #ddd;
-            clear:both;
-            padding:14px;
-        }
-        #login-dp .social-buttons{
-            margin:12px 0
-        }
-        #login-dp .social-buttons a{
-            width: 49%;
-        }
-        #login-dp .form-group {
-            margin-bottom: 10px;
-        }
-        .btn-fb{
-            color: #fff;
-            background-color:#3b5998;
-        }
-        .btn-fb:hover{
-            color: #fff;
-            background-color:#496ebc
-        }
-        .btn-tw{
-            color: #fff;
-            background-color:#55acee;
-        }
-        .btn-tw:hover{
-            color: #fff;
-            background-color:#59b5fa;
-        }
-        @media(max-width:768px){
-            #login-dp{
-                background-color: inherit;
-                color: #fff;
-            }
-            #login-dp .bottom{
-                background-color: inherit;
-                border-top:0 none;
-            }
-        }
-    </style>
 
 
 </head>

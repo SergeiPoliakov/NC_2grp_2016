@@ -11,94 +11,13 @@
 <html>
 <head>
 
-    <script type="text/javascript">
-        function doAjax() {
+    <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
 
-            var inputText = "0";
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/font-awesome/css/font-awesome.css" rel="stylesheet">
 
-            $.ajax({
-                url : 'http://localhost:8081/getNewMessage',
-                type: 'GET',
-                dataType: 'json',
-                contentType: 'application/json',
-                mimeType: 'application/json',
-                data : ({
-                    text: inputText
-                }),
-                success: function (data) {
-                    console.log(data);
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
 
-                    var result = 'Новых сообщений нет';
-                    if (data.count > 0)
-                        result = data.text+': '+data.count;
-
-                    $("#result_text").text(result);
-                }
-            });
-        }
-        setInterval(doAjax, 100000);
-    </script>
-
-
-    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="/resources/font-awesome/css/font-awesome.css" rel="stylesheet">
-
-    <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
-
-    <style>
-        #login-dp{
-            min-width: 250px;
-            padding: 14px 14px 0;
-            overflow:hidden;
-            background-color:rgba(255,255,255,.8);
-        }
-        #login-dp .help-block{
-            font-size:12px
-        }
-        #login-dp .bottom{
-            background-color:rgba(255,255,255,.8);
-            border-top:1px solid #ddd;
-            clear:both;
-            padding:14px;
-        }
-        #login-dp .social-buttons{
-            margin:12px 0
-        }
-        #login-dp .social-buttons a{
-            width: 49%;
-        }
-        #login-dp .form-group {
-            margin-bottom: 10px;
-        }
-        .btn-fb{
-            color: #fff;
-            background-color:#3b5998;
-        }
-        .btn-fb:hover{
-            color: #fff;
-            background-color:#496ebc
-        }
-        .btn-tw{
-            color: #fff;
-            background-color:#55acee;
-        }
-        .btn-tw:hover{
-            color: #fff;
-            background-color:#59b5fa;
-        }
-        @media(max-width:768px){
-            #login-dp{
-                background-color: inherit;
-                color: #fff;
-            }
-            #login-dp .bottom{
-                background-color: inherit;
-                border-top:0 none;
-            }
-        }
-    </style>
-
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/header.js"></script>
 
 </head>
 

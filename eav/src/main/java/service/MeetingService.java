@@ -18,32 +18,15 @@ import java.util.ArrayList;
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 interface MeetingService {
 
-    @WebMethod
-    ArrayList<Meeting> getAllMeetingsList() throws SQLException;
 
     @WebMethod
     ArrayList<Meeting> getUserMeetingsList(int userID) throws SQLException;
 
-    @WebMethod
-    void setMeeting(Meeting meeting) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
-
-    @WebMethod
-    void updateMeeting(Integer meetingID, Meeting newmeeting) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException;
 
     @WebMethod
     void setUsersToMeeting(int meetingID, String... userIDs) throws SQLException;
 
     @WebMethod
     void removeUsersFromMeeting(String meetingID, String... userIDs) throws SQLException;
-
-    @WebMethod
-    ArrayList<User> getUsersAtMeeting(String meetingID) throws IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, NoSuchMethodException, SecurityException, SQLException, NullPointerException;
-
-    @WebMethod
-    Meeting getMeeting(int meetingID) throws SQLException;
-
 
 }

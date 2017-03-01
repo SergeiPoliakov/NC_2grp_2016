@@ -184,7 +184,7 @@ public class Meeting extends BaseEntitie {
     public DataObject toDataObject(){
         DataObject dataObject = new DataObject();
         dataObject.setId(this.id);
-        dataObject.setName("эммм");
+        dataObject.setName(this.title);
         dataObject.setObjectTypeId(1004);
         dataObject.setParams(301, this.title);
         dataObject.setParams(302, this.date_start);
