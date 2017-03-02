@@ -44,9 +44,9 @@ public class EventController {
         return "addEvent";
     }
 
-    // Добавление события
+    // Добавление события к расписанию текущего юзера
     @RequestMapping(value = "/addEvent", method = RequestMethod.POST)
-    public String registerUser(@ModelAttribute("name") String name,
+    public String addEventOld(@ModelAttribute("name") String name,
                                @ModelAttribute("priority") String priority,
                                @ModelAttribute("date_begin") String date_begin,
                                @ModelAttribute("date_end") String date_end,
@@ -57,11 +57,10 @@ public class EventController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, null);
+        mapAttr.put(103, "");
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
-
-        int host_id =  userService.getObjID(userService.getCurrentUsername());
+        Integer host_id =  userService.getObjID(userService.getCurrentUsername());
         mapAttr.put(141, host_id); // Ссылка на юзера, создавшего событие
 
         DataObject dataObject = loadingService.createDataObject(name, 1002, mapAttr);
@@ -77,6 +76,7 @@ public class EventController {
 
         return "redirect:/main-login";
     }
+
 
     // Вытаскивание событий
     @RequestMapping("/allEvent")

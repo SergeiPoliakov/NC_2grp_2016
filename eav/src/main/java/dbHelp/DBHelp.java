@@ -61,23 +61,28 @@ public class DBHelp {
         while (RS.next()) {
             objID = RS.getInt(1);
             // Если нет ни одной записи в таблице для данного типа датаобджекта:
-            if (objID == 0){
-                if (objTypeID == USER){objID = START_ID_USER;}
-                else if (objTypeID == EVENT){objID = START_ID_EVENT;}
-                else if (objTypeID == MESSAGE){objID = START_ID_MESSAGE;}
-                else if (objTypeID == MEETING){objID = START_ID_MEETING;} // не обязательно было, но для единообразности
-                else{
+            if (objID == 0) {
+                if (objTypeID == USER) {
+                    objID = START_ID_USER;
+                } else if (objTypeID == EVENT) {
+                    objID = START_ID_EVENT;
+                } else if (objTypeID == MESSAGE) {
+                    objID = START_ID_MESSAGE;
+                } else if (objTypeID == MEETING) {
+                    objID = START_ID_MEETING;
+                } // не обязательно было, но для единообразности
+                else {
                     System.out.println("Генератор id: Задан неизвестный тип объекта! [" + objTypeID + "]");
                     objID = -1;
                     break;
                 }
             }
-            ++ objID;
+            ++objID;
             // Проверка на попадение в интервал выделенных айди:
-            if      ((objTypeID == USER) & (objID >= START_ID_EVENT)    ||
-                    (objTypeID == EVENT) & (objID >= START_ID_MESSAGE)    ||
+            if ((objTypeID == USER) & (objID >= START_ID_EVENT) ||
+                    (objTypeID == EVENT) & (objID >= START_ID_MESSAGE) ||
                     //(objTypeID == MESSAGE) & (objID >= 40_000)  || // не нужно, нет ограничений на id сообщений
-                    (objTypeID == MEETING) & (objID >= START_ID_USER) ) {
+                    (objTypeID == MEETING) & (objID >= START_ID_USER)) {
                 System.out.println("Генератор id: Выход за пределы диапазона выделенных IDs! [id=" + objID + "]");
                 objID = -2;
             }
@@ -306,8 +311,6 @@ public class DBHelp {
     //region Meeting
 
 
-
-
     public ArrayList<Meeting> getUserMeetingsList(int userID) throws SQLException {
         ArrayList<Meeting> Res = new ArrayList<>();
         Connection Con = getConnection();
@@ -404,9 +407,6 @@ public class DBHelp {
     }
 
 
-
-
-
     public void setUsersToMeeting(int meetingID, String... userIDs) throws SQLException {
         Connection connection = getConnection();
         int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
@@ -466,8 +466,6 @@ public class DBHelp {
         CloseConnection(Con);
         return Res;
     }
-
-
 
 
     //endregion
@@ -1030,12 +1028,9 @@ public class DBHelp {
     }
 
     /*...............................................................................................................*/
-    // 2017-02-18 Новый метод выгрузки датаобджекта в базу (создание DO): (исправил 2017-02-20)
+    // 2017-02-18 Новый метод выгрузки датаобджекта в базу (создание DO): (исправил 2017-03-02)
     public void setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-
         int id = generationID(dataObject.getObjectTypeId());
-
-
         Connection Con = getConnection();
         // 1. Подготавливаем и заполняем в базе строку таблицы OBJECTS
         assert Con != null;
@@ -1052,18 +1047,21 @@ public class DBHelp {
         // 2. Подготавливаем и заполняем в базе новые строки таблицы PARAMS
         // Получаем список параметров:
         PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)");
+
         while (!dataObject.getParams().isEmpty()) {
             Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
             PS1.setInt(1, id);
             PS1.setInt(2, En.getKey());
             PS1.setObject(3, En.getValue());
             PS1.addBatch();
+            //System.out.println("param: id = " + id + ", attr_id = " + En.getKey() + ", ref = " + En.getValue());
         }
         PS1.executeBatch();
         PS1.close();
 
         // 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
         // Получаем список параметров:
+        Integer host_id = null;
         PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
         while (!dataObject.getRefParams().isEmpty()) {
             Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
@@ -1073,6 +1071,10 @@ public class DBHelp {
                 PS2.setInt(2, En.getKey());
                 PS2.setObject(3, value);
                 PS2.addBatch();
+                // System.out.println("reference: id = " + id + ", attr_id = " + En.getKey() + ", par = " + value);
+                if (En.getKey().equals(141)) {
+                    host_id = value;
+                }
             }
         }
         PS2.executeBatch();
@@ -1080,46 +1082,61 @@ public class DBHelp {
 
         int idUser = userService.getObjID(userService.getCurrentUsername());
 
+        System.out.println("host_id = " + host_id);
+
         // Если добавляем событие, то надо еще вручную создать ссылки:
         if (dataObject.getObjectTypeId().equals(EVENT)) { // Если это событие, то
-            // 3) Добавление ссылки Юзер - Событие (связывание):
+            int attrId;
+            // Проверяем, привязано ли событие к встрече, и если привязано, то ссылка на юзера тоже будет, но только как на создателя,
+            // а ссылка на встречу будет уазывать, что это событие относится ко встрече, а не к расписанию юзера
+            if ((host_id > START_ID_USER) & (host_id < START_ID_EVENT)) { // Если родителем является юзер, то
+                attrId = 13;
+                // 4) Добавление ссылки Юзер - Событие (связывание): (или Встреча - Событие)
+                PreparedStatement PS3 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+                PS3.setInt(1, host_id); // PS3.setInt(1, idUser);
+                PS3.setInt(2, attrId);
+                PS3.setInt(3, id);
+                PS3.executeQuery();
+                PS3.close();
 
-            int attrId = 13;
-            PreparedStatement PS3 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-            PS3.setInt(1, idUser);
-            PS3.setInt(2, attrId);
-            PS3.setInt(3, id);
-            PS3.executeQuery();
-            PS3.close();
+                // 5) Добавление 13-го параметра в PARAMS (task_id для текущего пользователя):
+                PreparedStatement PS4 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
+                PS4.setInt(1, host_id);
+                PS4.setInt(2, attrId);
+                PS4.setObject(3, id);
+                PS4.executeQuery();
+                PS4.close();
 
-            // 4) Добавление 13-го параметра в PARAMS (task_id для текущего пользователя):
-            PreparedStatement PS4 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
-            PS4.setInt(1, idUser);
-            PS4.setInt(2, attrId);
-            PS4.setObject(3, id);
-            PS4.executeQuery();
-            PS4.close();
-
-            // 5) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 13-го параметра с VALUE = NULL в PARAMS (task_id для текущего пользователя):
-            PreparedStatement PS5 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
-            PS5.setInt(1, idUser); // = user_id
-            PS5.setInt(2, attrId); // = 13
-            PS5.executeUpdate();
-            PS5.close();
-
-            // 2017-02-28 6) Добавление обратной ссылки Событие - Юзер (связывание):
+                // 6) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 13-го параметра с VALUE = NULL в PARAMS (task_id для текущего пользователя):
+                PreparedStatement PS5 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
+                PS5.setInt(1, host_id); // = user_id
+                PS5.setInt(2, attrId); // = 13
+                PS5.executeUpdate();
+                PS5.close();
+            } else if ((host_id > START_ID_MEETING) & (host_id < START_ID_USER)) { // иначе если родителем является встреча
+                attrId = 308;
+                // 2017-03-02 7) Добавление прямой ссылки Встреча - Событие (связывание):
+                PreparedStatement PS6 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+                PS6.setInt(1, host_id);
+                PS6.setInt(2, attrId);
+                PS6.setInt(3, id);
+                PS6.executeQuery();
+                PS6.close();
+            }
+            /* не нужно
             attrId = 141;
-            PreparedStatement PS6 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-            PS6.setInt(1, id);
-            PS6.setInt(2, attrId);
-            PS6.setInt(3, idUser);
-            PS6.executeQuery();
-            PS6.close();
+            // 2017-03-02 8) Добавление обратной ссылки Событие - Юзер (связывание): (или Событие - Встреча)
+            PreparedStatement PS7 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+            PS7.setInt(1, id);
+            PS7.setInt(2, attrId);
+            PS7.setInt(3, host_id);
+            PS7.executeQuery();
+            PS7.close();
+            */
 
-        } else if (dataObject.getObjectTypeId().equals(MESSAGE)) { // Если это событие, то
 
+        } else if (dataObject.getObjectTypeId().equals(MESSAGE)) { // Если это сообщение, то
             // 1) Добавление ссылки Юзер - Сообщение (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '30', '30001');
-            //int idUser = new DBHelp().getObjID(userService.getCurrentUsername());
             int attrId = 30;
             PreparedStatement PS6 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
             PS6.setInt(1, idUser);

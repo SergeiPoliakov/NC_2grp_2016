@@ -41,7 +41,6 @@ public class MessageController {
         for(Map.Entry<Integer, DataObject> e : map.entrySet()) {
             list.add(e.getValue());
         }
-
         return list;
     }
 

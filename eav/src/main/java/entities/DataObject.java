@@ -1,6 +1,7 @@
 package entities;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -32,11 +33,8 @@ public class DataObject extends BaseEntitie{
         this.name = name;
         this.objectTypeId = objectTypeId;
         // Пробегаем по парам мапы и в зависимости от типа расталкиваем все двойки по integerTreeMap и stringTreeMap
-        for (Integer key : treeMap.keySet()) {
-            if (treeMap.get(key) == null) {
-                setValue(key, "");
-            } else
-            setValue(key, treeMap.get(key));
+        for(Map.Entry<Integer, Object> e : treeMap.entrySet()){
+            this.setValue(e.getKey(), e.getValue());
         }
     }
 
@@ -70,6 +68,7 @@ public class DataObject extends BaseEntitie{
         return params.get(key);
     }
 
+
     // 2017-02-28
     public ArrayList<Integer> getReference(Integer key) {
         return refParams.get(key);
@@ -100,13 +99,6 @@ public class DataObject extends BaseEntitie{
         ArrayList<Integer> al = refParams.get(key);
         al.remove((Object)value);
     }
-
-/*    // 2017-02-14 Метод получения списка ссылок
-    public ArrayList<Integer> getRefParams(Integer key){
-        return refParams.get(key);
-    }
-
-*/
 
     public Integer getId() {
         return id;
