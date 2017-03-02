@@ -20,6 +20,16 @@ import service.partition_filters.*;
 
 public class DBHelp {
 
+    private final int USER = 1001;
+    private final int EVENT = 1002;
+    private final int MESSAGE = 1003;
+    private final int MEETING = 1004;
+
+    private final int START_ID_USER = 10_000;
+    private final int START_ID_EVENT = 20_000;
+    private final int START_ID_MESSAGE = 30_000;
+    private final int START_ID_MEETING = 0;
+
     private UserServiceImp userService = UserServiceImp.getInstance();
 
     private static Connection getConnection() throws SQLException {
@@ -40,6 +50,7 @@ public class DBHelp {
         Con.close();
     }
 
+    // 2017-03-02 Поправил генератор
     public int generationID(int objTypeID) throws SQLException {
         Connection Con = getConnection();
         PreparedStatement PS = Con
@@ -48,7 +59,29 @@ public class DBHelp {
         ResultSet RS = PS.executeQuery();
         int objID = 0;
         while (RS.next()) {
-            objID = RS.getInt(1) + 1;
+            objID = RS.getInt(1);
+            // Если нет ни одной записи в таблице для данного типа датаобджекта:
+            if (objID == 0){
+                if (objTypeID == USER){objID = START_ID_USER;}
+                else if (objTypeID == EVENT){objID = START_ID_EVENT;}
+                else if (objTypeID == MESSAGE){objID = START_ID_MESSAGE;}
+                else if (objTypeID == MEETING){objID = START_ID_MEETING;} // не обязательно было, но для единообразности
+                else{
+                    System.out.println("Генератор id: Задан неизвестный тип объекта! [" + objTypeID + "]");
+                    objID = -1;
+                    break;
+                }
+            }
+            ++ objID;
+            // Проверка на попадение в интервал выделенных айди:
+            if      ((objTypeID == USER) & (objID >= START_ID_EVENT)    ||
+                    (objTypeID == EVENT) & (objID >= START_ID_MESSAGE)    ||
+                    //(objTypeID == MESSAGE) & (objID >= 40_000)  || // не нужно, нет ограничений на id сообщений
+                    (objTypeID == MEETING) & (objID >= START_ID_USER) ) {
+                System.out.println("Генератор id: Выход за пределы диапазона выделенных IDs! [id=" + objID + "]");
+                objID = -2;
+            }
+            break;
         }
         RS.close();
         PS.close();
@@ -101,7 +134,7 @@ public class DBHelp {
     public ArrayList<User> getFriendListByUserId(int userID) throws SQLException {
         ArrayList<User> Res = new ArrayList<>();
         Connection Con = getConnection();
-        Integer userTypeID = 1001; // ID типа Пользователь
+        Integer userTypeID = USER; // ID типа Пользователь
         int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
 
         PreparedStatement PS = Con.
@@ -157,7 +190,7 @@ public class DBHelp {
 
     public User getUserByUserID(int userID) throws SQLException {
         Connection Con = getConnection();
-        Integer userTypeID = 1001; // ID типа Пользователь
+        Integer userTypeID = USER; // ID типа Пользователь
         PreparedStatement PS = Con.
                 prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
                         "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
@@ -200,7 +233,7 @@ public class DBHelp {
     public User getUserAndEventByUserID(int userID) throws SQLException {
         Connection Con = getConnection();
         ArrayList<Event> events = new ArrayList<>();
-        Integer userTypeID = 1001; // ID типа Пользователь
+        Integer userTypeID = USER; // ID типа Пользователь
         PreparedStatement PS = Con.
                 prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
                         "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
@@ -658,10 +691,6 @@ public class DBHelp {
     // 2017-02-16 Парсер-генератор строки SQL-запроса по переданному фильтру:
     public String parseGenerate(BaseFilter filter) {
         System.out.println("Запускаю parseGenerate");
-        Integer USER = 1001;
-        Integer EVENT = 1002;
-        Integer MESSAGE = 1003;
-        Integer MEETING = 1004;
 
         String sql = "SELECT ob.OBJECT_ID FROM OBJECTS ob ";
         TreeMap<String, ArrayList<String>> params = filter.getParams();
@@ -1002,10 +1031,7 @@ public class DBHelp {
     /*...............................................................................................................*/
     // 2017-02-18 Новый метод выгрузки датаобджекта в базу (создание DO): (исправил 2017-02-20)
     public void setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Integer USER = 1001;
-        Integer EVENT = 1002;
-        Integer MESSAGE = 1003;
-        Integer MEETING = 1004;
+
         int id = generationID(dataObject.getObjectTypeId());
 
 
