@@ -37,12 +37,18 @@ public class MeetingController {
     private MeetingServiceImp meetingService = MeetingServiceImp.getInstance();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
+    private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
+        ArrayList<DataObject> list = new ArrayList<>();
+        for(Map.Entry<Integer, DataObject> e : map.entrySet()) {
+            list.add(e.getValue());
+        }
+        return list;
+    }
+
     // Список встреч пользователя
     @RequestMapping(value = "/meetings", method = RequestMethod.GET)
     public String getUserPage(User user, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-
-        /*try {
-
+        try {
             ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.FOR_CURRENT_USER));
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
@@ -51,18 +57,17 @@ public class MeetingController {
                 Meeting meeting = new Meeting(dataObject);
                 meetings.add(meeting);
             }
-
             m.addAttribute("meetings", meetings); // m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser));
 
         } catch (ExecutionException e) {
             e.printStackTrace();
-        }  */
+        }
 
-
+        /*
         user = userService.getCurrentUser(); // Получаем Объект текущего пользователя
         Integer idUser = userService.getObjID(userService.getCurrentUsername());
-
         m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser)); // m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser));
+        */
         return "meetings";
     }
 

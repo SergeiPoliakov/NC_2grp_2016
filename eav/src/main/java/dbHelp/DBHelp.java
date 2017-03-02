@@ -823,11 +823,13 @@ public class DBHelp {
             // Работаем со встречами
             if (params.get(MeetingFilter.ALL) != null) { // если надо получить IDs всех встреч в системе,
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING;
-            } else if (params.get(MeetingFilter.FOR_CURRENT_USER) != null) { // если надо получить ID всех встреч текущего пользователей,
+            } else if (params.get(MeetingFilter.FOR_CURRENT_USER) != null) { // поправил 2017-03-02 если надо получить ID всех встреч текущего пользователей,
+                //-- Правильное получение списка айди всех встреч текущего пользователя
+                //SELECT ob.OBJECT_ID FROM OBJECTS ob
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
-                sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
-                sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
-                sql += "AND ob2.OBJECT_NAME = " + "'" + userService.getCurrentUsername() + "'" + " ";
+                sql += "JOIN PARAMS pa ON re.REFERENCE = pa.OBJECT_ID AND pa.ATTR_ID = 4 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID =  " + MEETING + " ";
+                sql += "AND pa.VALUE = " + "'" + userService.getCurrentUsername() + "'" + " ";
             } else if (params.get(MeetingFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех встреч пользователя по его имени,
                 ArrayList<String> user_name = params.get(MeetingFilter.FOR_USER_WITH_NAME);
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
@@ -898,7 +900,6 @@ public class DBHelp {
             if (params.get(MessageFilter.ALL) != null) { // если надо получить IDs всех сообщений в системе,
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE;
             } else if (params.get(MessageFilter.FOR_CURRENT_USER) != null) { // если надо получить ID всех отправленных сообщений текущего пользователей,
-
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 30 ";
                 sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
