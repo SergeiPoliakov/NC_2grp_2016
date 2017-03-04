@@ -8,6 +8,7 @@ import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.Message;
+import entities.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
@@ -158,6 +159,45 @@ public class MessageController {
     public String sendMess(){
         return "sendMessage";
     }
+
+
+    // 2017-03-05 Вывод всех непрочитанных сообщений, но в виде ссылок на диалоги с написавшими юзерами
+    @RequestMapping("/allUnreadMessages")
+    public String listUnconfirmedFriends(Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        // String current_user_id = userService.getCurrentUser().getId().toString(); // айди текущего юзера
+        // Вытаскиваем айди всех неподтвержденных текущим пользователем друзей:
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new MessageFilter(MessageFilter.TO_CURRENT_USER, MessageFilter.UNREAD));
+
+        ArrayList<Message> messages = converter.ToMessage(loadingService.getListDataObjectByListIdAlternative(il));
+
+        // Получаем список пользователей, приславших сообщения:
+        ArrayList<Integer> usersId = new ArrayList<>();
+        for (Message message: messages) {
+            if (! usersId.contains( message.getFrom_id() )){ // если еще не было такого айди, то заносим
+                usersId.add(message.getFrom_id());
+            }
+        }
+        try {
+            System.out.println("Ищем в кэше список пользователей, приславших новые сообщения");
+            Map<Integer, DataObject> map = doCache.getAll(usersId);
+            ArrayList<DataObject> list = getListDataObject(map);
+            ArrayList<User> users = new ArrayList<>(list.size());
+
+            for (DataObject dataObject : list) {
+                User user = converter.ToUser(dataObject);
+                users.add(user);
+            }
+            System.out.println("Размер кэша после добавления " + doCache.size());
+
+            mapObjects.put("allUnreadMessages", users);
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return "allUnreadMessages";
+    }
+
 
 
 }

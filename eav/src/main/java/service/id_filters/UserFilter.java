@@ -14,6 +14,9 @@ public class UserFilter extends BaseFilter {
     public static final String WITH_ALL_EVENTS = "with_all_events";
     public static final String ALL_FRIENDS_FOR_USER_WITH_ID = "all_friends_for_user_with_id";
 
+    public static final String ALL_FRIENDS_CONFIRMED_FRIENDSHIP = "confirmed_friendship "; // Подтверждивший дружбу с текущим
+    public static final String ALL_FRIENDS_UNCONFIRMED_FRIENDSHIP = "unconfirmed_friendship"; // Не подтверживший дружбу
+
     public UserFilter(String... params) {
         super();
 
@@ -22,6 +25,8 @@ public class UserFilter extends BaseFilter {
         count_0.put(ALL, "");
         count_0.put(CURRENT, "");
         count_0.put(WITH_ALL_EVENTS, "");
+        count_0.put(ALL_FRIENDS_CONFIRMED_FRIENDSHIP, "");
+        count_0.put(ALL_FRIENDS_UNCONFIRMED_FRIENDSHIP, "");
 
         count_1.put(SEARCH_USER , "");
         count_1.put(ALL_FRIENDS_FOR_USER_WITH_ID , "");

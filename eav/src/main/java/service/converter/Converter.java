@@ -62,6 +62,15 @@ public class Converter {
         return user;
     }
 
+    // 2017-03-05 Конвертер для массива датаобджектов в массив юзеров
+    public ArrayList<Message> ToMessage(ArrayList<DataObject> aldo) {
+        ArrayList<Message> messages = new ArrayList<>();
+        for (DataObject DO : aldo) {
+            messages.add(ToMessage(DO));
+        }
+        return messages;
+    }
+
     // 2017-02-28 Конвертер для массива датаобджектов в массив юзеров
     public ArrayList<User> ToUser(ArrayList<DataObject> aldo) {
         ArrayList<User> users = new ArrayList<>();
@@ -70,7 +79,6 @@ public class Converter {
         }
         return users;
     }
-
     // 2017-02-28 Конвертер для массива датаобджектов в массив событий
     public ArrayList<Event> ToEvent(ArrayList<DataObject> aldo) {
         ArrayList<Event> events = new ArrayList<>();

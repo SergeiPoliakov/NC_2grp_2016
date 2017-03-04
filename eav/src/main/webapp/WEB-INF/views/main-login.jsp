@@ -251,7 +251,8 @@
     </div>
     <div id="log"></div>
 </div>
-
+<br>
+<br>
 <%@include file='footer.jsp'%>
 
 <script type="text/javascript">

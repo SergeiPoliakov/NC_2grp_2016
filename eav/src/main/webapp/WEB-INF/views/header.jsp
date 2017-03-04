@@ -66,7 +66,8 @@
                 <button type="submit" class="btn btn-default">Поиск</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/allMessage" id="result_text"></a></li>
+                <li><a href="/allUnconfirmedFriends" id="result_text_friend"></a></li> <!-- AJAX "Друзья: 5" -->
+                <li><a href="/allUnreadMessages" id="result_text_message"></a></li> <!-- AJAX "Сообщения: 10" -->
                 <li>
                     <p class="navbar-text">Привет, </p>
                 </li>

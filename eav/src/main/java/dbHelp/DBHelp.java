@@ -515,11 +515,11 @@ public class DBHelp {
                 System.out.println("Добавили нового друга");
                 // Добавляем к себе пользователя в друзья
                 currentUser.setRefParams(attrId, idFriend);
-                // Добавляем себя пользователю в друзья
-                friendUser.setRefParams(attrId, idUser);
+                // Добавляем себя пользователю в друзья !!!!! 2017-02-04 !!! Вот этого не надо!!! Пусть юзер сам решит, добавлять ли нас в друзья, или нет
+                // friendUser.setRefParams(attrId, idUser);
                 // и обновляем DO обоих пользователей в базе:
                 updateDataObject(currentUser);
-                updateDataObject(friendUser);
+                // updateDataObject(friendUser);
             }
         }
     }
@@ -534,14 +534,14 @@ public class DBHelp {
         int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
 
         DataObject currentUser = getObjectsByIdAlternative(idUser); // Получаем DO текущего пользователя
-        DataObject friendUser = getObjectsByIdAlternative(idFriend); // Получаем DO добавляемого в друзья пользователя
+        DataObject friendUser = getObjectsByIdAlternative(idFriend); // Получаем DO добавленного в друзья пользователя
         System.out.println("Удалили одного друга");
         // Удаляем у себя пользователя из друзей
         currentUser.deleteRefParams(attrId, idFriend);
         // Удаляем у пользователя себя из друзей
-        friendUser.deleteRefParams(attrId, idUser);
+        // friendUser.deleteRefParams(attrId, idUser);
         updateDataObject(currentUser);
-        updateDataObject(friendUser);
+        // updateDataObject(friendUser);
     }
 
 
@@ -687,7 +687,7 @@ public class DBHelp {
 
     /* ................................................................................................................... */
     // 2017-02-16 Парсер-генератор строки SQL-запроса по переданному фильтру:
-    public String parseGenerate(BaseFilter filter) {
+    public String parseGenerate(BaseFilter filter) throws SQLException {
         System.out.println("Запускаю parseGenerate");
 
         String sql = "SELECT ob.OBJECT_ID FROM OBJECTS ob ";
@@ -730,8 +730,28 @@ public class DBHelp {
             } else if (params.get(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID) != null) { // если надо получить ID друзей данного пользователя по его id,
                 ArrayList<String> user_id = params.get(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID);
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE ";
-                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID AND ATTR_ID = 12 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID AND re.ATTR_ID = 12 ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " AND ob2.OBJECT_ID = " + user_id.get(0) + " ";
+            }else if (params.get(UserFilter.ALL_FRIENDS_CONFIRMED_FRIENDSHIP) != null) { // если надо получить ID друзей данного пользователя, подтвердивших дружбу,
+                int current_user_id = userService.getObjID(userService.getCurrentUsername()); // userService.getCurrentUser().getId().toString(); // айди текущего юзера
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID ";
+                sql += "JOIN OBJECTS ob2 ON re.REFERENCE = ob2.OBJECT_ID AND re.ATTR_ID = 12 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " AND ob2.OBJECT_ID = " + current_user_id + " ";
+                sql += "AND ob2.OBJECT_ID IN ";
+                sql += "(SELECT obb.OBJECT_ID FROM OBJECTS obb ";
+                sql += "JOIN REFERENCES reb ON obb.OBJECT_ID = reb.OBJECT_ID ";
+                sql += "JOIN OBJECTS obb2 ON reb.REFERENCE = obb2.OBJECT_ID AND reb.ATTR_ID = 12 ";
+                sql += "WHERE obb.OBJECT_TYPE_ID = " + USER + " AND obb2.OBJECT_ID = ob.OBJECT_ID) ";
+            }else if (params.get(UserFilter.ALL_FRIENDS_UNCONFIRMED_FRIENDSHIP) != null) { // если надо получить ID друзей данного пользователя, еще НЕ подтвердивших дружбу,
+                int current_user_id = userService.getObjID(userService.getCurrentUsername()); // userService.getCurrentUser().getId().toString(); // айди текущего юзера
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID ";
+                sql += "JOIN OBJECTS ob2 ON re.REFERENCE = ob2.OBJECT_ID AND re.ATTR_ID = 12 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " AND ob2.OBJECT_ID = " + current_user_id + " ";
+                sql += "AND ob2.OBJECT_ID NOT IN ";
+                sql += "(SELECT obb.OBJECT_ID FROM OBJECTS obb ";
+                sql += "JOIN REFERENCES reb ON obb.OBJECT_ID = reb.OBJECT_ID ";
+                sql += "JOIN OBJECTS obb2 ON reb.REFERENCE = obb2.OBJECT_ID AND reb.ATTR_ID = 12 ";
+                sql += "WHERE obb.OBJECT_TYPE_ID = " + USER + " AND obb2.OBJECT_ID = ob.OBJECT_ID) ";
             } else {
                 return null; // Иначе не нашли основного фильтра, не сможем составить запрос
             }
@@ -743,7 +763,6 @@ public class DBHelp {
                 sql2 += "ORDER BY re.REFERENCE";
                 sql = "(" + sql1 + ") UNION (" + sql2 + ")";
             }
-
         } else if (filter instanceof EventFilter) {
             // Работаем с событиями
             if (params.get(EventFilter.ALL) != null) { // если надо получить IDs всех событий в системе,
@@ -1198,7 +1217,8 @@ public class DBHelp {
 
         PreparedStatement PS_ref_ins = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
         PreparedStatement PS_ref_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ? AND ATTR_ID = ? AND REFERENCE = ?");
-        PreparedStatement PS_ref_del2 = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ? AND ATTR_ID = ?");
+        //DELETE FROM REFERENCES WHERE OBJECT_ID = 10003 AND ATTR_ID = 12 AND REFERENCE = 10001
+        //PreparedStatement PS_ref_del2 = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ? AND ATTR_ID = ?");
 
         // Обходим все параметры в листе в новом датаобджекте
         for (Map.Entry<Integer, ArrayList<Integer>> entry : references.entrySet()) {
@@ -1229,23 +1249,25 @@ public class DBHelp {
                 //PS_ref_del2.setInt(1, id);
                 //PS_ref_del2.setInt(2, keyOld);
                 //PS_ref_del2.addBatch();
-            } else { // Ксли ключ есть, сравниваем значения
+            } else { // Если ключ есть, сравниваем значения
                 for (Integer valueOld : valueListOld) {
                     // Если в новом объекте нет такого значения, то надо удалить строку из базы
                     if (!valueList.contains(valueOld)) {
                         PS_ref_del.setInt(1, id);
                         PS_ref_del.setInt(2, keyOld);
-                        PS_ref_del.setInt(3, valueOld);
+                        PS_ref_del.setObject(3, valueOld);
                         PS_ref_del.addBatch();
+                        System.out.println("Удаляем ссылку " + id + " : " + keyOld + " : " + valueOld);
                     } // иначе не трогаем
                 }
+                PS_ref_del.executeBatch();
+
             }
         }
-        //PS_ref_del.executeBatch();
-        //PS_ref_del.close();
 
-        PS_ref_del2.executeBatch();
-        PS_ref_del2.close();
+        PS_ref_del.close();
+        //PS_ref_del2.executeBatch();
+        //PS_ref_del2.close();
 
         CloseConnection(Con);
     }

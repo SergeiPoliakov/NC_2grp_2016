@@ -237,6 +237,35 @@ public class UserController {
         return "allUser";
     }
 
+
+    // 2017-03-05 Вывод все неподтвержденных друзей
+    @RequestMapping("/allUnconfirmedFriends")
+    public String listUnconfirmedFriends(Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        // String current_user_id = userService.getCurrentUser().getId().toString(); // айди текущего юзера
+        // Вытаскиваем айди всех неподтвержденных текущим пользователем друзей:
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_UNCONFIRMED_FRIENDSHIP));
+
+        try {
+            System.out.println("Ищем в кэше список пользователей, подавших заявку в друзья");
+            Map<Integer, DataObject> map = doCache.getAll(il);
+            ArrayList<DataObject> list = getListDataObject(map);
+            ArrayList<User> users = new ArrayList<>(list.size());
+            for (DataObject dataObject : list) {
+                User user = converter.ToUser(dataObject);
+                users.add(user);
+            }
+            System.out.println("Размер кэша после добавления " + doCache.size());
+
+            mapObjects.put("allUnconfirmedFriends", users);
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return "allUnconfirmedFriends";
+    }
+
+
     @RequestMapping(value = "/addUser", method = RequestMethod.GET)
     public String getRegistrationUserPage() { return "addUser"; }
 
@@ -427,8 +456,8 @@ public class UserController {
 
     @RequestMapping("/allFriends")
     public String friendList(Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Integer idUser = userService.getObjID(userService.getCurrentUsername());
-        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(idUser)));
+        int current_user_id = userService.getObjID(userService.getCurrentUsername());
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(current_user_id)));
         try {
             System.out.println("Ищем в кэше список друзей");
             Map<Integer, DataObject> map = doCache.getAll(il);
@@ -437,6 +466,7 @@ public class UserController {
             for (DataObject dataObject : list) {
                 User user = converter.ToUser(dataObject);
                 friends.add(user);
+                System.out.println("Список друзей: " + user.getLogin());
             }
             System.out.println("Размер кэша после добавления " + doCache.size());
 
