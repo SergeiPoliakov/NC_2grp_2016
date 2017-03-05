@@ -39,7 +39,7 @@
                 <%--<li class="active pull-left"><a href="/delete/${object.id}">Удалить</a></li> Пока не будем тут удалять--%>
             <li class="active pull-left"><a href="/viewProfile/${user.id}">Смотреть профиль</a></li>
             <li class="active pull-left"><a href="/sendMessage/${user.id}">Отправить сообщение</a></li>
-            <li class="active pull-left"><a href="/addFriend/${user.id}">Добавить в друзья</a></li>
+            <li class="active pull-left"><a href="/addFriend/${user.id}/acceptFriend">Добавить в друзья</a></li>
         </ul>
     </div>
 </c:forEach>

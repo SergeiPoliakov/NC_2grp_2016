@@ -1,16 +1,28 @@
 package service;
 
+import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.User;
+import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.mail.MailException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import service.cache.DataObjectCache;
+import service.converter.Converter;
+import web.SMSCSender;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Lawrence on 08.02.2017.
@@ -18,16 +30,7 @@ import java.util.Random;
 
 public class UserServiceImp implements UserService {
 
-    private static volatile UserServiceImp instance;
-
-    public static UserServiceImp getInstance() {
-        if (instance == null)
-            synchronized (UserServiceImp.class) {
-                if (instance == null)
-                    instance = new UserServiceImp();
-            }
-        return instance;
-    }
+    private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
     public String getCurrentUsername() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -111,7 +114,82 @@ public class UserServiceImp implements UserService {
         return new DBHelp().generationID(objTypeID);
     }
 
-    public void sendEmail(String text, DataObject dataObject) throws MailException {
-        //TODO: Здесь будем отправлять опощения пользователю.
+    public void fittingEmail(String type, Integer fromID, Integer toID) throws MailException, UnsupportedEncodingException,
+            MessagingException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
+        //TODO: Здесь будем отправлять оповещения пользователю.
+        try (GenericXmlApplicationContext context = new GenericXmlApplicationContext()) {
+            context.load("classpath:applicationContext.xml");
+            context.refresh();
+            JavaMailSender mailSender = context.getBean("mailSender", JavaMailSender.class);
+
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            DataObject toUser = doCache.get(toID);
+            DataObject fromUser = doCache.get(fromID);
+            User userTo = new Converter().ToUser(toUser);
+            User userFrom = new Converter().ToUser(fromUser);
+            String nickname = userTo.getLogin();
+
+            message.setSubject(nickname, "UTF-8");
+            //TODO: Сюда напишите e-mail получателя.
+            helper.setTo(userTo.getEmail());
+            helper.setFrom(new InternetAddress("netcracker.thesecondgroup@gmail.com", "NC", "UTF-8"));
+
+
+
+            if ("newMessage".equals(type)) {
+                String url = "http://localhost:8081/sendMessage/" + userFrom.getId();
+                helper.setText("У вас новое сообщение от " + userFrom.getLogin() + "." +
+                        "Перейдите по ссылке, чтобы прочитать его. " +
+                        "<html><body><a href=" + url + ">" + "Войти в чат " + "</a></body></html>" +
+                        "Это сообщение создано автоматически, на него не нужно отвечать!", true);
+            } else if ("addFriend".equals(type)) {
+                String url = "http://localhost:8081/allUnconfirmedFriends";
+                helper.setText("Пользователь " + userFrom.getLogin() + " хочет стать вашим другом. " +
+                        "<html><body><a href=" + url + ">" + "Подробнее" + "</a></body></html>", true);
+            }
+
+            sendEmail(message);
+
+        }
+    }
+
+    @Override
+    public void sendEmail(MimeMessage message) {
+        JavaMailSender mailSender = getContextEmail();
+        try {
+            mailSender.send(message);
+            System.out.println("Mail sended");
+        } catch (MailException mailException) {
+            System.out.println("Mail send failed.");
+            mailException.printStackTrace();
+        }
+    }
+
+    private JavaMailSender getContextEmail() {
+        JavaMailSender mailSender;
+        try (GenericXmlApplicationContext context = new GenericXmlApplicationContext()) {
+            context.load("classpath:applicationContext.xml");
+            context.refresh();
+            mailSender = context.getBean("mailSender", JavaMailSender.class);
+        }
+        return mailSender;
+    }
+
+    public void sendSmS(String type, Integer fromID, Integer toID) throws ExecutionException {
+        DataObject dataObject = doCache.get(fromID);
+        if (dataObject.getValue(17).equals("true")) {  // тут нужно будет проверять расширенные настройки потом
+            SMSCSender sd = new SMSCSender("Netcracker", "q7Sq2O_VqLhh", "utf-8", true);   //после теста закомментируйте обратно!!!!!
+            User userTo = new Converter().ToUser(doCache.get(toID));
+            User userFrom = new Converter().ToUser(doCache.get(fromID));
+            if ("newMessage".equals(type)) {
+                sd.sendSms(userTo.getPhone(), "У вас новое сообщение от " + userFrom.getLogin() + ".", 0, "", "", 0, "NC", "");
+            } else if ("addFriend".equals(type)) {
+                sd.sendSms(userTo.getPhone(), "Пользователь " + userFrom.getLogin() + " хочет стать вашим другом.", 0, "", "", 0, "NC", "");
+            }
+            sd.getBalance();
+        }
     }
 }

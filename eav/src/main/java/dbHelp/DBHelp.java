@@ -30,7 +30,7 @@ public class DBHelp {
     private final int START_ID_MESSAGE = 30_000;
     private final int START_ID_MEETING = 0;
 
-    private UserServiceImp userService = UserServiceImp.getInstance();
+    private UserServiceImp userService = new UserServiceImp();
 
     private static Connection getConnection() throws SQLException {
         Locale.setDefault(Locale.ENGLISH);

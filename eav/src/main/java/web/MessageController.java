@@ -17,6 +17,7 @@ import service.cache.DataObjectCache;
 import service.converter.Converter;
 import service.id_filters.MessageFilter;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.*;
@@ -25,11 +26,13 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.ui.Model;
 import service.id_filters.UserFilter;
 
+import javax.mail.MessagingException;
+
 
 @Controller
 public class MessageController {
 
-    private UserServiceImp userService = UserServiceImp.getInstance();
+    private UserServiceImp userService = new UserServiceImp();
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
@@ -49,7 +52,7 @@ public class MessageController {
     // 2017-02-25 Отправка сообщения по нажатию кнопки
     @RequestMapping(value = "/sendMessage3", method = RequestMethod.GET)
     @ResponseBody
-    public Message sendNewMessage3(@RequestParam("text") String text) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    public Message sendNewMessage3(@RequestParam("text") String text) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, UnsupportedEncodingException, MessagingException, ExecutionException {
 
         String[] msg = text.split("~"); // Разбиваем на массив слов
 
@@ -93,6 +96,10 @@ public class MessageController {
 
 
         loadingService.setDataObjectToDB(dataObject);
+
+        userService.fittingEmail("newMessage" ,from_id, Integer.parseInt(to_id));  //идет сборка будущего сообщения
+
+        //  userService.sendSmS("newMessage", from_id, Integer.parseInt(to_id)); //отправка смс
 
 
         Message message = new Message();

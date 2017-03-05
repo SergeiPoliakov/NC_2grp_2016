@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutionException;
 public class EventController {
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
-    private UserServiceImp userService = UserServiceImp.getInstance();
+    private UserServiceImp userService = new UserServiceImp();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {

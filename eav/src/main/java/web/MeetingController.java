@@ -33,7 +33,7 @@ import java.util.concurrent.ExecutionException;
 public class MeetingController {
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
-    private UserServiceImp userService = UserServiceImp.getInstance();
+    private UserServiceImp userService = new UserServiceImp();
     private MeetingServiceImp meetingService = MeetingServiceImp.getInstance();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 

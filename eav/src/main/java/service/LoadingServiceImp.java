@@ -20,7 +20,7 @@ import java.util.TreeMap;
  */
 public class LoadingServiceImp implements LoadingService {
 
-    private UserServiceImp userService = UserServiceImp.getInstance();
+    private UserServiceImp userService = new UserServiceImp();
 
 
 

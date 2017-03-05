@@ -29,9 +29,7 @@ import service.id_filters.UserFilter;
  */
 @Controller
 public class NotificationController {
-    private UserServiceImp userService = UserServiceImp.getInstance();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
-    private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
 
     // 2017-02-24 Уведомления о новых сообщениях (вывод в хедер) // Старый метод, используйте универсальный getNewNotification

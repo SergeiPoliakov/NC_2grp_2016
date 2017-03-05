@@ -49,7 +49,7 @@
                                 <li class="right clearfix"><span class="chat-img pull-right">
                                 <a class="btn btn-primary btn-xs" href="/viewProfile/${object.id}"><span class="glyphicon glyphicon-cog">  </span>Профиль </a>
                                 <a class="btn btn-info btn-xs" href="/sendMessage/${object.id}"><span class="glyphicon glyphicon-envelope"></span>Написать</a>
-                                <a class="btn btn-success btn-xs" href="/addFriend/${object.id}"><span class="glyphicon glyphicon-plus">   </span>В друзья</a>
+                                <a class="btn btn-success btn-xs" href="/addFriend/${object.id}/addFriend"><span class="glyphicon glyphicon-plus">   </span>В друзья</a>
                                 </span>
                                     <div class="chat-body clearfix">
                                         <div class="header">

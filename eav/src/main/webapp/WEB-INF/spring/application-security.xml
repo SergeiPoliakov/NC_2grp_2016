@@ -16,24 +16,28 @@
         <intercept-url pattern="/profile" access="isAuthenticated()" />
         <intercept-url pattern="/main-login" access="isAuthenticated()" />
         <intercept-url pattern="/user" access="isAuthenticated()" />
-        <intercept-url pattern="/allUser" access="hasRole('ROLE_USER')" />
-        <intercept-url pattern="/profile" access="hasRole('ROLE_USER')" />
-
         <intercept-url pattern="/allEvent" access="isAuthenticated()" />
         <intercept-url pattern="/editEvent" access="isAuthenticated()" />
         <intercept-url pattern="/addEvent" access="isAuthenticated()" />
+        <intercept-url pattern="/sendMessage/*" access="isAuthenticated()" />
         <intercept-url pattern="/searchUser" access="isAuthenticated()" />
+        <intercept-url pattern="/allUnconfirmedFriends" access="isAuthenticated()" />
+
+        <intercept-url pattern="/allUser" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/profile" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/allEvent" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/editEvent" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/addEvent" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/user" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/sendMessage/*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/allUnconfirmedFriends" access="hasRole('ROLE_USER')" />
 
 
           <!-- access denied page -->
         <form-login
-                login-page="/test"
+                login-page="/main"
                 default-target-url="/main-login"
-                always-use-default-target="true"
+                always-use-default-target="false"
                 authentication-failure-url="/login?error"
                 username-parameter="username"
                 password-parameter="password" />

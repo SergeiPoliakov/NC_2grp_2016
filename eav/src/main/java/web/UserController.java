@@ -59,7 +59,7 @@ public class UserController {
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
-    private UserServiceImp userService = UserServiceImp.getInstance();
+    private UserServiceImp userService = new UserServiceImp();
 
     private Converter converter = new Converter();
 
@@ -332,13 +332,8 @@ public class UserController {
                         "<html><body><a href="+url+">"+"Завершение регистрации"+"</a></body></html> \n"+
                         "Это сообщение создано автоматически, на него не нужно отвечать!", true) ;
 
-                try {
-                    mailSender.send(message);
-                    System.out.println("Mail sended");
-                } catch (MailException mailException) {
-                    System.out.println("Mail send failed.");
-                    mailException.printStackTrace();
-                }
+                userService.sendEmail(message);
+
             }
             doCache.invalidate(dataObject.getId());
             System.out.println("Размер кэша после добавления " + doCache.size());
@@ -479,9 +474,16 @@ public class UserController {
     }
 
     // Добавление пользователя в друзья (по его ID)
-    @RequestMapping("/addFriend/{objectId}")
-    public String addFriend(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+    @RequestMapping("/addFriend/{objectId}/{type}")
+    public String addFriend(@PathVariable("objectId") Integer objectId,
+                            @PathVariable("type") String type) throws InvocationTargetException,
+            NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, UnsupportedEncodingException, MessagingException {
         userService.setFriend(objectId);
+        if ("addFriend".equals(type)) {
+            DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+            userService.fittingEmail("addFriend", dataObject.getId(), objectId);
+           // userService.sendSmS("addFriend" ,dataObject.getId(), objectId);  //отправка смс
+        }
         return "/addFriend";
     }
 

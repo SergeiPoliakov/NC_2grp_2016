@@ -9,10 +9,14 @@ import org.springframework.mail.MailException;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Lawrence on 08.02.2017.
@@ -57,7 +61,14 @@ interface UserService {
     int generationID(int objTypeID) throws SQLException;
 
     @WebMethod
-    void sendEmail(String text, DataObject dataObject) throws MailException;
+    void fittingEmail(String type, Integer fromID, Integer toID) throws MailException, UnsupportedEncodingException,
+            MessagingException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException;
+
+    @WebMethod
+    void sendEmail (MimeMessage message);
+
+    @WebMethod
+    public void sendSmS(String type, Integer fromID, Integer toID) throws ExecutionException;
 }
 
 
