@@ -36,8 +36,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -47,6 +49,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
+
+import service.calendar.CalendarService;
 
 /**
  * Created by Lawrence on 20.01.2017.
@@ -238,7 +242,7 @@ public class UserController {
     }
 
 
-    // 2017-03-05 Вывод все неподтвержденных друзей
+    // 2017-03-05 Вывод всех неподтвержденных друзей
     @RequestMapping("/allUnconfirmedFriends")
     public String listUnconfirmedFriends(Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         // String current_user_id = userService.getCurrentUser().getId().toString(); // айди текущего юзера

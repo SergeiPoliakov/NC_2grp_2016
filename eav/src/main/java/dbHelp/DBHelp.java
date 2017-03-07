@@ -7,10 +7,13 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.security.GeneralSecurityException;
 import java.sql.*;
 import java.util.*;
 
+import service.calendar.CalendarSettings;
 import service.id_filters.*;
 import service.partition_filters.*;
 
@@ -24,11 +27,13 @@ public class DBHelp {
     private final int EVENT = 1002;
     private final int MESSAGE = 1003;
     private final int MEETING = 1004;
+    private final int CALENDAR = 1005;
 
     private final int START_ID_USER = 10_000;
     private final int START_ID_EVENT = 20_000;
     private final int START_ID_MESSAGE = 30_000;
     private final int START_ID_MEETING = 0;
+    private final int START_ID_CALENDAR = 50_000;
 
     private UserServiceImp userService = new UserServiceImp();
 
@@ -70,6 +75,8 @@ public class DBHelp {
                     objID = START_ID_MESSAGE;
                 } else if (objTypeID == MEETING) {
                     objID = START_ID_MEETING;
+                } else if (objTypeID == CALENDAR) {
+                    objID = START_ID_CALENDAR;
                 } // не обязательно было, но для единообразности
                 else {
                     System.out.println("Генератор id: Задан неизвестный тип объекта! [" + objTypeID + "]");
@@ -81,7 +88,7 @@ public class DBHelp {
             // Проверка на попадение в интервал выделенных айди:
             if ((objTypeID == USER) & (objID >= START_ID_EVENT) ||
                     (objTypeID == EVENT) & (objID >= START_ID_MESSAGE) ||
-                    //(objTypeID == MESSAGE) & (objID >= 40_000)  || // не нужно, нет ограничений на id сообщений
+                    (objTypeID == MESSAGE) & (objID >= START_ID_CALENDAR)  || // Теперь нужно, т.к. появилась сущность CALENDAR // не нужно, нет ограничений на id сообщений
                     (objTypeID == MEETING) & (objID >= START_ID_USER)) {
                 System.out.println("Генератор id: Выход за пределы диапазона выделенных IDs! [id=" + objID + "]");
                 objID = -2;
@@ -129,6 +136,84 @@ public class DBHelp {
         CloseConnection(Con);
         return Res;
     }
+
+
+    //region Calendar to BD
+
+    // 2017-03-06 // Получение из базы идетификационного файла календаря гугл // !!! Пока что вытаскивает и сохраняет в файл в локальной папке юзера
+    public String getCalendarFile(int userId) throws SQLException, IOException, GeneralSecurityException {
+        CalendarSettings calendarSettings = new CalendarSettings(userId); // Получаем настройки текущего юзера
+
+        Connection Con = getConnection();
+        PreparedStatement PS = Con.prepareStatement("SELECT re.OBJECT_BODY FROM REPOSITORY re " +
+                "WHERE re.OBJECT_ID IN (SELECT MAX(ob.OBJECT_ID) FROM OBJECTS ob " +
+                "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 18 AND re.OBJECT_ID = ? ) ");
+        PS.setInt(1, userId);
+        ResultSet RS = PS.executeQuery();
+        InputStream inputStream = null;
+        byte[] buffer = new byte[1];
+        while (RS.next()) {
+            inputStream = RS.getBinaryStream(1);
+            if (inputStream != null){
+                File credential_file = new File(calendarSettings.getDATA_STORE_DIR().getAbsolutePath().toString() + "/StoredCredential");
+                FileOutputStream fileOutputStream = new FileOutputStream(credential_file);
+                while (inputStream.read(buffer) > 0) {
+                    fileOutputStream.write(buffer);
+                }
+                fileOutputStream.close();
+            }
+        }
+        RS.close();
+        PS.close();
+
+        CloseConnection(Con);
+        return (inputStream == null) ? null : "OK";
+    }
+
+
+
+    // 2017-03-06 // Загрузка в репозиторий базы идетификационного файла календаря гугл
+    public void setCalendarFile(String nameFile) throws SQLException, IOException, GeneralSecurityException {
+        int user_id = new DBHelp().getCurrentUser().getId(); // Получаем пользовательский айдишник (текущего юзера)
+        CalendarSettings calendarSettings = new CalendarSettings(user_id); // Получаем настройки текущего юзера
+
+        int file_id = generationID(CALENDAR); // Генерируем новый id для файла в репозитории
+        Connection connection = getConnection();
+
+        // 1) Добавляем заголовок датаобджекта в OBJECTS для данного файла:
+        PreparedStatement PS1 = connection.prepareStatement("INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
+        //например INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('50001', '1005', 'file.json');
+        PS1.setInt(1, file_id);
+        PS1.setInt(2, CALENDAR);
+        PS1.setString(3, nameFile);
+        PS1.executeQuery();
+        PS1.close();
+
+        // 2) Добавляем ссылку от датаобджекта юзера к датаобджекту данного файла:
+        PreparedStatement PS2 = connection.prepareStatement("INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES (?,?,?)");
+        //например INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '18', '50001'); -- file google
+        PS2.setInt(1, user_id);
+        PS2.setInt(2, 18);
+        PS2.setInt(3, file_id);
+        PS2.executeQuery();
+        PS2.close();
+
+        // 3) Добавляем сам файл в репозиторий базы как BLOB
+        connection.setAutoCommit(false); // выключаем автокоммиты
+        PreparedStatement PS3 = connection.prepareStatement("INSERT INTO Repository (OBJECT_ID, OBJECT_BODY) VALUES (?,?)");
+        PS3.setInt(1, file_id);
+        File credential_file = new File(calendarSettings.getDATA_STORE_DIR().getAbsolutePath().toString() + "/" + nameFile);
+        FileInputStream  fileInputStream = new FileInputStream(credential_file);
+        PS3.setBinaryStream(2, fileInputStream, (int) credential_file.length());
+        fileInputStream.close();
+        PS3.execute();
+        connection.commit();
+
+        CloseConnection(connection);
+        System.out.println("Права доступа сохранены в Repository в базу: " + file_id +", " + "BLOB[" + nameFile + "]");
+    }
+    //endregion
+
 
 
     public ArrayList<User> getFriendListCurrentUser() throws SQLException {
@@ -1071,7 +1156,7 @@ public class DBHelp {
             Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
             PS1.setInt(1, id);
             PS1.setInt(2, En.getKey());
-            PS1.setObject(3, En.getValue());
+            PS1.setString(3, En.getValue());
             PS1.addBatch();
             //System.out.println("param: id = " + id + ", attr_id = " + En.getKey() + ", ref = " + En.getValue());
         }
@@ -1080,7 +1165,8 @@ public class DBHelp {
 
         // 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
         // Получаем список параметров:
-        Integer host_id = null;
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        Integer host_id = idUser;
         PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
         while (!dataObject.getRefParams().isEmpty()) {
             Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
@@ -1088,7 +1174,7 @@ public class DBHelp {
             for (Integer value : valueList) {
                 PS2.setInt(1, id);
                 PS2.setInt(2, En.getKey());
-                PS2.setObject(3, value);
+                PS2.setInt(3, value);
                 PS2.addBatch();
                 // System.out.println("reference: id = " + id + ", attr_id = " + En.getKey() + ", par = " + value);
                 if (En.getKey().equals(141)) {
@@ -1098,8 +1184,6 @@ public class DBHelp {
         }
         PS2.executeBatch();
         PS2.close();
-
-        int idUser = userService.getObjID(userService.getCurrentUsername());
 
         System.out.println("host_id = " + host_id);
 

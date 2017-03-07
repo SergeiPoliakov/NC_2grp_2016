@@ -367,7 +367,7 @@
         <c:forEach items="${meeting.users}" var="user">
         {
             id: ${user.id},
-            content: "<a href='/viewProfile/${user.id}'>${user.name} ${user.middleName} ${user.surname}</a>",
+            content: "<a href='/viewProfile/${user.id}'>${user.name} ${user.middleName} ${user.surname}</a>", 
         },
         </c:forEach>
         {

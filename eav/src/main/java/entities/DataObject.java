@@ -7,15 +7,17 @@ import java.util.TreeMap;
 /**
  * Created by Lawrence on 11.02.2017.
  * Альтернативный DataObject Update by Hroniko on 14.02.2017.
- * 
+ * Добавлена возможность отображения на файл Update by Hroniko on 06.03.2017.
  */
 
 public class DataObject extends BaseEntitie{
     private Integer id;
     private Integer objectTypeId;
     private String name;
+    private Object file_body; // 2017-03-06 если же это отображение сущности файла, то держим двоичное тело файла
 
     // 2017-02-14 значения ссылок теперь хранятся в списке, так как ссылок может быть много
+    // Тут же и ссылка на файл в репозитории BLOB, если датаобджект - это отображение сущности файла
     private TreeMap<Integer, ArrayList<Integer>> refParams = new TreeMap<>();
     private TreeMap<Integer, String> params = new TreeMap<>();
 
@@ -36,6 +38,36 @@ public class DataObject extends BaseEntitie{
         for(Map.Entry<Integer, Object> e : treeMap.entrySet()){
             this.setValue(e.getKey(), e.getValue());
         }
+    }
+
+    // 2017-03-06
+    public DataObject(Integer id, String name, Integer objectTypeId, TreeMap<Integer, Object> treeMap, Object file_body) {
+        this.id = id;
+        this.name = name;
+        this.objectTypeId = objectTypeId;
+        // Пробегаем по парам мапы и в зависимости от типа расталкиваем все двойки по integerTreeMap и stringTreeMap
+        for(Map.Entry<Integer, Object> e : treeMap.entrySet()){
+            this.setValue(e.getKey(), e.getValue());
+        }
+        this.setFile_body(file_body);
+    }
+
+    // 2017-03-06
+    public DataObject(Integer id, String name, Integer objectTypeId, Object file_body) {
+        this.id = id;
+        this.name = name;
+        this.objectTypeId = objectTypeId;
+        this.setFile_body(file_body);
+    }
+
+    // 2017-03-06
+    public Object getFile_body() {
+        return file_body;
+    }
+
+    // 2017-03-06
+    public void setFile_body(Object file_body) {
+        this.file_body = file_body;
     }
 
     // Универсальный метод установки параметра (добавление в подходящую мапу по ключу-значению)

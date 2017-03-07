@@ -40,6 +40,11 @@ CREATE TABLE References (
     attr_id number(6,0)  NOT NULL,
     reference number(6,0)  NOT NULL
 ) ;
+-- Table: Repository for BLOB files
+CREATE TABLE Repository (
+    object_id number(6,0)  NOT NULL,
+    object_body BLOB -- сам файл в двоичном виде
+) ;
 -- foreign keys
 -- Reference: Obj_attributes_Attributes (table: Obj_attributes)
 ALTER TABLE Obj_attributes ADD CONSTRAINT Obj_attributes_Attributes
@@ -73,12 +78,17 @@ ALTER TABLE References ADD CONSTRAINT References_Attributes
 ALTER TABLE References ADD CONSTRAINT References_Objects
     FOREIGN KEY (object_id)
     REFERENCES Objects (object_id);
+-- Reference: Repository_Objects (table: Repository)
+ALTER TABLE Repository ADD CONSTRAINT Repository_Objects
+    FOREIGN KEY (object_id)
+    REFERENCES Objects (object_id);
 --rollback drop table Attributes cascade constraints;
 --rollback drop table Obj_attributes cascade constraints;
 --rollback drop table Obj_types cascade constraints;
 --rollback drop table Objects cascade constraints;
 --rollback drop table Params cascade constraints;
 --rollback drop table References cascade constraints;
+--rollback drop table Repository cascade constraints;
 
 --changeset Hroniko:2
 --Attributes(1-1000)
@@ -101,6 +111,7 @@ INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('14', 'events');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('15', 'confirmedEmail');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('16', 'phone');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('17', 'confirmedPhone');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('18', 'calendar_file');
 
 --Tasks_Attributes (101-200)
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('101', 'time_start');
@@ -115,9 +126,11 @@ INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('141', 'host_id');
 
 
 --Obj_Types(1001-2000)
-
 INSERT INTO Obj_types (OBJECT_TYPE_ID, NAME) VALUES ('1001', 'User');
 INSERT INTO Obj_types (OBJECT_TYPE_ID, NAME) VALUES ('1002', 'Tasks');
+INSERT INTO OBJ_TYPES (OBJECT_TYPE_ID, NAME) VALUES ('1003', 'Message');
+INSERT INTO OBJ_TYPES (OBJECT_TYPE_ID, NAME) VALUES ('1004', 'Meeting');
+INSERT INTO Obj_types (OBJECT_TYPE_ID, NAME) VALUES ('1005', 'Calendar');
 
 --End Obj_Types
 
@@ -142,6 +155,7 @@ INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '14');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '15');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '16');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '17');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '18');
 
 --Tasks Object_Attributes
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1002', '101');
@@ -210,8 +224,10 @@ INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('10001', '1
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '16', '7**********'); --phone
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '17', 'true'); --confirmedPhone
 
+
     INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '13', '20001'); --task_id
     INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '13', '20004'); --task_id
+	
 --User Id: 10002
 INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('10002', '1001', 'Василий Сергеевич Рожненко');
   INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '1', 'Василий'); --name
@@ -235,8 +251,7 @@ INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '17', 'true'); -
   INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '13', '20003'); --task_id
 
 
---Obj_Types(1001-2000) (add Message)
-INSERT INTO OBJ_TYPES (OBJECT_TYPE_ID, NAME) VALUES ('1003', 'Message');
+
 
 --Message_Attributes (201-300) (Attributes of Message)
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('201', 'from_id');
@@ -286,10 +301,6 @@ INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1003', '205');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1003', '206');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1003', '207');
 
-
---Obj_Types(1001-2000) (add Meeting)
-INSERT INTO OBJ_TYPES (OBJECT_TYPE_ID, NAME) VALUES ('1004', 'Meeting');
-
 --Tasks_Attributes (301-400) (Attributes of Meeting)
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('301', 'title');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('302', 'date_start');
@@ -309,3 +320,9 @@ INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '305');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '306');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '307');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '308');
+
+-- BLOB Files
+--File Id: 50001
+INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('50001', '1005', 'file.dat');
+INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '18', '50001'); -- file google
+INSERT INTO Repository (OBJECT_ID, OBJECT_BODY) VALUES ('50001', null);

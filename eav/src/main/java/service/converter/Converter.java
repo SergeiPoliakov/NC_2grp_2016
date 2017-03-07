@@ -193,4 +193,13 @@ public class Converter {
         return dataObject;
     }
 
+    // 2017-03-07 Конвертер для массива событий в массив датаобджектов
+    public ArrayList<DataObject> toDO(ArrayList<Event> events) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+        ArrayList<DataObject> dataObjects = new ArrayList<>();
+        for (Event event : events) {
+            dataObjects.add(toDO(event));
+        }
+        return dataObjects;
+    }
+
 }

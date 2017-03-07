@@ -26,6 +26,8 @@
 <body>
 
 <div class="container">
+
+
     <div class="page-header">
         <h1>Netcracker
             <small>Изменение профиля ${user.email}</small>
@@ -34,12 +36,28 @@
     <div class="container">
 
         <div class="row">
+            <div class="container col-lg-2 pull-right">
+
+
+                <img src="https://calendar.google.com/googlecalendar/images/calendarlogo/calendar_logo_ru_41px_1x_r1.png" class="img-polaroid"
+                     width="200">
+                <div class="form-group ">
+                    <%--Тестовый блок гугл-календаря, потом джаваскриптом можем подставлять идентификатор пользоателя и грузить его календарь, а расположить блок на нужной странице--%>
+                    <label for="InputImg">Общий календарь</label>
+                    <div class="form-group ">
+                        <iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp;wkst=2&amp;bgcolor=%23ffffff&amp;src=netcracker.thesecondgroup%40gmail.com&amp;color=%231B887A&amp;ctz=Europe%2FMoscow"
+                                style="border-width:0" width="250" height="450" frameborder="0" scrolling="no"></iframe>
+                    </div>
+                </div>
+
+            </div>
             <div class="row">
-                <div class="container col-lg-5 pull-right">
+                <div class="container col-lg-4 pull-right">
 
                     <img src="http://nc2.hop.ru/upload/${user.id}/avatar/avatar_${user.id}.png"
                          onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-polaroid"
                          width="200">
+
 
                     <div class="form-group ">
                         <%--Загрузка картинки-аватара--%>
@@ -80,7 +98,7 @@
                 </div>
 
 
-                <div class="container col-lg-5">
+                <div class="container col-lg-4">
                     <form action="/changeProfile/${user.id}" method="post">
 
                         <div class="form-group  ">

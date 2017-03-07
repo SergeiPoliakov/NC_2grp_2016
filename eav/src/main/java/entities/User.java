@@ -1,9 +1,7 @@
 package entities;
 
 import dbHelp.DBHelp;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.jws.soap.SOAPBinding;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,35 +15,45 @@ public class User extends BaseEntitie{
 
     private Integer id;
 
-    private String name;
+    private String name; // 1
 
-    private String surname;
+    private String surname; // 2
 
-    private String middleName;
+    private String middleName; // 3
 
-    private String login;
+    private String login; // 4
 
-    private String ageDate;
+    private String ageDate; // 5
 
-    private String email;
+    private String email;  // 6
 
-    private String password;
+    private String password;  // 7
 
-    private String city;
+    private String sex; // 8
 
-    private String sex;
+    private String city; // 9
 
-    private String phone;
+    private String additional_field; // 10
 
-    private String additional_field;
+    private String picture; // 11
 
-    private String picture;
+    private ArrayList<User> friends; // 12
 
-    private ArrayList<Event> eventsUser;
+    private ArrayList<Event> eventsUser; // 14
 
-    private ArrayList<User> friends;
+    private String phone; // 16
 
-    private ArrayList<Message> message;
+    private CalendarCredential calendarIdentificator; // 18 // идетификационнный файл для календаря
+
+    private ArrayList<Message> message; // 30
+
+    public CalendarCredential getCalendarIdentificator() {
+        return calendarIdentificator;
+    }
+
+    public void setCalendarIdentificator(CalendarCredential calendarIdentificator) {
+        this.calendarIdentificator = calendarIdentificator;
+    }
 
     public ArrayList<User> getFriends() {
         return friends;

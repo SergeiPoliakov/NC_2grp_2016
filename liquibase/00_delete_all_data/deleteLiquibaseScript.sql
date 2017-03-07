@@ -1,6 +1,7 @@
 --liquibase formatted sql
 
 --changeset Hroniko:3
+drop table REPOSITORY cascade constraints ;
 drop table ATTRIBUTES cascade constraints;
 drop table OBJ_ATTRIBUTES cascade constraints ;
 drop table OBJ_TYPES cascade constraints ;
