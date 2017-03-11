@@ -1,5 +1,4 @@
 body, html {
-    font-family: Roboto;
 	/*background-color: #f5f8fa;*/
 }
 /*Bootstrap*/
@@ -58,9 +57,19 @@ body, html {
 .card-nomargin{
   margin-bottom: 0px;
 }
-.nav{
+
+.card {
+    position: relative;
+    display: block;
+    margin-bottom: .75rem;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: .25rem;
+}
+
+.navi{
     max-height: 300px;
-    overflow-y:scroll; 
+    overflow:hidden !important;
 }
 .chat{
     max-height: 30rem;
@@ -128,13 +137,11 @@ body, html {
 .vis-delete{
   right: -4.5px;
   top: -7px;
-  font-family: Roboto;
   color: whitesmoke;
 }
 .vis-delete-rtl{
   right: -4.5px;
   top: -7px;
-  font-family: Roboto;
   color: whitesmoke;
 }
 .vis-item-content{
@@ -204,8 +211,8 @@ body, html {
 .profile-userpic img {
 	float: none;
 	margin: 0 auto;
-	width: 50%;
-	height: 50%;
+    width: 10rem;
+    height: 15rem;
 	-webkit-border-radius: 50% !important;
 	-moz-border-radius: 50% !important;
 	border-radius: 50% !important;
@@ -247,9 +254,16 @@ body, html {
     -webkit-transition: all 200ms ease-in;
     -webkit-transform: scale(1.05);
     -ms-transition: all 200ms ease-in;
-    -ms-transform: scale(1.01);   
+    -ms-transform: scale(1.05);   
     -moz-transition: all 200ms ease-in;
     -moz-transform: scale(1.05);
     transition: all 200ms ease-in;
     transform: scale(1.05);
+}
+
+/*Notification*/
+
+.notification-userbuttons {
+  text-align: right;
+  margin-top: 10px;  
 }
