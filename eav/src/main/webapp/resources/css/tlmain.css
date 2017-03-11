@@ -260,3 +260,9 @@ body, html {
     transition: all 200ms ease-in;
     transform: scale(1.05);
 }
+/*Notification*/
+
+.notification-userbuttons {
+  text-align: right;
+  margin-top: 10px;  
+}
