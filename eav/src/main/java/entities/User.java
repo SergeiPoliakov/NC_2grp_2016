@@ -47,6 +47,8 @@ public class User extends BaseEntitie{
 
     private ArrayList<Message> message; // 30
 
+    private Integer settingsUD; //19
+
     public CalendarCredential getCalendarIdentificator() {
         return calendarIdentificator;
     }
@@ -183,6 +185,14 @@ public class User extends BaseEntitie{
         this.eventsUser = eventsUser;
     }
 
+    public Integer getSettingsUD() {
+        return settingsUD;
+    }
+
+    public void setSettingsUD(Integer settingsUD) {
+        this.settingsUD = settingsUD;
+    }
+
     // 2017-02-28
     public void addToEventList(ArrayList<Event> newEvents){
         this.eventsUser.addAll(newEvents);
@@ -244,6 +254,9 @@ public class User extends BaseEntitie{
                     break;
                 case (16):
                     this.phone = param.getValue();
+                    break;
+                case (19):
+                    this.settingsUD = Integer.parseInt(param.getValue());
                     break;
             }
         }

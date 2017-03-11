@@ -28,11 +28,13 @@ public class DBHelp {
     private final int MESSAGE = 1003;
     private final int MEETING = 1004;
     private final int CALENDAR = 1005;
+    private final int SETTINGS = 1006;
 
     private final int START_ID_USER = 10_000;
     private final int START_ID_EVENT = 20_000;
     private final int START_ID_MESSAGE = 30_000;
     private final int START_ID_MEETING = 0;
+    private final int START_ID_SETTINGS = 40_000;
     private final int START_ID_CALENDAR = 50_000;
 
     private UserServiceImp userService = new UserServiceImp();
@@ -75,6 +77,8 @@ public class DBHelp {
                     objID = START_ID_MESSAGE;
                 } else if (objTypeID == MEETING) {
                     objID = START_ID_MEETING;
+                } else if (objTypeID == SETTINGS) {
+                    objID = START_ID_SETTINGS;
                 } else if (objTypeID == CALENDAR) {
                     objID = START_ID_CALENDAR;
                 } // не обязательно было, но для единообразности
@@ -1163,6 +1167,22 @@ public class DBHelp {
         PS1.executeBatch();
         PS1.close();
 
+        // Добавление ссылки для настроек. Потребовался отдельный блок, так как здесь value и id стоят на другом месте
+        if (dataObject.getObjectTypeId().equals(SETTINGS)) {
+            PreparedStatement PS7 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+            while (!dataObject.getRefParams().isEmpty()) {
+                Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
+                ArrayList<Integer> valueList = En.getValue(); // получаем значение
+                for (Integer value : valueList) {
+                    PS7.setInt(1, value);
+                    PS7.setInt(2, En.getKey());
+                    PS7.setInt(3, id);
+                }
+            }
+            PS7.executeQuery();
+            PS7.close();
+        }
+
         // 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
         // Получаем список параметров:
         int idUser = userService.getObjID(userService.getCurrentUsername());
@@ -1250,7 +1270,8 @@ public class DBHelp {
         }
 
         CloseConnection(Con);
-    }
+}
+
 
     /*...............................................................................................................*/
     // 2017-02-18 Новый метод обновления датаобджекта в базе:
@@ -1797,4 +1818,6 @@ public class DBHelp {
 
     }
     //endregion
+
+
 }

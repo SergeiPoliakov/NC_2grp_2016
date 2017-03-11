@@ -5,6 +5,7 @@ import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.Event;
+import entities.Settings;
 import entities.User;
 import exception.CustomException;
 import org.slf4j.Logger;
@@ -283,7 +284,7 @@ public class UserController {
                                @RequestParam("email") String email,
                                @RequestParam("phone") String phone,
                                @RequestParam("password") String password
-    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, CustomException, MessagingException, UnsupportedEncodingException {
+    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, CustomException, MessagingException, UnsupportedEncodingException, ParseException {
 
         String full_name = name + " " + surname + " " + middle_name;
 
@@ -308,12 +309,17 @@ public class UserController {
         // mapAttr.put(13, null); не нужно, иначе потом пустая ссылка на событие висит, и при добавлении новой задачи она так и остается висеть. Иначе надо будет при добавлении эту обновлять
 
 
-
-
         DataObject dataObject = loadingService.createDataObject(full_name, 1001, mapAttr);
+
+        Settings settingsUser = new Settings(userService.generationID(1006), dataObject.getId());
+
+        dataObject.setValue(19, String.valueOf(settingsUser.getId()));
 
         if (userService.getEmail(dataObject.getParams().get(6)).isEmpty()) {
             loadingService.setDataObjectToDB(dataObject);
+            DataObject dataObjectSettings = converter.toDO(settingsUser);
+            dataObjectSettings.setRefParams(19, settingsUser.getUser_id());
+            loadingService.setDataObjectToDB(dataObjectSettings);
             try (GenericXmlApplicationContext context = new GenericXmlApplicationContext()) {
                 context.load("classpath:applicationContext.xml");
                 context.refresh();
@@ -340,6 +346,7 @@ public class UserController {
 
             }
             doCache.invalidate(dataObject.getId());
+
             System.out.println("Размер кэша после добавления " + doCache.size());
         } else {
             throw new CustomException("Пользователь с таким email'ом уже существует");

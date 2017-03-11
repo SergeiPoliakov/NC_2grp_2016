@@ -19,6 +19,7 @@ public class Converter {
     Integer EVENT = 1002;
     Integer MESSAGE = 1003;
     Integer MEETING = 1004;
+    Integer SETTINGS = 1006;
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
@@ -56,6 +57,7 @@ public class Converter {
             user.setAdditional_field(dataObject.getParameter(10));
             user.setPicture(dataObject.getParameter(11));
             user.setPhone(dataObject.getParameter(16));
+            user.setSettingsUD(Integer.parseInt(dataObject.getParameter(19)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -129,6 +131,9 @@ public class Converter {
             dataObject.setParams(10, user.getAdditional_field());
             dataObject.setParams(11, user.getPicture());
             dataObject.setParams(16, user.getPhone());
+            dataObject.setParams(19, String.valueOf(user.getSettingsUD()));
+
+
 
             for (Map.Entry<Integer, ArrayList<Integer>> reference : dataObject.getRefParams().entrySet()) {
                 switch (reference.getKey()) {
@@ -187,6 +192,20 @@ public class Converter {
         } else if (entitie instanceof DataObject) {
             // Работаем со Датаобджектом, его конвертировать не надо
             dataObject = (DataObject) entitie;
+        } else if (entitie instanceof Settings) {
+            Settings settings = (Settings) entitie;
+
+            dataObject.setId(settings.getId());
+            dataObject.setObjectTypeId(SETTINGS);
+            dataObject.setName("Settings_User_" + settings.getUser_id());
+            //
+            dataObject.setParams(401, String.valueOf(settings.getUser_id()));
+            dataObject.setParams(402, settings.getEmailNewMessage());
+            dataObject.setParams(403, settings.getEmailNewFriend());
+            dataObject.setParams(404, settings.getEmailMeetingInvite());
+            dataObject.setParams(405, settings.getPhoneNewMessage());
+            dataObject.setParams(406, settings.getPhoneNewFriend());
+            dataObject.setParams(407, settings.getPhoneMeetingInvite());
         } else { // иначе сами не понимаем, что конвертируем
             dataObject = null;
         }

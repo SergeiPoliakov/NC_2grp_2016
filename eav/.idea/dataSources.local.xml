@@ -9,7 +9,6 @@
       <case-sensitivity plain-identifiers="upper" quoted-identifiers="exact" />
       <secret-storage>master_key</secret-storage>
       <user-name>nc</user-name>
-      <introspection-schemas>*:NC</introspection-schemas>
     </data-source>
   </component>
 </project>
