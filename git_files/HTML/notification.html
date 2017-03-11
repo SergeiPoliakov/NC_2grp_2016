@@ -27,7 +27,7 @@
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
 						<li class="dropdown dropdown-notifications" id="notificationDrop">
-							<a class="dropdown-toggle">
+							<a class="dropdown-toggle" id="notificationDropa">
 								<i data-count="4" class="glyphicon glyphicon-bell notification-icon" id ="notificationCount"></i>
 							</a>
 							<div class="dropdown-container">
@@ -83,7 +83,7 @@
 											<div class="media-body">
 												<strong class="notification-title"><a href="#">Иванов Иван</a> отправил Вам заявку в друзья</strong>
 												<div class="notification-meta">
-													<small class="timestamp">1. 9. 2015, 08:00</small>
+													<small class="timestamp">01. 09. 2015, 08:00</small>
 												</div>
 												<div class="notification-userbuttons">
 													<a href="#acceptFriend"><button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Добавить</span> </button></a>
@@ -127,21 +127,24 @@
 	</div>
 	
 <script type="text/javascript">
-
-	// Скрыть уведомления по нажатию в любую другую область экрана
-	$(document).click(function(event) {	
-		$( "#notificationDrop" ).removeClass( "open" );				
-	});
-	
-	// Скрыть/показать уведомления по нажатию на колокольчик
-	$( "#notificationDrop" ).click(function(event) {
+	//Скрыть/показать уведомления
+	$(document).click(function(event) { 	
+		if(!$(event.target).closest('#notificationDrop').length) {
+			if ($( "#notificationDrop" ).hasClass("open"))
+				$( "#notificationDrop" ).toggleClass( "open" );
+		}
+		else
+			if (!$( "#notificationDrop" ).hasClass("open"))
+				$( "#notificationDrop" ).toggleClass( "open" );
+	})	
+	$( "#notificationDropa" ).click(function(event) {
 		$( "#notificationDrop" ).toggleClass( "open" );
 		event.stopPropagation();
-	});		
-
+	});
+	
 	// Изменение состояния уведомления при наведении на него
 	$( ".notification" ).hover(
-		function() { // enter
+		function() { // mouse enter
 			if ( $( this ).hasClass( "active" ) ){				
 				$( this ).removeClass( "active" );
 				var notificationCount = $( "#notificationCount" ).attr( "data-count") - 1;
@@ -149,7 +152,7 @@
 				//$( "#notificationSecondCounter" ).html("Уведомления (" + notificationCount + ")");
 			}
 		}, 
-		function() {} // leave
+		function() {} // mouse leave
 	);
 </script>
 </body>
