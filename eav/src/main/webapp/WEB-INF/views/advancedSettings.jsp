@@ -53,8 +53,47 @@
     </div>
 
 <div class="container">
-    <form action="" method="post">
- <!--  Тут будут настройки оповещения для email и телефона с кнопкой Сохранить. Нужен фронтенд. -->
+    <form action="/updateSettings/${settings.id}" method="post">
+        <!--  Тут будут настройки оповещения для email и телефона с кнопкой Сохранить. Нужен фронтенд. -->
+        <div class="form-group col-lg-offset-4 col-lg-4">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="emailNewMessage"  <c:if test="${settings.emailNewMessage eq true}">checked=checked</c:if> >
+                    Отправлять уведомления о новых сообщениях на почту
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="emailNewFriend"  <c:if test="${settings.emailNewFriend eq true}">checked=checked</c:if> >
+                    Отправлять уведомления о новых заявках в друзья на почту
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="emailMeetingInvite" <c:if test="${settings.emailMeetingInvite eq true}">checked=checked</c:if> >
+                    Отправлять уведомления о приглашениях на встречу на почту
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="phoneNewMessage"  <c:if test="${settings.phoneNewMessage eq true}">checked=checked</c:if> >
+                    Отправлять уведомления о новых сообщениях на телефон
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="phoneNewFriend"  <c:if test="${settings.phoneNewFriend eq true}">checked=checked</c:if> >
+                    Отправлять уведомления о новых заявках в друзья на телефон
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox"  name="phoneMeetingInvite"  <c:if test="${settings.phoneMeetingInvite eq true}">checked=checked</c:if> >
+                    Отправлять уведомления о приглашениях на встречу на телефон
+                </label>
+            </div>
+        </div>
+        <button type="submit" class="btn-lg btn-success col-lg-4 col-lg-offset-4">Сохранить</button>
     </form>
 </div>
 </div>

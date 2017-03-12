@@ -85,6 +85,10 @@ public class Settings extends BaseEntitie {
         this.phoneMeetingInvite = phoneMeetingInvite;
     }
 
+    public Settings() {
+
+    }
+
     public Settings(Integer id, Integer user_id) {
         this.id = id;
         this.user_id = user_id;
@@ -94,5 +98,17 @@ public class Settings extends BaseEntitie {
         this.phoneNewMessage = "false";
         this.phoneNewFriend = "false";
         this.phoneMeetingInvite = "false";
+    }
+
+    public Settings(Integer id, Integer user_id, String emailNewMessage, String emailNewFriend, String emailMeetingInvite,
+                    String phoneNewMessage, String phoneNewFriend, String phoneMeetingInvite) {
+        this.id = id;
+        this.user_id = user_id;
+        this.emailNewMessage = emailNewMessage;
+        this.emailNewFriend = emailNewFriend;
+        this.emailMeetingInvite = emailMeetingInvite;
+        this.phoneNewMessage = phoneNewMessage;
+        this.phoneNewFriend = phoneNewFriend;
+        this.phoneMeetingInvite = phoneMeetingInvite;
     }
 }

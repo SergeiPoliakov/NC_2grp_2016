@@ -107,6 +107,23 @@ public class Converter {
         return event;
     }
 
+    public Settings ToSettings(DataObject dataObject) {
+        Settings settings = new Settings();
+        try {
+            settings.setId(dataObject.getId());
+            settings.setUser_id(Integer.parseInt(dataObject.getParameter(401)));
+            settings.setEmailNewMessage(dataObject.getParameter(402));
+            settings.setEmailNewFriend(dataObject.getParameter(403));
+            settings.setEmailMeetingInvite(dataObject.getParameter(404));
+            settings.setPhoneNewMessage(dataObject.getParameter(405));
+            settings.setPhoneNewFriend(dataObject.getParameter(406));
+            settings.setPhoneMeetingInvite(dataObject.getParameter(407));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return settings;
+    }
+
     // Конвертация в DataObbject'ы
     public DataObject toDO(BaseEntitie entitie) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         DataObject dataObject = new DataObject();

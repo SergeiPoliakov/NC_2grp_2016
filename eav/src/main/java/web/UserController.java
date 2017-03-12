@@ -80,6 +80,13 @@ public class UserController {
         return list;
     }
 
+    private String convertParameters(String value) {
+        if (value == null) {
+            value = "false";
+        } else value = "true";
+        return value;
+    }
+
 
     @RequestMapping(value = {"/", "main"})
     public ModelAndView index() {
@@ -384,17 +391,7 @@ public class UserController {
         return "/profile";
     }
 
-    @RequestMapping(value = "/advancedSettings", method = RequestMethod.GET)
-    public String getAdvancedSettingsPage(ModelMap m)  {
-        try {
-            DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
-            User user = converter.ToUser(dataObject);
-            m.addAttribute(user);
-        } catch (ExecutionException | SQLException e) {
-            e.printStackTrace();
-        }
-        return "advancedSettings";
-    }
+
 
 
     @RequestMapping(value = "/generatePhoneCode", method = RequestMethod.GET)
@@ -555,6 +552,50 @@ public class UserController {
     @RequestMapping(value = "/meeting", method = RequestMethod.GET)
     public String getMeeting() throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         return "meeting";
+    }
+
+    @RequestMapping(value = "/advancedSettings", method = RequestMethod.GET)
+    public String getAdvancedSettingsPage(ModelMap m)  {
+        try {
+            DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+            User user = converter.ToUser(dataObject);
+            DataObject dataObjectSettings = doCache.get(user.getSettingsUD());
+            Settings settings = converter.ToSettings(dataObjectSettings);
+            m.addAttribute(user);
+            m.addAttribute("settings", settings);
+        } catch (ExecutionException | SQLException e) {
+            e.printStackTrace();
+        }
+        return "/advancedSettings";
+    }
+
+    @RequestMapping(value = "/updateSettings/{settingsID}", method = RequestMethod.POST)
+    public String updateSettings(HttpServletRequest request,
+                                 HttpServletResponse res,
+                                 @PathVariable("settingsID") Integer settingsID) throws SQLException, NoSuchMethodException,
+            IllegalAccessException, ParseException, InvocationTargetException, ExecutionException {
+
+
+        String emailNewMessage = request.getParameter("emailNewMessage");
+        emailNewMessage = convertParameters(emailNewMessage);
+        String emailNewFriend = request.getParameter("emailNewFriend");
+        emailNewFriend = convertParameters(emailNewFriend);
+        String emailMeetingInvite = request.getParameter("emailMeetingInvite");
+        emailMeetingInvite = convertParameters(emailMeetingInvite);
+        String phoneNewMessage = request.getParameter("phoneNewMessage");
+        phoneNewMessage = convertParameters(phoneNewMessage);
+        String phoneNewFriend = request.getParameter("phoneNewFriend");
+        phoneNewFriend = convertParameters(phoneNewFriend);
+        String phoneMeetingInvite = request.getParameter("phoneMeetingInvite");
+        phoneMeetingInvite = convertParameters(phoneMeetingInvite);
+
+        Settings settings = new Settings(settingsID, userService.getObjID(userService.getCurrentUsername()),
+                emailNewMessage, emailNewFriend, emailMeetingInvite, phoneNewMessage, phoneNewFriend, phoneMeetingInvite);
+
+        DataObject dataObject = converter.toDO(settings);
+        loadingService.updateDataObject(dataObject);
+        doCache.invalidate(dataObject.getId());
+        return "redirect:/advancedSettings";
     }
 
 
