@@ -825,7 +825,7 @@ public class DBHelp {
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE ";
                 sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID AND re.ATTR_ID = 12 ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + USER + " AND ob2.OBJECT_ID = " + user_id.get(0) + " ";
-            }else if (params.get(UserFilter.ALL_FRIENDS_CONFIRMED_FRIENDSHIP) != null) { // если надо получить ID друзей данного пользователя, подтвердивших дружбу,
+            } else if (params.get(UserFilter.ALL_FRIENDS_CONFIRMED_FRIENDSHIP) != null) { // если надо получить ID друзей данного пользователя, подтвердивших дружбу,
                 int current_user_id = userService.getObjID(userService.getCurrentUsername()); // userService.getCurrentUser().getId().toString(); // айди текущего юзера
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID ";
                 sql += "JOIN OBJECTS ob2 ON re.REFERENCE = ob2.OBJECT_ID AND re.ATTR_ID = 12 ";
@@ -835,7 +835,7 @@ public class DBHelp {
                 sql += "JOIN REFERENCES reb ON obb.OBJECT_ID = reb.OBJECT_ID ";
                 sql += "JOIN OBJECTS obb2 ON reb.REFERENCE = obb2.OBJECT_ID AND reb.ATTR_ID = 12 ";
                 sql += "WHERE obb.OBJECT_TYPE_ID = " + USER + " AND obb2.OBJECT_ID = ob.OBJECT_ID) ";
-            }else if (params.get(UserFilter.ALL_FRIENDS_UNCONFIRMED_FRIENDSHIP) != null) { // если надо получить ID друзей данного пользователя, еще НЕ подтвердивших дружбу,
+            } else if (params.get(UserFilter.ALL_FRIENDS_UNCONFIRMED_FRIENDSHIP) != null) { // если надо получить ID друзей данного пользователя, еще НЕ подтвердивших дружбу,
                 int current_user_id = userService.getObjID(userService.getCurrentUsername()); // userService.getCurrentUser().getId().toString(); // айди текущего юзера
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID ";
                 sql += "JOIN OBJECTS ob2 ON re.REFERENCE = ob2.OBJECT_ID AND re.ATTR_ID = 12 ";
@@ -1100,8 +1100,99 @@ public class DBHelp {
                         "AND pa.ATTR_ID = 204 AND pa.VALUE = 0";
             }
 
+            // 2017-03-12 Для уведомлений
+
             //sql += "ORDER BY ob.OBJECT_ID"; // И группируем. Возможно придется сабрать в каждую else, если не сработает с INTERSECT
         }
+
+        ///// 2017-03-12 Для уведомлений (не все еще реализовал, сделаю)
+        else if (filter instanceof NotificationFilter) {
+            // Работаем с уведомлениями
+            if (params.get(NotificationFilter.ALL) != null) { // если надо получить IDs всех уведомлений в системе,
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + NOTIFICATION;
+            } else if (params.get(NotificationFilter.FOR_CURRENT_USER) != null) { // если надо получить ID всех уведомлений для текущего пользователя,
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 503 "; // 503 - это получатель
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + NOTIFICATION + " ";
+                sql += "AND ob2.OBJECT_NAME = " + "'" + userService.getCurrentUsername() + "'" + " ";
+            } else if (params.get(NotificationFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех уведомлений для пользователя с конкретным именем,
+                ArrayList<String> user_name = params.get(NotificationFilter.FOR_USER_WITH_NAME);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 503 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + NOTIFICATION + " ";
+                sql += "AND ob2.OBJECT_NAME = " + user_name.get(0) + " ";
+            } else if (params.get(NotificationFilter.FOR_USER_WITH_ID) != null) { // если надо получить ID всех уведомлений для пользователя с конкретным id,
+                ArrayList<String> user_id = params.get(NotificationFilter.FOR_USER_WITH_ID);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 503 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + NOTIFICATION + " ";
+                sql += "AND ob2.OBJECT_ID = " + user_id.get(0) + " ";
+            } /* 2017-03-12 Пока не реализовал это, сделаю все
+
+            else if (params.get(NotificationFilter.BETWEEN_TWO_USERS_WITH_NAMES) != null) { // если надо получить ID всех сообщений между двумя пользователями с конкретными именами друг другу,
+                ArrayList<String> user_names = params.get(MessageFilter.BETWEEN_TWO_USERS_WITH_NAMES);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID AND re.ATTR_ID = 30 ";
+                sql += "JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 201 ";
+                sql += "JOIN OBJECTS user1 ON pa1.VALUE = user1.OBJECT_ID ";
+                sql += "JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 ";
+                sql += "JOIN OBJECTS user2 ON pa2.VALUE = user2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + NOTIFICATION + " ";
+                sql += "AND (user1.OBJECT_NAME = " + user_names.get(0) + " AND user2.OBJECT_NAME = " + user_names.get(1) + " ";
+                sql += "OR user1.OBJECT_NAME = " + user_names.get(1) + " AND user2.OBJECT_NAME = " + user_names.get(0) + ") ";
+            } else if (params.get(MessageFilter.BETWEEN_TWO_USERS_WITH_IDS) != null) { // если надо получить ID всех сообщений двух пользователей с конкретным id друг другу,
+                ArrayList<String> user_ids = params.get(MessageFilter.BETWEEN_TWO_USERS_WITH_IDS);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE  AND re.ATTR_ID = 30 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 201 ";
+                sql += "JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + NOTIFICATION + " ";
+                sql += "AND (ob2.OBJECT_ID = " + user_ids.get(0) + " AND pa2.VALUE = " + user_ids.get(1) + " ";
+                sql += "OR ob2.OBJECT_ID = " + user_ids.get(1) + " AND pa2.VALUE = " + user_ids.get(0) + ") ";
+                sql += "ORDER BY ob.OBJECT_ID"; // 2017-02-26, иначе сообщения выводились вразноброд
+            } else if (params.get(MessageFilter.FROM_TO_USERS_WITH_NAMES) != null) { // если надо получить ID всех сообщений от первого пользователя второму по их именам пользователей,
+                ArrayList<String> user_names = params.get(MessageFilter.FROM_TO_USERS_WITH_NAMES);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID AND re.ATTR_ID = 30 ";
+                sql += "JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 201 ";
+                sql += "JOIN OBJECTS user1 ON pa1.VALUE = user1.OBJECT_ID ";
+                sql += "JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 ";
+                sql += "JOIN OBJECTS user2 ON pa2.VALUE = user2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + NOTIFICATION + " ";
+                sql += "AND user1.OBJECT_NAME = " + user_names.get(0) + " AND user2.OBJECT_NAME = " + user_names.get(1) + " ";
+            } else if (params.get(MessageFilter.FROM_TO_USERS_WITH_IDS) != null) { // если надо получить ID всех сообщений от первого пользователя второму по их id пользователей,
+                ArrayList<String> user_ids = params.get(MessageFilter.FROM_TO_USERS_WITH_IDS);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE  AND re.ATTR_ID = 30 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 201 ";
+                sql += "JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 202 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + NOTIFICATION + " ";
+                sql += "AND ob2.OBJECT_ID = " + user_ids.get(0) + " AND pa2.VALUE = " + user_ids.get(1) + " "; */
+        } else {
+            return null; // Иначе не нашли основного фильтра, не сможем составить запрос
+        }
+
+        // Прикручиваем вспомогательные фильтры:
+        if (params.get(NotificationFilter.BEFORE_DATE) != null) { // если надо получить ID всех уведомлений юзеру, отправленных ДО какой-то даты,
+            ArrayList<String> before_date = params.get(NotificationFilter.BEFORE_DATE);
+            sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                    "AND pa.ATTR_ID = 506 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + before_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))"; // 506 параметр
+        } else if (params.get(NotificationFilter.AFTER_DATE) != null) { // если надо получить ID всех уведомлений юзеру, отправленных ПОСЛЕ какой-то даты,
+            ArrayList<String> after_date = params.get(NotificationFilter.AFTER_DATE);
+            sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                    "AND pa.ATTR_ID = 506 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + after_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
+        } else if (params.get(NotificationFilter.BETWEEN_TWO_DATES) != null) { // если надо получить ID всех уведомлений юзеру, отправленных МЕЖДУ двумя датами,
+            ArrayList<String> date = params.get(NotificationFilter.BETWEEN_TWO_DATES);
+            sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob " +
+                    "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                    "AND pa.ATTR_ID = 506 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss')) " +
+                    "AND (TO_DATE(pa1.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + date.get(1) + ", 'dd.mm.yyyy hh24:mi:ss'))"; // Можно сделать и between'ом, в принципе
+        } else if (params.get(NotificationFilter.UNSEEN) != null) { // если надо получить ID всех непросмотренных уведомлений, отправленных текущему пользователю,
+            sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                    "AND pa.ATTR_ID = 507 AND pa.VALUE = 0"; // Параметр 507
+        }
+
+        /////
 
 
         System.out.println("Итоговый запрос " + sql);

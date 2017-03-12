@@ -73,6 +73,10 @@ public class LoadingServiceImp implements LoadingService {
         return new DBHelp().getListObjectsByFilters(meetingFilter);
     }
 
+    @Override  // 2017-03-12 С фильтром для уведомлений
+    public ArrayList<Integer> getListIdFilteredAlternative(NotificationFilter notificationFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return new DBHelp().getListObjectsByFilters(notificationFilter);
+    }
 
     // 2017-02-14 Метод получения списка самих датаобджектов, удовлетворяющих условиям примененных фильтров, фильры задаем списком Фильт1, Значение1, Фильтр2, Значение2 ... и т д
 

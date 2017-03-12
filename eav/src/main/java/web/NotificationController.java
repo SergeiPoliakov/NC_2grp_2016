@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutionException;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
+import service.id_filters.NotificationFilter;
 import service.id_filters.UserFilter;
 
 
@@ -62,17 +63,23 @@ public class NotificationController {
         // Сначала получим все новые сообщения для пользователя:
         try {
             ArrayList<Integer> al = null;
-            if (text.equals("new_message")){ // Если нам надо узнать, есть ли новые сообщения
+            // 2017-03-12 Добавил вытаскивание вообще всех непросмотренных уведомлений
+            if (text.equals("all")){ // Если нам надо узнать, есть вообще любые новые уведомления (и о сообщениях, и о друзьях, и о приглашениях и пр.)
+                // Вытаскиваем все уведомления для данного пользователя:
+                al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
+                result.setText("Уведомления");
+            }
+            else if (text.equals("new_message")){ // Если нам надо узнать только, есть ли новые сообщения
                 // Вытаскиваем все непрочитанные сообщения для данного пользователя:
                 al = loadingService.getListIdFilteredAlternative(new MessageFilter(MessageFilter.TO_CURRENT_USER, MessageFilter.UNREAD));
                 result.setText("Сообщения");
             }
-            else if (text.equals("new_friend")) { // Если нам надо узнать, есть ли новые заявки в друзья
+            else if (text.equals("new_friend")) { // Если нам надо узнать только, есть ли новые заявки в друзья
                 // Вытаскиваем айди всех неподтвержденных текущим пользователем друзей:
                 al = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_UNCONFIRMED_FRIENDSHIP));
                 result.setText("Заявки в друзья");
             }
-            // Нам даже обходить их не надо, достаточно знать количество новых:
+            // Нам даже обходить их не надо, достаточно знать количество новых: // НО ПОТОМ ПРИ НЕОБХОДИМОСТИ ВООБЩЕ МОЖНО ОБОЙТИ И ВЫТАЩИТЬ ВСЕ ИЗ СПИСКА
             count = al.size();
 
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {

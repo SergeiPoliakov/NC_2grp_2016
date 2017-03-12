@@ -54,6 +54,9 @@ public interface LoadingService {
     @WebMethod
     ArrayList<Integer> getListIdFilteredAlternative(service.id_filters.MeetingFilter meetingFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
+    @WebMethod // 2017-03-12 // Для уведомлений
+    ArrayList<Integer> getListIdFilteredAlternative(service.id_filters.NotificationFilter notificationFilter) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+
     @WebMethod
     DataObject createDataObject(String name, int objType, TreeMap<Integer, Object> mapAttr) throws SQLException;
 

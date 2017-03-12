@@ -19,7 +19,7 @@ public class Notification extends BaseEntitie{
     private String additionalID; // 504
     private String type; // 505
     private String date; // 506
-    private String isSeen; // 507
+    private String isSeen; // 507 // Просмотренные
 
     private User sender;
     private User reciever;
