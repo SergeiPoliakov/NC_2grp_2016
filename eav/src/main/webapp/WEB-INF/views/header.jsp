@@ -15,9 +15,7 @@
     <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/skywalk-docs.min.css">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-notifications.min.css">
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tlmain.css">
 
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/docs.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/header.js"></script>
@@ -177,6 +175,7 @@
     <!-- /.container-fluid -->
 </nav>
  <!-- Notification -->
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript">
     //Скрыть/показать уведомления
     $(document).click(function(event) {
