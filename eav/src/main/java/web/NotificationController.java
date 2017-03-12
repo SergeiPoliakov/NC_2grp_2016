@@ -6,16 +6,16 @@ package web;
 import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
 import entities.DataObject;
+import entities.Meeting;
+import entities.User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import service.id_filters.MessageFilter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 
 import service.LoadingServiceImp;
@@ -30,7 +30,6 @@ import service.id_filters.UserFilter;
 @Controller
 public class NotificationController {
     private LoadingServiceImp loadingService = new LoadingServiceImp();
-
 
     // 2017-02-24 Уведомления о новых сообщениях (вывод в хедер) // Старый метод, используйте универсальный getNewNotification
     @RequestMapping(value = "/getNewMessage", method = RequestMethod.GET)

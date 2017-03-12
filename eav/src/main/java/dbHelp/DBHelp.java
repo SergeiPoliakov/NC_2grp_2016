@@ -29,6 +29,7 @@ public class DBHelp {
     private final int MEETING = 1004;
     private final int CALENDAR = 1005;
     private final int SETTINGS = 1006;
+    private final int NOTIFICATION = 1007;
 
     private final int START_ID_USER = 10_000;
     private final int START_ID_EVENT = 20_000;
@@ -36,6 +37,7 @@ public class DBHelp {
     private final int START_ID_MEETING = 0;
     private final int START_ID_SETTINGS = 40_000;
     private final int START_ID_CALENDAR = 50_000;
+    private final int START_ID_NOTIFICATION = 60_000;
 
     private UserServiceImp userService = new UserServiceImp();
 
@@ -81,6 +83,8 @@ public class DBHelp {
                     objID = START_ID_SETTINGS;
                 } else if (objTypeID == CALENDAR) {
                     objID = START_ID_CALENDAR;
+                } else if (objTypeID == NOTIFICATION) {
+                    objID = START_ID_NOTIFICATION;
                 } // не обязательно было, но для единообразности
                 else {
                     System.out.println("Генератор id: Задан неизвестный тип объекта! [" + objTypeID + "]");

@@ -2,10 +2,7 @@ package web;
 
 import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
-import entities.DataObject;
-import entities.Event;
-import entities.Meeting;
-import entities.User;
+import entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -20,8 +17,12 @@ import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.MeetingFilter;
 
+import javax.xml.crypto.Data;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -31,6 +32,8 @@ import java.util.concurrent.ExecutionException;
  */
 @Controller
 public class MeetingController {
+
+    Logger logger = LoggerFactory.getLogger(MeetingController.class);
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private UserServiceImp userService = new UserServiceImp();
@@ -44,6 +47,35 @@ public class MeetingController {
         }
         return list;
     }
+
+    // TEST
+    @RequestMapping(value = "/notificationSendTo{recieverID}", method = RequestMethod.GET)
+    public String notificationTestGet(@PathVariable("recieverID") String recieverID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
+
+        logger.info("SD");
+
+        Integer host_id =  userService.getObjID(userService.getCurrentUsername());
+        String currentDate =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+
+
+        // Это можно использовать в дальнейшем (наверное)
+        //Notification notification = new Notification(host_id.toString(), recieverID,"0","4",currentDate);
+
+        // Добавить для себя, посмотреть чё там как
+        Notification notification = new Notification("10001", host_id.toString(),"0","4",currentDate);
+
+        DataObject dataObject = notification.toDataObject();
+        loadingService.setDataObjectToDB(dataObject);
+
+        DataObject dataObject2 = loadingService.getDataObjectByIdAlternative(60009);
+        Notification notification2 = new Notification(dataObject2);
+
+        boolean a = 2+2 == 5;
+
+        return "/main-login";
+    }
+    //END TEST
+
 
     // Список встреч пользователя
     @RequestMapping(value = "/meetings", method = RequestMethod.GET)
