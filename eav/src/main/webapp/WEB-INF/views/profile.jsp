@@ -109,13 +109,13 @@
                             <label>Выберите ваш пол</label>
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="sex" id="Gender1" value="Мужской" checked>
+                                    <input type="radio" name="sex" id="Gender1" value="мужской"  <c:if test="${user.sex eq 'мужской' or user.sex eq 'unknown'}">checked</c:if> >
                                     Мужской
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="sex" id="Gender2" value="Женский">
+                                    <input type="radio" name="sex" id="Gender2" value="женский" <c:if test="${user.sex eq 'женский'}">checked</c:if> >
                                     Женский
                                 </label>
                             </div>

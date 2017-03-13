@@ -305,9 +305,9 @@ public class UserController {
         mapAttr.put(5, ageDate);
         mapAttr.put(6, email);
         mapAttr.put(7, bcryptPass);
-        mapAttr.put(8, null);
-        mapAttr.put(9, null);
-        mapAttr.put(10, null);
+        mapAttr.put(8, "unknown");
+        mapAttr.put(9, "");
+        mapAttr.put(10, "");
         mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");
         mapAttr.put(15, "true");  //изначально должно быть false
         mapAttr.put(16, phone);
