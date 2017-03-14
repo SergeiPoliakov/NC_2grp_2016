@@ -20,6 +20,9 @@ public class Converter {
     Integer MESSAGE = 1003;
     Integer MEETING = 1004;
     Integer SETTINGS = 1006;
+    Integer NOTIFICATIONS = 1007;
+    Integer LOG = 1008;
+    Integer FILE = 1009;
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
@@ -63,6 +66,50 @@ public class Converter {
         }
         return user;
     }
+
+    // 2017-03-13
+    public Log ToLog(DataObject dataObject) {
+        Log log = new Log();
+        try {
+            log.setId(dataObject.getId());
+            log.setName(dataObject.getName());
+            log.setDate(dataObject.getParameter(600));
+            int i = 601;
+            String params = null;
+            for ( ; i < 700; i++){
+                params = dataObject.getParameter(i);
+                if (params != null) { // ищем валидный параметр
+                    log.setType(i);
+                    log.setInfo(params);
+                    break;
+                }
+            }
+            i = 601;
+            Integer referens = null;
+            for ( ; i < 700; i++){ // Ищем валидную ссылку
+                referens = dataObject.getReference(i).get(0);
+                if (referens != null) {
+                    log.setType(i);
+                    log.setId(referens);
+                    break;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return log;
+    }
+
+    // 2017-03-13 Конвертер для массива датаобджектов в массив логов
+    public ArrayList<Log> ToLog(ArrayList<DataObject> aldo) {
+        ArrayList<Log> logs = new ArrayList<>();
+        for (DataObject DO : aldo) {
+            logs.add(ToLog(DO));
+        }
+        return logs;
+    }
+
 
     // 2017-03-05 Конвертер для массива датаобджектов в массив юзеров
     public ArrayList<Message> ToMessage(ArrayList<DataObject> aldo) {
@@ -223,19 +270,39 @@ public class Converter {
             dataObject.setParams(405, settings.getPhoneNewMessage());
             dataObject.setParams(406, settings.getPhoneNewFriend());
             dataObject.setParams(407, settings.getPhoneMeetingInvite());
-        } else { // иначе сами не понимаем, что конвертируем
+        }else if (entitie instanceof Log) {
+            // Работаем с логами
+            Log log = (Log) entitie;
+
+            // dataObject.setId(log.getId()); // это не надо, так как логи долго храниться могут в памяти, а айдишников еще не заняли
+            dataObject.setObjectTypeId(LOG);
+            dataObject.setName(log.getName());
+
+            dataObject.setParams(600, log.getDate());
+
+            // Замечание! В отличие от других сущностей, логи могут храниться либо как ссылки на объекты в базе,
+            // либо как записи в параметрах, поэтому либо то, либо то (вместе не храним, зачем лишнее дублирование):
+            if (log.getInfo() != null) {
+                dataObject.setParams(log.getType(), log.getInfo());
+            }
+            if (log.getLinkId() != null) {
+                dataObject.setRefParams(log.getType(), log.getLinkId());
+            }
+        }
+        else { // иначе сами не понимаем, что конвертируем
             dataObject = null;
         }
         return dataObject;
     }
 
-    // 2017-03-07 Конвертер для массива событий в массив датаобджектов
-    public ArrayList<DataObject> toDO(ArrayList<Event> events) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    // 2017-03-14 Конвертер для массива сущностей в массив датаобджектов
+    public ArrayList<DataObject> toDO(ArrayList<BaseEntitie> entities) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         ArrayList<DataObject> dataObjects = new ArrayList<>();
-        for (Event event : events) {
-            dataObjects.add(toDO(event));
+        for (BaseEntitie entitie : entities) {
+            dataObjects.add(toDO(entitie));
         }
         return dataObjects;
     }
+
 
 }

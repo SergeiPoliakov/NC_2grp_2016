@@ -30,6 +30,8 @@ public class DBHelp {
     private final int CALENDAR = 1005;
     private final int SETTINGS = 1006;
     private final int NOTIFICATION = 1007;
+    private final int LOG = 1008;
+    private final int FILE = 1009;
 
     private final int START_ID_USER = 10_000;
     private final int START_ID_EVENT = 20_000;
@@ -38,6 +40,8 @@ public class DBHelp {
     private final int START_ID_SETTINGS = 40_000;
     private final int START_ID_CALENDAR = 50_000;
     private final int START_ID_NOTIFICATION = 60_000;
+    private final int START_ID_LOG = 70_000;
+    private final int START_ID_FILE = 80_000;
 
     private UserServiceImp userService = new UserServiceImp();
 
@@ -85,6 +89,10 @@ public class DBHelp {
                     objID = START_ID_CALENDAR;
                 } else if (objTypeID == NOTIFICATION) {
                     objID = START_ID_NOTIFICATION;
+                } else if (objTypeID == LOG) {
+                    objID = START_ID_LOG;
+                } else if (objTypeID == FILE) {
+                    objID = START_ID_FILE;
                 } // не обязательно было, но для единообразности
                 else {
                     System.out.println("Генератор id: Задан неизвестный тип объекта! [" + objTypeID + "]");
@@ -96,7 +104,11 @@ public class DBHelp {
             // Проверка на попадение в интервал выделенных айди:
             if ((objTypeID == USER) & (objID >= START_ID_EVENT) ||
                     (objTypeID == EVENT) & (objID >= START_ID_MESSAGE) ||
-                    (objTypeID == MESSAGE) & (objID >= START_ID_CALENDAR)  || // Теперь нужно, т.к. появилась сущность CALENDAR // не нужно, нет ограничений на id сообщений
+                    (objTypeID == MESSAGE) & (objID >= START_ID_SETTINGS)  ||
+                    (objTypeID == SETTINGS) & (objID >= START_ID_CALENDAR) ||
+                    (objTypeID == CALENDAR) & (objID >= START_ID_NOTIFICATION) ||
+                    (objTypeID == NOTIFICATION) & (objID >= START_ID_LOG) ||
+                    (objTypeID == LOG) & (objID >= START_ID_FILE) ||
                     (objTypeID == MEETING) & (objID >= START_ID_USER)) {
                 System.out.println("Генератор id: Выход за пределы диапазона выделенных IDs! [id=" + objID + "]");
                 objID = -2;
@@ -1362,6 +1374,15 @@ public class DBHelp {
             PS6.setInt(3, id);
             PS6.executeQuery();
             PS6.close();
+        }else if (dataObject.getObjectTypeId().equals(LOG)) { // Если это логи, то
+            // 1) Добавление ссылки Юзер - Лог (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '31', '30001');
+            int attrId = 31;
+            PreparedStatement PS7 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+            PS7.setInt(1, idUser);
+            PS7.setInt(2, attrId);
+            PS7.setInt(3, id);
+            PS7.executeQuery();
+            PS7.close();
         }
 
         CloseConnection(Con);

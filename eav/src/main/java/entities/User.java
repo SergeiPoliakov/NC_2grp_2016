@@ -49,6 +49,8 @@ public class User extends BaseEntitie{
 
     private Integer settingsUD; //19
 
+    private ArrayList<Log> logs; // 31
+
     public CalendarCredential getCalendarIdentificator() {
         return calendarIdentificator;
     }
