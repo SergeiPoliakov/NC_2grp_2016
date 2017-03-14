@@ -177,59 +177,59 @@ INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1002', '141');
 -- Tasks
 --Task Id: 20001
 INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('20001', '1002', 'Task20001');
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20001', '101', '19.07.2017 17:30'); -- time_start
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20001', '102', '19.07.2017 21:50'); -- time_end
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20001', '103', '4,333'); -- duration
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20001', '104', 'Работа'); -- task_comment
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20001', '105', 'Style1'); -- priority
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20001', '101', '19.07.2017 17:30'); -- time_start
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20001', '102', '19.07.2017 21:50'); -- time_end
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20001', '103', '4,333'); -- duration
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20001', '104', 'Работа'); -- task_comment
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20001', '105', 'Style1'); -- priority
   
   --Task Id: 20002
 INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('20002', '1002', 'Task20002');
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20002', '101', '09.07.2017 08:30'); -- time_start
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20002', '102', '09.07.2017 17:30'); -- time_end
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20002', '103', '9'); -- duration
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20002', '104', 'Работа'); -- task_comment
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20002', '105', 'Style1'); -- priority
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20002', '101', '09.07.2017 08:30'); -- time_start
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20002', '102', '09.07.2017 17:30'); -- time_end
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20002', '103', '9'); -- duration
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20002', '104', 'Работа'); -- task_comment
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20002', '105', 'Style1'); -- priority
   
   --Task Id: 20003
 INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('20003', '1002', 'Task20003');
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20003', '101', '09.02.2017 20:00'); -- time_start
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20003', '102', '09.02.2017 22:30'); -- time_end
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20003', '103', '2,5'); -- duration
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20003', '104', 'Кинотеатр'); -- task_comment
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20003', '105', 'Style2'); -- priority
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20003', '101', '09.02.2017 20:00'); -- time_start
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20003', '102', '09.02.2017 22:30'); -- time_end
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20003', '103', '2,5'); -- duration
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20003', '104', 'Кинотеатр'); -- task_comment
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20003', '105', 'Style2'); -- priority
   
   --Task Id: 20004
 INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('20004', '1002', 'Task20004');
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20004', '101', '11.02.2017 17:45'); -- time_start
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20004', '102', '11.02.2017 19:40'); -- time_end
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20004', '103', '1'); -- duration
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20004', '104', 'Какие то дела'); -- task_comment
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20004', '105', 'Style3'); -- priority
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20004', '101', '11.02.2017 17:45'); -- time_start
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20004', '102', '11.02.2017 19:40'); -- time_end
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20004', '103', '1'); -- duration
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20004', '104', 'Какие то дела'); -- task_comment
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('20004', '105', 'Style3'); -- priority
 
 -- Users
 --User Id: 10001
 INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('10001', '1001', 'Геннадий Иванович Степанов');
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '1', 'Геннадий'); --name
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '2', 'Степанов'); --surname
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '3', 'Иванович'); --middle_name
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '4', 'gena322'); --login
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '5', '09.07.1985 00:00'); --birthdate
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '6', 'gena51rus@pochta.ru'); --e-mail
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '7', '$2a$06$F2.VRxDdlpM1Uzp/IlZNlOHtjK3MNAO5vUuX7v8b0MmPiDvWVdbm2'); --password
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '8', 'мужской'); --sex
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '9', 'Воронеж'); --city
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '10', 'Тут дополнительная информация'); --additional_field
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '11', 'pic.jpg'); --picture
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '12', ''); -- friends
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '13', ''); --task_id
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '15', 'true'); --confirmedEmail
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '1', 'Геннадий'); --name
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '2', 'Степанов'); --surname
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '3', 'Иванович'); --middle_name
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '4', 'gena322'); --login
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '5', '09.07.1985 00:00'); --birthdate
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '6', 'gena51rus@pochta.ru'); --e-mail
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '7', '$2a$06$F2.VRxDdlpM1Uzp/IlZNlOHtjK3MNAO5vUuX7v8b0MmPiDvWVdbm2'); --password
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '8', 'мужской'); --sex
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '9', 'Воронеж'); --city
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '10', 'Тут дополнительная информация'); --additional_field
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '11', 'pic.jpg'); --picture
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '12', ''); -- friends
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '13', ''); --task_id
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '15', 'true'); --confirmedEmail
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '16', '7**********'); --phone
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '17', 'true'); --confirmedPhone
 
 
-    INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '13', '20001'); --task_id
-    INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '13', '20004'); --task_id
+INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '13', '20001'); --task_id
+INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '13', '20004'); --task_id
 
 
 
@@ -237,25 +237,25 @@ INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '17', 'true'); -
 	
 --User Id: 10002
 INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('10002', '1001', 'Василий Сергеевич Рожненко');
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '1', 'Василий'); --name
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '2', 'Рожненко'); --surname
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '3', 'Сергеевич'); --middle_name
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '4', 'vasyan14'); --login
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '5', '17.05.1995 00:00'); --birthdate
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '6', 'vasyarozh@poshta.com'); --e-mail
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '7', '$2a$06$.ZNeT3DLgl/t8ElWPd9xQOySO62NFK6Uw4uMTUJMgeWN0rJyHB8X.'); --password
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '8', 'мужской'); --sex
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '9', 'Москва'); --city
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '10', 'Тут дополнительная информация о Васе'); --additional_field
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '11', 'picvasya.jpg'); --picture
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '12', ''); -- friends
-  INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '12', '10001'); --friend
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '13', ''); --task_id
-  INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '15', 'true'); --confirmed
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '1', 'Василий'); --name
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '2', 'Рожненко'); --surname
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '3', 'Сергеевич'); --middle_name
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '4', 'vasyan14'); --login
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '5', '17.05.1995 00:00'); --birthdate
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '6', 'vasyarozh@poshta.com'); --e-mail
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '7', '$2a$06$.ZNeT3DLgl/t8ElWPd9xQOySO62NFK6Uw4uMTUJMgeWN0rJyHB8X.'); --password
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '8', 'мужской'); --sex
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '9', 'Москва'); --city
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '10', 'Тут дополнительная информация о Васе'); --additional_field
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '11', 'picvasya.jpg'); --picture
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '12', ''); -- friends
+INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '12', '10001'); --friend
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '13', ''); --task_id
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '15', 'true'); --confirmed
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '16', '7**********'); --phone
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '17', 'true'); --confirmedPhone
-  INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '13', '20002'); --task_id
-  INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '13', '20003'); --task_id
+INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '13', '20002'); --task_id
+INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '13', '20003'); --task_id
 
 
 
@@ -377,22 +377,87 @@ INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '19', '4
 
 --Notification
 INSERT INTO Obj_types (OBJECT_TYPE_ID, NAME) VALUES ('1007', 'Notification');
-	INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('501', 'ID'); 
-	INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('502', 'senderID'); -- link
-	INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('503', 'recieverID'); -- link
-	INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('504', 'additionalID'); -- link
-	INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('505', 'type');
-	INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('506', 'date');
-	INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('507', 'isSeen');
-		INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '501');
-		INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '502');
-		INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '503');
-		INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '504');
-		INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '505');
-		INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '506');
-		INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '507');
-		
-		
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('501', 'ID'); 
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('502', 'senderID'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('503', 'recieverID'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('504', 'additionalID'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('505', 'type');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('506', 'date');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('507', 'isSeen');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '501');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '502');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '503');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '504');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '505');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '506');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1007', '507');
+
+
+
+--Log 2017-03-14
+--Log_Attributes (201-300) (add new Log of User)
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('31', 'Log_atr');
+--User Object_Attributes
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '30'); -- а то не было
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1001', '31');
+--Obj_Types(1001-2000)
+INSERT INTO Obj_types (OBJECT_TYPE_ID, NAME) VALUES ('1008', 'Log');
+--Log_Attributes (600-699)
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('600', 'log_date');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('601', 'log_login');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('602', 'log_logout');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('603', 'log_relog');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('604', 'log_page');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('611', 'log_add_friend'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('612', 'log_del_friend'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('613', 'log_search_user');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('614', 'log_view_profile'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('621', 'log_send_message'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('622', 'log_get_message'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('631', 'log_add_file'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('632', 'log_edit_file'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('633', 'log_del_file'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('634', 'log_send_file'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('635', 'log_avatar');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('641', 'log_add_event'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('642', 'log_edit_event'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('643', 'log_del_event'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('651', 'log_add_meeting'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('652', 'log_edit_meeting'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('653', 'log_del_meeting'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('654', 'log_send_invite'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('655', 'log_get_invite'); -- link
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('661', 'log_add_calendar');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('662', 'log_syn_calendar');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('671', 'log_edit_settings');
+--Logs Object_Attributes
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '600');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '601');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '602');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '603');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '604');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '611');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '612');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '613');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '614');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '621');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '622');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '631');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '632');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '633');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '634');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '635');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '641');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '642');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '643');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '651');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '652');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '653');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '654');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '655');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '661');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '662');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '671');
 		
 		
 		
