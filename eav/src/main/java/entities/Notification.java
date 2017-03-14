@@ -166,14 +166,14 @@ public class Notification extends BaseEntitie{
                     }
                     break;
                 // Additional
-                case (504):
+                /*case (504):
                     if (reference != null) {
                         for (Integer refValue : reference.getValue()) {
                             this.meeting = new Meeting(new DBHelp().getObjectsByIdAlternative(refValue));
                             this.additionalID = refValue.toString();
                         }
                     }
-                    break;
+                    break;*/
             }
         }
     }
@@ -186,10 +186,10 @@ public class Notification extends BaseEntitie{
         dataObject.setParams(505, this.type);
         dataObject.setParams(506, this.date);
         dataObject.setParams(507, this.isSeen);
+        dataObject.setParams(504, this.additionalID);
 
         dataObject.setRefParams(502, Integer.parseInt(this.senderID));
         dataObject.setRefParams(503, Integer.parseInt(this.recieverID));
-        dataObject.setRefParams(504, Integer.parseInt(this.additionalID));
 
         return dataObject;
     }
