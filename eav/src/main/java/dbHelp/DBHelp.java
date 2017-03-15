@@ -65,96 +65,98 @@ public class DBHelp {
 
     // 2017-03-02 Поправил генератор
     public int generationID(int objTypeID) throws SQLException {
-        Connection Con = getConnection();
-        PreparedStatement PS = Con
-                .prepareStatement("SELECT MAX(OBJECT_ID) FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
-        PS.setInt(1, objTypeID);
-        ResultSet RS = PS.executeQuery();
         int objID = 0;
-        while (RS.next()) {
-            objID = RS.getInt(1);
-            // Если нет ни одной записи в таблице для данного типа датаобджекта:
-            if (objID == 0) {
-                if (objTypeID == USER) {
-                    objID = START_ID_USER;
-                } else if (objTypeID == EVENT) {
-                    objID = START_ID_EVENT;
-                } else if (objTypeID == MESSAGE) {
-                    objID = START_ID_MESSAGE;
-                } else if (objTypeID == MEETING) {
-                    objID = START_ID_MEETING;
-                } else if (objTypeID == SETTINGS) {
-                    objID = START_ID_SETTINGS;
-                } else if (objTypeID == CALENDAR) {
-                    objID = START_ID_CALENDAR;
-                } else if (objTypeID == NOTIFICATION) {
-                    objID = START_ID_NOTIFICATION;
-                } else if (objTypeID == LOG) {
-                    objID = START_ID_LOG;
-                } else if (objTypeID == FILE) {
-                    objID = START_ID_FILE;
-                } // не обязательно было, но для единообразности
-                else {
-                    System.out.println("Генератор id: Задан неизвестный тип объекта! [" + objTypeID + "]");
-                    objID = -1;
-                    break;
+
+        try (Connection Con = getConnection(); PreparedStatement PS = Con
+                .prepareStatement("SELECT MAX(OBJECT_ID) FROM OBJECTS WHERE OBJECT_TYPE_ID = ?")) {
+
+            PS.setInt(1, objTypeID);
+            ResultSet RS = PS.executeQuery();
+
+            while (RS.next()) {
+                objID = RS.getInt(1);
+                // Если нет ни одной записи в таблице для данного типа датаобджекта:
+                if (objID == 0) {
+                    if (objTypeID == USER) {
+                        objID = START_ID_USER;
+                    } else if (objTypeID == EVENT) {
+                        objID = START_ID_EVENT;
+                    } else if (objTypeID == MESSAGE) {
+                        objID = START_ID_MESSAGE;
+                    } else if (objTypeID == MEETING) {
+                        objID = START_ID_MEETING;
+                    } else if (objTypeID == SETTINGS) {
+                        objID = START_ID_SETTINGS;
+                    } else if (objTypeID == CALENDAR) {
+                        objID = START_ID_CALENDAR;
+                    } else if (objTypeID == NOTIFICATION) {
+                        objID = START_ID_NOTIFICATION;
+                    } else if (objTypeID == LOG) {
+                        objID = START_ID_LOG;
+                    } else if (objTypeID == FILE) {
+                        objID = START_ID_FILE;
+                    } // не обязательно было, но для единообразности
+                    else {
+                        System.out.println("Генератор id: Задан неизвестный тип объекта! [" + objTypeID + "]");
+                        objID = -1;
+                        break;
+                    }
                 }
+                ++objID;
+                // Проверка на попадение в интервал выделенных айди:
+                if ((objTypeID == USER) & (objID >= START_ID_EVENT) ||
+                        (objTypeID == EVENT) & (objID >= START_ID_MESSAGE) ||
+                        (objTypeID == MESSAGE) & (objID >= START_ID_SETTINGS) ||
+                        (objTypeID == SETTINGS) & (objID >= START_ID_CALENDAR) ||
+                        (objTypeID == CALENDAR) & (objID >= START_ID_NOTIFICATION) ||
+                        (objTypeID == NOTIFICATION) & (objID >= START_ID_LOG) ||
+                        (objTypeID == LOG) & (objID >= START_ID_FILE) ||
+                        (objTypeID == MEETING) & (objID >= START_ID_USER)) {
+                    System.out.println("Генератор id: Выход за пределы диапазона выделенных IDs! [id=" + objID + "]");
+                    objID = -2;
+                }
+                break;
             }
-            ++objID;
-            // Проверка на попадение в интервал выделенных айди:
-            if ((objTypeID == USER) & (objID >= START_ID_EVENT) ||
-                    (objTypeID == EVENT) & (objID >= START_ID_MESSAGE) ||
-                    (objTypeID == MESSAGE) & (objID >= START_ID_SETTINGS)  ||
-                    (objTypeID == SETTINGS) & (objID >= START_ID_CALENDAR) ||
-                    (objTypeID == CALENDAR) & (objID >= START_ID_NOTIFICATION) ||
-                    (objTypeID == NOTIFICATION) & (objID >= START_ID_LOG) ||
-                    (objTypeID == LOG) & (objID >= START_ID_FILE) ||
-                    (objTypeID == MEETING) & (objID >= START_ID_USER)) {
-                System.out.println("Генератор id: Выход за пределы диапазона выделенных IDs! [id=" + objID + "]");
-                objID = -2;
-            }
-            break;
+            RS.close();
+            return objID;
         }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return objID;
     }
 
+
     public int getObjID(String username) throws SQLException {
-        Connection Con = getConnection();
-        PreparedStatement PS = Con
-                .prepareStatement("SELECT OBJECT_ID FROM PARAMS WHERE VALUE = ?");
-        PS.setString(1, username);
-        ResultSet RS = PS.executeQuery();
         int objID = 0;
-        while (RS.next()) {
-            objID = RS.getInt(1);
+        try (Connection Con = getConnection();
+             PreparedStatement PS = Con
+                     .prepareStatement("SELECT OBJECT_ID FROM PARAMS WHERE VALUE = ?");) {
+            PS.setString(1, username);
+            ResultSet RS = PS.executeQuery();
+
+            while (RS.next()) {
+                objID = RS.getInt(1);
+            }
+            RS.close();
+            return objID;
         }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return objID;
+
     }
 
 
     public ArrayList<Object> getEmail(String email)
             throws SQLException {
         ArrayList<Object> Res = new ArrayList<>();
-        Connection Con = getConnection();
-        PreparedStatement PS = Con
-                .prepareStatement("SELECT p.VALUE " +
-                        "FROM PARAMS p " +
-                        "WHERE p.ATTR_ID = 6 and p.VALUE = ?");
-        PS.setString(1, email);
-        ResultSet RS = PS.executeQuery();
-        while (RS.next()) {
-            Res.add(RS.getObject(1));
+        try ( Connection Con = getConnection();
+              PreparedStatement PS = Con
+                      .prepareStatement("SELECT p.VALUE " +
+                              "FROM PARAMS p " +
+                              "WHERE p.ATTR_ID = 6 and p.VALUE = ?");) {
+            PS.setString(1, email);
+            ResultSet RS = PS.executeQuery();
+            while (RS.next()) {
+                Res.add(RS.getObject(1));
+            }
+            RS.close();
+            return Res;
         }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
     }
 
 
@@ -163,31 +165,29 @@ public class DBHelp {
     // 2017-03-06 // Получение из базы идетификационного файла календаря гугл // !!! Пока что вытаскивает и сохраняет в файл в локальной папке юзера
     public String getCalendarFile(int userId) throws SQLException, IOException, GeneralSecurityException {
         CalendarSettings calendarSettings = new CalendarSettings(userId); // Получаем настройки текущего юзера
-
-        Connection Con = getConnection();
-        PreparedStatement PS = Con.prepareStatement("SELECT re.OBJECT_BODY FROM REPOSITORY re " +
-                "WHERE re.OBJECT_ID IN (SELECT MAX(ob.OBJECT_ID) FROM OBJECTS ob " +
-                "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 18 AND re.OBJECT_ID = ? ) ");
-        PS.setInt(1, userId);
-        ResultSet RS = PS.executeQuery();
         InputStream inputStream = null;
-        byte[] buffer = new byte[1];
-        while (RS.next()) {
-            inputStream = RS.getBinaryStream(1);
-            if (inputStream != null){
-                File credential_file = new File(calendarSettings.getDATA_STORE_DIR().getAbsolutePath().toString() + "/StoredCredential");
-                FileOutputStream fileOutputStream = new FileOutputStream(credential_file);
-                while (inputStream.read(buffer) > 0) {
-                    fileOutputStream.write(buffer);
-                }
-                fileOutputStream.close();
-            }
-        }
-        RS.close();
-        PS.close();
+      try (Connection Con = getConnection();
+     PreparedStatement PS = Con.prepareStatement("SELECT re.OBJECT_BODY FROM REPOSITORY re " +
+             "WHERE re.OBJECT_ID IN (SELECT MAX(ob.OBJECT_ID) FROM OBJECTS ob " +
+             "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 18 AND re.OBJECT_ID = ? ) ");) {
+    PS.setInt(1, userId);
+    ResultSet RS = PS.executeQuery();
 
-        CloseConnection(Con);
-        return (inputStream == null) ? null : "OK";
+    byte[] buffer = new byte[1];
+    while (RS.next()) {
+        inputStream = RS.getBinaryStream(1);
+        if (inputStream != null) {
+            File credential_file = new File(calendarSettings.getDATA_STORE_DIR().getAbsolutePath().toString() + "/StoredCredential");
+            FileOutputStream fileOutputStream = new FileOutputStream(credential_file);
+            while (inputStream.read(buffer) > 0) {
+                fileOutputStream.write(buffer);
+            }
+            fileOutputStream.close();
+        }
+    }
+    RS.close();
+          return (inputStream == null) ? null : "OK";
+}
     }
 
 
@@ -198,39 +198,43 @@ public class DBHelp {
         CalendarSettings calendarSettings = new CalendarSettings(user_id); // Получаем настройки текущего юзера
 
         int file_id = generationID(CALENDAR); // Генерируем новый id для файла в репозитории
-        Connection connection = getConnection();
-
-        // 1) Добавляем заголовок датаобджекта в OBJECTS для данного файла:
+        try (Connection connection = getConnection();
         PreparedStatement PS1 = connection.prepareStatement("INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
-        //например INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('50001', '1005', 'file.json');
-        PS1.setInt(1, file_id);
-        PS1.setInt(2, CALENDAR);
-        PS1.setString(3, nameFile);
-        PS1.executeQuery();
-        PS1.close();
+             PreparedStatement PS2 = connection.prepareStatement("INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES (?,?,?)");
+             PreparedStatement PS3 = connection.prepareStatement("INSERT INTO Repository (OBJECT_ID, OBJECT_BODY) VALUES (?,?)");) {
 
-        // 2) Добавляем ссылку от датаобджекта юзера к датаобджекту данного файла:
-        PreparedStatement PS2 = connection.prepareStatement("INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES (?,?,?)");
-        //например INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '18', '50001'); -- file google
-        PS2.setInt(1, user_id);
-        PS2.setInt(2, 18);
-        PS2.setInt(3, file_id);
-        PS2.executeQuery();
-        PS2.close();
 
-        // 3) Добавляем сам файл в репозиторий базы как BLOB
-        connection.setAutoCommit(false); // выключаем автокоммиты
-        PreparedStatement PS3 = connection.prepareStatement("INSERT INTO Repository (OBJECT_ID, OBJECT_BODY) VALUES (?,?)");
-        PS3.setInt(1, file_id);
-        File credential_file = new File(calendarSettings.getDATA_STORE_DIR().getAbsolutePath().toString() + "/" + nameFile);
-        FileInputStream  fileInputStream = new FileInputStream(credential_file);
-        PS3.setBinaryStream(2, fileInputStream, (int) credential_file.length());
-        fileInputStream.close();
-        PS3.execute();
-        connection.commit();
+            // 1) Добавляем заголовок датаобджекта в OBJECTS для данного файла:
 
-        CloseConnection(connection);
-        System.out.println("Права доступа сохранены в Repository в базу: " + file_id +", " + "BLOB[" + nameFile + "]");
+            //например INSERT INTO Objects (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('50001', '1005', 'file.json');
+            PS1.setInt(1, file_id);
+            PS1.setInt(2, CALENDAR);
+            PS1.setString(3, nameFile);
+            PS1.executeQuery();
+
+
+            // 2) Добавляем ссылку от датаобджекта юзера к датаобджекту данного файла:
+
+            //например INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10001', '18', '50001'); -- file google
+            PS2.setInt(1, user_id);
+            PS2.setInt(2, 18);
+            PS2.setInt(3, file_id);
+            PS2.executeQuery();
+
+
+            // 3) Добавляем сам файл в репозиторий базы как BLOB
+            connection.setAutoCommit(false); // выключаем автокоммиты
+
+            PS3.setInt(1, file_id);
+            File credential_file = new File(calendarSettings.getDATA_STORE_DIR().getAbsolutePath().toString() + "/" + nameFile);
+            FileInputStream fileInputStream = new FileInputStream(credential_file);
+            PS3.setBinaryStream(2, fileInputStream, (int) credential_file.length());
+            fileInputStream.close();
+            PS3.execute();
+            connection.commit();
+
+            System.out.println("Права доступа сохранены в Repository в базу: " + file_id + ", " + "BLOB[" + nameFile + "]");
+        }
     }
     //endregion
 
@@ -243,33 +247,32 @@ public class DBHelp {
 
     public ArrayList<User> getFriendListByUserId(int userID) throws SQLException {
         ArrayList<User> Res = new ArrayList<>();
-        Connection Con = getConnection();
         Integer userTypeID = USER; // ID типа Пользователь
         int attrId = 12; // ID атрибута в базе, соответствующий друзьям пользователя
+        try (Connection Con = getConnection();
+             PreparedStatement PS = Con.
+                     prepareStatement("SELECT friend.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
+                             "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
+                             "LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND ATTR_ID = ? " + // Только ссылки на друзей attrId = 12
+                             "LEFT JOIN OBJECTS friend ON re.REFERENCE = friend.OBJECT_ID " +
+                             "LEFT JOIN PARAMS pa1 ON friend.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " + // -- name
+                             "LEFT JOIN PARAMS pa2 ON friend.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " + // -- suname
+                             "LEFT JOIN PARAMS pa3 ON friend.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " + // -- middleName
+                             "LEFT JOIN PARAMS pa4 ON friend.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " + // -- nickname
+                             "LEFT JOIN PARAMS pa5 ON friend.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " + // -- ageDate
+                             "LEFT JOIN PARAMS pa6 ON friend.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " + // -- email
+                             "LEFT JOIN PARAMS pa7 ON friend.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " + // -- bcryptPass
+                             "LEFT JOIN PARAMS pa8 ON friend.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " + // -- sex
+                             "LEFT JOIN PARAMS pa9 ON friend.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " + // -- country
+                             "LEFT JOIN PARAMS pa10 ON friend.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " + // -- additional_field
+                             "LEFT JOIN PARAMS pa11 ON friend.OBJECT_ID = pa11.OBJECT_ID AND pa10.ATTR_ID = 11 " + // -- picture
+                             "WHERE ob.OBJECT_TYPE_ID = ? " + // -- Только тип Пользователи userTypeID = 1001
+                             "AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID")) { // id юзера, кому ищем друзей)
 
-        PreparedStatement PS = Con.
-                prepareStatement("SELECT friend.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
-                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
-                        "LEFT JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND ATTR_ID = ? " + // Только ссылки на друзей attrId = 12
-                        "LEFT JOIN OBJECTS friend ON re.REFERENCE = friend.OBJECT_ID " +
-                        "LEFT JOIN PARAMS pa1 ON friend.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " + // -- name
-                        "LEFT JOIN PARAMS pa2 ON friend.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " + // -- suname
-                        "LEFT JOIN PARAMS pa3 ON friend.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " + // -- middleName
-                        "LEFT JOIN PARAMS pa4 ON friend.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " + // -- nickname
-                        "LEFT JOIN PARAMS pa5 ON friend.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " + // -- ageDate
-                        "LEFT JOIN PARAMS pa6 ON friend.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " + // -- email
-                        "LEFT JOIN PARAMS pa7 ON friend.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " + // -- bcryptPass
-                        "LEFT JOIN PARAMS pa8 ON friend.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " + // -- sex
-                        "LEFT JOIN PARAMS pa9 ON friend.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " + // -- country
-                        "LEFT JOIN PARAMS pa10 ON friend.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " + // -- additional_field
-                        "LEFT JOIN PARAMS pa11 ON friend.OBJECT_ID = pa11.OBJECT_ID AND pa10.ATTR_ID = 11 " + // -- picture
-                        "WHERE ob.OBJECT_TYPE_ID = ? " + // -- Только тип Пользователи userTypeID = 1001
-                        "AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID"); // id юзера, кому ищем друзей
-
-        PS.setInt(1, attrId); // В качестве параметра id ссылки на друга
-        PS.setInt(2, userTypeID); // В качестве параметра id типа Пользователь
-        PS.setInt(3, userID); // В качестве параметра id юзера, для которого ищем друзей
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+             PS.setInt(1, attrId); // В качестве параметра id ссылки на друга
+             PS.setInt(2, userTypeID); // В качестве параметра id типа Пользователь
+             PS.setInt(3, userID); // В качестве параметра id юзера, для которого ищем друзей
+             ResultSet RS = PS.executeQuery(); // System.out.println(RS);
         while (RS.next()) {
             User friend = new User();
             friend.setId(RS.getInt(1));
@@ -286,9 +289,8 @@ public class DBHelp {
             Res.add(friend);
         }
         RS.close();
-        PS.close();
-        CloseConnection(Con);
         return Res;
+        }
     }
 
 
@@ -299,117 +301,122 @@ public class DBHelp {
 
 
     public User getUserByUserID(int userID) throws SQLException {
-        Connection Con = getConnection();
         Integer userTypeID = USER; // ID типа Пользователь
-        PreparedStatement PS = Con.
-                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
-                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
-                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
-                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
-                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
-                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
-                        "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " +
-                        "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " +
-                        "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " +
-                        "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
-                        "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
-                        "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
-                        "WHERE ob.OBJECT_TYPE_ID = ? AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID");
-        PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
-        PS.setInt(2, userID); // В качестве параметра id пользователя
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        User user = null;
-        while (RS.next()) {
-            user = new User();
-            user.setId(RS.getInt(1));
-            user.setName(RS.getString(2));
-            user.setSurname(RS.getString(3));
-            user.setMiddleName(RS.getString(4));
-            user.setLogin(RS.getString(5));
-            user.setAgeDate(RS.getString(6));
-            user.setEmail(RS.getString(7));
-            user.setPassword(RS.getString(8));
-            user.setSex(RS.getString(9));
-            user.setCity(RS.getString(10));
-            user.setAdditional_field(RS.getString(11));
+        try (Connection Con = getConnection();
+             PreparedStatement PS = Con.
+                     prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
+                             "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
+                             "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
+                             "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
+                             "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
+                             "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
+                             "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " +
+                             "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " +
+                             "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " +
+                             "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
+                             "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
+                             "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
+                             "WHERE ob.OBJECT_TYPE_ID = ? AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID");) {
+
+
+            PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
+            PS.setInt(2, userID); // В качестве параметра id пользователя
+            ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+            User user = null;
+            while (RS.next()) {
+                user = new User();
+                user.setId(RS.getInt(1));
+                user.setName(RS.getString(2));
+                user.setSurname(RS.getString(3));
+                user.setMiddleName(RS.getString(4));
+                user.setLogin(RS.getString(5));
+                user.setAgeDate(RS.getString(6));
+                user.setEmail(RS.getString(7));
+                user.setPassword(RS.getString(8));
+                user.setSex(RS.getString(9));
+                user.setCity(RS.getString(10));
+                user.setAdditional_field(RS.getString(11));
+            }
+            RS.close();
+            return user;
         }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return user;
     }
 
 
     public User getUserAndEventByUserID(int userID) throws SQLException {
-        Connection Con = getConnection();
-        ArrayList<Event> events = new ArrayList<>();
         Integer userTypeID = USER; // ID типа Пользователь
-        PreparedStatement PS = Con.
-                prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
-                        "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
-                        "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
-                        "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
-                        "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
-                        "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
-                        "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " +
-                        "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " +
-                        "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " +
-                        "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
-                        "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
-                        "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
-                        "WHERE ob.OBJECT_TYPE_ID = ? AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID");
-        PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
-        PS.setInt(2, userID); // В качестве параметра id пользователя
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        User user = null;
-        while (RS.next()) {
-            user = new User();
-            user.setId(RS.getInt(1));
-            user.setName(RS.getString(2));
-            user.setSurname(RS.getString(3));
-            user.setMiddleName(RS.getString(4));
-            user.setLogin(RS.getString(5));
-            user.setAgeDate(RS.getString(6));
-            user.setEmail(RS.getString(7));
-            user.setPassword(RS.getString(8));
-            user.setSex(RS.getString(9));
-            user.setCity(RS.getString(10));
-            user.setAdditional_field(RS.getString(11));
-        }
-        RS.close();
-        PS.close();
+        try (Connection Con = getConnection();
+             PreparedStatement PS = Con.
+                     prepareStatement("SELECT ob.OBJECT_ID, pa1.VALUE, pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE, " +
+                             "pa6.VALUE, pa7.VALUE, pa8.VALUE, pa9.VALUE, pa10.VALUE FROM OBJECTS ob " +
+                             "LEFT JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
+                             "LEFT JOIN PARAMS pa2 ON ob.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 2 " +
+                             "LEFT JOIN PARAMS pa3 ON ob.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 3 " +
+                             "LEFT JOIN PARAMS pa4 ON ob.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 4 " +
+                             "LEFT JOIN PARAMS pa5 ON ob.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 5 " +
+                             "LEFT JOIN PARAMS pa6 ON ob.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 6 " +
+                             "LEFT JOIN PARAMS pa7 ON ob.OBJECT_ID = pa7.OBJECT_ID AND pa7.ATTR_ID = 7 " +
+                             "LEFT JOIN PARAMS pa8 ON ob.OBJECT_ID = pa8.OBJECT_ID AND pa8.ATTR_ID = 8 " +
+                             "LEFT JOIN PARAMS pa9 ON ob.OBJECT_ID = pa9.OBJECT_ID AND pa9.ATTR_ID = 9 " +
+                             "LEFT JOIN PARAMS pa10 ON ob.OBJECT_ID = pa10.OBJECT_ID AND pa10.ATTR_ID = 10 " +
+                             "WHERE ob.OBJECT_TYPE_ID = ? AND ob.OBJECT_ID = ? ORDER BY ob.OBJECT_ID");
+             PreparedStatement PS1 = Con.prepareStatement("SELECT ev.OBJECT_ID, ob.OBJECT_ID, ev.OBJECT_NAME," +
+                     "pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE FROM OBJECTS ob LEFT JOIN REFERENCES re " +
+                     "ON ob.OBJECT_ID = re.OBJECT_ID LEFT JOIN OBJECTS ev  ON re.REFERENCE = ev.OBJECT_ID " +
+                     "LEFT JOIN PARAMS pa1 ON ev.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 103 LEFT JOIN PARAMS pa2 " +
+                     "ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 101   LEFT JOIN PARAMS pa3 " +
+                     "ON ev.OBJECT_ID = pa3.OBJECT_ID AND  pa3.ATTR_ID = 102 LEFT JOIN PARAMS pa4 " +
+                     "ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 105 LEFT JOIN PARAMS pa5 " +
+                     "ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 104 WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 13 ORDER BY ev.OBJECT_ID");) {
 
-        PreparedStatement PS1 = Con.prepareStatement("SELECT ev.OBJECT_ID, ob.OBJECT_ID, ev.OBJECT_NAME," +
-                "pa2.VALUE, pa3.VALUE, pa4.VALUE, pa5.VALUE FROM OBJECTS ob LEFT JOIN REFERENCES re " +
-                "ON ob.OBJECT_ID = re.OBJECT_ID LEFT JOIN OBJECTS ev  ON re.REFERENCE = ev.OBJECT_ID " +
-                "LEFT JOIN PARAMS pa1 ON ev.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 103 LEFT JOIN PARAMS pa2 " +
-                "ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 101   LEFT JOIN PARAMS pa3 " +
-                "ON ev.OBJECT_ID = pa3.OBJECT_ID AND  pa3.ATTR_ID = 102 LEFT JOIN PARAMS pa4 " +
-                "ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 105 LEFT JOIN PARAMS pa5 " +
-                "ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 104 WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 13 ORDER BY ev.OBJECT_ID");
-        PS1.setInt(1, userID);
-        ResultSet RS1 = PS1.executeQuery();
-        while (RS1.next()) {
-            Event event = new Event();
-            event.setId(RS1.getInt(1));
-            event.setHost_id(RS1.getInt(2));
-            event.setName(RS1.getString(3));
-            event.setDate_begin(RS1.getString(4));
-            event.setDate_end(RS1.getString(5));
-            event.setPriority(RS1.getString(6));
-            event.setInfo(RS1.getString(7));
+            ArrayList<Event> events = new ArrayList<>();
 
-            events.add(event);
-        }
-        try {
-            assert user != null;
-            user.setEventsUser(events);
-        } catch (NullPointerException e) {
-            System.out.println("У данного пользователя нет событий или такой пользователь не найден");
-        }
 
-        CloseConnection(Con);
-        return user;
+            PS.setInt(1, userTypeID); // В качестве параметра id типа Пользователь
+            PS.setInt(2, userID); // В качестве параметра id пользователя
+            ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+            User user = null;
+            while (RS.next()) {
+                user = new User();
+                user.setId(RS.getInt(1));
+                user.setName(RS.getString(2));
+                user.setSurname(RS.getString(3));
+                user.setMiddleName(RS.getString(4));
+                user.setLogin(RS.getString(5));
+                user.setAgeDate(RS.getString(6));
+                user.setEmail(RS.getString(7));
+                user.setPassword(RS.getString(8));
+                user.setSex(RS.getString(9));
+                user.setCity(RS.getString(10));
+                user.setAdditional_field(RS.getString(11));
+            }
+            RS.close();
+
+
+            PS1.setInt(1, userID);
+            ResultSet RS1 = PS1.executeQuery();
+            while (RS1.next()) {
+                Event event = new Event();
+                event.setId(RS1.getInt(1));
+                event.setHost_id(RS1.getInt(2));
+                event.setName(RS1.getString(3));
+                event.setDate_begin(RS1.getString(4));
+                event.setDate_end(RS1.getString(5));
+                event.setPriority(RS1.getString(6));
+                event.setInfo(RS1.getString(7));
+
+                events.add(event);
+            }
+            RS1.close();
+            try {
+                assert user != null;
+                user.setEventsUser(events);
+            } catch (NullPointerException e) {
+                System.out.println("У данного пользователя нет событий или такой пользователь не найден");
+            }
+
+            return user;
+        }
     }
 
 
@@ -418,158 +425,154 @@ public class DBHelp {
 
     public ArrayList<Meeting> getUserMeetingsList(int userID) throws SQLException {
         ArrayList<Meeting> Res = new ArrayList<>();
-        Connection Con = getConnection();
-        // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
+        try (Connection Con = getConnection();
+             PreparedStatement PS = Con.prepareStatement("SELECT  ev.OBJECT_ID, " +
+                     "        pa1.VALUE as PA1," +
+                     "        pa2.VALUE as PA2," +
+                     "        pa3.VALUE as PA3," +
+                     "        pa4.VALUE as PA4," +
+                     "        pa5.VALUE as PA5," +
+                     "        pa6.VALUE as PA6 " +
+                     "FROM  OBJECTS ob " +
+                     "      LEFT JOIN REFERENCES re " +
+                     "        ON ob.OBJECT_ID = re.REFERENCE " +
+                     "      LEFT JOIN OBJECTS ev " +
+                     "        ON re.OBJECT_ID = ev.OBJECT_ID " +
+                     "      LEFT JOIN PARAMS pa1 " +
+                     "        ON ev.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 301 " +
+                     "      LEFT JOIN PARAMS pa2 " +
+                     "        ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 302 " +
+                     "      LEFT JOIN PARAMS pa3 " +
+                     "        ON ev.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 303 " +
+                     "      LEFT JOIN PARAMS pa4 " +
+                     "        ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 304 " +
+                     "      LEFT JOIN PARAMS pa5 " +
+                     "        ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 305 " +
+                     "      LEFT JOIN PARAMS pa6 " +
+                     "        ON ev.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 306 " +
+                     "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 307 ORDER BY ev.OBJECT_ID");) {
 
-        PreparedStatement PS = Con.prepareStatement("SELECT  ev.OBJECT_ID, " +
-                "        pa1.VALUE as PA1," +
-                "        pa2.VALUE as PA2," +
-                "        pa3.VALUE as PA3," +
-                "        pa4.VALUE as PA4," +
-                "        pa5.VALUE as PA5," +
-                "        pa6.VALUE as PA6 " +
-                "FROM  OBJECTS ob " +
-                "      LEFT JOIN REFERENCES re " +
-                "        ON ob.OBJECT_ID = re.REFERENCE " +
-                "      LEFT JOIN OBJECTS ev " +
-                "        ON re.OBJECT_ID = ev.OBJECT_ID " +
-                "      LEFT JOIN PARAMS pa1 " +
-                "        ON ev.OBJECT_ID = pa1.OBJECT_ID AND pa1.ATTR_ID = 301 " +
-                "      LEFT JOIN PARAMS pa2 " +
-                "        ON ev.OBJECT_ID = pa2.OBJECT_ID AND pa2.ATTR_ID = 302 " +
-                "      LEFT JOIN PARAMS pa3 " +
-                "        ON ev.OBJECT_ID = pa3.OBJECT_ID AND pa3.ATTR_ID = 303 " +
-                "      LEFT JOIN PARAMS pa4 " +
-                "        ON ev.OBJECT_ID = pa4.OBJECT_ID AND pa4.ATTR_ID = 304 " +
-                "      LEFT JOIN PARAMS pa5 " +
-                "        ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 305 " +
-                "      LEFT JOIN PARAMS pa6 " +
-                "        ON ev.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 306 " +
-                "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 307 ORDER BY ev.OBJECT_ID");
-        PS.setInt(1, userID); // В качестве параметра id пользователя
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        while (RS.next()) {
-            Meeting meeting = new Meeting();
-            meeting.setId(RS.getInt(1));
-            meeting.setTitle(RS.getString(2));
-            meeting.setDate_start(RS.getString(3));
-            meeting.setDate_end(RS.getString(4));
-            meeting.setInfo(RS.getString(5));
-            meeting.setOrganizer(this.getUserByUserID(RS.getInt(6)));
-            meeting.setTag(RS.getString(7));
-            Res.add(meeting);
+            // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
+
+
+            PS.setInt(1, userID); // В качестве параметра id пользователя
+            ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+            while (RS.next()) {
+                Meeting meeting = new Meeting();
+                meeting.setId(RS.getInt(1));
+                meeting.setTitle(RS.getString(2));
+                meeting.setDate_start(RS.getString(3));
+                meeting.setDate_end(RS.getString(4));
+                meeting.setInfo(RS.getString(5));
+                meeting.setOrganizer(this.getUserByUserID(RS.getInt(6)));
+                meeting.setTag(RS.getString(7));
+                Res.add(meeting);
+            }
+            RS.close();
+            return Res;
         }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
     }
 
 
     // Добавить встречу (id у обьекта Meeting указывать не нужно)
     public void setMeeting(Meeting meeting) throws SQLException {
 
-        Connection connection = getConnection();
-        int meetingID = 40000;
-        TreeMap<Integer, Object> attributeArray = meeting.getArrayWithAttributes();
+        try (Connection connection = getConnection();
+             Statement st = connection.createStatement();
+             ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + meeting.objTypeID);
+             PreparedStatement PS = connection.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
+             PreparedStatement PS1 = connection.prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
+             PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");) {
 
-        Statement st = connection.createStatement();
-        ResultSet RS = st.executeQuery("Select max(OBJECT_ID) from OBJECTS WHERE OBJECT_TYPE_ID = " + meeting.objTypeID);
-        while (RS.next()) {
-            meetingID = RS.getInt(1) + 1;
+            int meetingID = 40000;
+            TreeMap<Integer, Object> attributeArray = meeting.getArrayWithAttributes();
+
+            while (RS.next()) {
+                meetingID = RS.getInt(1) + 1;
+            }
+
+            PS.setInt(1, meetingID);
+            PS.setInt(2, meeting.objTypeID);
+            PS.setObject(3, "Met" + meetingID);
+            PS.executeUpdate();
+
+            // 2) Добавление атрибутов события (параметры со страницы создания события):
+
+            while (!attributeArray.isEmpty()) {
+                java.util.Map.Entry<Integer, Object> en = attributeArray.pollFirstEntry();
+                PS1.setObject(1, en.getValue());
+                PS1.setInt(2, meetingID);
+                PS1.setInt(3, en.getKey());
+                PS1.addBatch();
+            }
+            PS1.executeBatch();
+
+            // 3) Добавление ссылки Встреча - Участники (админ в анном случае):
+            Integer idUser = meeting.getOrganizer().getId();
+            int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
+
+            PS2.setInt(1, meetingID); // ID встречи
+            PS2.setInt(2, referenceAttrId); // ID параметра(307)
+            PS2.setInt(3, idUser); // ID организатора
+            PS2.executeQuery(); //PS2.executeBatch();
         }
-
-        PreparedStatement PS = connection.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?,?,?)");
-        PS.setInt(1, meetingID);
-        PS.setInt(2, meeting.objTypeID);
-        PS.setObject(3, "Met" + meetingID);
-        PS.executeUpdate();
-        PS.close();
-
-        // 2) Добавление атрибутов события (параметры со страницы создания события):
-        PreparedStatement PS1 = connection.prepareStatement("INSERT INTO PARAMS (VALUE,OBJECT_ID,ATTR_ID) VALUES (?,?,?)");
-        while (!attributeArray.isEmpty()) {
-            java.util.Map.Entry<Integer, Object> en = attributeArray.pollFirstEntry();
-            PS1.setObject(1, en.getValue());
-            PS1.setInt(2, meetingID);
-            PS1.setInt(3, en.getKey());
-            PS1.addBatch();
-        }
-        PS1.executeBatch();
-        PS1.close();
-
-        // 3) Добавление ссылки Встреча - Участники (админ в анном случае):
-        Integer idUser = meeting.getOrganizer().getId();
-        int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
-        PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-        PS2.setInt(1, meetingID); // ID встречи
-        PS2.setInt(2, referenceAttrId); // ID параметра(307)
-        PS2.setInt(3, idUser); // ID организатора
-        PS2.executeQuery(); //PS2.executeBatch();
-        PS2.close();
-
-        CloseConnection(connection);
     }
 
 
     public void setUsersToMeeting(int meetingID, String... userIDs) throws SQLException {
-        Connection connection = getConnection();
-        int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
-        assert connection != null;
-        PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
+        try (Connection connection = getConnection();
+             PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");) {
 
-        for (String userID : userIDs) {
-            PS2.setInt(1, meetingID); // ID встречи
-            PS2.setInt(2, referenceAttrId); // ID параметра(307)
-            PS2.setString(3, userID); // ID пользователя
-            PS2.addBatch();
+            int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
+
+            for (String userID : userIDs) {
+                PS2.setInt(1, meetingID); // ID встречи
+                PS2.setInt(2, referenceAttrId); // ID параметра(307)
+                PS2.setString(3, userID); // ID пользователя
+                PS2.addBatch();
+            }
+            PS2.executeBatch();
         }
-        PS2.executeBatch();
-        PS2.close();
-        CloseConnection(connection);
     }
 
 
     public void removeUsersFromMeeting(String meetingID, String... userIDs) throws SQLException {
-        Connection connection = getConnection();
-        assert connection != null;
-        PreparedStatement PS2 = connection.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ? AND OBJECT_ID = ?");
+        try (Connection connection = getConnection();
+             PreparedStatement PS2 = connection.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ? AND OBJECT_ID = ?");) {
 
-        for (String userID : userIDs) {
-            PS2.setString(1, userID); // ID пользователя
-            PS2.setString(2, meetingID); // ID встречи
-            PS2.executeUpdate();
+            for (String userID : userIDs) {
+                PS2.setString(1, userID); // ID пользователя
+                PS2.setString(2, meetingID); // ID встречи
+                PS2.executeUpdate();
+            }
         }
-        PS2.close();
-        CloseConnection(connection);
     }
 
 
     public ArrayList<User> getUsersAtMeeting(int meetingID) throws IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, NoSuchMethodException, SecurityException, SQLException, NullPointerException {
         ArrayList<User> Res = new ArrayList<>();
-        Connection Con = getConnection();
-        // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
+        try ( Connection Con = getConnection();
+              PreparedStatement PS = Con.prepareStatement("SELECT " +
+                      "        re.REFERENCE " +
+                      " FROM  OBJECTS ob " +
+                      "      LEFT JOIN REFERENCES re " +
+                      "        ON ob.OBJECT_ID = re.OBJECT_ID " +
+                      "      LEFT JOIN PARAMS pa1 " +
+                      "        ON re.REFERENCE = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
+                      "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 307 ORDER BY re.OBJECT_ID");) {
 
-        assert Con != null;
-        PreparedStatement PS = Con.prepareStatement("SELECT " +
-                "        re.REFERENCE " +
-                " FROM  OBJECTS ob " +
-                "      LEFT JOIN REFERENCES re " +
-                "        ON ob.OBJECT_ID = re.OBJECT_ID " +
-                "      LEFT JOIN PARAMS pa1 " +
-                "        ON re.REFERENCE = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
-                "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 307 ORDER BY re.OBJECT_ID");
-        PS.setInt(1, meetingID); // В качестве параметра id встречи
-        ResultSet RS = PS.executeQuery(); // System.out.println(RS);
-        while (RS.next()) {
-            User user = this.getUserAndEventByUserID(RS.getInt(1));
-            Res.add(user);
+            // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
+
+            PS.setInt(1, meetingID); // В качестве параметра id встречи
+            ResultSet RS = PS.executeQuery(); // System.out.println(RS);
+            while (RS.next()) {
+                User user = this.getUserAndEventByUserID(RS.getInt(1));
+                Res.add(user);
+            }
+            RS.close();
+            return Res;
         }
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        return Res;
     }
 
 
@@ -577,27 +580,6 @@ public class DBHelp {
 
 
     //region DO Methods
-
-    // Метод уже является только прослойкой, вызывает универсальный setDataObjectToDB
-    public void setNewUser(DataObject dataObject) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        setDataObjectToDB(dataObject);
-    }
-
-    // Обновленный метод добавления событий (работа через DO)
-    public void setNewEvent(DataObject dataObject) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        setDataObjectToDB(dataObject);
-    }
-
-    // Обновленный метод обновления пользователя (работа через DO)
-    public void updateUser(DataObject dataObject) throws SQLException,
-            NoSuchMethodException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        updateDataObject(dataObject);
-    }
 
     // 2017-02-20 Обновленный метод добавления в друзья (работа через DO)
     public void setFriend(int idFriend) throws SQLException,
@@ -656,74 +638,74 @@ public class DBHelp {
             IllegalArgumentException, InvocationTargetException {
 
         //System.out.println(userId + " " + patch);
-        Connection Con = getConnection();
-        // Удаляем ту ссылку, которая уже имеется:
-        assert Con != null;
-        PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ?"); // DELETE FROM PARAMS WHERE OBJECT_ID = '10005' AND ATTR_ID = '11';
-        PS.setInt(1, userId);
-        PS.setInt(2, 11);
-        PS.executeUpdate();
-        // И создаем новую:
-        PS = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)"); // INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10005','11','\\upload\\10005\\avatar\\avatar_10005.png');
-        PS.setInt(1, userId);
-        PS.setInt(2, 11);
-        PS.setString(3, patch);
-        PS.executeUpdate();
+        try (Connection Con = getConnection();
+             PreparedStatement PS = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ?"); // DELETE FROM PARAMS WHERE OBJECT_ID = '10005' AND ATTR_ID = '11';
+            PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)");) { // INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10005','11','\\upload\\10005\\avatar\\avatar_10005.png');
 
-        PS.close();
-        CloseConnection(Con);
+            // Удаляем ту ссылку, которая уже имеется:
+
+            PS.setInt(1, userId);
+            PS.setInt(2, 11);
+            PS.executeUpdate();
+            // И создаем новую:
+
+            PS1.setInt(1, userId);
+            PS1.setInt(2, 11);
+            PS1.setString(3, patch);
+            PS1.executeUpdate();
+        }
     }
 
     // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает все поля ДатаОбджекта, используя универсальный запрос в базу
     public DataObject getObjectsByIdAlternative(int objectId) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Connection Con = getConnection();
-        assert Con != null;
-        PreparedStatement PS = Con.
-                prepareStatement("(SELECT -2 AS KEY, CAST(OBJECT_ID AS VARCHAR(70)) AS VALUE, 0 AS REF FROM OBJECTS WHERE OBJECT_ID = ?) " +
-                        "UNION (SELECT -1, OBJECT_NAME, 0 FROM OBJECTS WHERE OBJECT_ID = ?) " +
-                        "UNION (SELECT 0, CAST(OBJECT_TYPE_ID AS VARCHAR(70)), 0 FROM OBJECTS WHERE OBJECT_ID = ?) " +
-                        "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) " +
-                        "AS VALUE_LIST, 0 FROM PARAMS pa WHERE OBJECT_ID = ? AND ATTR_ID != 12 AND ATTR_ID != 13) " +
-                        "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1 FROM REFERENCES WHERE OBJECT_ID = ?)");
-        // В качестве всех параметров id датаобджекта:
-        PS.setInt(1, objectId);
-        PS.setInt(2, objectId);
-        PS.setInt(3, objectId);
-        PS.setInt(4, objectId);
-        PS.setInt(5, objectId);
+        try (Connection Con = getConnection();
+             PreparedStatement PS = Con.
+                     prepareStatement("(SELECT -2 AS KEY, CAST(OBJECT_ID AS VARCHAR(70)) AS VALUE, 0 AS REF FROM OBJECTS WHERE OBJECT_ID = ?) " +
+                             "UNION (SELECT -1, OBJECT_NAME, 0 FROM OBJECTS WHERE OBJECT_ID = ?) " +
+                             "UNION (SELECT 0, CAST(OBJECT_TYPE_ID AS VARCHAR(70)), 0 FROM OBJECTS WHERE OBJECT_ID = ?) " +
+                             "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) " +
+                             "AS VALUE_LIST, 0 FROM PARAMS pa WHERE OBJECT_ID = ? AND ATTR_ID != 12 AND ATTR_ID != 13) " +
+                             "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1 FROM REFERENCES WHERE OBJECT_ID = ?)")) {
 
-        ResultSet RS = PS.executeQuery();
-        DataObject dataObject = new DataObject();
 
-        // Обходим всю полученную таблицу и формируем поля датаобджекта
-        while (RS.next()) {
-            Integer key = RS.getInt(1); // key
-            String value = RS.getString(2); // value
-            // Удаление дублирования строк (Вася Вася Вася):
-            value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
-            Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
-            // System.out.println(key + " : " + value); // для отладки
+            // В качестве всех параметров id датаобджекта:
+            PS.setInt(1, objectId);
+            PS.setInt(2, objectId);
+            PS.setInt(3, objectId);
+            PS.setInt(4, objectId);
+            PS.setInt(5, objectId);
 
-            if (key == -2) { // Это пришел к нам айдишник
-                dataObject.setId(Integer.parseInt(value));
-            } else if (key == -1) { // Это пришло к нам имя
-                dataObject.setName(value);
-            } else if (key == 0) { // Это пришел к нам тип
-                dataObject.setObjectTypeId(Integer.parseInt(value));
-            } else { // Иначе пришли параматры или ссылки
-                if (ref == 0) { // Значит, это пришли параметры
-                    dataObject.setParams(key, value);
-                } else { // Иначе пришли ссылки
-                    dataObject.setRefParams(key, Integer.parseInt(value));
+            ResultSet RS = PS.executeQuery();
+            DataObject dataObject = new DataObject();
+
+            // Обходим всю полученную таблицу и формируем поля датаобджекта
+            while (RS.next()) {
+                Integer key = RS.getInt(1); // key
+                String value = RS.getString(2); // value
+                // Удаление дублирования строк (Вася Вася Вася):
+                value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
+                Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
+                // System.out.println(key + " : " + value); // для отладки
+
+                if (key == -2) { // Это пришел к нам айдишник
+                    dataObject.setId(Integer.parseInt(value));
+                } else if (key == -1) { // Это пришло к нам имя
+                    dataObject.setName(value);
+                } else if (key == 0) { // Это пришел к нам тип
+                    dataObject.setObjectTypeId(Integer.parseInt(value));
+                } else { // Иначе пришли параматры или ссылки
+                    if (ref == 0) { // Значит, это пришли параметры
+                        dataObject.setParams(key, value);
+                    } else { // Иначе пришли ссылки
+                        dataObject.setRefParams(key, Integer.parseInt(value));
+                    }
                 }
             }
-        }
 
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
-        System.out.println("getObjectsByIdAlternative");
-        return dataObject;
+            RS.close();
+            System.out.println("getObjectsByIdAlternative");
+            return dataObject;
+        }
     }
 
     // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает список ДатаОбджектов по списку id, используя универсальный запрос в базу
@@ -743,49 +725,49 @@ public class DBHelp {
                     "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
                     "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13) " +
                     "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set + ")) ORDER BY OBJECT_ID, KEY";
-            Connection Con = getConnection();
-            PreparedStatement PS = Con.prepareStatement(sql);
-            ResultSet RS = PS.executeQuery();
+            try ( Connection Con = getConnection();
+                  PreparedStatement PS = Con.prepareStatement(sql);
+                  ResultSet RS = PS.executeQuery();) {
 
-            // Обходим всю полученную таблицу и формируем поля датаобджектов
-            DataObject dataObject = null;
-            while (RS.next()) {
-                Integer key = RS.getInt(1); // key
-                String value = RS.getString(2); // value
-                // Удаление дублирования строк (Вася Вася Вася):
-                value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
-                Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
-                Integer id = RS.getInt(4); // object id
 
-                if (key == -2) { // Это пришел к нам айдишник
-                    if (dataObject != null) {
-                        dataObjectList.add(dataObject); // кладем предыдущий объект в лист
-                    }
-                    dataObject = new DataObject(); // создаем новый, и будем теперь в него писать
-                    dataObject.setId(Integer.parseInt(value));
-                } else if (key == -1) { // Это пришло к нам имя
-                    dataObject.setName(value);
-                } else if (key == 0) { // Это пришел к нам тип
-                    dataObject.setObjectTypeId(Integer.parseInt(value));
-                } else { // Иначе пришли параматры или ссылки
-                    if (ref == 0) { // Значит, это пришли параметры
-                        dataObject.setParams(key, value);
-                    } else { // Иначе пришли ссылки
-                        dataObject.setRefParams(key, Integer.parseInt(value));
+                // Обходим всю полученную таблицу и формируем поля датаобджектов
+                DataObject dataObject = null;
+                while (RS.next()) {
+                    Integer key = RS.getInt(1); // key
+                    String value = RS.getString(2); // value
+                    // Удаление дублирования строк (Вася Вася Вася):
+                    value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
+                    Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
+                    Integer id = RS.getInt(4); // object id
+
+                    if (key == -2) { // Это пришел к нам айдишник
+                        if (dataObject != null) {
+                            dataObjectList.add(dataObject); // кладем предыдущий объект в лист
+                        }
+                        dataObject = new DataObject(); // создаем новый, и будем теперь в него писать
+                        dataObject.setId(Integer.parseInt(value));
+                    } else if (key == -1) { // Это пришло к нам имя
+                        dataObject.setName(value);
+                    } else if (key == 0) { // Это пришел к нам тип
+                        dataObject.setObjectTypeId(Integer.parseInt(value));
+                    } else { // Иначе пришли параматры или ссылки
+                        if (ref == 0) { // Значит, это пришли параметры
+                            dataObject.setParams(key, value);
+                        } else { // Иначе пришли ссылки
+                            dataObject.setRefParams(key, Integer.parseInt(value));
+                        }
                     }
                 }
+                // и в конце надо дописать последний элемент, который из-за while не занесся в лист:
+                if (dataObject != null) { // если успели прочитать поля в объект, то есть он не просто пустая заготовка
+                    dataObjectList.add(dataObject); // кладем объект в лист
+                }
+                //dataObjectList.add(dataObject); // кладем объект в лист
             }
-            // и в конце надо дописать последний элемент, который из-за while не занесся в лист:
-            if (dataObject != null) { // если успели прочитать поля в объект, то есть он не просто пустая заготовка
-                dataObjectList.add(dataObject); // кладем объект в лист
-            }
-            //dataObjectList.add(dataObject); // кладем объект в лист
-            RS.close();
-            PS.close();
-            CloseConnection(Con);
         }
         return dataObjectList;
     }
+
 
     // 2017-02-14 Альтернативный вспомогательный метод, вытаскивает список id подходящих под фильтры датаобджектов
 
@@ -1218,19 +1200,20 @@ public class DBHelp {
         ArrayList<Integer> idList = new ArrayList<>();
         if (sql != null) {
 
-            Connection Con = getConnection();
-            assert Con != null;
-            PreparedStatement PS = Con.prepareStatement(sql);
-            ResultSet RS = PS.executeQuery();
-            // Обходим всю полученную таблицу и формируем лист id-шек
-            while (RS.next()) {
-                idList.add(RS.getInt(1));
+            try (Connection Con = getConnection();
+                 PreparedStatement PS = Con.prepareStatement(sql);
+                 ResultSet RS = PS.executeQuery();) {
+
+                // Обходим всю полученную таблицу и формируем лист id-шек
+                while (RS.next()) {
+                    idList.add(RS.getInt(1));
+                }
+                RS.close();
+                PS.close();
+                CloseConnection(Con);
             }
-            RS.close();
-            PS.close();
-            CloseConnection(Con);
+            System.out.println("Возвращаю список");
         }
-        System.out.println("Возвращаю список");
         return idList;
     }
 
@@ -1246,113 +1229,114 @@ public class DBHelp {
     // 2017-02-18 Новый метод выгрузки датаобджекта в базу (создание DO): (исправил 2017-03-02)
     public void setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         int id = generationID(dataObject.getObjectTypeId());
-        Connection Con = getConnection();
-        // 1. Подготавливаем и заполняем в базе строку таблицы OBJECTS
-        assert Con != null;
-        PreparedStatement PS = Con
-                .prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?, ?, ?)");
+        try ( Connection Con = getConnection();
+              PreparedStatement PS = Con
+                      .prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?, ?, ?)");
+              PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)");) {
 
-        System.out.println(">> Новый объект с id =" + id);
-        PS.setInt(1, id);
-        PS.setInt(2, dataObject.getObjectTypeId());
-        PS.setString(3, dataObject.getName());
-        PS.executeUpdate();
-        PS.close();
+            // 1. Подготавливаем и заполняем в базе строку таблицы OBJECTS
 
-        // 2. Подготавливаем и заполняем в базе новые строки таблицы PARAMS
-        // Получаем список параметров:
-        PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)");
 
-        while (!dataObject.getParams().isEmpty()) {
-            Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
-            PS1.setInt(1, id);
-            PS1.setInt(2, En.getKey());
-            PS1.setString(3, En.getValue());
-            PS1.addBatch();
-            //System.out.println("param: id = " + id + ", attr_id = " + En.getKey() + ", ref = " + En.getValue());
-        }
-        PS1.executeBatch();
-        PS1.close();
+            System.out.println(">> Новый объект с id =" + id);
+            PS.setInt(1, id);
+            PS.setInt(2, dataObject.getObjectTypeId());
+            PS.setString(3, dataObject.getName());
+            PS.executeUpdate();
 
-        // Добавление ссылки для настроек. Потребовался отдельный блок, так как здесь value и id стоят на другом месте
-        if (dataObject.getObjectTypeId().equals(SETTINGS)) {
-            PreparedStatement PS7 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-            while (!dataObject.getRefParams().isEmpty()) {
-                Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
-                ArrayList<Integer> valueList = En.getValue(); // получаем значение
-                for (Integer value : valueList) {
-                    PS7.setInt(1, value);
-                    PS7.setInt(2, En.getKey());
-                    PS7.setInt(3, id);
+            // 2. Подготавливаем и заполняем в базе новые строки таблицы PARAMS
+            // Получаем список параметров:
+
+            while (!dataObject.getParams().isEmpty()) {
+                Map.Entry<Integer, String> En = dataObject.getParams().pollFirstEntry();
+                PS1.setInt(1, id);
+                PS1.setInt(2, En.getKey());
+                PS1.setString(3, En.getValue());
+                PS1.addBatch();
+                //System.out.println("param: id = " + id + ", attr_id = " + En.getKey() + ", ref = " + En.getValue());
+            }
+            PS1.executeBatch();
+
+            // Добавление ссылки для настроек. Потребовался отдельный блок, так как здесь value и id стоят на другом месте
+            if (dataObject.getObjectTypeId().equals(SETTINGS)) {
+                try ( PreparedStatement PS7 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");) {
+                    while (!dataObject.getRefParams().isEmpty()) {
+                        Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
+                        ArrayList<Integer> valueList = En.getValue(); // получаем значение
+                        for (Integer value : valueList) {
+                            PS7.setInt(1, value);
+                            PS7.setInt(2, En.getKey());
+                            PS7.setInt(3, id);
+                        }
+                    }
+                    PS7.executeQuery();
                 }
             }
-            PS7.executeQuery();
-            PS7.close();
-        }
 
-        // 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
-        // Получаем список параметров:
-        int idUser = userService.getObjID(userService.getCurrentUsername());
-        Integer host_id = idUser;
-        PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
-        while (!dataObject.getRefParams().isEmpty()) {
-            Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
-            ArrayList<Integer> valueList = En.getValue(); // получаем значение
-            for (Integer value : valueList) {
-                PS2.setInt(1, id);
-                PS2.setInt(2, En.getKey());
-                PS2.setInt(3, value);
-                PS2.addBatch();
-                // System.out.println("reference: id = " + id + ", attr_id = " + En.getKey() + ", par = " + value);
-                if (En.getKey().equals(141)) {
-                    host_id = value;
+            // 3. Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
+            // Получаем список параметров:
+            int idUser = userService.getObjID(userService.getCurrentUsername());
+            Integer host_id = idUser;
+            try (PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");) {
+
+                while (!dataObject.getRefParams().isEmpty()) {
+                    Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
+                    ArrayList<Integer> valueList = En.getValue(); // получаем значение
+                    for (Integer value : valueList) {
+                        PS2.setInt(1, id);
+                        PS2.setInt(2, En.getKey());
+                        PS2.setInt(3, value);
+                        PS2.addBatch();
+                        // System.out.println("reference: id = " + id + ", attr_id = " + En.getKey() + ", par = " + value);
+                        if (En.getKey().equals(141)) {
+                            host_id = value;
+                        }
+                    }
                 }
+                PS2.executeBatch();
             }
-        }
-        PS2.executeBatch();
-        PS2.close();
 
-        System.out.println("host_id = " + host_id);
+            System.out.println("host_id = " + host_id);
 
-        // Если добавляем событие, то надо еще вручную создать ссылки:
-        if (dataObject.getObjectTypeId().equals(EVENT)) { // Если это событие, то
-            int attrId;
-            // Проверяем, привязано ли событие к встрече, и если привязано, то ссылка на юзера тоже будет, но только как на создателя,
-            // а ссылка на встречу будет уазывать, что это событие относится ко встрече, а не к расписанию юзера
-            if ((host_id > START_ID_USER) & (host_id < START_ID_EVENT)) { // Если родителем является юзер, то
-                attrId = 13;
-                // 4) Добавление ссылки Юзер - Событие (связывание): (или Встреча - Событие)
-                PreparedStatement PS3 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-                PS3.setInt(1, host_id); // PS3.setInt(1, idUser);
-                PS3.setInt(2, attrId);
-                PS3.setInt(3, id);
-                PS3.executeQuery();
-                PS3.close();
+            // Если добавляем событие, то надо еще вручную создать ссылки:
+            if (dataObject.getObjectTypeId().equals(EVENT)) { // Если это событие, то
+                int attrId;
+                // Проверяем, привязано ли событие к встрече, и если привязано, то ссылка на юзера тоже будет, но только как на создателя,
+                // а ссылка на встречу будет уазывать, что это событие относится ко встрече, а не к расписанию юзера
+                if ((host_id > START_ID_USER) & (host_id < START_ID_EVENT)) { // Если родителем является юзер, то
+                    attrId = 13;
+                    // 4) Добавление ссылки Юзер - Событие (связывание): (или Встреча - Событие)
+                    try (PreparedStatement PS3 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");) {
 
-                // 5) Добавление 13-го параметра в PARAMS (task_id для текущего пользователя):
-                PreparedStatement PS4 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");
-                PS4.setInt(1, host_id);
-                PS4.setInt(2, attrId);
-                PS4.setObject(3, id);
-                PS4.executeQuery();
-                PS4.close();
+                        PS3.setInt(1, host_id); // PS3.setInt(1, idUser);
+                        PS3.setInt(2, attrId);
+                        PS3.setInt(3, id);
+                        PS3.executeQuery();
+                    }
 
-                // 6) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 13-го параметра с VALUE = NULL в PARAMS (task_id для текущего пользователя):
-                PreparedStatement PS5 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");
-                PS5.setInt(1, host_id); // = user_id
-                PS5.setInt(2, attrId); // = 13
-                PS5.executeUpdate();
-                PS5.close();
-            } else if ((host_id > START_ID_MEETING) & (host_id < START_ID_USER)) { // иначе если родителем является встреча
-                attrId = 308;
-                // 2017-03-02 7) Добавление прямой ссылки Встреча - Событие (связывание):
-                PreparedStatement PS6 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-                PS6.setInt(1, host_id);
-                PS6.setInt(2, attrId);
-                PS6.setInt(3, id);
-                PS6.executeQuery();
-                PS6.close();
-            }
+                    // 5) Добавление 13-го параметра в PARAMS (task_id для текущего пользователя):
+                    try ( PreparedStatement PS4 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");) {
+                        PS4.setInt(1, host_id);
+                        PS4.setInt(2, attrId);
+                        PS4.setObject(3, id);
+                        PS4.executeQuery();
+                    }
+
+                    // 6) (НА ВСЯКИЙ СЛУЧАЙ) Удаление 13-го параметра с VALUE = NULL в PARAMS (task_id для текущего пользователя):
+                    try (PreparedStatement PS5 = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ? AND ATTR_ID = ? AND VALUE IS NULL");) {
+                        PS5.setInt(1, host_id); // = user_id
+                        PS5.setInt(2, attrId); // = 13
+                        PS5.executeUpdate();
+                    }
+                } else if ((host_id > START_ID_MEETING) & (host_id < START_ID_USER)) { // иначе если родителем является встреча
+                    attrId = 308;
+                    // 2017-03-02 7) Добавление прямой ссылки Встреча - Событие (связывание):
+                    try (PreparedStatement PS6 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");) {
+                        PS6.setInt(1, host_id);
+                        PS6.setInt(2, attrId);
+                        PS6.setInt(3, id);
+                        PS6.executeQuery();
+                    }
+                }
             /* не нужно
             attrId = 141;
             // 2017-03-02 8) Добавление обратной ссылки Событие - Юзер (связывание): (или Событие - Встреча)
@@ -1365,157 +1349,156 @@ public class DBHelp {
             */
 
 
-        } else if (dataObject.getObjectTypeId().equals(MESSAGE)) { // Если это сообщение, то
-            // 1) Добавление ссылки Юзер - Сообщение (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '30', '30001');
-            int attrId = 30;
-            PreparedStatement PS6 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-            PS6.setInt(1, idUser);
-            PS6.setInt(2, attrId);
-            PS6.setInt(3, id);
-            PS6.executeQuery();
-            PS6.close();
-        }else if (dataObject.getObjectTypeId().equals(LOG)) { // Если это логи, то
-            // 1) Добавление ссылки Юзер - Лог (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '31', '30001');
-            int attrId = 31;
-            PreparedStatement PS7 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");
-            PS7.setInt(1, idUser);
-            PS7.setInt(2, attrId);
-            PS7.setInt(3, id);
-            PS7.executeQuery();
-            PS7.close();
+            } else if (dataObject.getObjectTypeId().equals(MESSAGE)) { // Если это сообщение, то
+                // 1) Добавление ссылки Юзер - Сообщение (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '30', '30001');
+                int attrId = 30;
+                try (PreparedStatement PS6 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");) {
+                    PS6.setInt(1, idUser);
+                    PS6.setInt(2, attrId);
+                    PS6.setInt(3, id);
+                    PS6.executeQuery();
+                }
+            } else if (dataObject.getObjectTypeId().equals(LOG)) { // Если это логи, то
+                // 1) Добавление ссылки Юзер - Лог (связывание): INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('10001', '31', '30001');
+                int attrId = 31;
+                try (PreparedStatement PS7 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");) {
+                    PS7.setInt(1, idUser);
+                    PS7.setInt(2, attrId);
+                    PS7.setInt(3, id);
+                    PS7.executeQuery();
+                }
+            }
         }
-
-        CloseConnection(Con);
 }
 
 
     /*...............................................................................................................*/
     // 2017-02-18 Новый метод обновления датаобджекта в базе:
     public void updateDataObject(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Connection Con = getConnection();
-        // 1. Подгружаем из базы текущее состояние DO:
-        int id = dataObject.getId();
-        DataObject dataObjectOld = getObjectsByIdAlternative(id);
+        try (Connection Con = getConnection();) {
 
-        // 2. Подготавливаем и заполняем (если соотвествующие поля в базе и в памяти отличаются) в базе строку таблицы OBJECTS
-        if (!dataObjectOld.getName().equals(dataObject.getName())) { // Если имена различны, то обновляем имя
-            assert Con != null;
-            PreparedStatement PS = Con.prepareStatement("UPDATE OBJECTS SET OBJECT_NAME = ? WHERE OBJECT_ID = ?");
-            PS.setString(1, dataObject.getName());
-            PS.setInt(2, id);
-            PS.executeUpdate();
-            PS.close();
-        }
+            // 1. Подгружаем из базы текущее состояние DO:
+            int id = dataObject.getId();
+            DataObject dataObjectOld = getObjectsByIdAlternative(id);
 
-        // 3. Подготавливаем и заполняем (если соотвествующие поля в базе и в памяти отличаются) в базе строки таблицы PARAMS
-        // Получаем список параметров:
-        TreeMap<Integer, String> paramsOld = dataObjectOld.getParams();
-        TreeMap<Integer, String> params = dataObject.getParams();
-
-        assert Con != null;
-        PreparedStatement PS_upd = Con.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? AND ATTR_ID = ?");
-
-        // Обходим все параметры в листе в новом датаобджекте
-        for (Map.Entry<Integer, String> entry : params.entrySet()) {
-            Integer key = entry.getKey(); // получаем ключ
-            String value = entry.getValue(); // получаем значение
-            String valueOld = paramsOld.get(key);
-            System.out.println("Старое значение ключа " + key + " = " + valueOld + ", новое значение ключа = " + value);
-
-            PS_upd.setString(1, value);
-            PS_upd.setInt(2, id);
-            PS_upd.setInt(3, key);
-            PS_upd.addBatch();
-
-        }
-        PS_upd.executeBatch();
-        PS_upd.close();
-
-        // 4. Подготавливаем и заполняем (если соотвествующие поля в базе и в памяти отличаются) в базе строки таблицы REFERENCES
-        // Получаем список параметров:
-        TreeMap<Integer, ArrayList<Integer>> referencesOld = dataObjectOld.getRefParams();
-        TreeMap<Integer, ArrayList<Integer>> references = dataObject.getRefParams();
-
-        PreparedStatement PS_ref_ins = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
-        PreparedStatement PS_ref_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ? AND ATTR_ID = ? AND REFERENCE = ?");
-        //DELETE FROM REFERENCES WHERE OBJECT_ID = 10003 AND ATTR_ID = 12 AND REFERENCE = 10001
-        //PreparedStatement PS_ref_del2 = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ? AND ATTR_ID = ?");
-
-        // Обходим все параметры в листе в новом датаобджекте
-        for (Map.Entry<Integer, ArrayList<Integer>> entry : references.entrySet()) {
-            Integer key = entry.getKey(); // получаем ключ
-            ArrayList<Integer> valueList = entry.getValue(); // получаем значение
-            ArrayList<Integer> valueListOld = referencesOld.get(key);
-
-            for (Integer value : valueList) {
-                // Если в старом объекте нет такого ключа или если есть ключ, но нет такого значения в старом датаобджекте, то надо создать новую строку
-                if ((valueListOld == null) || (!valueListOld.contains(value))) {
-                    PS_ref_ins.setInt(1, id);
-                    PS_ref_ins.setInt(2, key);
-                    PS_ref_ins.setInt(3, value);
-                    PS_ref_ins.addBatch();
-                } // иначе не трогаем
-            }
-        }
-        PS_ref_ins.executeBatch();
-        PS_ref_ins.close();
-
-        // А теперь смотрим, может, нужно какие-то ссылки удалить. Обходим все ссылки в листе в старом датаобджекте
-        for (Map.Entry<Integer, ArrayList<Integer>> entry : referencesOld.entrySet()) {
-            Integer keyOld = entry.getKey(); // получаем ключ
-            ArrayList<Integer> valueListOld = entry.getValue(); // получаем значение
-            ArrayList<Integer> valueList = references.get(keyOld);
-
-            if (valueList == null) { // если вообще нет такого ключа
-                //PS_ref_del2.setInt(1, id);
-                //PS_ref_del2.setInt(2, keyOld);
-                //PS_ref_del2.addBatch();
-            } else { // Если ключ есть, сравниваем значения
-                for (Integer valueOld : valueListOld) {
-                    // Если в новом объекте нет такого значения, то надо удалить строку из базы
-                    if (!valueList.contains(valueOld)) {
-                        PS_ref_del.setInt(1, id);
-                        PS_ref_del.setInt(2, keyOld);
-                        PS_ref_del.setObject(3, valueOld);
-                        PS_ref_del.addBatch();
-                        System.out.println("Удаляем ссылку " + id + " : " + keyOld + " : " + valueOld);
-                    } // иначе не трогаем
+            // 2. Подготавливаем и заполняем (если соотвествующие поля в базе и в памяти отличаются) в базе строку таблицы OBJECTS
+            if (!dataObjectOld.getName().equals(dataObject.getName())) { // Если имена различны, то обновляем имя
+                try (PreparedStatement PS = Con.prepareStatement("UPDATE OBJECTS SET OBJECT_NAME = ? WHERE OBJECT_ID = ?");) {
+                    PS.setString(1, dataObject.getName());
+                    PS.setInt(2, id);
+                    PS.executeUpdate();
                 }
-                PS_ref_del.executeBatch();
+            }
+
+            // 3. Подготавливаем и заполняем (если соотвествующие поля в базе и в памяти отличаются) в базе строки таблицы PARAMS
+            // Получаем список параметров:
+            TreeMap<Integer, String> paramsOld = dataObjectOld.getParams();
+            TreeMap<Integer, String> params = dataObject.getParams();
+
+            try (PreparedStatement PS_upd = Con.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? AND ATTR_ID = ?");) {
+
+
+                // Обходим все параметры в листе в новом датаобджекте
+                for (Map.Entry<Integer, String> entry : params.entrySet()) {
+                    Integer key = entry.getKey(); // получаем ключ
+                    String value = entry.getValue(); // получаем значение
+                    String valueOld = paramsOld.get(key);
+                    System.out.println("Старое значение ключа " + key + " = " + valueOld + ", новое значение ключа = " + value);
+
+                    PS_upd.setString(1, value);
+                    PS_upd.setInt(2, id);
+                    PS_upd.setInt(3, key);
+                    PS_upd.addBatch();
+
+                }
+                PS_upd.executeBatch();
+            }
+
+            // 4. Подготавливаем и заполняем (если соотвествующие поля в базе и в памяти отличаются) в базе строки таблицы REFERENCES
+            // Получаем список параметров:
+            TreeMap<Integer, ArrayList<Integer>> referencesOld = dataObjectOld.getRefParams();
+            TreeMap<Integer, ArrayList<Integer>> references = dataObject.getRefParams();
+            try (PreparedStatement PS_ref_ins = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");
+                 PreparedStatement PS_ref_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ? AND ATTR_ID = ? AND REFERENCE = ?");) {
+
+                //DELETE FROM REFERENCES WHERE OBJECT_ID = 10003 AND ATTR_ID = 12 AND REFERENCE = 10001
+                //PreparedStatement PS_ref_del2 = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ? AND ATTR_ID = ?");
+
+                // Обходим все параметры в листе в новом датаобджекте
+                for (Map.Entry<Integer, ArrayList<Integer>> entry : references.entrySet()) {
+                    Integer key = entry.getKey(); // получаем ключ
+                    ArrayList<Integer> valueList = entry.getValue(); // получаем значение
+                    ArrayList<Integer> valueListOld = referencesOld.get(key);
+
+                    for (Integer value : valueList) {
+                        // Если в старом объекте нет такого ключа или если есть ключ, но нет такого значения в старом датаобджекте, то надо создать новую строку
+                        if ((valueListOld == null) || (!valueListOld.contains(value))) {
+                            PS_ref_ins.setInt(1, id);
+                            PS_ref_ins.setInt(2, key);
+                            PS_ref_ins.setInt(3, value);
+                            PS_ref_ins.addBatch();
+                        } // иначе не трогаем
+                    }
+                }
+                PS_ref_ins.executeBatch();
+
+                // А теперь смотрим, может, нужно какие-то ссылки удалить. Обходим все ссылки в листе в старом датаобджекте
+                for (Map.Entry<Integer, ArrayList<Integer>> entry : referencesOld.entrySet()) {
+                    Integer keyOld = entry.getKey(); // получаем ключ
+                    ArrayList<Integer> valueListOld = entry.getValue(); // получаем значение
+                    ArrayList<Integer> valueList = references.get(keyOld);
+
+                    if (valueList == null) { // если вообще нет такого ключа
+                        //PS_ref_del2.setInt(1, id);
+                        //PS_ref_del2.setInt(2, keyOld);
+                        //PS_ref_del2.addBatch();
+                    } else { // Если ключ есть, сравниваем значения
+                        for (Integer valueOld : valueListOld) {
+                            // Если в новом объекте нет такого значения, то надо удалить строку из базы
+                            if (!valueList.contains(valueOld)) {
+                                PS_ref_del.setInt(1, id);
+                                PS_ref_del.setInt(2, keyOld);
+                                PS_ref_del.setObject(3, valueOld);
+                                PS_ref_del.addBatch();
+                                System.out.println("Удаляем ссылку " + id + " : " + keyOld + " : " + valueOld);
+                            } // иначе не трогаем
+                        }
+                        PS_ref_del.executeBatch();
+
+                    }
+                }
 
             }
+            //PS_ref_del2.executeBatch();
+            //PS_ref_del2.close();
+
         }
-
-        PS_ref_del.close();
-        //PS_ref_del2.executeBatch();
-        //PS_ref_del2.close();
-
-        CloseConnection(Con);
     }
 
     /*...............................................................................................................*/
     // 2017-02-18 Новый универсальный метод удаления датаобджекта из базы:
     public void deleteDataObject(Integer id) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
-        Connection Con = getConnection();
-        assert Con != null;
-        PreparedStatement PS_del = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
-        PS_del.setInt(1, id);
-        PS_del.executeUpdate();
+        try (Connection Con = getConnection();) {
 
-        PS_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ?");
-        PS_del.setInt(1, id);
-        PS_del.executeUpdate();
+            PreparedStatement PS_del = Con.prepareStatement("DELETE FROM PARAMS WHERE OBJECT_ID = ?");
+            PS_del.setInt(1, id);
+            PS_del.executeUpdate();
 
-        PS_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ?");
-        PS_del.setInt(1, id);
-        PS_del.executeUpdate();
+            PS_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE OBJECT_ID = ?");
+            PS_del.setInt(1, id);
+            PS_del.executeUpdate();
 
-        PS_del = Con.prepareStatement("DELETE FROM OBJECTS WHERE OBJECT_ID = ?");
-        PS_del.setInt(1, id);
-        PS_del.executeUpdate();
+            PS_del = Con.prepareStatement("DELETE FROM REFERENCES WHERE REFERENCE = ?");
+            PS_del.setInt(1, id);
+            PS_del.executeUpdate();
 
-        PS_del.close();
-        CloseConnection(Con);
+            PS_del = Con.prepareStatement("DELETE FROM OBJECTS WHERE OBJECT_ID = ?");
+            PS_del.setInt(1, id);
+            PS_del.executeUpdate();
+
+            PS_del.close();
+
+        }
     }
 
     // На всякий случай удаление по объекту, а не по айди
@@ -1871,44 +1854,42 @@ public class DBHelp {
                 }
             }
 
-            Connection Con = getConnection();
-            PreparedStatement PS = Con.prepareStatement(sql);
-            ResultSet RS = PS.executeQuery();
+            try (Connection Con = getConnection();
+                 PreparedStatement PS = Con.prepareStatement(sql);
+                 ResultSet RS = PS.executeQuery(); ) {
 
-            // Обходим всю полученную таблицу и формируем поля датаобджектов
-            DataObject partitionDataObject = null;
-            while (RS.next()) {
-                Integer key = RS.getInt(1); // key
-                String value = RS.getString(2); // value
-                // Удаление дублирования строк (Вася Вася Вася):
-                value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
-                Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
-                // Integer id = RS.getInt(4); // object id
-                if (key == -2) { // Это пришел к нам айдишник
-                    if (partitionDataObject != null) {
-                        partitionDataObjectList.add(partitionDataObject); // кладем предыдущий объект в лист
-                    }
-                    partitionDataObject = new DataObject(); // создаем новый, и будем теперь в него писать
-                    partitionDataObject.setId(Integer.parseInt(value));
-                } else if (key == -1) { // Это пришло к нам имя
-                    partitionDataObject.setName(value);
-                } else if (key == 0) { // Это пришел к нам тип
-                    partitionDataObject.setObjectTypeId(Integer.parseInt(value));
-                } else { // Иначе пришли параматры или ссылки
-                    if (ref == 0) { // Значит, это пришли параметры
-                        partitionDataObject.setParams(key, value);
-                    } else { // Иначе пришли ссылки
-                        partitionDataObject.setRefParams(key, Integer.parseInt(value));
+                // Обходим всю полученную таблицу и формируем поля датаобджектов
+                DataObject partitionDataObject = null;
+                while (RS.next()) {
+                    Integer key = RS.getInt(1); // key
+                    String value = RS.getString(2); // value
+                    // Удаление дублирования строк (Вася Вася Вася):
+                    value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
+                    Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
+                    // Integer id = RS.getInt(4); // object id
+                    if (key == -2) { // Это пришел к нам айдишник
+                        if (partitionDataObject != null) {
+                            partitionDataObjectList.add(partitionDataObject); // кладем предыдущий объект в лист
+                        }
+                        partitionDataObject = new DataObject(); // создаем новый, и будем теперь в него писать
+                        partitionDataObject.setId(Integer.parseInt(value));
+                    } else if (key == -1) { // Это пришло к нам имя
+                        partitionDataObject.setName(value);
+                    } else if (key == 0) { // Это пришел к нам тип
+                        partitionDataObject.setObjectTypeId(Integer.parseInt(value));
+                    } else { // Иначе пришли параматры или ссылки
+                        if (ref == 0) { // Значит, это пришли параметры
+                            partitionDataObject.setParams(key, value);
+                        } else { // Иначе пришли ссылки
+                            partitionDataObject.setRefParams(key, Integer.parseInt(value));
+                        }
                     }
                 }
+                // и в конце надо дописать последний элемент, который из-за while не занесся в лист:
+                if (partitionDataObject != null) { // если успели прочитать поля в объект, то есть он не просто пустая заготовка
+                    partitionDataObjectList.add(partitionDataObject); // кладем объект в лист
+                }
             }
-            // и в конце надо дописать последний элемент, который из-за while не занесся в лист:
-            if (partitionDataObject != null) { // если успели прочитать поля в объект, то есть он не просто пустая заготовка
-                partitionDataObjectList.add(partitionDataObject); // кладем объект в лист
-            }
-            RS.close();
-            PS.close();
-            CloseConnection(Con);
         }
 
         return partitionDataObjectList;
@@ -1924,13 +1905,10 @@ public class DBHelp {
         }
         sql += "0)";
 
-        Connection Con = getConnection();
-        assert Con != null;
-        PreparedStatement PS = Con.prepareStatement(sql);
-        ResultSet RS = PS.executeQuery();
-        RS.close();
-        PS.close();
-        CloseConnection(Con);
+        try (Connection Con = getConnection();
+             PreparedStatement PS = Con.prepareStatement(sql);
+             ResultSet RS = PS.executeQuery();) {
+        }
 
     }
     //endregion

@@ -39,9 +39,11 @@
                 <%--<li class="active pull-left"><a href="/delete/${object.id}">Удалить</a></li> Пока не будем тут удалять--%>
             <li class="active pull-left"><a href="/viewProfile/${user.id}">Смотреть профиль</a></li>
             <li class="active pull-left"><a href="/sendMessage/${user.id}">Отправить сообщение</a></li>
-            <li class="active pull-left"><a href="/addFriend/${user.id}/acceptFriend">Добавить в друзья</a></li>
-        </ul>
-    </div>
+    <%-- Если этот пользователь уже есть в друзьях, то этой кнопки быть не должно  --%>
+    <%-- Если в настройках приватности стоит, что пользователя не могут добавлять в друзья, то это кнопки быть не должно  --%>
+<li class="active pull-left"><a href="/addFriend/${user.id}/addFriend">Добавить в друзья</a></li>
+</ul>
+</div>
 </c:forEach>
 
 <%@include file='footer.jsp'%>

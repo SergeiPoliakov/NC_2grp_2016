@@ -141,7 +141,7 @@ public class UserServiceImp implements UserService {
 
             if ("newMessage".equals(type)) {
                 String url = "http://localhost:8081/sendMessage/" + userFrom.getId();
-                helper.setText("У вас новое сообщение от " + userFrom.getLogin() + "." +
+                helper.setText("У вас новое сообщение от " + userFrom.getLogin() + ". " +
                         "Перейдите по ссылке, чтобы прочитать его. " +
                         "<html><body><a href=" + url + ">" + "Войти в чат " + "</a></body></html>" +
                         "Это сообщение создано автоматически, на него не нужно отвечать!", true);

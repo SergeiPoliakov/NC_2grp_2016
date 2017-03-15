@@ -179,17 +179,19 @@ public class UserController {
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        logger.add(Log.LOGOUT);  // чуть переставил, иначе NullPointerException
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
+
         }
-        logger.add(Log.LOGOUT);
+
         return "redirect:/main?logout";
     }
 
 
     @RequestMapping(value = "/main", method = RequestMethod.GET)
     public String mainPage() {
-        logger.add(Log.PAGE, "main"); // Посещение страницы
+        logger.add(Log.PAGE, "main"); // Посещение страницы           // в консоле вылетает ошибка "violated - parent key not found"
         return "main";
     }
 
@@ -494,9 +496,16 @@ public class UserController {
             NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, UnsupportedEncodingException, MessagingException {
         userService.setFriend(objectId);
         if ("addFriend".equals(type)) {
-            DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
-            userService.fittingEmail("addFriend", dataObject.getId(), objectId);
-           // userService.sendSmS("addFriend" ,dataObject.getId(), objectId);  //отправка смс
+            DataObject dataObjectFrom = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+            DataObject dataObjectTo = doCache.get(objectId);
+            User user = converter.ToUser(dataObjectTo);
+            Settings settings = converter.ToSettings(doCache.get(user.getSettingsUD()));
+            if ("true".equals(settings.getEmailNewFriend())) {
+                userService.fittingEmail("addFriend", dataObjectFrom.getId(), objectId);
+            }
+            if ("true".equals(settings.getPhoneNewFriend())) {
+                // userService.sendSmS("addFriend" ,dataObject.getId(), objectId);  //отправка смс
+            }
         }
         logger.add(Log.ADD_FRIEND, objectId); // Добавление пользователя в друзья
         return "/addFriend";

@@ -8,6 +8,7 @@ import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.Message;
+import entities.Settings;
 import entities.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -93,13 +94,18 @@ public class MessageController {
 
         DataObject dataObject = loadingService.createDataObject(name, 1003, mapAttr);
 
-
-
         loadingService.setDataObjectToDB(dataObject);
 
-        userService.fittingEmail("newMessage" ,from_id, Integer.parseInt(to_id));  //идет сборка будущего сообщения
+        DataObject dataObjectTo = doCache.get(Integer.parseInt(to_id));
 
-        //  userService.sendSmS("newMessage", from_id, Integer.parseInt(to_id)); //отправка смс
+        User user = converter.ToUser(dataObjectTo);
+        Settings settings = converter.ToSettings(doCache.get(user.getSettingsUD()));
+        if ("true".equals(settings.getEmailNewMessage())) {
+            userService.fittingEmail("newMessage", from_id, Integer.parseInt(to_id));  //идет сборка будущего сообщения
+        }
+        if ("true".equals(settings.getPhoneNewMessage())) {
+            //  userService.sendSmS("newMessage", from_id, Integer.parseInt(to_id)); //отправка смс
+        }
 
 
         Message message = new Message();
