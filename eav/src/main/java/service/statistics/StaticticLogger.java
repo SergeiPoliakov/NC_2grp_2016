@@ -3,6 +3,11 @@ package service.statistics;
 import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.Log;
+
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
 import service.converter.Converter;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,11 +16,15 @@ import java.text.ParseException;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
+
+
 /**
  * Created by Hroniko on 12.03.2017.
  * Класс для регистрации всех элементарных событий и действий юзера в базу
  * для последующего использования в менеджере статистики StatisticManager
  */
+@Component
+@EnableScheduling
 public class StaticticLogger {
     // И тут же надо накапливать все логи, а потом при достижении какого-то фиксированного их значения заносить в базу
     private Queue<Log> logQueue; // Очередь логов за сеанс
@@ -71,15 +80,16 @@ public class StaticticLogger {
     }
 
     // Получение из начала внутренней очереди (с удалением)
-    public Log remove(){
+    synchronized public Log remove(){
         Log log = this.logQueue.remove();
         this.count --;
         return log;
     }
 
     // Перенос в базу: // В т.ч. и принудительный сброс командой извне
+
     public void loadToDB() throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
-        System.out.print("Старт записи логов в базу: ");
+        System.out.print("Старт записи логов в базу (count = "+count+"): ");
         int i = 0;
         while (count > 0){
         //for (int i = 0; i < count; i++){
@@ -97,5 +107,10 @@ public class StaticticLogger {
         }
         System.out.println("\n Конец записи логов в базу.");
 
+    }
+
+    @Scheduled(fixedDelay = 10000)
+    public void tictuck() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        loadToDB();
     }
 }

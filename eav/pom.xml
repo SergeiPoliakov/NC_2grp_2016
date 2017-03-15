@@ -18,9 +18,18 @@
         <org.aspectj-version>1.8.9</org.aspectj-version>
         <org.slf4j-version>1.7.7</org.slf4j-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Quartz scheduling framework для таймера -->
+        <quartz.scheduling.version>2.2.1</quartz.scheduling.version>
     </properties>
 
     <dependencies>
+        <!-- Quartz scheduling framework для таймера -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.scheduling.version}</version>
+        </dependency>
+
         <!-- Apache Commons FileUpload -->
         <dependency>
             <groupId>commons-fileupload</groupId>
