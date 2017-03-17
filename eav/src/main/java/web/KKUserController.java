@@ -10,6 +10,7 @@ import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.statistics.StaticticLogger;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Map;
@@ -26,6 +27,9 @@ public class KKUserController {
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private UserServiceImp userService = new UserServiceImp();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
+
+    public KKUserController() throws IOException {
+    }
 
 
     @RequestMapping(value = "/userAddEvent", method = RequestMethod.POST)

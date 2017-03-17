@@ -4,12 +4,15 @@ import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.Log;
 
+import entities.Settings;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import service.application_settings.SettingsLoader;
 import service.converter.Converter;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -26,17 +29,23 @@ import java.util.concurrent.ArrayBlockingQueue;
 @Component
 @EnableScheduling
 public class StaticticLogger {
+
+    private boolean on_off_logger = false; // Флаг включения/выключения работы логгера, по умолчанию выключен false
+    private boolean on_off_sheduler = false; // Флаг включения/выключения работы шедуллера, по умолчанию выключен false
+
     // И тут же надо накапливать все логи, а потом при достижении какого-то фиксированного их значения заносить в базу
     private Queue<Log> logQueue; // Очередь логов за сеанс
     private Integer max_count = 10; // Максимальное количество логов для хранения в накопителе, при превышении сброс логов в базу
     private Integer count = 0; // Текущее количество логов в накопителе
 
-    public StaticticLogger() {
+    public StaticticLogger() throws IOException {
         this.logQueue = new ArrayBlockingQueue<Log>(max_count + 1);
+        this.loadSetting();
     }
 
     // Добавление в конец внутренней очереди
     public void add(Log log) throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        if (!this.on_off_logger) return;
         this.logQueue.add(log);
         this.count ++;
         System.out.println("-----------> Logs size = " + count);
@@ -47,6 +56,7 @@ public class StaticticLogger {
     }
 
     public void add(Integer logType)  {
+        if (!this.on_off_logger) return;
         String name = Log.convert(logType);
         String date = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm").format( new java.util.Date());
         Log log = new Log(logType, name, date);
@@ -58,6 +68,7 @@ public class StaticticLogger {
     }
 
     public void add(Integer logType, String info){
+        if (!this.on_off_logger) return;
         String name = Log.convert(logType);
         String date = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm").format( new java.util.Date());
         Log log = new Log(logType, name, date, info);
@@ -69,6 +80,7 @@ public class StaticticLogger {
     }
 
     public void add(Integer logType, Integer id){
+        if (!this.on_off_logger) return;
         String name = Log.convert(logType);
         String date = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm").format( new java.util.Date());
         Log log = new Log(logType, name, date, id);
@@ -111,6 +123,20 @@ public class StaticticLogger {
 
     @Scheduled(fixedDelay = 10000)
     public void tictuck() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        if (!this.on_off_sheduler) return;
         loadToDB();
+    }
+
+    // 2017-03-17 Метод загрузки настройки логгера из настроечного файла приложения: // чтобы по ходу работы можно было менять, будет другой метод
+    private void loadSetting() throws IOException {
+        SettingsLoader settingsLoader = new SettingsLoader();
+        String on_off_logger = settingsLoader.getSetting("logger");
+        if (on_off_logger.equals("on")){
+            this.on_off_logger = true;
+        }
+        String on_off_sheduler = settingsLoader.getSetting("sheduler");
+        if (on_off_sheduler.equals("on")){
+            this.on_off_sheduler = true;
+        }
     }
 }

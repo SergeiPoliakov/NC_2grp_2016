@@ -29,6 +29,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
@@ -58,6 +59,9 @@ public class UserController {
     private Converter converter = new Converter();
 
     private String code = "";
+
+    public UserController() throws IOException {
+    }
 
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
         ArrayList<DataObject> list = new ArrayList<>();

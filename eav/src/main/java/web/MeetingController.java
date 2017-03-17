@@ -19,6 +19,7 @@ import service.id_filters.MeetingFilter;
 import service.statistics.StaticticLogger;
 
 import javax.xml.crypto.Data;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -42,6 +43,9 @@ public class MeetingController {
     private UserServiceImp userService = new UserServiceImp();
     private MeetingServiceImp meetingService = MeetingServiceImp.getInstance();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
+
+    public MeetingController() throws IOException {
+    }
 
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
         ArrayList<DataObject> list = new ArrayList<>();

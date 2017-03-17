@@ -17,6 +17,7 @@ import service.id_filters.EventFilter;
 import service.UserServiceImp;
 import service.statistics.StaticticLogger;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,11 +28,14 @@ import java.util.concurrent.ExecutionException;
 @Controller
 public class EventController {
     // Собственный логгер для контроллера
-    private StaticticLogger logger = new StaticticLogger();
+    private StaticticLogger loggerLog = new StaticticLogger();
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private UserServiceImp userService = new UserServiceImp();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
+
+    public EventController() throws IOException {
+    }
 
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
         ArrayList<DataObject> list = new ArrayList<>();
@@ -79,7 +83,7 @@ public class EventController {
         int id = loadingService.setDataObjectToDB(dataObject);
 
         // Логируем:
-        logger.add(Log.ADD_EVENT, id); // Добавление события и айди события
+        loggerLog.add(Log.ADD_EVENT, id); // Добавление события и айди события
 
         return "redirect:/main-login";
     }
@@ -109,7 +113,7 @@ public class EventController {
         }
 
         // Логируем:
-        logger.add(Log.PAGE, "allEvent"); // Посещение страницы просмотра списка событий
+        loggerLog.add(Log.PAGE, "allEvent"); // Посещение страницы просмотра списка событий
 
         return "allEvent";
     }
@@ -124,7 +128,7 @@ public class EventController {
         loadingService.deleteDataObjectById(objectId);
 
         // Логируем:
-        logger.add(Log.DEL_EVENT, "deleteEvent"); // Удаление события (ВОТ ТУТ НАДО БЫ НЕ УДАЛЯТЬ СОБЫТИЯ, А МЕНЯТЬ ИМ СТАТУС НА НЕАКТИВНЫЙ, И ТУТ ПЕРЕДАВАТЬ ССЫЛКУ НА СОБЫТИЯ - его айди)
+        loggerLog.add(Log.DEL_EVENT, "deleteEvent"); // Удаление события (ВОТ ТУТ НАДО БЫ НЕ УДАЛЯТЬ СОБЫТИЯ, А МЕНЯТЬ ИМ СТАТУС НА НЕАКТИВНЫЙ, И ТУТ ПЕРЕДАВАТЬ ССЫЛКУ НА СОБЫТИЯ - его айди)
         return "redirect:/allEvent";
     }
 
@@ -148,7 +152,7 @@ public class EventController {
         }
 
         // Логируем:
-        logger.add(Log.PAGE, "editEvent"); // Посещение страницы редактирования события
+        loggerLog.add(Log.PAGE, "editEvent"); // Посещение страницы редактирования события
         return "/editEvent";
     }
 
@@ -182,7 +186,7 @@ public class EventController {
         doCache.refresh(eventId);
 
         // Логируем:
-        logger.add(Log.EDIT_EVENT, id); // Посещение страницы редактирования события айди события
+        loggerLog.add(Log.EDIT_EVENT, id); // Посещение страницы редактирования события айди события
         return "redirect:/allEvent";
     }
 

@@ -23,6 +23,9 @@ public class CalendarController {
     // Собственный логгер для контроллера
     private StaticticLogger logger = new StaticticLogger();
 
+    public CalendarController() throws IOException {
+    }
+
     // Подключение календаря к приложению
     @RequestMapping(value = "/addCalendar", method = RequestMethod.GET)
     public String addCalendar() throws GeneralSecurityException, SQLException, IOException {

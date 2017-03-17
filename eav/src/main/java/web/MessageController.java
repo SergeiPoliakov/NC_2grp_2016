@@ -15,6 +15,7 @@ import service.cache.DataObjectCache;
 import service.converter.Converter;
 import service.id_filters.MessageFilter;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -39,6 +40,9 @@ public class MessageController {
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private Converter converter = new Converter();
+
+    public MessageController() throws IOException {
+    }
 
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
         ArrayList<DataObject> list = new ArrayList<>();

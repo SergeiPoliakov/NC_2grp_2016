@@ -49,6 +49,9 @@ public class FileUploadController {
 
     private UploadServiceImp uploadService = UploadServiceImp.getInstance();
 
+    public FileUploadController() throws IOException {
+    }
+
     @RequestMapping("/upload")
     public String uploadPage() throws Exception {
         // Логируем в базу:
