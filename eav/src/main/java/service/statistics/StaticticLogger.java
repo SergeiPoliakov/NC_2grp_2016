@@ -30,83 +30,94 @@ import java.util.concurrent.ArrayBlockingQueue;
 @EnableScheduling
 public class StaticticLogger {
 
-    private boolean on_off_logger = false; // Флаг включения/выключения работы логгера, по умолчанию выключен false
-    private boolean on_off_sheduler = false; // Флаг включения/выключения работы шедуллера, по умолчанию выключен false
+    private static boolean on_off_logger = false; // Флаг включения/выключения работы логгера, по умолчанию выключен false
+    private static boolean on_off_sheduler = false; // Флаг включения/выключения работы шедуллера, по умолчанию выключен false
 
     // И тут же надо накапливать все логи, а потом при достижении какого-то фиксированного их значения заносить в базу
-    private Queue<Log> logQueue; // Очередь логов за сеанс
-    private Integer max_count = 10; // Максимальное количество логов для хранения в накопителе, при превышении сброс логов в базу
-    private Integer count = 0; // Текущее количество логов в накопителе
+    private static final Integer max_count = 20; // Максимальное количество логов для хранения в накопителе, при превышении сброс логов в базу
+    // Будет одна общая очередь на всех
+    private static final Queue<Log> logQueue = new ArrayBlockingQueue<>(max_count + 1); // Очередь логов
+
+    // И еще одна общая очередь на всех уже для хранения id юзера, которому принадлежит лог
+    private static final Queue<Integer> idQueue = new ArrayBlockingQueue<>(max_count + 1); // Очередь айди
 
     public StaticticLogger() throws IOException {
-        this.logQueue = new ArrayBlockingQueue<Log>(max_count + 1);
-        this.loadSetting();
+        //this.logQueue = new ArrayBlockingQueue<Log>(max_count + 1);
+        loadSetting();
     }
 
     // Добавление в конец внутренней очереди
-    public void add(Log log) throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
-        if (!this.on_off_logger) return;
-        this.logQueue.add(log);
-        this.count ++;
-        System.out.println("-----------> Logs size = " + count);
+    public void add(Log log, Integer user_id) throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        if (!on_off_logger) return;
+        logQueue.add(log);
+        idQueue.add(user_id);
+        //count ++;
+        System.out.println("-----------> Logs size = " + logQueue.size());
         // Проверяем, не пора ли переносить в базу:
-        if (this.count == this.max_count){
-            this.loadToDB();
+        if (logQueue.size() == max_count){
+            loadToDB();
         }
     }
 
-    public void add(Integer logType)  {
-        if (!this.on_off_logger) return;
+    public void add(Integer logType, Integer user_id)  {
+        if (! on_off_logger) return;
         String name = Log.convert(logType);
         String date = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm").format( new java.util.Date());
         Log log = new Log(logType, name, date);
         try {
-            this.add(log);
+            add(log, user_id);
         } catch (InvocationTargetException | SQLException | IllegalAccessException | ParseException | NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
 
-    public void add(Integer logType, String info){
-        if (!this.on_off_logger) return;
+    public void add(Integer logType, String info, Integer user_id){
+        if (! on_off_logger) return;
         String name = Log.convert(logType);
         String date = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm").format( new java.util.Date());
         Log log = new Log(logType, name, date, info);
         try {
-            this.add(log);
+            this.add(log, user_id);
         } catch (InvocationTargetException | SQLException | IllegalAccessException | ParseException | NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
 
-    public void add(Integer logType, Integer id){
-        if (!this.on_off_logger) return;
+    public void add(Integer logType, Integer id, Integer user_id){
+        if (! on_off_logger) return;
         String name = Log.convert(logType);
         String date = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm").format( new java.util.Date());
         Log log = new Log(logType, name, date, id);
         try {
-            this.add(log);
+            this.add(log, user_id);
         } catch (InvocationTargetException | SQLException | IllegalAccessException | ParseException | NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
 
-    // Получение из начала внутренней очереди (с удалением)
-    synchronized public Log remove(){
-        Log log = this.logQueue.remove();
-        this.count --;
+    // Получение лога из начала внутренней очереди (с удалением)
+    synchronized public static Log removeLog(){
+        Log log = logQueue.remove();
+        //count --;
         return log;
+    }
+    // Получение айдишника юзера из начала внутренней очереди (с удалением)
+    synchronized public static Integer removeId(){
+        Integer id = idQueue.remove();
+        //count --;
+        return id;
     }
 
     // Перенос в базу: // В т.ч. и принудительный сброс командой извне
 
-    public void loadToDB() throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
-        System.out.print("Старт записи логов в базу (count = "+count+"): ");
+    public static void loadToDB() throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
+        System.out.print("Старт записи логов в базу (count = " + logQueue.size() + "): ");
         int i = 0;
-        while (count > 0){
-        //for (int i = 0; i < count; i++){
+        while (logQueue.size() > 0){
+            //for (int i = 0; i < count; i++){
             i++;
-            Log log = this.remove();
+            Log log = removeLog();
+            Integer id = removeId();
             System.out.print(i + " ");
             // А тут надо перенести в базу
             // Конвертируем в датаобджект:
@@ -114,16 +125,16 @@ public class StaticticLogger {
             // Генерируем айдишник и вставляем в датаобджект:
             //dataObject.setId(new DBHelp().generationID(1008));
             // и переносим в базу
-            new DBHelp().setDataObjectToDB(dataObject);
+            new DBHelp().setDataObjectToDB(dataObject, id);
 
         }
         System.out.println("\n Конец записи логов в базу.");
 
     }
 
-    @Scheduled(fixedDelay = 10000)
-    public void tictuck() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
-        if (!this.on_off_sheduler) return;
+    @Scheduled(fixedDelay = 60000)
+    public static void tictuck() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        if (! on_off_sheduler) return;
         loadToDB();
     }
 

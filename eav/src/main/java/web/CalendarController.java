@@ -4,6 +4,7 @@ import entities.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import service.UserServiceImp;
 import service.calendar.CalendarService;
 import service.calendar.CalendarSynhronizer;
 import service.statistics.StaticticLogger;
@@ -22,6 +23,7 @@ import java.text.ParseException;
 public class CalendarController {
     // Собственный логгер для контроллера
     private StaticticLogger logger = new StaticticLogger();
+    private UserServiceImp userService = new UserServiceImp();
 
     public CalendarController() throws IOException {
     }
@@ -31,7 +33,8 @@ public class CalendarController {
     public String addCalendar() throws GeneralSecurityException, SQLException, IOException {
         CalendarService.authorize();
         // Логируем:
-        logger.add(Log.ADD_CALENDAR, "addCalendar"); // Добавление календаря
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        logger.add(Log.ADD_CALENDAR, "addCalendar", idUser); // Добавление календаря
         return "redirect:/profile";
     }
 
@@ -41,7 +44,8 @@ public class CalendarController {
         // Проверка работы календаря (синхронизация)
         new CalendarSynhronizer().synhronizedCurrentUser("primary");
         // Логируем:
-        logger.add(Log.SYNCHRONIZED_CALENDAR, "synchronizeCalendar");
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        logger.add(Log.SYNCHRONIZED_CALENDAR, "synchronizeCalendar", idUser);
         return "redirect:/profile";
     }
 }

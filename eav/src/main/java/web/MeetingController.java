@@ -36,11 +36,11 @@ import java.util.concurrent.ExecutionException;
 public class MeetingController {
     // Собственный внутренний логгер для контроллера
     private StaticticLogger loggerLog = new StaticticLogger();
+    private UserServiceImp userService = new UserServiceImp();
 
     Logger logger = LoggerFactory.getLogger(MeetingController.class);
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
-    private UserServiceImp userService = new UserServiceImp();
     private MeetingServiceImp meetingService = MeetingServiceImp.getInstance();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
@@ -109,7 +109,8 @@ public class MeetingController {
         */
 
         // Логируем:
-        loggerLog.add(Log.PAGE, "meetings");
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "meetings", idUser);
         return "meetings";
     }
 
@@ -134,7 +135,8 @@ public class MeetingController {
                 return "/meetingMember";
 
         // Логируем:
-        loggerLog.add(Log.PAGE, "meeting");
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "meeting", idUser);
         return "/main-login";
     }
 
@@ -160,7 +162,8 @@ public class MeetingController {
         doCache.invalidate(dataObject.getId());
 
         // Логирование:
-        loggerLog.add(Log.ADD_MEETING, id);
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.ADD_MEETING, id, idUser);
         return "redirect:/meetings";
     }
 
@@ -210,7 +213,8 @@ public class MeetingController {
         doCache.refresh(meetingID);
 
         // Логирование:
-        loggerLog.add(Log.EDIT_MEETING, id);
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.EDIT_MEETING, id, idUser);
         return "redirect:/meeting{meetingID}";
     }
 }

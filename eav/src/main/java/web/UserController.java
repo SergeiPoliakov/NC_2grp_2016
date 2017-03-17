@@ -60,6 +60,7 @@ public class UserController {
 
     private String code = "";
 
+
     public UserController() throws IOException {
     }
 
@@ -150,14 +151,16 @@ public class UserController {
             e.printStackTrace();
         }
 
-        loggerLog.add(Log.PAGE, "main-login"); // Посещение страницы
+        // Логирование
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "main-login", idUser); // Посещение страницы
         return "main-login";
     }
 
 
 
     @RequestMapping(value = { "/login" }, method = RequestMethod.GET)
-    public ModelAndView login(@RequestParam(value = "error", required = false) String error) {
+    public ModelAndView login(@RequestParam(value = "error", required = false) String error) throws SQLException {
 
         ModelAndView model = new ModelAndView();
         if (error != null) {
@@ -165,16 +168,19 @@ public class UserController {
         }
         model.setViewName("main");
 
-        loggerLog.add(Log.LOGIN); // Авторизация
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.LOGIN, "login", idUser); // Авторизация
         return model;
 
     }
 
 
     @RequestMapping(value="/logout", method = RequestMethod.GET)
-    public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+    public String logoutPage (HttpServletRequest request, HttpServletResponse response) throws SQLException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        loggerLog.add(Log.LOGOUT);  // чуть переставил, иначе NullPointerException
+
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.LOGOUT, "logout", idUser);  // чуть переставил, иначе NullPointerException
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
 
@@ -185,8 +191,9 @@ public class UserController {
 
 
     @RequestMapping(value = "/main", method = RequestMethod.GET)
-    public String mainPage() {
-        loggerLog.add(Log.PAGE, "main"); // Посещение страницы           // в консоле вылетает ошибка "violated - parent key not found"
+    public String mainPage() throws SQLException {
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "main", idUser); // Посещение страницы           // в консоле вылетает ошибка "violated - parent key not found"
         return "main";
     }
 
@@ -210,7 +217,8 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        loggerLog.add(Log.SEARCH_USER, name); // Поиск юзера
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.SEARCH_USER, name, idUser); // Поиск юзера
         return "/searchUser";
     }
 
@@ -245,7 +253,9 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        loggerLog.add(Log.PAGE, "allUser"); // Посещение страницы
+
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "allUser", idUser); // Посещение страницы
         return "allUser";
     }
 
@@ -273,14 +283,16 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        loggerLog.add(Log.PAGE, "allUnconfirmedFriends"); // Посещение страницы
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "allUnconfirmedFriends", idUser); // Посещение страницы
         return "allUnconfirmedFriends";
     }
 
 
     @RequestMapping(value = "/addUser", method = RequestMethod.GET)
-    public String getRegistrationUserPage() {
-        loggerLog.add(Log.PAGE, "addUser"); // Посещение страницы
+    public String getRegistrationUserPage() throws SQLException {
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "addUser", idUser); // Посещение страницы
         return "addUser";
     }
 
@@ -390,7 +402,8 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        loggerLog.add(Log.PAGE, "profile"); // Посещение страницы
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "profile", idUser); // Посещение страницы
         return "/profile";
     }
 
@@ -398,7 +411,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/generatePhoneCode", method = RequestMethod.GET)
-    public String generatePhoneCode() {
+    public String generatePhoneCode() throws SQLException {
         String code = userService.generatePhoneToken();
         this.code = code;
         System.out.println("Сгенированыый код " + code);
@@ -406,7 +419,8 @@ public class UserController {
          //SMSCSender sd= new SMSCSender("Netcracker", "q7Sq2O_VqLhh", "utf-8", true);   //после теста закомментируйте обратно!!!!!
          //sd.sendSms("7**********", "Код подтверждения: " + code, 0, "", "", 0, "NC", "");  // тут нужно указать ваш номер телефона
          //sd.getBalance();
-        loggerLog.add(Log.EDIT_SETTINGS, "generatePhoneCode"); // Изменение настроек
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.EDIT_SETTINGS, "generatePhoneCode", idUser); // Изменение настроек
         return "redirect:/advancedSettings";
     }
 
@@ -456,7 +470,8 @@ public class UserController {
         loadingService.updateDataObject(dataObject);
         doCache.refresh(userId);
         System.out.println("Обновляем в кэше текущего пользователя");
-        loggerLog.add(Log.EDIT_SETTINGS, "changeProfile"); // Изменение настроек
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.EDIT_SETTINGS, "changeProfile", idUser); // Изменение настроек
         return "redirect:/main-login";
     }
 
@@ -480,7 +495,8 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        loggerLog.add(Log.PAGE, "allFriends"); // Посещение страницы
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "allFriends", idUser); // Посещение страницы
         return "allFriends";
     }
 
@@ -502,7 +518,8 @@ public class UserController {
                 // userService.sendSmS("addFriend" ,dataObject.getId(), objectId);  //отправка смс
             }
         }
-        loggerLog.add(Log.ADD_FRIEND, objectId); // Добавление пользователя в друзья
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.ADD_FRIEND, objectId, idUser); // Добавление пользователя в друзья
         return "/addFriend";
     }
 
@@ -510,7 +527,8 @@ public class UserController {
     @RequestMapping("/deleteFriend/{objectId}")
     public String deleteFriend(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         userService.deleteFriend(objectId);
-        loggerLog.add(Log.DEL_FRIEND, objectId); // Удаления пользователя из друзей
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.DEL_FRIEND, objectId, idUser); // Удаления пользователя из друзей
         return "/deleteFriend";
     }
 
@@ -541,8 +559,8 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
-        loggerLog.add(Log.VIEW_PROFILE, userId); // Просмотр пользователя
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.VIEW_PROFILE, userId, idUser); // Просмотр пользователя
         return "/viewProfile";
     }
 
@@ -565,7 +583,8 @@ public class UserController {
 
     @RequestMapping(value = "/meeting", method = RequestMethod.GET)
     public String getMeeting() throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        loggerLog.add(Log.PAGE, "meeting"); // Посещение страницы
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "meeting", idUser); // Посещение страницы
         return "meeting";
     }
 
@@ -610,7 +629,8 @@ public class UserController {
         DataObject dataObject = converter.toDO(settings);
         loadingService.updateDataObject(dataObject);
         doCache.invalidate(dataObject.getId());
-        loggerLog.add(Log.PAGE, "advancedSettings"); // Посещение страницы
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "advancedSettings", idUser); // Посещение страницы
         return "redirect:/advancedSettings";
     }
 

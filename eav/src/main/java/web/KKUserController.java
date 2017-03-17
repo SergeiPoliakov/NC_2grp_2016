@@ -23,9 +23,9 @@ import java.util.TreeMap;
 public class KKUserController {
     // Собственный внутренний логгер для контроллера
     private StaticticLogger logger = new StaticticLogger();
+    private UserServiceImp userService = new UserServiceImp();
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
-    private UserServiceImp userService = new UserServiceImp();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     public KKUserController() throws IOException {
@@ -55,7 +55,8 @@ public class KKUserController {
         int id = loadingService.setDataObjectToDB(dataObject);
 
         // Логируем:
-        logger.add(Log.ADD_EVENT, id);
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        logger.add(Log.ADD_EVENT, id, idUser);
         return "redirect:/main-login";
     }
 
@@ -88,7 +89,8 @@ public class KKUserController {
         // и только потом обновляем объект в базе
         int id = loadingService.setDataObjectToDB(dataObject);
         // Логируем:
-        logger.add(Log.ADD_EVENT, id);
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        logger.add(Log.ADD_EVENT, id, idUser);
         return "redirect:/main-login";
     }
 
@@ -116,7 +118,8 @@ public class KKUserController {
         doCache.refresh(eventId);
 
         // Логируем:
-        logger.add(Log.EDIT_EVENT, id);
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        logger.add(Log.EDIT_EVENT, id, idUser);
         return "redirect:/main-login";
     }
 
@@ -125,7 +128,8 @@ public class KKUserController {
         loadingService.deleteDataObjectById(eventId);
 
         // Логируем:
-        logger.add(Log.DEL_EVENT, "userRemoveEvent");
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        logger.add(Log.DEL_EVENT, "userRemoveEvent", idUser);
         return "redirect:/main-login";
     }
 

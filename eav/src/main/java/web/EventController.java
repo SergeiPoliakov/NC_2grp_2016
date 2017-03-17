@@ -29,9 +29,9 @@ import java.util.concurrent.ExecutionException;
 public class EventController {
     // Собственный логгер для контроллера
     private StaticticLogger loggerLog = new StaticticLogger();
+    private UserServiceImp userService = new UserServiceImp();
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
-    private UserServiceImp userService = new UserServiceImp();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     public EventController() throws IOException {
@@ -83,7 +83,8 @@ public class EventController {
         int id = loadingService.setDataObjectToDB(dataObject);
 
         // Логируем:
-        loggerLog.add(Log.ADD_EVENT, id); // Добавление события и айди события
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.ADD_EVENT, id, idUser); // Добавление события и айди события
 
         return "redirect:/main-login";
     }
@@ -113,7 +114,8 @@ public class EventController {
         }
 
         // Логируем:
-        loggerLog.add(Log.PAGE, "allEvent"); // Посещение страницы просмотра списка событий
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "allEvent", idUser); // Посещение страницы просмотра списка событий
 
         return "allEvent";
     }
@@ -128,7 +130,8 @@ public class EventController {
         loadingService.deleteDataObjectById(objectId);
 
         // Логируем:
-        loggerLog.add(Log.DEL_EVENT, "deleteEvent"); // Удаление события (ВОТ ТУТ НАДО БЫ НЕ УДАЛЯТЬ СОБЫТИЯ, А МЕНЯТЬ ИМ СТАТУС НА НЕАКТИВНЫЙ, И ТУТ ПЕРЕДАВАТЬ ССЫЛКУ НА СОБЫТИЯ - его айди)
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.DEL_EVENT, "deleteEvent", idUser); // Удаление события (ВОТ ТУТ НАДО БЫ НЕ УДАЛЯТЬ СОБЫТИЯ, А МЕНЯТЬ ИМ СТАТУС НА НЕАКТИВНЫЙ, И ТУТ ПЕРЕДАВАТЬ ССЫЛКУ НА СОБЫТИЯ - его айди)
         return "redirect:/allEvent";
     }
 
@@ -152,7 +155,8 @@ public class EventController {
         }
 
         // Логируем:
-        loggerLog.add(Log.PAGE, "editEvent"); // Посещение страницы редактирования события
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "editEvent", idUser); // Посещение страницы редактирования события
         return "/editEvent";
     }
 
@@ -186,7 +190,8 @@ public class EventController {
         doCache.refresh(eventId);
 
         // Логируем:
-        loggerLog.add(Log.EDIT_EVENT, id); // Посещение страницы редактирования события айди события
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.EDIT_EVENT, id, idUser); // Посещение страницы редактирования события айди события
         return "redirect:/allEvent";
     }
 

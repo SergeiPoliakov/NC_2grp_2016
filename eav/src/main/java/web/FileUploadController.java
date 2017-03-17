@@ -35,6 +35,7 @@ public class FileUploadController {
 
     // Собственный внутренний логгер для контроллера
     private StaticticLogger loggerLog = new StaticticLogger();
+    private UserServiceImp userService = new UserServiceImp();
 
     private String  server = "nc2.hop.ru"; // String server = "netcracker.hop.ru";
     private int     port = 21;
@@ -55,14 +56,16 @@ public class FileUploadController {
     @RequestMapping("/upload")
     public String uploadPage() throws Exception {
         // Логируем в базу:
-        loggerLog.add(Log.PAGE, "upload");
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "upload", idUser);
         return "upload";
     }
 
     @RequestMapping("/uploadMultiple")
     public String uploadMultiplePage() throws Exception {
         // Логируем в базу:
-        loggerLog.add(Log.PAGE, "uploadMultiple");
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "uploadMultiple", idUser);
         return "uploadMultiple";
     }
 
@@ -207,7 +210,8 @@ public class FileUploadController {
                 uploadService.updateAvatar(currentUserId, relativePatchToFolder); // uploadService.updateAvatar(currentUserId, serverFile.getAbsolutePath());
 
                 // Логируем в базу:
-                loggerLog.add(Log.AVATAR, relativePatchToFolder); // обавление (смена) аватара и ссылка на него в строке
+                int idUser = userService.getObjID(userService.getCurrentUsername());
+                loggerLog.add(Log.AVATAR, relativePatchToFolder, idUser); // обавление (смена) аватара и ссылка на него в строке
 
             } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
                 System.out.println("Ошибка: " + ex.getMessage());

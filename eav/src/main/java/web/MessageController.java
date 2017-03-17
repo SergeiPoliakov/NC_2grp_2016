@@ -33,7 +33,6 @@ import javax.mail.MessagingException;
 public class MessageController {
     // Собственный внутренний логгер для контроллера
     private StaticticLogger loggerLog = new StaticticLogger();
-
     private UserServiceImp userService = new UserServiceImp();
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
@@ -118,7 +117,8 @@ public class MessageController {
         message.setText(text);
 
         // Логировнаие:
-        loggerLog.add(Log.SEND_MESSAGE, id);
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.SEND_MESSAGE, id, idUser);
         return  message;
     }
 
@@ -163,7 +163,8 @@ public class MessageController {
         }
 
         // Логирование:
-        loggerLog.add(Log.PAGE, "messageList~"+from_id+"~"+to_id);
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "messageList~"+from_id+"~"+to_id, idUser);
         return AR;
     }
 
@@ -174,14 +175,16 @@ public class MessageController {
         loadingService.deleteDataObjectById(objectId);
         doCache.invalidate(objectId);
         // Логирование:
-        loggerLog.add(Log.DEL_MESSAGE, "DEL_MESSAGE");
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.DEL_MESSAGE, "DEL_MESSAGE", idUser);
         return "redirect: /sendMessage/{to_id}";
     }
 
     @RequestMapping("/sendMessage") // @RequestMapping(value = "/deleteMessage/{to_id}/{objectId}", method = RequestMethod.POST)
-    public String sendMess(){
+    public String sendMess() throws SQLException {
         // Логирование:
-        loggerLog.add(Log.PAGE, "sendMessage");
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "sendMessage", idUser);
         return "sendMessage";
     }
 
@@ -220,7 +223,8 @@ public class MessageController {
             e.printStackTrace();
         }
         // Логирование:
-        loggerLog.add(Log.PAGE, "allUnreadMessages");
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "allUnreadMessages", idUser);
         return "allUnreadMessages";
     }
 
