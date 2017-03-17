@@ -16,6 +16,7 @@ import service.MeetingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.MeetingFilter;
+import service.statistics.StaticticLogger;
 
 import javax.xml.crypto.Data;
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +33,8 @@ import java.util.concurrent.ExecutionException;
  */
 @Controller
 public class MeetingController {
+    // Собственный внутренний логгер для контроллера
+    private StaticticLogger loggerLog = new StaticticLogger();
 
     Logger logger = LoggerFactory.getLogger(MeetingController.class);
 
@@ -100,6 +103,9 @@ public class MeetingController {
         Integer idUser = userService.getObjID(userService.getCurrentUsername());
         m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser)); // m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser));
         */
+
+        // Логируем:
+        loggerLog.add(Log.PAGE, "meetings");
         return "meetings";
     }
 
@@ -122,6 +128,9 @@ public class MeetingController {
         else
             if (meetingService.isMeetingMember(userService.getObjID(userService.getCurrentUsername()), meeting)) // Страницу запрашивает участник встречи
                 return "/meetingMember";
+
+        // Логируем:
+        loggerLog.add(Log.PAGE, "meeting");
         return "/main-login";
     }
 
@@ -143,8 +152,11 @@ public class MeetingController {
         meeting.setUsers(users);
 
         DataObject dataObject = meeting.toDataObject();
-        loadingService.setDataObjectToDB(dataObject);
+        int id = loadingService.setDataObjectToDB(dataObject);
         doCache.invalidate(dataObject.getId());
+
+        // Логирование:
+        loggerLog.add(Log.ADD_MEETING, id);
         return "redirect:/meetings";
     }
 
@@ -166,8 +178,11 @@ public class MeetingController {
             userList.add(user);
         }
         meeting.setUsers(userList);
-        loadingService.updateDataObject(meeting.toDataObject());
+        int id = loadingService.updateDataObject(meeting.toDataObject());
         doCache.refresh(meetingID);
+
+        // Логирвоание:
+        loggerLog.add(Log.SEND_INVITE_MEETING, id);
         return "redirect:/meeting{meetingID}";
     }
 
@@ -187,8 +202,11 @@ public class MeetingController {
         meeting.setDate_end(date_end);
         meeting.setInfo(info);
         DataObject dataObject = meeting.toDataObject();
-        loadingService.updateDataObject(dataObject);
+        int id = loadingService.updateDataObject(dataObject);
         doCache.refresh(meetingID);
+
+        // Логирование:
+        loggerLog.add(Log.EDIT_MEETING, id);
         return "redirect:/meeting{meetingID}";
     }
 }

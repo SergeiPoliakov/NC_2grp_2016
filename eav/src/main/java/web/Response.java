@@ -1,6 +1,7 @@
 package web;
 /**
  * Created by Hroniko on 24.02.2017.
+ * Класс для хранения пересылаемых ответов на запросы в AJAX
  */
 public class Response {
 	

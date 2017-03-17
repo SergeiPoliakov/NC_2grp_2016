@@ -1227,7 +1227,7 @@ public class DBHelp {
 
     /*...............................................................................................................*/
     // 2017-02-18 Новый метод выгрузки датаобджекта в базу (создание DO): (исправил 2017-03-02)
-    public void setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public int setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         int id = generationID(dataObject.getObjectTypeId());
         try ( Connection Con = getConnection();
               PreparedStatement PS = Con
@@ -1369,16 +1369,19 @@ public class DBHelp {
                 }
             }
         }
+
+        return id;
 }
 
 
     /*...............................................................................................................*/
     // 2017-02-18 Новый метод обновления датаобджекта в базе:
-    public void updateDataObject(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public int updateDataObject(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        int id = 0;
         try (Connection Con = getConnection();) {
 
             // 1. Подгружаем из базы текущее состояние DO:
-            int id = dataObject.getId();
+            id = dataObject.getId();
             DataObject dataObjectOld = getObjectsByIdAlternative(id);
 
             // 2. Подготавливаем и заполняем (если соотвествующие поля в базе и в памяти отличаются) в базе строку таблицы OBJECTS
@@ -1473,6 +1476,7 @@ public class DBHelp {
             //PS_ref_del2.close();
 
         }
+        return id;
     }
 
     /*...............................................................................................................*/

@@ -6,6 +6,8 @@ package web;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+
+import entities.Log;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.slf4j.Logger;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import service.UploadServiceImp;
 import service.UserServiceImp;
+import service.statistics.StaticticLogger;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,6 +32,9 @@ import java.util.Random;
 
 @Controller
 public class FileUploadController {
+
+    // Собственный внутренний логгер для контроллера
+    private StaticticLogger loggerLog = new StaticticLogger();
 
     private String  server = "nc2.hop.ru"; // String server = "netcracker.hop.ru";
     private int     port = 21;
@@ -44,11 +51,15 @@ public class FileUploadController {
 
     @RequestMapping("/upload")
     public String uploadPage() throws Exception {
+        // Логируем в базу:
+        loggerLog.add(Log.PAGE, "upload");
         return "upload";
     }
 
     @RequestMapping("/uploadMultiple")
     public String uploadMultiplePage() throws Exception {
+        // Логируем в базу:
+        loggerLog.add(Log.PAGE, "uploadMultiple");
         return "uploadMultiple";
     }
 
@@ -59,7 +70,7 @@ public class FileUploadController {
     }
     */
 
-    // Загрузка одного файла:
+    // Загрузка одного файла: // Надо переделать, будет другой метод!!!!!!! 2017-03-16
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     @ResponseBody
     public String uploadFileHandler(@RequestParam("name") String name,
@@ -97,7 +108,7 @@ public class FileUploadController {
         }
     }
 
-    // Многофайловая загрузка:
+    // Многофайловая загрузка: // Надо переделать, будет другой метод! 2017-03-16
     @RequestMapping(value = "/uploadMultipleFile", method = RequestMethod.POST)
     @ResponseBody
     public String uploadMultipleFileHandler(@RequestParam("name") String[] names,
@@ -192,16 +203,13 @@ public class FileUploadController {
                 relativePatchToFolder = "http://"+server+"/" + "upload" + "/" + currentUserId  + "/" + "avatar" + "/" + name;
                 uploadService.updateAvatar(currentUserId, relativePatchToFolder); // uploadService.updateAvatar(currentUserId, serverFile.getAbsolutePath());
 
-            } catch (IOException ex) {
+                // Логируем в базу:
+                loggerLog.add(Log.AVATAR, relativePatchToFolder); // обавление (смена) аватара и ссылка на него в строке
+
+            } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
                 System.out.println("Ошибка: " + ex.getMessage());
                 ex.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } finally {
+            }  finally {
                 try {
                     if (ftpClient.isConnected()) {
                         ftpClient.logout();

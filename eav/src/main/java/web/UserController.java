@@ -3,13 +3,8 @@ package web;
 import entities.*;
 import service.statistics.StaticticLogger;
 import com.google.common.cache.LoadingCache;
-import dbHelp.DBHelp;
 import exception.CustomException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.support.GenericXmlApplicationContext;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
@@ -34,10 +29,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -48,15 +41,13 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
-import service.calendar.CalendarService;
-
 /**
  * Created by Lawrence on 20.01.2017.
  */
 @Controller
 public class UserController {
-
-    private StaticticLogger logger = new StaticticLogger(); // Собственный внутренний логгер для контроллера
+    // Собственный внутренний логгер для контроллера
+    private StaticticLogger loggerLog = new StaticticLogger();
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
@@ -155,7 +146,7 @@ public class UserController {
             e.printStackTrace();
         }
 
-        logger.add(Log.PAGE, "main-login"); // Посещение страницы
+        loggerLog.add(Log.PAGE, "main-login"); // Посещение страницы
         return "main-login";
     }
 
@@ -170,7 +161,7 @@ public class UserController {
         }
         model.setViewName("main");
 
-        logger.add(Log.LOGIN); // Авторизация
+        loggerLog.add(Log.LOGIN); // Авторизация
         return model;
 
     }
@@ -179,7 +170,7 @@ public class UserController {
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        logger.add(Log.LOGOUT);  // чуть переставил, иначе NullPointerException
+        loggerLog.add(Log.LOGOUT);  // чуть переставил, иначе NullPointerException
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
 
@@ -191,7 +182,7 @@ public class UserController {
 
     @RequestMapping(value = "/main", method = RequestMethod.GET)
     public String mainPage() {
-        logger.add(Log.PAGE, "main"); // Посещение страницы           // в консоле вылетает ошибка "violated - parent key not found"
+        loggerLog.add(Log.PAGE, "main"); // Посещение страницы           // в консоле вылетает ошибка "violated - parent key not found"
         return "main";
     }
 
@@ -215,7 +206,7 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        logger.add(Log.SEARCH_USER, name); // Поиск юзера
+        loggerLog.add(Log.SEARCH_USER, name); // Поиск юзера
         return "/searchUser";
     }
 
@@ -250,7 +241,7 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        logger.add(Log.PAGE, "allUser"); // Посещение страницы
+        loggerLog.add(Log.PAGE, "allUser"); // Посещение страницы
         return "allUser";
     }
 
@@ -278,14 +269,14 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        logger.add(Log.PAGE, "allUnconfirmedFriends"); // Посещение страницы
+        loggerLog.add(Log.PAGE, "allUnconfirmedFriends"); // Посещение страницы
         return "allUnconfirmedFriends";
     }
 
 
     @RequestMapping(value = "/addUser", method = RequestMethod.GET)
     public String getRegistrationUserPage() {
-        logger.add(Log.PAGE, "addUser"); // Посещение страницы
+        loggerLog.add(Log.PAGE, "addUser"); // Посещение страницы
         return "addUser";
     }
 
@@ -395,7 +386,7 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        logger.add(Log.PAGE, "profile"); // Посещение страницы
+        loggerLog.add(Log.PAGE, "profile"); // Посещение страницы
         return "/profile";
     }
 
@@ -411,7 +402,7 @@ public class UserController {
          //SMSCSender sd= new SMSCSender("Netcracker", "q7Sq2O_VqLhh", "utf-8", true);   //после теста закомментируйте обратно!!!!!
          //sd.sendSms("7**********", "Код подтверждения: " + code, 0, "", "", 0, "NC", "");  // тут нужно указать ваш номер телефона
          //sd.getBalance();
-        logger.add(Log.EDIT_SETTINGS, "generatePhoneCode"); // Изменение настроек
+        loggerLog.add(Log.EDIT_SETTINGS, "generatePhoneCode"); // Изменение настроек
         return "redirect:/advancedSettings";
     }
 
@@ -461,7 +452,7 @@ public class UserController {
         loadingService.updateDataObject(dataObject);
         doCache.refresh(userId);
         System.out.println("Обновляем в кэше текущего пользователя");
-        logger.add(Log.EDIT_SETTINGS, "changeProfile"); // Изменение настроек
+        loggerLog.add(Log.EDIT_SETTINGS, "changeProfile"); // Изменение настроек
         return "redirect:/main-login";
     }
 
@@ -485,7 +476,7 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        logger.add(Log.PAGE, "allFriends"); // Посещение страницы
+        loggerLog.add(Log.PAGE, "allFriends"); // Посещение страницы
         return "allFriends";
     }
 
@@ -507,7 +498,7 @@ public class UserController {
                 // userService.sendSmS("addFriend" ,dataObject.getId(), objectId);  //отправка смс
             }
         }
-        logger.add(Log.ADD_FRIEND, objectId); // Добавление пользователя в друзья
+        loggerLog.add(Log.ADD_FRIEND, objectId); // Добавление пользователя в друзья
         return "/addFriend";
     }
 
@@ -515,7 +506,7 @@ public class UserController {
     @RequestMapping("/deleteFriend/{objectId}")
     public String deleteFriend(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         userService.deleteFriend(objectId);
-        logger.add(Log.DEL_FRIEND, objectId); // Удаления пользователя из друзей
+        loggerLog.add(Log.DEL_FRIEND, objectId); // Удаления пользователя из друзей
         return "/deleteFriend";
     }
 
@@ -547,7 +538,7 @@ public class UserController {
             e.printStackTrace();
         }
 
-        logger.add(Log.VIEW_PROFILE, userId); // Просмотр пользователя
+        loggerLog.add(Log.VIEW_PROFILE, userId); // Просмотр пользователя
         return "/viewProfile";
     }
 
@@ -570,7 +561,7 @@ public class UserController {
 
     @RequestMapping(value = "/meeting", method = RequestMethod.GET)
     public String getMeeting() throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        logger.add(Log.PAGE, "meeting"); // Посещение страницы
+        loggerLog.add(Log.PAGE, "meeting"); // Посещение страницы
         return "meeting";
     }
 
@@ -615,7 +606,7 @@ public class UserController {
         DataObject dataObject = converter.toDO(settings);
         loadingService.updateDataObject(dataObject);
         doCache.invalidate(dataObject.getId());
-        logger.add(Log.PAGE, "advancedSettings"); // Посещение страницы
+        loggerLog.add(Log.PAGE, "advancedSettings"); // Посещение страницы
         return "redirect:/advancedSettings";
     }
 

@@ -64,9 +64,9 @@ public interface LoadingService {
     void deleteDataObjectById(Integer id) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
     @WebMethod
-    void setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException;
+    int setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException;
 
     @WebMethod
-    void updateDataObject(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException;
+    int updateDataObject(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException;
 
 }

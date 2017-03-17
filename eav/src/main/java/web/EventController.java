@@ -7,6 +7,7 @@ package web;
 import com.google.common.cache.LoadingCache;
 import entities.DataObject;
 import entities.Event;
+import entities.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import service.LoadingServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.EventFilter;
 import service.UserServiceImp;
+import service.statistics.StaticticLogger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -24,6 +26,8 @@ import java.util.concurrent.ExecutionException;
 
 @Controller
 public class EventController {
+    // Собственный логгер для контроллера
+    private StaticticLogger logger = new StaticticLogger();
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private UserServiceImp userService = new UserServiceImp();
@@ -72,7 +76,10 @@ public class EventController {
         System.out.println("Добавляем в кэш событие " + dataObject.getName());
 
         // и только потом обновляем объект в базе
-        loadingService.setDataObjectToDB(dataObject);
+        int id = loadingService.setDataObjectToDB(dataObject);
+
+        // Логируем:
+        logger.add(Log.ADD_EVENT, id); // Добавление события и айди события
 
         return "redirect:/main-login";
     }
@@ -101,6 +108,9 @@ public class EventController {
             e.printStackTrace();
         }
 
+        // Логируем:
+        logger.add(Log.PAGE, "allEvent"); // Посещение страницы просмотра списка событий
+
         return "allEvent";
     }
 
@@ -112,6 +122,9 @@ public class EventController {
         doCache.invalidate(objectId);
 
         loadingService.deleteDataObjectById(objectId);
+
+        // Логируем:
+        logger.add(Log.DEL_EVENT, "deleteEvent"); // Удаление события (ВОТ ТУТ НАДО БЫ НЕ УДАЛЯТЬ СОБЫТИЯ, А МЕНЯТЬ ИМ СТАТУС НА НЕАКТИВНЫЙ, И ТУТ ПЕРЕДАВАТЬ ССЫЛКУ НА СОБЫТИЯ - его айди)
         return "redirect:/allEvent";
     }
 
@@ -134,6 +147,8 @@ public class EventController {
             e.printStackTrace();
         }
 
+        // Логируем:
+        logger.add(Log.PAGE, "editEvent"); // Посещение страницы редактирования события
         return "/editEvent";
     }
 
@@ -161,11 +176,13 @@ public class EventController {
         System.out.println("Обновляем в кэше событие " + dataObject.getName());
 
         // и только потом обновляем объект в базе
-        loadingService.updateDataObject(dataObject);
+        int id = loadingService.updateDataObject(dataObject);
         // Работаем с кэшем:
         // обновляем
         doCache.refresh(eventId);
 
+        // Логируем:
+        logger.add(Log.EDIT_EVENT, id); // Посещение страницы редактирования события айди события
         return "redirect:/allEvent";
     }
 

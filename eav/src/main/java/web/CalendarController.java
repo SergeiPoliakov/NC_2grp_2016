@@ -1,10 +1,12 @@
 package web;
 
+import entities.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import service.calendar.CalendarService;
 import service.calendar.CalendarSynhronizer;
+import service.statistics.StaticticLogger;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -18,11 +20,15 @@ import java.text.ParseException;
  */
 @Controller
 public class CalendarController {
+    // Собственный логгер для контроллера
+    private StaticticLogger logger = new StaticticLogger();
 
     // Подключение календаря к приложению
     @RequestMapping(value = "/addCalendar", method = RequestMethod.GET)
     public String addCalendar() throws GeneralSecurityException, SQLException, IOException {
         CalendarService.authorize();
+        // Логируем:
+        logger.add(Log.ADD_CALENDAR, "addCalendar"); // Добавление календаря
         return "redirect:/profile";
     }
 
@@ -31,6 +37,8 @@ public class CalendarController {
     public String synchronizeCalendar()throws GeneralSecurityException, SQLException, IOException, ParseException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         // Проверка работы календаря (синхронизация)
         new CalendarSynhronizer().synhronizedCurrentUser("primary");
+        // Логируем:
+        logger.add(Log.SYNCHRONIZED_CALENDAR, "synchronizeCalendar");
         return "redirect:/profile";
     }
 }

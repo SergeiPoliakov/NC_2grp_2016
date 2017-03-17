@@ -6,10 +6,7 @@ package web;
 
 import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
-import entities.DataObject;
-import entities.Message;
-import entities.Settings;
-import entities.User;
+import entities.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
@@ -26,12 +23,15 @@ import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutionException;
 import org.springframework.ui.Model;
 import service.id_filters.UserFilter;
+import service.statistics.StaticticLogger;
 
 import javax.mail.MessagingException;
 
 
 @Controller
 public class MessageController {
+    // Собственный внутренний логгер для контроллера
+    private StaticticLogger loggerLog = new StaticticLogger();
 
     private UserServiceImp userService = new UserServiceImp();
 
@@ -94,7 +94,7 @@ public class MessageController {
 
         DataObject dataObject = loadingService.createDataObject(name, 1003, mapAttr);
 
-        loadingService.setDataObjectToDB(dataObject);
+        int id = loadingService.setDataObjectToDB(dataObject);
 
         DataObject dataObjectTo = doCache.get(Integer.parseInt(to_id));
 
@@ -113,6 +113,8 @@ public class MessageController {
         message.setDate_send(date_send);
         message.setText(text);
 
+        // Логировнаие:
+        loggerLog.add(Log.SEND_MESSAGE, id);
         return  message;
     }
 
@@ -156,6 +158,8 @@ public class MessageController {
             e.printStackTrace();
         }
 
+        // Логирование:
+        loggerLog.add(Log.PAGE, "messageList~"+from_id+"~"+to_id);
         return AR;
     }
 
@@ -165,11 +169,15 @@ public class MessageController {
     public String deleteMessage(@PathVariable("to_id") int to_id, @PathVariable("objectId") int objectId) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         loadingService.deleteDataObjectById(objectId);
         doCache.invalidate(objectId);
+        // Логирование:
+        loggerLog.add(Log.DEL_MESSAGE, "DEL_MESSAGE");
         return "redirect: /sendMessage/{to_id}";
     }
 
     @RequestMapping("/sendMessage") // @RequestMapping(value = "/deleteMessage/{to_id}/{objectId}", method = RequestMethod.POST)
     public String sendMess(){
+        // Логирование:
+        loggerLog.add(Log.PAGE, "sendMessage");
         return "sendMessage";
     }
 
@@ -207,7 +215,8 @@ public class MessageController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
+        // Логирование:
+        loggerLog.add(Log.PAGE, "allUnreadMessages");
         return "allUnreadMessages";
     }
 

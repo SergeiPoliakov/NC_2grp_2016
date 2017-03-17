@@ -91,19 +91,18 @@ public class LoadingServiceImp implements LoadingService {
 
     // 2017-02-18 Новый метод переноса датаобджекта в базу
     @Override
-    public void setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        new DBHelp().setDataObjectToDB(dataObject);
+    public int setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        return new DBHelp().setDataObjectToDB(dataObject); // Возвращаем айдишник добавленного в базу объекта
     }
     // 2017-02-18 Новый метод обновления датаобджекта в базе
     @Override
-    public void updateDataObject(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        new DBHelp().updateDataObject(dataObject);
+    public int updateDataObject(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        return new DBHelp().updateDataObject(dataObject);  // Возвращаем айдишник проапдейченного объекта
     }
     // 2017-02-18 Новый метод удаления датаобджекта из базы
     @Override
     public void deleteDataObjectById(Integer id) throws SQLException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         new DBHelp().deleteDataObject(id);
-
     }
 
     /*...............................................................................................................*/

@@ -21,6 +21,7 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
 
     public static final int SEND_MESSAGE =  621; // Отправка сообщения (ссылка на сообщение) -- сслылка на объект
     public static final int GET_MESSAGE =   622; // Получение сообщения (ссылка на сообщение) -- сслылка на объект
+    public static final int DEL_MESSAGE =   623; // Удаление сообщения -- параметр
 
     public static final int ADD_FILE =      631; // Загрузка файла (ссылка на файл) -- сслылка на объект
     public static final int EDIT_FILE =     632; // Изменение описания файла (ссылка на файл) -- сслылка на объект
@@ -189,6 +190,9 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
                 break;
             case (GET_MESSAGE): // Получение сообщения (ссылка на сообщение)
                 name = "GET_MESSAGE";
+                break;
+            case (DEL_MESSAGE): // Удаление сообщения
+                name = "DEL_MESSAGE";
                 break;
             case (ADD_FILE): // Загрузка файла (ссылка на файл)
                 name = "ADD_FILE";
