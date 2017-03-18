@@ -53,3 +53,25 @@ function doAjaxNewFriends() {
     });
 }
 setInterval(doAjaxNewFriends, 10000);
+
+function doAjaxNotifications() {
+
+    var inputText = "all";
+
+    $.ajax({
+        url : 'http://localhost:8081/getNewNotification',
+        type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json',
+        mimeType: 'application/json',
+        data : ({
+            text: inputText
+        }),
+        success: function (data) {
+            console.log(data);
+
+            $( "#notificationCount" ).attr( "data-count", data.count);
+        }
+    });
+}
+setInterval(doAjaxNotifications, 100);

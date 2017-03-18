@@ -69,15 +69,13 @@ public class MeetingController {
         //Notification notification = new Notification(host_id.toString(), recieverID,"0","4",currentDate);
 
         // Добавить для себя, посмотреть чё там как
-        Notification notification = new Notification("10001", host_id.toString(),"0","4",currentDate);
+        Notification notification = new Notification(host_id.toString(), recieverID,"0","friendRequest",currentDate);
 
         DataObject dataObject = notification.toDataObject();
         loadingService.setDataObjectToDB(dataObject);
 
-        DataObject dataObject2 = loadingService.getDataObjectByIdAlternative(60009);
-        Notification notification2 = new Notification(dataObject2);
-
-        boolean a = 2+2 == 5;
+        /*DataObject dataObject2 = loadingService.getDataObjectByIdAlternative(60009);
+        Notification notification2 = new Notification(dataObject2);*/
 
         return "/main-login";
     }
