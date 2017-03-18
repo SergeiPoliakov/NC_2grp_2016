@@ -18,84 +18,109 @@
     <title>Advanced Settings Page</title>
     <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/bootstrap-select.min.css">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
+
+    <script src="<%=request.getContextPath()%>/resources/js/bootstrap-select.min.js"></script>
+
     <%@include file='header.jsp'%>
-
-
 
 </head>
 <body>
 <div class="container">
-<div class="container">
-    <div class="page-header">
-        <h1>Netcracker <small>Расширенные настройки профиля ${user.email}</small></h1>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Netcracker <small>Расширенные настройки профиля ${user.email}</small></h1>
+        </div>
+        <form action="/generatePhoneCode" method="get">
+            <div class="form-group col-lg-offset-4 col-lg-5">
+
+                <button type="submit" >Отправить код</button>
+
+            </div>
+        </form>
+
+        <form action="/confirmedPhone" method="post">
+            <div class="form-group  col-lg-offset-4 col-lg-5">
+                <label for="InputCode">Введите код подтверждения</label>
+                <input type="text" class="form-control " name="codeUser" id="InputCode">
+                <button type="submit" >Подтвердить</button>
+            </div>
+        </form>
     </div>
-    <form action="/generatePhoneCode" method="get">
-        <div class="form-group col-lg-offset-4 col-lg-5">
-
-            <button type="submit" >Отправить код</button>
-
-        </div>
-    </form>
-
-    <form action="/confirmedPhone" method="post">
-        <div class="form-group  col-lg-offset-4 col-lg-5">
-        <label for="InputCode">Введите код подтверждения</label>
-        <input type="text" class="form-control " name="codeUser" id="InputCode">
-            <button type="submit" >Подтвердить</button>
-        </div>
-    </form>
-</div>
 
     <div class="form-group ">
         <a href="/profile"> К обычным настройкам </a>
     </div>
 
-<div class="container">
-    <form action="/updateSettings/${settings.id}" method="post">
-        <!--  Тут будут настройки оповещения для email и телефона с кнопкой Сохранить. Нужен фронтенд. -->
-        <div class="form-group col-lg-offset-4 col-lg-4">
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="emailNewMessage"  <c:if test="${settings.emailNewMessage eq true}">checked=checked</c:if> >
-                    Отправлять уведомления о новых сообщениях на почту
-                </label>
+    <div class="container">
+        <form action="/updateSettings/${settings.id}" method="post">
+            <!--  Тут будут настройки оповещения для email и телефона с кнопкой Сохранить. Нужен фронтенд. -->
+
+            <div class="form-group col-lg-offset-4 col-lg-4">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="emailNewMessage"  <c:if test="${settings.emailNewMessage eq true}">checked=checked</c:if> >
+                        Отправлять уведомления о новых сообщениях на почту
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="emailNewFriend"  <c:if test="${settings.emailNewFriend eq true}">checked=checked</c:if> >
+                        Отправлять уведомления о новых заявках в друзья на почту
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="emailMeetingInvite" <c:if test="${settings.emailMeetingInvite eq true}">checked=checked</c:if> >
+                        Отправлять уведомления о приглашениях на встречу на почту
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="phoneNewMessage"  <c:if test="${settings.phoneNewMessage eq true}">checked=checked</c:if> >
+                        Отправлять уведомления о новых сообщениях на телефон
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="phoneNewFriend"  <c:if test="${settings.phoneNewFriend eq true}">checked=checked</c:if> >
+                        Отправлять уведомления о новых заявках в друзья на телефон
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"  name="phoneMeetingInvite"  <c:if test="${settings.phoneMeetingInvite eq true}">checked=checked</c:if> >
+                        Отправлять уведомления о приглашениях на встречу на телефон
+                    </label>
+                </div>
+
+                <div>
+                    <label>Кто может просматривать мой профиль</label>
+                    <select name="privateProfile" class="selectpicker show-menu-arrow" data-style="btn-info">
+                        <option <c:if test="${settings.privateProfile eq 'any'}">selected</c:if>  value="any">Все</option>
+                        <option <c:if test="${settings.privateProfile eq 'onlyFriend'}">selected</c:if> value="onlyFriend">Только друзья</option>
+                        <option <c:if test="${settings.privateProfile eq 'nobody'}">selected</c:if> value="nobody">Никто</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Кто может писать мне личные сообщения</label>
+                    <select name="privateMessage" class="selectpicker show-menu-arrow" data-style="btn-info">
+                        <option <c:if test="${settings.privateMessage eq 'any'}">selected</c:if>  value="any">Все</option>
+                        <option <c:if test="${settings.privateMessage  eq 'onlyFriend'}">selected</c:if> value="onlyFriend">Только друзья</option>
+                        <option <c:if test="${settings.privateMessage  eq 'nobody'}">selected</c:if> value="nobody">Никто</option>
+                    </select>
+                </div>
+
             </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="emailNewFriend"  <c:if test="${settings.emailNewFriend eq true}">checked=checked</c:if> >
-                    Отправлять уведомления о новых заявках в друзья на почту
-                </label>
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="emailMeetingInvite" <c:if test="${settings.emailMeetingInvite eq true}">checked=checked</c:if> >
-                    Отправлять уведомления о приглашениях на встречу на почту
-                </label>
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="phoneNewMessage"  <c:if test="${settings.phoneNewMessage eq true}">checked=checked</c:if> >
-                    Отправлять уведомления о новых сообщениях на телефон
-                </label>
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="phoneNewFriend"  <c:if test="${settings.phoneNewFriend eq true}">checked=checked</c:if> >
-                    Отправлять уведомления о новых заявках в друзья на телефон
-                </label>
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox"  name="phoneMeetingInvite"  <c:if test="${settings.phoneMeetingInvite eq true}">checked=checked</c:if> >
-                    Отправлять уведомления о приглашениях на встречу на телефон
-                </label>
-            </div>
-        </div>
-        <button type="submit" class="btn-lg btn-success col-lg-4 col-lg-offset-4">Сохранить</button>
-    </form>
-</div>
+            <button type="submit" class="btn-lg btn-success col-lg-4 col-lg-offset-4">Сохранить</button>
+        </form>
+    </div>
+
 </div>
 
 <%@include file='footer.jsp'%>

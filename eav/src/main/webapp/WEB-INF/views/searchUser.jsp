@@ -21,34 +21,64 @@
 <head>
     <title>DB Test</title>
 
+    <link href="<%=request.getContextPath()%>/resources/css/resultList.css" rel="stylesheet">
+
     <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"> </script>
 
 </head>
 <body>
 
-
 <%@include file='header.jsp'%>
 
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="accordion">
+                    <span class="glyphicon glyphicon-list"></span> Список пользователей:
+                    <div class="btn-group pull-right">
+                        <a type="button" class="btn btn-default btn-xs" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseOne">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </a>
+                    </div>
+                </div>
 
+                <div class="panel-collapse in" id="collapseOne">
+                    <div class="panel-body">
+                        <ul class="chat">
 
-<h2 id="faq">Результаты поиска:</h2>
-<c:forEach items="${allUsers}" var="user">
-    <div class="thumbnail">
-        <h4>${user.surname} ${user.name} ${user.middleName}, ник "${user.login}"</h4>
-        <ul class="nav nav-pills">
-                <%--<li class="active pull-left"><a href="/delete/${object.id}">Удалить</a></li> Пока не будем тут удалять--%>
-            <li class="active pull-left"><a href="/viewProfile/${user.id}">Смотреть профиль</a></li>
-            <li class="active pull-left"><a href="/sendMessage/${user.id}">Отправить сообщение</a></li>
-    <%-- Если этот пользователь уже есть в друзьях, то этой кнопки быть не должно  --%>
-    <%-- Если в настройках приватности стоит, что пользователя не могут добавлять в друзья, то это кнопки быть не должно  --%>
-<li class="active pull-left"><a href="/addFriend/${user.id}/addFriend">Добавить в друзья</a></li>
-</ul>
+                            <c:forEach items="${allUsers}" var="object">
+                                <li class="right clearfix"><span class="chat-img pull-right">
+                                <a class="btn btn-primary btn-xs" href="/viewProfile/${object.id}"><span class="glyphicon glyphicon-cog">  </span>Профиль </a>
+                                <a class="btn btn-info btn-xs" href="/sendMessage/${object.id}"><span class="glyphicon glyphicon-envelope"></span>Написать</a>
+                                <a class="btn btn-success btn-xs" href="/addFriend/${object.id}/addFriend"><span class="glyphicon glyphicon-plus">   </span>В друзья</a>
+                                </span>
+                                    <div class="chat-body clearfix">
+                                        <div class="header">
+                                            <small class=" text-muted"><span
+                                                    class="glyphicon glyphicon-user"></span> ${object.login} </small>
+
+                                        </div>
+                                        <div class="text-left">
+                                                ${object.surname} ${object.name} ${object.middleName}, ник ${object.login}
+                                        </div>
+                                    </div>
+                                </li>
+                            </c:forEach>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-</c:forEach>
 
 <%@include file='footer.jsp'%>
 
 </body>
 </html>
+
 
 

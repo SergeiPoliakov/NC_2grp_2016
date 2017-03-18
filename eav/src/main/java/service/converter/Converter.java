@@ -165,6 +165,8 @@ public class Converter {
             settings.setPhoneNewMessage(dataObject.getParameter(405));
             settings.setPhoneNewFriend(dataObject.getParameter(406));
             settings.setPhoneMeetingInvite(dataObject.getParameter(407));
+            settings.setPrivateProfile(dataObject.getParameter(408));
+            settings.setPrivateMessage(dataObject.getParameter(409));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -270,6 +272,8 @@ public class Converter {
             dataObject.setParams(405, settings.getPhoneNewMessage());
             dataObject.setParams(406, settings.getPhoneNewFriend());
             dataObject.setParams(407, settings.getPhoneMeetingInvite());
+            dataObject.setParams(408, settings.getPrivateProfile());
+            dataObject.setParams(409, settings.getPrivateMessage());
         }else if (entitie instanceof Log) {
             // Работаем с логами
             Log log = (Log) entitie;

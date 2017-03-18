@@ -10,7 +10,7 @@
     <p>${exception.message}</p>
     <br>
     <p>
-        Можете <a href="/">вернуться на главную</a>...
+        Можете <a href="/main-login">вернуться на главную</a>...
     </p>
 </body>
 </html>

@@ -312,6 +312,7 @@ public class UserController {
 
         String bcryptPass = new BCryptPasswordEncoder().encode(password);
 
+
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
         mapAttr.put(1, name);
         mapAttr.put(2, surname);
@@ -320,7 +321,7 @@ public class UserController {
         mapAttr.put(5, ageDate);
         mapAttr.put(6, email);
         mapAttr.put(7, bcryptPass);
-        mapAttr.put(8, "unknown");
+        mapAttr.put(8, "");
         mapAttr.put(9, "");
         mapAttr.put(10, "");
         mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");
@@ -535,23 +536,62 @@ public class UserController {
 
     @RequestMapping(value = "/viewProfile/{id}")
     public String viewUser(@PathVariable("id") int userId,
-                           ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+                           ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException, CustomException {
+        DataObject dataObject = doCache.get(userId);
+        User user = converter.ToUser(dataObject);
+        Settings settings = converter.ToSettings(doCache.get(user.getSettingsUD()));
+
+        String flagProfile = "false";
+        String flagMessage = "false";
+
+        // проверяем, есть ли текущий пользователь в друзьях, чтобы дать ему доступ
+        int current_user_id = userService.getObjID(userService.getCurrentUsername());
+        ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(userId)));
         try {
-            DataObject dataObject = doCache.get(userId);
-            User user = converter.ToUser(dataObject);
+            Map<Integer, DataObject> map = doCache.getAll(ilFriend);
+            ArrayList<DataObject> list = getListDataObject(map);
+            for (DataObject dataObjectFriend : list) {
+                User userFriend = converter.ToUser(dataObjectFriend);
+                if (current_user_id == userFriend.getId()) {
+                    flagMessage = "true";
+                    flagProfile = "true";
+                }
+            }
             m.addAttribute(user);
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
+        // вариант с ошибкой
+        if ("onlyFriend".equals(settings.getPrivateProfile()) && flagProfile.equals("true")) {
+            m.addAttribute("flagProfile", flagProfile);
+        } else  if ("onlyFriend".equals(settings.getPrivateProfile()) && flagProfile.equals("false") || "nobody".equals((settings.getPrivateProfile()))) {
+            throw new CustomException("Пользователь ограничил доступ к странице");
+        } else {
+            flagProfile = "true";
+            m.addAttribute("flagProfile", flagProfile);
+        }
+
+        // вариант с блокировкой кнопки
+        if ("onlyFriend".equals(settings.getPrivateMessage()) && flagMessage.equals("true")){
+            m.addAttribute("flagMessage", flagMessage);
+        } else if ("onlyFriend".equals(settings.getPrivateMessage()) && flagMessage.equals("false") || "nobody".equals((settings.getPrivateMessage()))) {
+            flagMessage = "false";
+            m.addAttribute("flagMessage", flagMessage);
+        } else {
+            flagMessage = "true";
+            m.addAttribute("flagMessage", flagMessage);
+        }
+
         try {
             ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_USER_WITH_ID, String.valueOf(userId)));
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
             System.out.println("Размер кэша после добавления " + doCache.size());
             ArrayList<Event> events = new ArrayList<>(list.size());
-            for (DataObject dataObject: list
+            for (DataObject dataObjectEvent : list
                     ) {
-                Event event = new Event(dataObject);
+                Event event = new Event(dataObjectEvent);
                 events.add(event);
             }
             m.addAttribute("allObject", events);
@@ -622,9 +662,11 @@ public class UserController {
         phoneNewFriend = convertParameters(phoneNewFriend);
         String phoneMeetingInvite = request.getParameter("phoneMeetingInvite");
         phoneMeetingInvite = convertParameters(phoneMeetingInvite);
+        String privateProfile = request.getParameter("privateProfile");
+        String privateMessage = request.getParameter("privateMessage");
 
         Settings settings = new Settings(settingsID, userService.getObjID(userService.getCurrentUsername()),
-                emailNewMessage, emailNewFriend, emailMeetingInvite, phoneNewMessage, phoneNewFriend, phoneMeetingInvite);
+                emailNewMessage, emailNewFriend, emailMeetingInvite, phoneNewMessage, phoneNewFriend, phoneMeetingInvite, privateProfile, privateMessage);
 
         DataObject dataObject = converter.toDO(settings);
         loadingService.updateDataObject(dataObject);

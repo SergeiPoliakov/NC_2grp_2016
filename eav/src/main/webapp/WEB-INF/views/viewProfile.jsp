@@ -53,9 +53,14 @@
                 <div class="profile-userpic">
                     <img src="${user.picture}" onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
                 </div>
-                <div class="profile-userbuttons">
-                    <a href="/sendMessage/${user.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
-                </div>
+
+                <form action="/sendMessage/${user.id}">
+                    <div class="profile-userbuttons">
+                        <button type="submit" class="btn btn-info btn-xs" <c:if test="${flagMessage eq false}"> disabled </c:if> >
+                            <span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button>
+                    </div>
+                </form>
+
                 <ul class="list-group list-group-my list-group-flush">
                     <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
                     <li class="list-group-item">Город: ${user.city}</li>

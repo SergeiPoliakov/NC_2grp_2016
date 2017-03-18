@@ -177,7 +177,7 @@ public class MeetingController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        ArrayList<User> userList = new ArrayList<>();
+        ArrayList<User> userList = meeting.getUsers();   //исправлено
         for (String userID: users) {
             User user = new User(doCache.get(Integer.parseInt(userID)));
             userList.add(user);
