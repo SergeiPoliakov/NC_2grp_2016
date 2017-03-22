@@ -29,7 +29,7 @@ import service.id_filters.UserFilter;
  * @author Hroniko
  */
 @Controller
-public class NotificationController { // Тут вроде логировать не нужно, ут только подсвечиваются уведомления 2017-03-17
+public class NotificationController { // Тут вроде логировать не нужно, тут только подсвечиваются уведомления 2017-03-17
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     // 2017-02-24 Уведомления о новых сообщениях (вывод в хедер) // Старый метод, используйте универсальный getNewNotification

@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import service.application_settings.SettingsLoader;
 import service.cache.DataObjectCache;
 import service.converter.Converter;
 import web.SMSCSender;
@@ -17,6 +18,7 @@ import web.SMSCSender;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -29,6 +31,10 @@ import java.util.concurrent.ExecutionException;
  */
 
 public class UserServiceImp implements UserService {
+
+    private static String host_name = "";
+
+    private static String host_port = "";
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
@@ -114,9 +120,15 @@ public class UserServiceImp implements UserService {
         return new DBHelp().generationID(objTypeID);
     }
 
-    public void fittingEmail(String type, Integer fromID, Integer toID) throws MailException, UnsupportedEncodingException,
+    public void fittingEmail(String type, Integer fromID, Integer toID) throws MailException, IOException,
             MessagingException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
         //TODO: Здесь будем отправлять оповещения пользователю.
+        // Подгружаем настройки
+        SettingsLoader settingsLoader = new SettingsLoader();
+        host_name = settingsLoader.getSetting("host_name");
+        String port = settingsLoader.getSetting("host_port");
+        if (!port.equals("80")) host_port = ":" + port;
+        //
         try (GenericXmlApplicationContext context = new GenericXmlApplicationContext()) {
             context.load("classpath:applicationContext.xml");
             context.refresh();
@@ -140,13 +152,13 @@ public class UserServiceImp implements UserService {
 
 
             if ("newMessage".equals(type)) {
-                String url = "http://localhost:8081/sendMessage/" + userFrom.getId();
+                String url = "http://" + host_name + host_port + "/sendMessage/" + userFrom.getId();
                 helper.setText("У вас новое сообщение от " + userFrom.getLogin() + ". " +
                         "Перейдите по ссылке, чтобы прочитать его. " +
                         "<html><body><a href=" + url + ">" + "Войти в чат " + "</a></body></html>" +
                         "Это сообщение создано автоматически, на него не нужно отвечать!", true);
             } else if ("addFriend".equals(type)) {
-                String url = "http://localhost:8081/allUnconfirmedFriends";
+                String url = "http://" + host_name + host_port + "/allUnconfirmedFriends";
                 helper.setText("Пользователь " + userFrom.getLogin() + " хочет стать вашим другом. " +
                         "<html><body><a href=" + url + ">" + "Подробнее" + "</a></body></html>", true);
             }

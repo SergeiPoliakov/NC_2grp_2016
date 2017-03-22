@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import service.UploadServiceImp;
 import service.UserServiceImp;
+import service.application_settings.SettingsLoader;
 import service.statistics.StaticticLogger;
 
 import java.io.BufferedOutputStream;
@@ -37,10 +38,10 @@ public class FileUploadController {
     private StaticticLogger loggerLog = new StaticticLogger();
     private UserServiceImp userService = new UserServiceImp();
 
-    private String  server = "nc2.hop.ru"; // String server = "netcracker.hop.ru";
-    private int     port = 21;
-    private String  user = "w513411"; // String user = "w513022";
-    private String  pass = "jtgashiw"; // String pass = "oi4qe6l4";
+    private String  server; // = "nc2.hop.ru"; // String server = "netcracker.hop.ru";
+    private int     port; // = 21;
+    private String  user; // = "w513411"; // String user = "w513022";
+    private String  pass; // = "jtgashiw"; // String pass = "oi4qe6l4";
 
 
     final Random random = new Random();
@@ -50,7 +51,10 @@ public class FileUploadController {
 
     private UploadServiceImp uploadService = UploadServiceImp.getInstance();
 
+    // Конструктор
     public FileUploadController() throws IOException {
+        // Вызов метода загрузки настроек
+        loadSetting();
     }
 
     @RequestMapping("/upload")
@@ -184,7 +188,7 @@ public class FileUploadController {
 
 
                 // 3. Проверяем, есть ли такая папка на сервере  /upload/10005/avatar*/
-                String relativePatchToFolder = "public_html/upload" + "/" + currentUserId  + "/" + "avatar";
+                String relativePatchToFolder = "upload" + "/" + currentUserId  + "/" + "avatar"; // String relativePatchToFolder = "public_html/upload" + "/" + currentUserId  + "/" + "avatar";
                 ftpCreateDirectoryTree(ftpClient, relativePatchToFolder); // (и создаем ее, если ее нет)
                 ftpClient.changeWorkingDirectory("/"); // Переходим в корневую папку
                 ftpClient.changeWorkingDirectory(relativePatchToFolder); // Переходим в эту папку
@@ -206,7 +210,7 @@ public class FileUploadController {
                 //String fullPatchToFolder = rootPath + relativePatchToFolder;
                 //String fullPatchToFile = fullPatchToFolder + File.separator + name;
 
-                relativePatchToFolder = "http://"+server+"/" + "upload" + "/" + currentUserId  + "/" + "avatar" + "/" + name;
+                relativePatchToFolder = "ftp://"+server+"/" + "upload" + "/" + currentUserId  + "/" + "avatar" + "/" + name; // relativePatchToFolder = "http://"+server+"/" + "upload" + "/" + currentUserId  + "/" + "avatar" + "/" + name;
                 uploadService.updateAvatar(currentUserId, relativePatchToFolder); // uploadService.updateAvatar(currentUserId, serverFile.getAbsolutePath());
 
                 // Логируем в базу:
@@ -253,6 +257,17 @@ public class FileUploadController {
                 }
             }
         }
+    }
+
+
+    // 2017-03-21 Метод загрузки настроек ftp-сервера из настроечного файла приложения:
+    private void loadSetting() throws IOException {
+        SettingsLoader settingsLoader = new SettingsLoader();
+        this.server = settingsLoader.getSetting("ftp_server");
+        this.port = new Integer(settingsLoader.getSetting("ftp_port"));
+        this.user = settingsLoader.getSetting("ftp_login");
+        this.pass = settingsLoader.getSetting("ftp_password");
+
     }
 
 }

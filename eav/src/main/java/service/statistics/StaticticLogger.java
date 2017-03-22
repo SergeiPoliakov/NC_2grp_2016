@@ -52,7 +52,7 @@ public class StaticticLogger {
         logQueue.add(log);
         idQueue.add(user_id);
         //count ++;
-        System.out.println("-----------> Logs size = " + logQueue.size());
+        System.out.println(log.getDate() + " ::: Добавление лога в очередь, размер очереди: " + logQueue.size());
         // Проверяем, не пора ли переносить в базу:
         if (logQueue.size() == max_count){
             loadToDB();
@@ -111,7 +111,7 @@ public class StaticticLogger {
     // Перенос в базу: // В т.ч. и принудительный сброс командой извне
 
     public static void loadToDB() throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
-        System.out.print("Старт записи логов в базу (count = " + logQueue.size() + "): ");
+        System.out.println(new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm").format( new java.util.Date()) + " :: Старт записи логов в базу (count = " + logQueue.size() + "): ");
         int i = 0;
         while (logQueue.size() > 0){
             //for (int i = 0; i < count; i++){
@@ -123,18 +123,19 @@ public class StaticticLogger {
             // Конвертируем в датаобджект:
             DataObject dataObject = new Converter().toDO(log);
             // Генерируем айдишник и вставляем в датаобджект:
-            //dataObject.setId(new DBHelp().generationID(1008));
+            dataObject.setId(new DBHelp().generationID(1008));
             // и переносим в базу
             new DBHelp().setDataObjectToDB(dataObject, id);
 
         }
-        System.out.println("\n Конец записи логов в базу.");
+        System.out.println("\n" + new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm").format( new java.util.Date()) + " :: Конец записи логов в базу.");
 
     }
 
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 120000)
     public static void tictuck() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
         if (! on_off_sheduler) return;
+        if (logQueue.size() < 1) return;
         loadToDB();
     }
 

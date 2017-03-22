@@ -97,7 +97,8 @@
                             class="glyphicon glyphicon-user"></span> ${user.login} </small>
                 </div>
                 <div class="profile-userpic">
-                    <img src="${user.picture}" class="img-responsive"  alt='Изображение' >
+                    <img src="${user.picture}"
+                         onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
                 </div>
                 <ul class="list-group list-group-my list-group-flush">
                     <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>

@@ -7,7 +7,7 @@ function doAjaxNewMessages() {
     var inputText = "new_message";
 
     $.ajax({
-        url : 'http://localhost:8081/getNewNotification',
+        url : '/getNewNotification',
         type: 'GET',
         dataType: 'json',
         contentType: 'application/json',
@@ -33,7 +33,7 @@ function doAjaxNewFriends() {
     var inputText = "new_friend";
 
     $.ajax({
-        url : 'http://localhost:8081/getNewNotification',
+        url : '/getNewNotification',
         type: 'GET',
         dataType: 'json',
         contentType: 'application/json',
@@ -59,7 +59,7 @@ function doAjaxNotifications() {
     var inputText = "all";
 
     $.ajax({
-        url : 'http://localhost:8081/getNewNotification',
+        url : '/getNewNotification',
         type: 'GET',
         dataType: 'json',
         contentType: 'application/json',
@@ -74,4 +74,4 @@ function doAjaxNotifications() {
         }
     });
 }
-setInterval(doAjaxNotifications, 100);
+setInterval(doAjaxNotifications, 10000);

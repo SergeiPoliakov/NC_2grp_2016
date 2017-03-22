@@ -1,6 +1,7 @@
 package web;
 
 import entities.*;
+import service.application_settings.SettingsLoader;
 import service.statistics.StaticticLogger;
 import com.google.common.cache.LoadingCache;
 import exception.CustomException;
@@ -60,6 +61,12 @@ public class UserController {
 
     private String code = "";
 
+    private static String host_name = "";
+
+    private static String host_port = "";
+
+    private static String ftp_server = "";
+
 
     public UserController() throws IOException {
     }
@@ -83,7 +90,16 @@ public class UserController {
 
 
     @RequestMapping(value = {"/", "main"})
-    public ModelAndView index() {
+    public ModelAndView index() throws IOException {
+
+        // Подгружаем настройки
+        SettingsLoader settingsLoader = new SettingsLoader();
+        host_name = settingsLoader.getSetting("host_name");
+
+        String port = settingsLoader.getSetting("host_port");
+        if (!port.equals("80")) host_port = ":" + port;
+
+        ftp_server = settingsLoader.getSetting("ftp_server");
 
         return new ModelAndView("main");
     }
@@ -324,7 +340,7 @@ public class UserController {
         mapAttr.put(8, "");
         mapAttr.put(9, "");
         mapAttr.put(10, "");
-        mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");
+        mapAttr.put(11, "ftp://" + this.ftp_server +"/upload/default/avatar.png"); // mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");
         mapAttr.put(15, "true");  //изначально должно быть false
         mapAttr.put(16, phone);
         mapAttr.put(17, "true");  //изначально должно быть false
@@ -358,7 +374,7 @@ public class UserController {
                 helper.setTo(email);
                 helper.setFrom(new InternetAddress("netcracker.thesecondgroup@gmail.com", "NC", "UTF-8"));
 
-                String url = "http://localhost:8081/" + dataObject.getId() + "/varification_token/" + userService.generateEmailToken(20);
+                String url = "http://"+ this.host_name + this.host_port +"/" + dataObject.getId() + "/varification_token/" + userService.generateEmailToken(20); // String url = "http://localhost:8081/" + dataObject.getId() + "/varification_token/" + userService.generateEmailToken(20);
 
                 helper.setText("Добро пожаловать! \n"+
                         "Перейдите по ссылке, чтобы завершить регистрацию и получить полный доступ к приложению \n"+
@@ -505,7 +521,7 @@ public class UserController {
     @RequestMapping("/addFriend/{objectId}/{type}")
     public String addFriend(@PathVariable("objectId") Integer objectId,
                             @PathVariable("type") String type) throws InvocationTargetException,
-            NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, UnsupportedEncodingException, MessagingException {
+            NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, IOException, MessagingException {
         userService.setFriend(objectId);
         if ("addFriend".equals(type)) {
             DataObject dataObjectFrom = doCache.get(userService.getObjID(userService.getCurrentUsername()));

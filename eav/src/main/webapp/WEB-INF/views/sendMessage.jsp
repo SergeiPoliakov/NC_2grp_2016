@@ -31,7 +31,7 @@
             var inputText = '${to_id}';
 
             $.ajax({
-                url: 'http://localhost:8081/getArray',
+                url: '/getArray',
                 type: 'GET',
                 dataType: 'json',
                 contentType: 'application/json',
@@ -82,7 +82,7 @@
             document.getElementById("input_str2").value = '';
 
             $.ajax({
-                url: 'http://localhost:8081/sendMessage3',
+                url: '/sendMessage3',
                 type: 'GET',
                 dataType: 'json',
                 contentType: 'application/json',

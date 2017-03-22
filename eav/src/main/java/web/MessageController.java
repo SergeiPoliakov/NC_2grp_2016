@@ -56,7 +56,7 @@ public class MessageController {
     // 2017-02-25 Отправка сообщения по нажатию кнопки
     @RequestMapping(value = "/sendMessage3", method = RequestMethod.GET)
     @ResponseBody
-    public Message sendNewMessage3(@RequestParam("text") String text) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, UnsupportedEncodingException, MessagingException, ExecutionException {
+    public Message sendNewMessage3(@RequestParam("text") String text) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, IOException, MessagingException, ExecutionException {
 
         String[] msg = text.split("~"); // Разбиваем на массив слов
 
@@ -163,8 +163,8 @@ public class MessageController {
         }
 
         // Логирование:
-        int idUser = userService.getObjID(userService.getCurrentUsername());
-        loggerLog.add(Log.PAGE, "messageList~"+from_id+"~"+to_id, idUser);
+        //int idUser = userService.getObjID(userService.getCurrentUsername());
+        //loggerLog.add(Log.PAGE, "messageList~"+from_id+"~"+to_id, idUser);
         return AR;
     }
 
@@ -183,15 +183,15 @@ public class MessageController {
     @RequestMapping("/sendMessage") // @RequestMapping(value = "/deleteMessage/{to_id}/{objectId}", method = RequestMethod.POST)
     public String sendMess() throws SQLException {
         // Логирование:
-        int idUser = userService.getObjID(userService.getCurrentUsername());
-        loggerLog.add(Log.PAGE, "sendMessage", idUser);
+        //int idUser = userService.getObjID(userService.getCurrentUsername());
+        //loggerLog.add(Log.PAGE, "sendMessage", idUser);
         return "sendMessage";
     }
 
 
     // 2017-03-05 Вывод всех непрочитанных сообщений, но в виде ссылок на диалоги с написавшими юзерами
     @RequestMapping("/allUnreadMessages")
-    public String listUnconfirmedFriends(Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public String listUnreadMessages(Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         // String current_user_id = userService.getCurrentUser().getId().toString(); // айди текущего юзера
         // Вытаскиваем айди всех неподтвержденных текущим пользователем друзей:
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new MessageFilter(MessageFilter.TO_CURRENT_USER, MessageFilter.UNREAD));
@@ -223,8 +223,8 @@ public class MessageController {
             e.printStackTrace();
         }
         // Логирование:
-        int idUser = userService.getObjID(userService.getCurrentUsername());
-        loggerLog.add(Log.PAGE, "allUnreadMessages", idUser);
+         // int idUser = userService.getObjID(userService.getCurrentUsername());
+         // loggerLog.add(Log.PAGE, "allUnreadMessages", idUser);
         return "allUnreadMessages";
     }
 

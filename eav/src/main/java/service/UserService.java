@@ -11,6 +11,7 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -61,7 +62,7 @@ interface UserService {
     int generationID(int objTypeID) throws SQLException;
 
     @WebMethod
-    void fittingEmail(String type, Integer fromID, Integer toID) throws MailException, UnsupportedEncodingException,
+    void fittingEmail(String type, Integer fromID, Integer toID) throws MailException, IOException,
             MessagingException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException;
 
     @WebMethod

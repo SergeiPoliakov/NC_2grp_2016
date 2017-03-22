@@ -36,9 +36,13 @@
         <div class="row">
             <div class="row">
                 <div class="container col-lg-5 pull-right">
-
-                    <img src="http://nc2.hop.ru/upload/${user.id}/avatar/avatar_${user.id}.png"
+                    <%--
+                      <img src="http://nc2.hop.ru/upload/${user.id}/avatar/avatar_${user.id}.png"
                          onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-polaroid"
+                         width="200">
+                    --%>
+                    <img src="${user.picture}"
+                         onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-polaroid"
                          width="200">
 
                     <div class="form-group ">

@@ -18,6 +18,7 @@
             <!--<property name="jboss.entity.manager.factory.jndi.name" value="java:/PtEntityManagerFactory" />-->
             <property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver" />
             <property name="hibernate.connection.url" value="jdbc:oracle:thin:@localhost:1521:XE" />
+            <!-- <property name="hibernate.connection.url" value="jdbc:oracle:thin:@localhost:1521:XE" /> -->
             <property name="hibernate.connection.username" value="nc" />
             <property name="hibernate.connection.password" value="nc" />
         </properties>
