@@ -4,10 +4,11 @@ package web;
  * Контроллер для системы оповещения (новые события, сообщения, напоминания)
  */
 import com.google.common.cache.LoadingCache;
+import com.google.gson.Gson;
 import dbHelp.DBHelp;
-import entities.DataObject;
-import entities.Meeting;
+import entities.Notification;
 import entities.User;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import service.id_filters.MessageFilter;
@@ -15,6 +16,7 @@ import service.id_filters.MessageFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -87,6 +89,33 @@ public class NotificationController { // Тут вроде логировать 
         }
         result.setCount(count);
         return result;
+    }
+
+    // Обработка запроса из центра уведомлений
+    @RequestMapping(value = "/getNotification", method = RequestMethod.GET)
+    public @ResponseBody
+    Response getNotification() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+        LoggerFactory.getLogger(NotificationController.class).info("asdasd");
+        ArrayList<Notification> notifications = new ArrayList<>();
+        Notification not1 = new Notification("10001", "10003", "", "infoFriendAccept", "23.03.2017 11:00");
+        Notification not2 = new Notification("10001", "10003", "", "infoFriendAccept", "24.03.2017 11:00");
+        Notification not3 = new Notification("10001", "10003", "", "infoFriendAccept", "25.03.2017 11:00");
+
+        not1.setSender(new User(new DBHelp().getObjectsByIdAlternative(Integer.parseInt(not1.getSenderID()))));
+        not2.setSender(new User(new DBHelp().getObjectsByIdAlternative(Integer.parseInt(not2.getSenderID()))));
+        not3.setSender(new User(new DBHelp().getObjectsByIdAlternative(Integer.parseInt(not3.getSenderID()))));
+
+        notifications.add(not1);
+        notifications.add(not2);
+        notifications.add(not3);
+
+
+        String json = new Gson().toJson(notifications);
+
+        Response response = new Response();
+        response.setText(json);
+        response.setCount(notifications.size());
+        return response;
     }
 
 }

@@ -56,21 +56,22 @@ setInterval(doAjaxNewFriends, 10000);
 
 function doAjaxNotifications() {
 
-    var inputText = "all";
-
     $.ajax({
-        url : '/getNewNotification',
+        url : '/getNotification',
         type: 'GET',
         dataType: 'json',
         contentType: 'application/json',
         mimeType: 'application/json',
-        data : ({
-            text: inputText
-        }),
         success: function (data) {
             console.log(data);
 
-            $( "#notificationCount" ).attr( "data-count", data.count);
+            var notifications = JSON.parse(data.text);
+            $.each(notifications, function(index, notification) {    // Iterate over the JSON array.
+                   //alert(index + " " + notification.senderID);
+                addNotification(notification);
+            });
+
+            //$( "#notificationCount" ).attr( "data-count", data.count);
         }
     });
 }
