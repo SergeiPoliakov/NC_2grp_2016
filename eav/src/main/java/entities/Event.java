@@ -116,7 +116,7 @@ public class Event extends BaseEntitie{
     public DataObject toDataObject(){
         DataObject dataObject = new DataObject();
         dataObject.setId(this.id);
-        dataObject.setObjectTypeId(1002);
+        dataObject.setObjectTypeId(objTypeID);
         dataObject.setName(this.name);
         dataObject.setParams(101, this.date_begin);
         dataObject.setParams(102, this.date_end);

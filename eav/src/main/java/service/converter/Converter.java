@@ -67,6 +67,27 @@ public class Converter {
         return user;
     }
 
+    // 2017-03-24
+    public Notification ToNotification(DataObject dataObject) {
+        Notification notification = new Notification();
+        try {
+            notification.setId(dataObject.getId());
+            notification.setName(dataObject.getName());
+
+            notification.setType(dataObject.getParameter(505));
+            notification.setDate(dataObject.getParameter(506));
+            notification.setIsSeen(dataObject.getParameter(507));
+
+            notification.setSenderID(dataObject.getReference(502).get(0));
+            notification.setRecieverID(dataObject.getReference(503).get(0));
+            notification.setAdditionalID(dataObject.getReference(504).get(0));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return notification;
+    }
+
     // 2017-03-13
     public Log ToLog(DataObject dataObject) {
         Log log = new Log();
@@ -99,6 +120,15 @@ public class Converter {
             e.printStackTrace();
         }
         return log;
+    }
+
+    // 2017-03-24 Конвертер для массива датаобджектов в массив уведомлений
+    public ArrayList<Notification> ToNotification(ArrayList<DataObject> aldo) {
+        ArrayList<Notification> notifications = new ArrayList<>();
+        for (DataObject DO : aldo) {
+            notifications.add(ToNotification(DO));
+        }
+        return notifications;
     }
 
     // 2017-03-13 Конвертер для массива датаобджектов в массив логов
@@ -199,8 +229,6 @@ public class Converter {
             dataObject.setParams(16, user.getPhone());
             dataObject.setParams(19, String.valueOf(user.getSettingsUD()));
 
-
-
             for (Map.Entry<Integer, ArrayList<Integer>> reference : dataObject.getRefParams().entrySet()) {
                 switch (reference.getKey()) {
                     case (12): // friends
@@ -274,7 +302,21 @@ public class Converter {
             dataObject.setParams(407, settings.getPhoneMeetingInvite());
             dataObject.setParams(408, settings.getPrivateProfile());
             dataObject.setParams(409, settings.getPrivateMessage());
-        }else if (entitie instanceof Log) {
+        } else if (entitie instanceof Notification) {
+            // Работаем с Уведомлениями
+            Notification notification = (Notification) entitie;
+            //
+            dataObject.setId(notification.getId());
+            dataObject.setObjectTypeId(NOTIFICATIONS);
+            dataObject.setName("Notif_" + notification.getId());
+            //
+            dataObject.setRefParams(502, notification.getSenderID());
+            dataObject.setRefParams(503, notification.getRecieverID());
+            dataObject.setRefParams(504, notification.getAdditionalID());
+            dataObject.setParams(505, notification.getType());
+            dataObject.setParams(506, notification.getDate());
+            dataObject.setParams(507, notification.getIsSeen());
+        } else if (entitie instanceof Log) {
             // Работаем с логами
             Log log = (Log) entitie;
 

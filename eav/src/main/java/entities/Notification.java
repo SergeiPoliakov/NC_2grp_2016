@@ -13,10 +13,14 @@ import java.util.Map;
 // 1007
 public class Notification extends BaseEntitie{
 
-    private  int  id; // 501
-    private  String senderID; // 502
-    private  String recieverID; // 503
-    private String additionalID; // 504
+    public static final int objTypeID = 1007;
+
+    private  int  id; // не 501, это не параметр, это ключ из таблицы обджектов
+    private String name; // 1 // имя для таблицы обджектов
+
+    private int senderID; // 502
+    private int recieverID; // 503
+    private int additionalID; // 504
     private String type; // 505
     private String date; // 506
     private String isSeen; // 507 // Просмотренные
@@ -33,27 +37,27 @@ public class Notification extends BaseEntitie{
         this.id = id;
     }
 
-    public String getSenderID() {
+    public int getSenderID() {
         return senderID;
     }
 
-    public void setSenderID(String senderID) {
+    public void setSenderID(int senderID) {
         this.senderID = senderID;
     }
 
-    public String getRecieverID() {
+    public int getRecieverID() {
         return recieverID;
     }
 
-    public void setRecieverID(String recieverID) {
+    public void setRecieverID(int recieverID) {
         this.recieverID = recieverID;
     }
 
-    public String getAdditionalID() {
+    public int getAdditionalID() {
         return additionalID;
     }
 
-    public void setAdditionalID(String additionalID) {
+    public void setAdditionalID(int additionalID) {
         this.additionalID = additionalID;
     }
 
@@ -81,6 +85,26 @@ public class Notification extends BaseEntitie{
         this.sender = sender;
     }
 
+    public static int getObjTypeID() {
+        return objTypeID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getIsSeen() {
+        return isSeen;
+    }
+
+    public void setIsSeen(String isSeen) {
+        this.isSeen = isSeen;
+    }
+
     public User getReciever() {
         return reciever;
     }
@@ -97,20 +121,24 @@ public class Notification extends BaseEntitie{
         this.meeting = meeting;
     }
 
-    public Notification(int id, String senderID, String recieverID, String additionalID, String type, String date, User sender, User reciever, Meeting meeting) {
+    public Notification(){}
+
+    public Notification(int id, String name, int senderID, int recieverID, int additionalID, String type, String date, User sender, User reciever, Meeting meeting) {
         this.id = id;
+        this.name = name;
         this.senderID = senderID;
         this.recieverID = recieverID;
         this.additionalID = additionalID;
-        this.type = type;
+        this.type = type; // не тот тайп, который в таблице обджектов!
         this.date = date;
         this.sender = sender;
         this.reciever = reciever;
         this.meeting = meeting;
     }
 
-    public Notification( String senderID, String recieverID, String additionalID, String type, String date) {
-        this.id = 50000;
+    public Notification(int id, String name,int senderID, int recieverID, int additionalID, String type, String date) {
+        this.id = id;
+        this.name = name;
         this.senderID = senderID;
         this.recieverID = recieverID;
         this.additionalID = additionalID;
@@ -120,21 +148,14 @@ public class Notification extends BaseEntitie{
     }
 
     public Notification(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        this.id = dataObject.getId();
+        this.name = dataObject.getName();
         this.sender = new User();
         this.reciever =  new User();
         this.meeting = new Meeting();
-        this.id = dataObject.getId();
+
         for (Map.Entry<Integer, String> param : dataObject.getParams().entrySet() ) {
             switch (param.getKey()){
-                case (502):
-                    this.senderID = param.getValue();
-                    break;
-                case (503):
-                    this.recieverID = param.getValue();
-                    break;
-                case (504):
-                    this.additionalID = param.getValue();
-                    break;
                 case (505):
                     this.type = param.getValue();
                     break;
@@ -153,7 +174,7 @@ public class Notification extends BaseEntitie{
                 case (502):
                     for (Integer refValue : reference.getValue()) {
                         this.sender = new User(new DBHelp().getObjectsByIdAlternative(refValue));
-                        this.senderID = refValue.toString();
+                        this.senderID = refValue;
                     }
                     break;
                 // Reciever
@@ -161,19 +182,19 @@ public class Notification extends BaseEntitie{
                     if (reference != null) {
                         for (Integer refValue : reference.getValue()) {
                             this.reciever = new User(new DBHelp().getObjectsByIdAlternative(refValue));
-                            this.recieverID = refValue.toString();
+                            this.recieverID = refValue;
                         }
                     }
                     break;
                 // Additional
-                /*case (504):
+                case (504):
                     if (reference != null) {
                         for (Integer refValue : reference.getValue()) {
                             this.meeting = new Meeting(new DBHelp().getObjectsByIdAlternative(refValue));
-                            this.additionalID = refValue.toString();
+                            this.additionalID = refValue;
                         }
                     }
-                    break;*/
+                    break;
             }
         }
     }
@@ -181,16 +202,14 @@ public class Notification extends BaseEntitie{
     public DataObject toDataObject(){
         DataObject dataObject = new DataObject();
         dataObject.setId(this.id);
-        dataObject.setName(this.senderID);
-        dataObject.setObjectTypeId(1007);
+        dataObject.setName(this.name);
+        dataObject.setObjectTypeId(objTypeID);
+        dataObject.setRefParams(502, this.senderID);
+        dataObject.setRefParams(503, this.recieverID);
+        dataObject.setRefParams(504, this.additionalID);
         dataObject.setParams(505, this.type);
         dataObject.setParams(506, this.date);
         dataObject.setParams(507, this.isSeen);
-        dataObject.setParams(504, this.additionalID);
-
-        dataObject.setRefParams(502, Integer.parseInt(this.senderID));
-        dataObject.setRefParams(503, Integer.parseInt(this.recieverID));
-
         return dataObject;
     }
 }

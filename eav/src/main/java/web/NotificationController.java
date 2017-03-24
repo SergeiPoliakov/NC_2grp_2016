@@ -6,11 +6,13 @@ package web;
 import com.google.common.cache.LoadingCache;
 import com.google.gson.Gson;
 import dbHelp.DBHelp;
+import entities.DataObject;
 import entities.Notification;
 import entities.User;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import service.converter.Converter;
 import service.id_filters.MessageFilter;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,6 +35,7 @@ import service.id_filters.UserFilter;
 @Controller
 public class NotificationController { // Тут вроде логировать не нужно, тут только подсвечиваются уведомления 2017-03-17
     private LoadingServiceImp loadingService = new LoadingServiceImp();
+    private Converter converter = new Converter();
 
     // 2017-02-24 Уведомления о новых сообщениях (вывод в хедер) // Старый метод, используйте универсальный getNewNotification
     @RequestMapping(value = "/getNewMessage", method = RequestMethod.GET)
@@ -96,7 +99,9 @@ public class NotificationController { // Тут вроде логировать 
     public @ResponseBody
     Response getNotification() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         LoggerFactory.getLogger(NotificationController.class).info("asdasd");
+        /*
         ArrayList<Notification> notifications = new ArrayList<>();
+
         Notification not1 = new Notification("10001", "10003", "", "infoFriendAccept", "23.03.2017 11:00");
         Notification not2 = new Notification("10001", "10003", "", "infoFriendAccept", "24.03.2017 11:00");
         Notification not3 = new Notification("10001", "10003", "", "infoFriendAccept", "25.03.2017 11:00");
@@ -108,8 +113,14 @@ public class NotificationController { // Тут вроде логировать 
         notifications.add(not1);
         notifications.add(not2);
         notifications.add(not3);
-
-
+        */
+        // Получаем айдищники всех непрочитанных сообщений (приглашения на встречи, новые сообщения, добавленяи в друзья и пр.)
+        // ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
+        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_USER_WITH_ID, "10002", NotificationFilter.UNSEEN));
+        ArrayList<Notification> notifications = new ArrayList<>();
+        for(Integer id : al){
+            Notification notification = converter.ToNotification(loadingService.getDataObjectByIdAlternative(id));
+        }
         String json = new Gson().toJson(notifications);
 
         Response response = new Response();
