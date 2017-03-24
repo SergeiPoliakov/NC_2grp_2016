@@ -31,9 +31,6 @@
                 </div>
                 <div id="right" class="row">
                     <div class="col-md-12 hidden-xs text-right">
-                        <a href="https://www.instagram.com/" target="_blank"><i class="fa fa-2x fa-fw fa-instagram text-inverse"></i></a>
-                        <a href="https://twitter.com/" target="_blank"><i class="fa fa-2x fa-fw fa-twitter text-inverse"></i></a>
-                        <a href="https://www.facebook.com/" target="_blank"><i class="fa fa-2x fa-fw fa-facebook text-inverse"></i></a>
                         <a href="https://github.com/SergeiPoliakov/NC_2grp_2016/" target="_blank"><i class="fa fa-2x fa-fw fa-github text-inverse"></i></a>
                     </div>
                 </div>

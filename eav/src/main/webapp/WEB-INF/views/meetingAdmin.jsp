@@ -107,7 +107,8 @@
                                 data-selected-text-format="count>0" data-count-selected-text="Выбрано участников: {0}"
                                 data-none-results-text="Никого не найдено" data-actions-box="true"
                                 data-select-all-text="Выбрать всех" data-deselect-all-text="Убрать всех"
-                                data-size="8" data-dropup-auto="false">
+                                data-size="8" data-dropup-auto="false"
+                                data-style="">
                             <c:forEach items="${meeting.organizer.friends}" var="friend">
                                 <option value="${friend.id}">${friend.name} ${friend.surname}</option>
                             </c:forEach>

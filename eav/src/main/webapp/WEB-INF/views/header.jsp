@@ -11,9 +11,9 @@
 <html>
 <head>
 
-    <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/skywalk-docs.min.css">
+    <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-notifications.min.css">
 
     <!-- Если будут какие траблы - возможно из за tlmain..css -->
@@ -28,7 +28,7 @@
 <body>
 
 
-<nav class="navbar navbar-default navbar-inverse" role="navigation">
+<nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
