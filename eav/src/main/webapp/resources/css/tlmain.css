@@ -67,6 +67,15 @@ body, html {
     border-radius: .25rem;
 }
 
+.card_meetings_list {
+    position: relative;
+    display: block;
+    margin-bottom: .75rem;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: .5rem;
+}
+
 .navi{
     max-height: 300px;
     overflow:hidden !important;
@@ -238,14 +247,14 @@ body, html {
 .style_prevu_kit
 {
     -webkit-transition: all 200ms ease-in;
-    -webkit-transform: scale(1); 
+    -webkit-transform: scale(1);
     -ms-transition: all 200ms ease-in;
-    -ms-transform: scale(1); 
+    -ms-transform: scale(1);
     -moz-transition: all 200ms ease-in;
     -moz-transform: scale(1);
     transition: all 200ms ease-in;
-    transform: scale(1);   
-	cursor: default;
+    transform: scale(1);
+    cursor: default;
 }
 .style_prevu_kit:hover
 {
@@ -254,12 +263,22 @@ body, html {
     -webkit-transition: all 200ms ease-in;
     -webkit-transform: scale(1.05);
     -ms-transition: all 200ms ease-in;
-    -ms-transform: scale(1.05);   
+    -ms-transform: scale(1.05);
     -moz-transition: all 200ms ease-in;
     -moz-transform: scale(1.05);
     transition: all 200ms ease-in;
     transform: scale(1.05);
 }
+
+.style_prevu_kit_static
+{
+    cursor: default;
+}
+.style_prevu_kit_static:hover {
+    transition: box-shadow 0.20s ease-in-out;
+    box-shadow: 0px 0px 10px #5bc0de;
+}
+
 /*Notification*/
 
 .notification-userbuttons {

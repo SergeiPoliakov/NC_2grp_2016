@@ -39,7 +39,7 @@
     <div class="row top-buffer-10">
         <c:forEach items="${meetings}" var="meeting">
         <div class="col-md-3 col-sm-4" id="meeting">
-            <div class="card style_prevu_kit">
+            <div class="card_meetings_list style_prevu_kit_static">
                 <h3 class="card-title text-center">${meeting.title}</h3>
                 <div class="profile-userbuttons">
                     <a href="/meeting${meeting.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"> Просмотр</span> </button></a>

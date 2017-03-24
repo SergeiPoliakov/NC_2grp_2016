@@ -1,16 +1,15 @@
 package web;
 
 import com.google.common.cache.LoadingCache;
+import com.google.gson.Gson;
 import dbHelp.DBHelp;
 import entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
 import service.MeetingServiceImp;
 import service.UserServiceImp;
@@ -214,5 +213,33 @@ public class MeetingController {
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.EDIT_MEETING, id, idUser);
         return "redirect:/meeting{meetingID}";
+    }
+
+    // Редактирование встречи Ajax
+    @RequestMapping(value = "/updateMeetingAJAX", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Response inviteUserAtMeetingWithAJAX(
+                                      @RequestParam("title") String title,
+                                      @RequestParam("tag") String tag,
+                                      @RequestParam("date_start") String date_start,
+                                      @RequestParam("date_end") String date_end,
+                                      @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
+        Response response = new Response();
+        logger.info("asdasd");
+        Meeting meeting = meetingService.getMeeting(1);
+        meeting.setTitle(title);
+        meeting.setTag(tag);
+        meeting.setDate_start(date_start);
+        meeting.setDate_end(date_end);
+        meeting.setInfo(info);
+        DataObject dataObject = meeting.toDataObject();
+        int id = loadingService.updateDataObject(dataObject);
+        doCache.refresh(1);
+
+        // Логирование:
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.EDIT_MEETING, id, idUser);
+        response.setText(new Gson().toJson(meeting));
+        return response;
     }
 }

@@ -281,26 +281,49 @@
 
         if ($(this).html() == '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Принять'){
             $(this).html('<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>  Настройки');
-            $(this).prop("type", "submit");
+            //$(this).prop("type", "submit");
+            callAJAX();
             $("#meetingInfo").toggle();
             $(".hideinput").toggle();
             return;
         }
         else {
             $(this).html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Принять');
-            $(this).prop("type", "button");
+            $("#title").val(title);
+            $("#date_start").val($("#pDate_start").text().substring(8, $("#pDate_start").text().length));
+            $("#date_end").val($("#pDate_end").text().substring(11, $("#pDate_end").text().length));
+            $("#description").val($("#pDescription").text().substring(10, $("#pDescription").text().length));
+            $("#tag").val($("#pTag").text().substring(6, $("#pTag").text().length));
+            //$(this).prop("type", "button");
             $("#pTitle").text("Настройки");
         }
-
-        $("#title").val(title);
-        $("#date_start").val($("#pDate_start").text().substring(8, $("#pDate_start").text().length));
-        $("#date_end").val($("#pDate_end").text().substring(11, $("#pDate_end").text().length));
-        $("#description").val($("#pDescription").text().substring(10, $("#pDescription").text().length));
-        $("#tag").val($("#pTag").text().substring(6, $("#pTag").text().length));
-
         $("#meetingInfo").toggle();
         $(".hideinput").toggle();
     });
+
+    function callAJAX() {
+        $.ajax({
+            url : '/updateMeetingAJAX',
+            type: 'POST',
+            dataType: 'json',
+            data : {
+                title: $("#title").val(),
+                tag: $("#tag").val(),
+                date_start: $("#date_start").val(),
+                date_end: $("#date_end").val(),
+                info: $("#description").val()
+            },
+            success: function (data) {
+                var meeting = JSON.parse(data.text);
+                $("#pTitle").text(meeting.title);
+                document.title = meeting.title;
+                $("#pDate_start").text('Начало: ' + meeting.date_start);
+                $("#pDate_end").text('Окончание: ' + meeting.date_end);
+                $("#pDescription").text('Описание: ' + meeting.info);
+                $("#pTag").text('Теги: ' + meeting.tag);
+            }
+        });
+    }
 
     $("#cardsholderItems").mCustomScrollbar({
         scrollInertia: 275
