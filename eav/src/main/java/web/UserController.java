@@ -176,11 +176,11 @@ public class UserController {
 
 
     @RequestMapping(value = { "/login" }, method = RequestMethod.GET)
-    public ModelAndView login(@RequestParam(value = "error", required = false) String error) throws SQLException {
+    public ModelAndView login(@RequestParam(value = "error", required = false) String error) throws SQLException, CustomException {
 
         ModelAndView model = new ModelAndView();
         if (error != null) {
-            model.addObject("error", "Invalid username or password!");
+            throw new CustomException("Неправильно введен логин или пароль!");  //Временное решение
         }
         model.setViewName("main");
 
@@ -692,5 +692,60 @@ public class UserController {
         return "redirect:/advancedSettings";
     }
 
+    //Сброс пароля
+    @RequestMapping(value="/resetPassword", method=RequestMethod.POST)
+    public String resetPassword(@RequestParam("email") String email) throws SQLException, NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException, ExecutionException, MessagingException, IOException, ParseException {
+
+        if (!userService.getEmail(email).isEmpty()) {
+            int userID = userService.getObjID(email);
+            User user = converter.ToUser(doCache.get(userID));
+            String password = userService.generateEmailToken(8);
+            String passBcrypt = new BCryptPasswordEncoder().encode(password);
+            user.setPassword(passBcrypt);
+            loadingService.updateDataObject(converter.toDO(user));
+            doCache.invalidate(converter.toDO(user));
+            try (GenericXmlApplicationContext context = new GenericXmlApplicationContext()) {
+                context.load("classpath:applicationContext.xml");
+                context.refresh();
+                JavaMailSender mailSender = context.getBean("mailSender", JavaMailSender.class);
+
+
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper  =  new  MimeMessageHelper(message,  true);
+
+                message.setSubject("Сброс пароля", "UTF-8");
+
+                //TODO: Сюда напишите e-mail получателя.
+                helper.setTo(email);
+                helper.setFrom(new InternetAddress("netcracker.thesecondgroup@gmail.com", "NC", "UTF-8"));
+
+                String url = "http://"+ this.host_name + this.host_port +"/profile";
+
+                helper.setText("Уважаемый пользователь! \n"+
+                        "Уведомляем вас, что ваш пароль был сброшен. Ваш новый пароль:  \n"+
+                        password + " Пароль всегда можно поменять в настройках вашего профиля. " +
+                        "<html><body><a href="+url+">"+"Профиль"+"</a></body></html> \n", true) ;
+
+                userService.sendEmail(message);
+
+            }
+        }
+
+        return "/main";
+    }
+
+    @RequestMapping(value="/changePassword", method=RequestMethod.POST)
+    public String changePassword(@RequestParam("password1") String password) throws SQLException, ExecutionException,
+            NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
+
+        User user = converter.ToUser(doCache.get(userService.getObjID(userService.getCurrentUsername())));
+        String passBcrypt = new BCryptPasswordEncoder().encode(password);
+        user.setPassword(passBcrypt);
+        loadingService.updateDataObject(converter.toDO(user));
+        doCache.invalidate(converter.toDO(user));
+
+        return "redirect:/profile";
+    }
 
 }

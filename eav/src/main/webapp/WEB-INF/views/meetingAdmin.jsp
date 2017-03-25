@@ -57,7 +57,7 @@
                 <h3 class="card-title text-center" id="pTitle">${meeting.title}</h3>
                 <ul class="list-group list-group-my list-group-flush" id="meetingInfo">
                     <div class="list-group-item">
-                        <p id="pOrganizer">Организатор: <a href='/user${meeting.organizer.id}'>Вы</a></p>
+                        <p id="pOrganizer">Организатор: <a href='/viewProfile/${meeting.organizer.id}'>Вы</a></p>
                     </div>
                     <div class="list-group-item">
                         <p id="pDate_start">Начало: ${meeting.date_start}</p>

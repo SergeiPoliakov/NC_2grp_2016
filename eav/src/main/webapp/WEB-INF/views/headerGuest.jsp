@@ -20,6 +20,13 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
 
 
+    <script>
+
+        // Нажатие кнопки "Отправить" в всплывающем окне
+        document.getElementById('sendPassword').onclick = function() {
+            $('#sendPasswordToEmail').modal('hide');
+        };
+    </script>
 
 
 </head>
@@ -75,7 +82,7 @@
                                         <div class="form-group">
                                             <label class="sr-only" for="exampleInputPassword2">Пароль</label>
                                             <input type="password" name="password" class="form-control" id="exampleInputPassword2" placeholder="Пароль" required>
-                                            <div class="help-block text-right"><a href="">Забыли пароль?</a></div>
+                                            <div class="help-block text-right" id="rememberPassword"><a href="#myModal" data-toggle="modal">Забыли пароль?</a></div>
                                         </div>
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary btn-block">Войти</button>
@@ -99,6 +106,45 @@
     </div>
     <!-- /.container-fluid -->
 </nav>
+
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <!--  <div class="modal-content"> -->
+        <div class=".col-xs-6 .col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="text-center">
+                        <h3><i class="fa fa-lock fa-4x"></i></h3>
+                        <h2 class="text-center">Забыли пароль?</h2>
+                        <p>Вы можете сбросить ваш пароль здесь.</p>
+                        <div class="panel-body">
+
+                            <form class="form" method="post" action="/resetPassword">
+                                <fieldset>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope color-blue"></i></span>
+
+                                            <input id="emailInput" name="email" placeholder="email адрес" class="form-control" type="email" oninvalid="setCustomValidity('Пожалуйста введите корректный email!')" onchange="try{setCustomValidity('')}catch(e){}" required="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="btn btn-lg btn-primary btn-block" id="sendPassword" value="Отправить мой пароль" type="submit">
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  </div> -->
+    </div>
+</div>
+
+
 </body>
 </html>
 
