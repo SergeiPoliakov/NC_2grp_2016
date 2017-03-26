@@ -21,6 +21,7 @@
 
     <link rel="stylesheet" type="text/css" href="resources\css\bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="resources\css\bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/jquery.mCustomScrollbar.min.css">
 
     <link rel="stylesheet" type="text/css" href="resources\css\tlmain.css">
 
@@ -28,6 +29,7 @@
     <script type="text/javascript" src="resources\js\moment-with-locales.min.js"> </script>
     <script type="text/javascript" src="resources\js\bootstrap.min.js"></script>
     <script type="text/javascript" src="resources\js\bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 
 </head>
 <body>
@@ -36,7 +38,7 @@
 
     <div class="row top-buffer-10">
         <div class="col-md-3 col-sm-4" id="createMeeting">
-            <div class="card_meetings_list" style="border-style: dashed;">
+            <div class="card_meetings_list" style="border-style: dashed;border-color: #18bc9c;">
                 <h3 class="card-title text-center">Создать встречу</h3>
                 <div class="hor-align">
                     <i class="hovicon effect-1 sub-a" id="addMeetingButton"><b class="fa fa-plus"></b></i>
@@ -46,7 +48,7 @@
 
         <c:forEach items="${meetings}" var="meeting">
         <div class="col-md-3 col-sm-4" id="meeting">
-            <div class="card_meetings_list style_prevu_kit_static">
+            <div class="card_meetings_list style_prevu_kit_static mCustomScrollbar" data-mcs-theme="minimal-dark">
                 <h3 class="card-title text-center">${meeting.title}</h3>
                 <div class="profile-userbuttons">
                     <a href="/meeting${meeting.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"> Просмотр</span> </button></a>
@@ -57,7 +59,7 @@
                     <li class="list-group-item">Начало: ${meeting.date_start}</li>
                     <li class="list-group-item">Окончание: ${meeting.date_end}</li>
                     <li class="list-group-item">Описание: ${meeting.info}</li>
-                    <li class="list-group-item">Теги: ${meeting.tag}</li>
+                    <li class="list-group-item" name="tags">Теги: ${meeting.tag}</li>
                 </ul>
             </div>
         </div>
@@ -129,6 +131,7 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/tags.js"></script>
 
 <%@include file='footer.jsp'%>
 

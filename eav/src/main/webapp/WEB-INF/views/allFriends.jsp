@@ -19,7 +19,7 @@
     <title>Ваши друзья</title>
     <%@include file='header.jsp'%>
     <meta charset="UTF-8">
-
+    <script type="text/javascript" src="resources\js\bootstrap.min.js"></script>
 </head>
 <body>
 <div class="container top-buffer-20">

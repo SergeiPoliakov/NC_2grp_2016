@@ -3,6 +3,10 @@ body, html {
 }
 /*Bootstrap*/
 
+.label {
+    margin-left: 5px; 
+}
+
 /*Modal*/
 /*#taskmodal .modal-dialog  {
 	width: 70rem;
@@ -78,9 +82,11 @@ body, html {
 #timelineContainer{
 	border: 2px solid #c8c8c8;
 	background-color: white;
-	box-shadow: 0px 0px 10px 0px #8c8a8a;
-	border-radius: 0.5rem;
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+	border-radius: 0.5rem;	
 }
+
+
 
 .card_meetings_list {
     position: relative;
@@ -91,6 +97,7 @@ body, html {
     border-radius: .5rem;
 	min-height: 35rem;
 	max-height: 35rem;
+	overflow: hidden;
 }
 
 .navi{
@@ -158,6 +165,10 @@ body, html {
   vertical-align: middle;
 }
 /*Timeline*/
+
+.vis-item.vis-background.negative {
+	background-color: rgba(24, 188, 156, 0.6);
+} 
 
 /*Крестик для удаления*/
 .vis-delete{
@@ -381,7 +392,7 @@ transition: box-shadow 0.20s ease-in-out;
 }
 /* Effect 1 */
  .hovicon.effect-1 {
-    background: rgba(24, 188, 156, 0.1);
+    background: rgba(24, 188, 156, 0.25);
     -webkit-transition: background 0.2s, color 0.2s;
     -moz-transition: background 0.2s, color 0.2s;
     transition: background 0.2s, color 0.2s;

@@ -49,7 +49,7 @@
                     <li class="list-group-item">Начало: ${meeting.date_start}</li>
                     <li class="list-group-item">Окончание: ${meeting.date_end}</li>
                     <li class="list-group-item">Описание: ${meeting.info}</li>
-                    <li class="list-group-item">Теги: ${meeting.tag}</li>
+                    <li class="list-group-item" name="tags">Теги: ${meeting.tag}</li>
                 </ul>
                 <button type="button" class="btn btn-danger btn-block" id="leaveButton">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"> Покинуть встречу</span>
@@ -204,6 +204,7 @@
     <div id="log"></div>
 </div>
 
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/tags.js"></script>
 <%@include file='footer.jsp'%>
 
 <script type="text/javascript">
@@ -303,7 +304,7 @@
         },
         </c:forEach>
         </c:forEach>
-        {id: 'A', group: 0, type: 'background', start: new Date(getDateFromString('${meeting.date_start}')), end: new Date(getDateFromString('${meeting.date_end}'))} // Подсветка времени встречи
+        {id: 'A', group: 0, type: 'background', start: new Date(getDateFromString('${meeting.date_start}')), end: new Date(getDateFromString('${meeting.date_end}')), className: 'negative'} // Подсветка времени встречи
 
     ]);
 

@@ -66,7 +66,6 @@
 
                 <li><a href="/main-login">Расписание</a></li>
                 <li><a href="/meetings">Встречи</a></li>
-                <li><a href="/allEvent">События</a></li>
                 <li><a href="/allFriends">Друзья</a></li>
                 <li><a href="/allUser">Пользователи</a></li>
                 <li class="dropdown">

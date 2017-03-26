@@ -216,8 +216,9 @@ public class MeetingController {
     }
 
     // Редактирование встречи Ajax
-    @RequestMapping(value = "/updateMeetingAJAX", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/updateMeetingAJAX{meetingID}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Response inviteUserAtMeetingWithAJAX(
+                                      @PathVariable("meetingID") Integer meetingID,
                                       @RequestParam("title") String title,
                                       @RequestParam("tag") String tag,
                                       @RequestParam("date_start") String date_start,
@@ -226,7 +227,7 @@ public class MeetingController {
 
         Response response = new Response();
         logger.info("asdasd");
-        Meeting meeting = meetingService.getMeeting(1);
+        Meeting meeting = meetingService.getMeeting(meetingID);
         meeting.setTitle(title);
         meeting.setTag(tag);
         meeting.setDate_start(date_start);
@@ -234,7 +235,7 @@ public class MeetingController {
         meeting.setInfo(info);
         DataObject dataObject = meeting.toDataObject();
         int id = loadingService.updateDataObject(dataObject);
-        doCache.refresh(1);
+        doCache.refresh(meetingID);
 
         // Логирование:
         int idUser = userService.getObjID(userService.getCurrentUsername());

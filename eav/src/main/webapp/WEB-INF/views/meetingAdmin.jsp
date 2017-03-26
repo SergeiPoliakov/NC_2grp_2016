@@ -306,7 +306,7 @@
 
     function callAJAX() {
         $.ajax({
-            url : '/updateMeetingAJAX',
+            url : '/updateMeetingAJAX${meeting.id}',
             type: 'POST',
             dataType: 'json',
             data : {
@@ -419,7 +419,7 @@
         },
         </c:forEach>
         </c:forEach>
-        {id: 'A', group: 0, type: 'background', start: new Date(getDateFromString('${meeting.date_start}')), end: new Date(getDateFromString('${meeting.date_end}'))} // Подсветка времени встречи
+        {id: 'A', group: 0, type: 'background', start: new Date(getDateFromString('${meeting.date_start}')), end: new Date(getDateFromString('${meeting.date_end}')), className: 'negative'} // Подсветка времени встречи
 
     ]);
 

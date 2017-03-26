@@ -46,11 +46,9 @@
                 <label for="remember_me" class="inline">Запомнить</label>
                 <fieldset class="account-action">
                     <input class="btn btn-sm" type="submit" name="submit" value="Войти">
-
                     <a href="addUser">Регистрация</a>
                 </fieldset>
             </form>
-
         </div>
 
     </div>
