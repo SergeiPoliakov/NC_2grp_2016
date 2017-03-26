@@ -89,8 +89,8 @@
 <div class="container top-buffer-20">
     <!-- Информация о пользователе -->
     <div class="row">
-        <div class="col-md-4">
-            <div class="card" style="width: 27rem;">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card">
                 <h4 class="card-title text-center">${user.name} ${user.surname} ${user.middleName}</h4>
                 <div class="card-title text-center">
                     <small class=" text-muted"><span
@@ -100,7 +100,7 @@
                     <img src="${user.picture}"
                          onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
                 </div>
-                <ul class="list-group list-group-my list-group-flush">
+                <ul class="list-group list-group-my">
                     <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
                     <li class="list-group-item">Город: ${user.city}</li>
                     <li class="list-group-item">Пол: ${user.sex}</li>
@@ -119,8 +119,8 @@
         </div>
         -->
         <!-- Список шаблонов задач -->
-        <div class="col-md-4 col-md-offset-4">
-            <div class="card pull-right" style="width: 30rem;">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-md-offset-4 col-lg-3 col-lg-offset-6">
+            <div class="card">
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>
                 </div>
@@ -186,7 +186,7 @@
                     </div>
                     <!-- Основное содержимое модального окна -->
                     <div class="modal-body">
-                        <div class='row '>
+                        <div class='row'>
                             <div class='col-md-6'>
                                 <div class="input-group">
                                     <span class="input-group-addon">Название</span>

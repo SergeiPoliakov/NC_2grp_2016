@@ -37,7 +37,7 @@
 <div class="container top-buffer-20">
 
     <div class="row top-buffer-10">
-        <div class="col-md-3 col-sm-4" id="createMeeting">
+        <div class="col-sm-4 col-md-3" id="createMeeting">
             <div class="card_meetings_list" style="border-style: dashed;border-color: #18bc9c;">
                 <h3 class="card-title text-center">Создать встречу</h3>
                 <div class="hor-align">
@@ -47,7 +47,7 @@
         </div>
 
         <c:forEach items="${meetings}" var="meeting">
-        <div class="col-md-3 col-sm-4" id="meeting">
+        <div class="col-sm-4 col-md-3" id="meeting">
             <div class="card_meetings_list style_prevu_kit_static mCustomScrollbar" data-mcs-theme="minimal-dark">
                 <h3 class="card-title text-center">${meeting.title}</h3>
                 <div class="profile-userbuttons">

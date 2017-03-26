@@ -86,7 +86,9 @@ body, html {
 	border-radius: 0.5rem;	
 }
 
-
+#marginRow{
+	margin-bottom: 4rem;
+}
 
 .card_meetings_list {
     position: relative;
@@ -95,8 +97,8 @@ body, html {
     background-color: #fff;
     border: 2px solid #c8c8c8;
     border-radius: .5rem;
-	min-height: 35rem;
-	max-height: 35rem;
+	min-height: 38rem;
+	max-height: 38rem;
 	overflow: hidden;
 }
 
@@ -110,6 +112,8 @@ body, html {
 }
 .list-group-my{
   margin-bottom: 0px;
+  word-wrap:break-word;
+   white-space: normal;
 }
 .thumbnail-my{
   margin-bottom: 0px;

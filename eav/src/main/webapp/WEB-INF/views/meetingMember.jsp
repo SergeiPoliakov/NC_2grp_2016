@@ -41,8 +41,8 @@
 
     <!-- Информация о встрече -->
     <div class="row">
-        <div class="col-md-6">
-            <div class="card" style="width: 30rem;">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card">
                 <h3 class="card-title text-center">${meeting.title}</h3>
                 <ul class="list-group list-group-my list-group-flush">
                     <li class="list-group-item">Организатор: <a href='/viewProfile/${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>
@@ -57,8 +57,8 @@
             </div>
         </div>
         <!-- ЧАТ -->
-        <div class="col-md-6">
-            <div class="card pull-right" style="width: 30rem;">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-md-offset-4 col-lg-3 col-lg-offset-6">
+            <div class="card">
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Чат</h3>
                 </div>
