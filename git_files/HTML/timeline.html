@@ -245,7 +245,8 @@ $(function() {
     stack: false,
     multiselect: true,
     dataAttributes: 'all',
-    
+    snap: null,
+	tooltipOnItemUpdateTime: true,
 	// Добавление задачи
     onAdd: function (item, callback) {
 		$('#taskName').val("Новая задача");

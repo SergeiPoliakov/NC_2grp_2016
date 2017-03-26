@@ -247,7 +247,7 @@
                     <!-- Футер модального окна -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                        <button type="submit" class="btn btn-primary" id="modalAddButton">Добавить</button>
+                        <button type="button" class="btn btn-primary" id="modalAddButton">Добавить</button>
                     </div>
                 </div>
             </form>
@@ -332,34 +332,60 @@
         itemsAlwaysDraggable: true,
         zoomMin: 60000, // 1 минута
         zoomMax: 157700000000, //5 лет
+        snap: null, // Плавно перемещать элементы
 
         // Добавление задачи
         onAdd: function (item, callback) {
             $('#eventForm').attr('action', '/userAddEvent');
             $('#taskName').val("Новая задача");
             $("#modalAddButton").html('Добавить');
+            $("#taskAddInfo").val("");
             document.getElementById('taskStartTime').value = toLocaleDateTimeString(item.start);
             document.getElementById('taskEndTime').value = toLocaleDateTimeString(item.start);
             $('#taskmodal').modal('show');
             document.getElementById('modalAddButton').onclick = function() {
                 $('#taskmodal').modal('hide');
+                item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
+                item.start = getDateFromString(document.getElementById('taskStartTime').value);
+                item.end = getDateFromString(document.getElementById('taskEndTime').value);
+                item.content = document.getElementById('taskName').value;
+                $('#taskmodal').modal('hide');
                 // Изменение элемента на таймлайне, наверное уже не нужно, т.к. сервер сам перегружает данные, но на всякий пусть останется
-                /*item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
-                 item.start = getDateFromString(document.getElementById('taskStartTime').value);
-                 item.end = getDateFromString(document.getElementById('taskEndTime').value);
-                 item.content = document.getElementById('taskName').value;
-                 $('#taskmodal').modal('hide');
-                 callback(item);
-                 createTooltip();*/
+                $.ajax({
+                    url : '/userAddEventAJAX',
+                    type: 'POST',
+                    dataType: 'json',
+                    data : {
+                        name: item.content,
+                        priority: item.className,
+                        date_begin: toLocaleDateTimeString(item.start),
+                        date_end: toLocaleDateTimeString(item.end),
+                        info: $("#taskAddInfo").val()
+                    },
+                    success: function (data) {
+                        item.id = data.text;
+                        callback(item);
+                        createTooltip();
+                        addInfoArray[data.text] = $("#taskAddInfo").val();
+                    }
+                });
             };
             callback(null);
         },
 
         // Удаление задачи
         onRemove: function (item, callback) {
-            $('#eventForm').attr('action', '/userRemoveEvent/'+item.id);
-            $( "#eventForm" ).submit();
-            callback(item);
+            //$('#eventForm').attr('action', '/userRemoveEvent/'+item.id);
+            //$( "#eventForm" ).submit();
+            $.ajax({
+                url : '/userRemoveEventAJAX/' + item.id,
+                type: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    addInfoArray[item.id] = "";
+                    callback(item);
+                }
+            });
         },
 
         // Обновление задачи
@@ -377,30 +403,52 @@
             document.getElementById('modalAddButton').onclick = function() {
                 $('#taskmodal').modal('hide');
                 // Изменение элемента на таймлайне, наверное уже не нужно, т.к. сервер сам перегружает данные, но на всякий пусть останется
-                /*item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
+                 item.className = $('#taskPriority').val() =='' ? 'Style3' : $('#taskPriority').val();
                  item.start = getDateFromString(document.getElementById('taskStartTime').value);
                  item.end = getDateFromString(document.getElementById('taskEndTime').value);
                  item.content = document.getElementById('taskName').value;
                  $('#taskmodal').modal('hide');
+                $.ajax({
+                    url : '/userChangeEventAJAX/' + item.id,
+                    type: 'POST',
+                    dataType: 'json',
+                    data : {
+                        name: item.content,
+                        priority: item.className,
+                        date_begin: toLocaleDateTimeString(item.start),
+                        date_end: toLocaleDateTimeString(item.end),
+                        info: $("#taskAddInfo").val()
+                    },
+                    success: function (data) {
+                        addInfoArray[item.id] = $("#taskAddInfo").val();
+                        callback(item);
+                        createTooltip();
+                    }
+                });
                  callback(item);
-                 createTooltip();*/
+                 createTooltip();
             };
             callback(null);
         },
 
         // Перемещение задачи
         onMove: function (item, callback) {
-            $('#eventForm').attr('action', '/userChangeEvent/'+item.id);
-            $("#modalAddButton").html('Сохранить');
-            $('#taskStartTime').val(toLocaleDateTimeString(item.start));
-            $('#taskEndTime').val(toLocaleDateTimeString(item.end));
-            $('#taskID').val(item.id);
-            $('#taskName').val(item.content);
-            $('#taskPriority').val(item.className);
-            $('#taskPriority').selectpicker('refresh');
-            $('#taskAddInfo').val(addInfoArray[item.id]);
-            $( "#eventForm" ).submit();
-            callback(item);
+            $.ajax({
+                url : '/userChangeEventAJAX/' + item.id,
+                type: 'POST',
+                dataType: 'json',
+                data : {
+                    name: item.content,
+                    priority: item.className,
+                    date_begin: toLocaleDateTimeString(item.start),
+                    date_end: toLocaleDateTimeString(item.end),
+                    info: addInfoArray[item.id]
+                },
+                success: function (data) {
+                    callback(item);
+                    createTooltip();
+                }
+            });
         }
     };
     // Create a Timeline

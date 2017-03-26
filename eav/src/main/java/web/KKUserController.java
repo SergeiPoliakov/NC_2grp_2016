@@ -13,6 +13,9 @@ import service.statistics.StaticticLogger;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -94,6 +97,76 @@ public class KKUserController {
         return "redirect:/main-login";
     }
 
+    // Добавление через AJAX
+    @RequestMapping(value = "/userAddEventAJAX", method = RequestMethod.POST)
+    public @ResponseBody
+    Response addEventToCurrentUserAJAX(@ModelAttribute("name") String name,
+                                        @ModelAttribute("priority") String priority,
+                                        @ModelAttribute("date_begin") String date_begin,
+                                        @ModelAttribute("date_end") String date_end,
+                                        @ModelAttribute("info") String info
+    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
+
+        Response response = new Response();
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
+
+
+        mapAttr.put(101, date_begin);
+        mapAttr.put(102, date_end);
+
+        mapAttr.put(101, date_begin);
+        mapAttr.put(102, date_end);
+        mapAttr.put(103, "");
+        mapAttr.put(104, info);
+        mapAttr.put(105, priority);
+        Integer host_id =  userService.getObjID(userService.getCurrentUsername());
+        mapAttr.put(141, host_id); // Ссылка на юзера, создавшего событие
+
+        DataObject dataObject = loadingService.createDataObject(name, 1002, mapAttr);
+
+        int id = loadingService.setDataObjectToDB(dataObject);
+
+        // Логируем:
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        logger.add(Log.ADD_EVENT, id, idUser);
+
+        String idstr = Integer.toString(id);
+        response.setText(idstr);
+        return response;
+    }
+
+    // Редактирование события AJAX
+    @RequestMapping(value = "/userChangeEventAJAX/{eventId}", method = RequestMethod.POST)
+    public @ResponseBody
+    Response changeEventAJAX(@PathVariable("eventId") Integer eventId,
+                              @ModelAttribute("name") String name,
+                              @ModelAttribute("priority") String priority,
+                              @ModelAttribute("date_begin") String date_begin,
+                              @ModelAttribute("date_end") String date_end,
+                              @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
+        Response response = new Response();
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
+
+        mapAttr.put(101, date_begin);
+        mapAttr.put(102, date_end);
+        mapAttr.put(103, "");
+        mapAttr.put(104, info);
+        mapAttr.put(105, priority);
+
+        DataObject dataObject = new DataObject(eventId, name, 1002, mapAttr);
+
+        int id = loadingService.updateDataObject(dataObject);
+
+        doCache.refresh(eventId);
+
+        // Логируем:
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        logger.add(Log.EDIT_EVENT, id, idUser);
+
+        return response;
+    }
+
     // Редактирование события
     @RequestMapping(value = "/userChangeEvent/{eventId}", method = RequestMethod.POST)
     public String changeEvent(@PathVariable("eventId") Integer eventId,
@@ -131,6 +204,17 @@ public class KKUserController {
         int idUser = userService.getObjID(userService.getCurrentUsername());
         logger.add(Log.DEL_EVENT, "userRemoveEvent", idUser);
         return "redirect:/main-login";
+    }
+
+    @RequestMapping(value = "/userRemoveEventAJAX/{eventId}", method = RequestMethod.POST)
+    public @ResponseBody
+    Response removeEventAJAX(@PathVariable("eventId") Integer eventId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        Response response = new Response();
+        loadingService.deleteDataObjectById(eventId);
+        // Логируем:
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        logger.add(Log.DEL_EVENT, "userRemoveEvent", idUser);
+        return response;
     }
 
 }

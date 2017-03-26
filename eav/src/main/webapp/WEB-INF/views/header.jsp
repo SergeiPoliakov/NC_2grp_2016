@@ -49,7 +49,7 @@
                     <a class="dropdown-toggle" id="notificationDropa">
                         <i data-count="0" class="glyphicon glyphicon-bell notification-icon" id ="notificationCount"></i>
                     </a>
-                    <div class="dropdown-container" style="margin-top: 1rem;">
+                    <div class="dropdown-container">
                         <div class="dropdown-toolbar">
                             <div class="dropdown-toolbar-actions">
                                 <a href="#">Пометить всё как просмотренное</a>
@@ -71,9 +71,7 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Меню <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li ><a href="/addEvent">Добавить событие</a></li>
                         <li ><a href="/allEvent">Список событий</a></li>
-                        <li><a href="/allFriends">Список друзей</a></li>
                         <li ><a href="/allUser">Все пользователи</a></li>
                     </ul>
                 </li>
