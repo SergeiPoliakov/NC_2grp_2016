@@ -90,7 +90,7 @@
                                         <div class="panel-body">
                                             <div class="text-center">
                                                 <h3><i class="fa fa-lock fa-4x"></i></h3>
-                                                <h2 class="text-center">Хотите изменит пароль?</h2>
+                                                <h2 class="text-center">Хотите изменить пароль?</h2>
                                                 <p>Вы можете изменить ваш пароль здесь.</p>
                                                 <div class="panel-body">
 

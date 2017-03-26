@@ -31,29 +31,70 @@
 <body>
 <div class="container">
 
-    <div class="container">
+
         <div class="page-header">
             <h1>Netcracker <small>Расширенные настройки профиля ${user.email}</small></h1>
         </div>
-        <form action="/generatePhoneCode" method="get">
-            <div class="form-group col-lg-offset-4 col-lg-5">
 
-                <button type="submit" >Отправить код</button>
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <!--  <div class="modal-content"> -->
+                <div class=".col-xs-6 .col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-center">
 
+                                <h3><i class="fa fa-mobile fa-4x"></i></h3>
+                                <h2 class="text-center">Хотите получать уведомления на телефон?</h2>
+                                <p>Вы можете подтвердить ваш номер здесь.</p>
+
+                                <div class="panel-body">
+
+                                    <form action="/generatePhoneCode" method="get">
+                                        <fieldset>
+                                        <div class="form-group">
+                                            <input class="btn btn-lg btn-primary btn-block" id="sendCode" value="Отправить код подтверждения" type="submit">
+                                        </div>
+                                            </fieldset>
+                                    </form>
+
+
+                                    <form class="form" method="post" action="/confirmedPhone">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><i class="glyphicon-phone-alt glyphicon-envelope color-blue"></i></span>
+
+                                                    <input id="emailInput" name="codeUser" id="InputCode" placeholder="Код подтверждения" class="form-control" type="text" >
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <input class="btn btn-lg btn-primary btn-block" id="confirm" value="Подтвердить" type="submit">
+                                            </div>
+                                        </fieldset>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--  </div> -->
             </div>
-        </form>
+        </div>
 
-        <form action="/confirmedPhone" method="post">
-            <div class="form-group  col-lg-offset-4 col-lg-5">
-                <label for="InputCode">Введите код подтверждения</label>
-                <input type="text" class="form-control " name="codeUser" id="InputCode">
-                <button type="submit" >Подтвердить</button>
-            </div>
-        </form>
-    </div>
+
+
+
+
+
 
     <div class="form-group ">
         <a href="/profile"> К обычным настройкам </a>
+    </div>
+
+    <div class="form-group ">
+        <a href="#myModal" data-toggle="modal"> Подтвердить номер телефона </a>
     </div>
 
     <div class="container">
