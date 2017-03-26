@@ -60,6 +60,58 @@
         <form action="/updateSettings/${settings.id}" method="post">
             <!--  Тут будут настройки оповещения для email и телефона с кнопкой Сохранить. Нужен фронтенд. -->
 
+            <!--  ТУТ НАЧАТЬ ВЫПИЛИВАТЬ -->
+            <div class="col-lg-offset-3 col-lg-6">
+                <div class="panel panel-default ">
+                    <div class="panel-heading">Настройки уведомлений</div>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            Отправлять уведомления о новых сообщениях на почту
+                            <div class="material-switch pull-right">
+                                <input id="i1" type="checkbox" name="emailNewMessage"  <c:if test="${settings.emailNewMessage eq true}">checked=checked</c:if> >
+                                <label for="i1" class="label-success"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Отправлять уведомления о новых заявках в друзья на почту
+                            <div class="material-switch pull-right">
+                                <input id="i2" type="checkbox" name="emailNewFriend"  <c:if test="${settings.emailNewFriend eq true}">checked=checked</c:if> >
+                                <label for="i2" class="label-success"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Отправлять уведомления о приглашениях на встречу на почту
+                            <div class="material-switch pull-right">
+                                <input id="i3" type="checkbox" name="emailMeetingInvite" <c:if test="${settings.emailMeetingInvite eq true}">checked=checked</c:if> >
+                                <label for="i3" class="label-success"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Отправлять уведомления о новых сообщениях на телефон
+                            <div class="material-switch pull-right">
+                                <input id="i4" type="checkbox" name="phoneNewMessage"  <c:if test="${settings.phoneNewMessage eq true}">checked=checked</c:if> >
+                                <label for="i4" class="label-success"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Отправлять уведомления о новых заявках в друзья на телефон
+                            <div class="material-switch pull-right">
+                                <input id="i5" type="checkbox" name="phoneNewFriend"  <c:if test="${settings.phoneNewFriend eq true}">checked=checked</c:if> >
+                                <label for="i5" class="label-success"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Отправлять уведомления о приглашениях на встречу на телефон
+                            <div class="material-switch pull-right">
+                                <input id="i6" type="checkbox"  name="phoneMeetingInvite"  <c:if test="${settings.phoneMeetingInvite eq true}">checked=checked</c:if> >
+                                <label for="i6" class="label-success"></label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--  ТУТ ОКОНЧИТЬ ВЫПИЛИВАТЬ -->
+
             <div class="form-group col-lg-offset-4 col-lg-4">
                 <div class="checkbox">
                     <label>

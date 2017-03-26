@@ -17,6 +17,8 @@
 
     <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/header.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/footer.css">
+
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
 
 

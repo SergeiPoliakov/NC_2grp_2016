@@ -7,14 +7,6 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=utf8"
          pageEncoding="utf8" %>
-<html>
-<head>
-
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/footer.css">
-
-</head>
-<body>
-
 
 <footer class="footer">
     <div class="container">
@@ -38,5 +30,3 @@
         </div>
     </div>
 </footer>
-</body>
-</html>

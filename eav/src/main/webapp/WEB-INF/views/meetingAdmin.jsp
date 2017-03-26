@@ -167,24 +167,26 @@
     <div class="row">
         <div class="col-md-12">
             <h4>Участники встречи</h4>
-            <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default timeline-menu-button" id="showTodayButton">Cегодня
-                    </button>
+            <div id ="timelineContainer">
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showTodayButton">Cегодня
+                        </button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showWeekButton">Неделя
+                        </button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showMonthButton">Месяц
+                        </button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showYearButton">Год</button>
+                    </div>
                 </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default timeline-menu-button" id="showWeekButton">Неделя
-                    </button>
-                </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default timeline-menu-button" id="showMonthButton">Месяц
-                    </button>
-                </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default timeline-menu-button" id="showYearButton">Год</button>
-                </div>
+                <div id="visualization"></div>
             </div>
-            <div id="visualization"></div>
         </div>
     </div>
     <!-- Форма для создания новой задачи -->
@@ -210,7 +212,7 @@
                             <div class='col-md-6'>
                                 <div class="input-group">
                                     <div type="text" class="hidden" name="eventId" id="eventId" value="mras"></div>
-                                    <span class="input-group-addon">Приоритет</span>
+                                    <span class="input-group-addon" style="border-top-left-radius:4px;border-bottom-left-radius:4px;">Приоритет</span>
                                     <select id="taskPriority" class="selectpicker form-control" title="Выберите приоритет">
                                         <option style="background: #d9534f; color: #fff;" value="Style1">Высокий</option>
                                         <option style="background: #f0ad4e; color: #fff;" value="Style2">Средний</option>
@@ -225,7 +227,7 @@
                             <div class='col-md-6'>
                                 <div class='input-group date' id='datetimepicker1'>
                                     <span class="input-group-addon">Начало</span>
-                                    <input type='text' class="form-control" id="taskStartTime"/>
+                                    <input type='text' class="form-control" id="taskStartTime" style="font-size: 13px;"/>
                                     <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
@@ -233,8 +235,8 @@
                             </div>
                             <div class='col-md-6'>
                                 <div class='input-group date' id='datetimepicker2'>
-                                    <span class="input-group-addon" >Окончание</span>
-                                    <input type='text' class="form-control" id="taskEndTime"/>
+                                    <span class="input-group-addon">Конец</span>
+                                    <input type='text' class="form-control" id="taskEndTime" style="font-size: 13px;"/>
                                     <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>

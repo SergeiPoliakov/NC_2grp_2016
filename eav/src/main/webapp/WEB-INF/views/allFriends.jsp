@@ -20,19 +20,14 @@
     <%@include file='header.jsp'%>
     <meta charset="UTF-8">
 
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/resources/css/tlmain.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
-
 </head>
 <body>
 <div class="container top-buffer-20">
     <div class="row">
         <c:forEach items="${allObject}" var="object">
             <!-- Карточка пользователя -->
-            <div class="col-md-3 col-sm-4" id="forCloning">
-                <div class="card style_prevu_kit">
+            <div class="col-md-3 col-sm-4">
+                <div class="card style_prevu_kit_static_blue">
                     <h4 class="card-title text-center">${object.surname} ${object.name} ${object.middleName}</h4>
                     <div class="card-title text-center">
                         <small class=" text-muted"><span

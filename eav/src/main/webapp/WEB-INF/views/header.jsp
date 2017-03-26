@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/skywalk-docs.min.css">
     <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-notifications.min.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/footer.css">
 
     <!-- Если будут какие траблы - возможно из за tlmain..css -->
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tlmain.css">
@@ -28,7 +29,7 @@
 <body>
 
 
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-default" role="navigation" style="border-radius: 0px 0px 0px 0px;">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -80,19 +81,15 @@
             </ul>
             <form action="/searchUser" class="navbar-form navbar-left" role="search" method="post">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="name" placeholder="Search">
+                    <input type="text" class="form-control" name="name" placeholder='Поиск'>
                 </div>
-                <button type="submit" class="btn btn-default">Поиск</button>
+                <button type="submit" class="btn btn-success">Поиск</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/allUnconfirmedFriends" id="result_text_friend"></a></li> <!-- AJAX "Друзья: 5" -->
                 <li><a href="/allUnreadMessages" id="result_text_message"></a></li> <!-- AJAX "Сообщения: 10" -->
-                <li>
-                    <p class="navbar-text">Привет, </p>
-                </li>
-
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b> <sec:authentication property="principal.username" /></b> <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b><span class="glyphicon glyphicon-user"></span> <sec:authentication property="principal.username"/></b> <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="/profile">Профиль</a></li>
                         <li><a href="/logout">Выход</a></li>

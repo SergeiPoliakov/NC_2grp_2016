@@ -90,7 +90,7 @@
     <!-- Информация о пользователе -->
     <div class="row">
         <div class="col-md-4">
-            <div class="card" style="width: 30rem;">
+            <div class="card" style="width: 27rem;">
                 <h4 class="card-title text-center">${user.name} ${user.surname} ${user.middleName}</h4>
                 <div class="card-title text-center">
                     <small class=" text-muted"><span
@@ -108,17 +108,18 @@
                 </ul>
             </div>
         </div>
+        <!--
         <div class="col-md-4">
             <div class="card-title text-center">
                 <h4>Дерево событий:</h4>
             </div>
             <div class="card-title text-center">
-                <!-- Дерево задач -->
                 <div class="prokrutka" id="wordtree_basic"></div>
             </div>
         </div>
+        -->
         <!-- Список шаблонов задач -->
-        <div class="col-md-4">
+        <div class="col-md-4 col-md-offset-4">
             <div class="card pull-right" style="width: 30rem;">
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>
@@ -135,29 +136,31 @@
                     <li class="list-group-item list-group-item-info">ДЕВЯТЬ ШАБЛОН</li>
                     <li class="list-group-item list-group-item-warning">ДЕСЯТЬ ШАБЛОН</li>
                 </ul>
-                <button type="button" class="btn btn-primary btn-block" id="templateAddButton">Добавить</button>
+                <button type="button" class="btn btn-success btn-block" id="templateAddButton">Добавить</button>
             </div>
         </div>
     </div>
     <!-- Timeline и кнопки -->
-    <div class="row">
+    <div class="row top-buffer-5">
         <div class="col-md-12">
             <h4>Расписание</h4>
-            <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default timeline-menu-button" id="showTodayButton">Cегодня</button>
+            <div id ="timelineContainer">
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showTodayButton">Сегодня</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showWeekButton">Неделя</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showMonthButton">Месяц</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showYearButton">Год</button>
+                    </div>
                 </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default timeline-menu-button" id="showWeekButton">Неделя</button>
-                </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default timeline-menu-button" id="showMonthButton">Месяц</button>
-                </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default timeline-menu-button" id="showYearButton">Год</button>
-                </div>
+                <div id="visualization"></div>
             </div>
-            <div id="visualization"></div>
         </div>
     </div>
     <!-- Форма вывода полноразмерного изображения -->
@@ -193,11 +196,11 @@
                             <div class='col-md-6'>
                                 <div class="input-group">
                                     <div type="text" class="hidden" name="eventId" id="taskID" value = "eventId"></div>
-                                    <span class="input-group-addon">Приоритет</span>
+                                    <span class="input-group-addon" style="border-top-left-radius:4px;border-bottom-left-radius:4px;">Приоритет</span>
                                     <select type="text" id="taskPriority" name="priority" class="selectpicker form-control" title="Выберите приоритет">
-                                        <option style="background: #d9534f; color: #fff;" value="Style1">Высокий</option>
-                                        <option style="background: #f0ad4e; color: #fff;" value="Style2">Средний</option>
-                                        <option style="background: #5bc0de; color: #fff;" value="Style3" selected>Низкий</option>
+                                        <option style="background: #e74c3c; color: #fff;" value="Style1">Высокий</option>
+                                        <option style="background: #f39c12; color: #fff;" value="Style2">Средний</option>
+                                        <option style="background: #3498db; color: #fff;" value="Style3" selected>Низкий</option>
                                     </select>
                                 </div>
                             </div>
@@ -207,7 +210,7 @@
                             <div class='col-md-6'>
                                 <div class='input-group date' id='datetimepicker1'>
                                     <span class="input-group-addon">Начало</span>
-                                    <input type='text' name="date_begin" class="form-control" id="taskStartTime" />
+                                    <input type='text' name="date_begin" class="form-control" id="taskStartTime" style="font-size: 13px;" />
                                     <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -215,8 +218,8 @@
                             </div>
                             <div class='col-md-6'>
                                 <div class='input-group date' id='datetimepicker2'>
-                                    <span class="input-group-addon">Окончание</span>
-                                    <input type='text' name="date_end" class="form-control" id="taskEndTime" />
+                                    <span class="input-group-addon">Конец</span>
+                                    <input type='text' name="date_end" class="form-control" id="taskEndTime" style="font-size: 13px;" />
                                     <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -254,7 +257,7 @@
 </div>
 <br>
 <br>
-<%@include file='footer.jsp'%>
+
 
 <script type="text/javascript">
     // Поле дополнительная информация eventID : info
@@ -500,26 +503,10 @@
         var lastDay = new Date(currentDate.getFullYear(), 12, 0);
         timeline.setWindow(firstDay, lastDay);
     };
-
-    timeline.on('itemover', function (event, properties) {
-        //logEvent(event, properties);
-    });
-
-    items.on('*', function (event, properties) {
-        logEvent(event, properties);
-    });
-
-    // Запись в лог для отладки
-    function logEvent(event, properties) {
-        var log = document.getElementById('log');
-        var msg = document.createElement('div');
-        msg.innerHTML = 'event=' + JSON.stringify(event) + ', ' +
-            'properties=' + JSON.stringify(properties);
-        log.firstChild ? log.insertBefore(msg, log.firstChild) : log.appendChild(msg);
-    }
     createTooltip();
     // Установка возраста
-    $("#userAge").html('Возраст: ' + declOfNum(getAge(getDateFromString('${user.ageDate}')), ['год', 'года', 'лет']));
+    $("#userAge").html('Возраст: ' + declOfNum(getAge(getDateFromString('${user.ageDate}' + ' 00:00')), ['год', 'года', 'лет']));
 </script>
 </body>
+<%@include file='footer.jsp'%>
 </html>

@@ -33,10 +33,17 @@
 <body>
 
 <div class="container top-buffer-20">
-    <div class="row">
-        <button class="btn btn-success" id="addMeetingButton">Добавить</button>
-    </div>
+
     <div class="row top-buffer-10">
+        <div class="col-md-3 col-sm-4" id="createMeeting">
+            <div class="card_meetings_list" style="border-style: dashed;">
+                <h3 class="card-title text-center">Создать встречу</h3>
+                <div class="hor-align">
+                    <i class="hovicon effect-1 sub-a" id="addMeetingButton"><b class="fa fa-plus"></b></i>
+                </div>
+            </div>
+        </div>
+
         <c:forEach items="${meetings}" var="meeting">
         <div class="col-md-3 col-sm-4" id="meeting">
             <div class="card_meetings_list style_prevu_kit_static">
@@ -87,7 +94,7 @@
                             <div class='col-md-6'>
                                 <div class='input-group date' id='datetimepicker1'>
                                     <span class="input-group-addon">Начало</span>
-                                    <input type='text' name="date_start" class="form-control" id="taskStartTime" />
+                                    <input type='text' name="date_start" class="form-control" id="taskStartTime" style="font-size: 13px;"/>
                                     <span class="input-group-addon">
 										<span class="glyphicon glyphicon-calendar"></span>
 									</span>
@@ -95,8 +102,8 @@
                             </div>
                             <div class='col-md-6'>
                                 <div class='input-group date' id='datetimepicker2'>
-                                    <span class="input-group-addon">Окончание</span>
-                                    <input type='text' name="date_end" class="form-control" id="taskEndTime" />
+                                    <span class="input-group-addon">Конец</span>
+                                    <input type='text' name="date_end" class="form-control" id="taskEndTime" style="font-size: 13px;"/>
                                     <span class="input-group-addon">
 										<span class="glyphicon glyphicon-calendar"></span>
 									</span>
