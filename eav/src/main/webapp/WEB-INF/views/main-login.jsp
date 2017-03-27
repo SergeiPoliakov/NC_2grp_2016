@@ -55,6 +55,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap-select.min.js"> </script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
@@ -177,7 +178,7 @@
     <!-- Форма для создания новой задачи -->
     <div id="taskmodal" class="modal fade">
         <div class="modal-dialog">
-            <form id="eventForm" name="creation" action="/userAddEvent" method="post">
+            <form id="eventForm" name="creation" data-toggle="validator">
                 <div class="modal-content">
                     <!-- Заголовок модального окна -->
                     <div class="modal-header">
@@ -189,14 +190,14 @@
                         <div class='row'>
                             <div class='col-md-6'>
                                 <div class="input-group">
-                                    <span class="input-group-addon">Название</span>
+                                    <label for="taskName" class="control-label">Название:</label>
                                     <input type="text" class="form-control" name="name" id="taskName" placeholder="Введите название задачи">
                                 </div>
                             </div>
                             <div class='col-md-6'>
-                                <div class="input-group">
+                                <div class="input-group" style="width: 1%;display: table-cell;">
                                     <div type="text" class="hidden" name="eventId" id="taskID" value = "eventId"></div>
-                                    <span class="input-group-addon" style="border-top-left-radius:4px;border-bottom-left-radius:4px;">Приоритет</span>
+                                    <label for="taskPriority" class="control-label">Приоритет:</label>
                                     <select type="text" id="taskPriority" name="priority" class="selectpicker form-control" title="Выберите приоритет">
                                         <option style="background: #e74c3c; color: #fff;" value="Style1">Высокий</option>
                                         <option style="background: #f39c12; color: #fff;" value="Style2">Средний</option>
@@ -208,28 +209,28 @@
                         <!-- DateTime Pickers -->
                         <div class='row top-buffer-2'>
                             <div class='col-md-6'>
+                                <label for="taskStartTime" class="control-label">Начало:</label>
                                 <div class='input-group date' id='datetimepicker1'>
-                                    <span class="input-group-addon">Начало</span>
-                                    <input type='text' name="date_begin" class="form-control" id="taskStartTime" style="font-size: 13px;" />
+                                    <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_begin" class="form-control" id="taskStartTime" required/>
                                     <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
                                 </div>
                             </div>
                             <div class='col-md-6'>
+                                <label for="taskEndTime" class="control-label">Окончание:</label>
                                 <div class='input-group date' id='datetimepicker2'>
-                                    <span class="input-group-addon">Конец</span>
-                                    <input type='text' name="date_end" class="form-control" id="taskEndTime" style="font-size: 13px;" />
+                                    <input type='text' name="date_end" class="form-control" id="taskEndTime" required/>
                                     <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="row top-buffer-2">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <div class="input-group-addon textarea-addon">Дополнительная информация</div>
+                                    <label for="taskAddInfo" class="control-label">Дополнительная информация:</label>
                                     <textarea type='text' name="info" class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo"></textarea>
                                 </div>
                             </div>
@@ -333,10 +334,10 @@
         zoomMin: 60000, // 1 минута
         zoomMax: 157700000000, //5 лет
         snap: null, // Плавно перемещать элементы
+        start: new Date(), 
 
         // Добавление задачи
         onAdd: function (item, callback) {
-            $('#eventForm').attr('action', '/userAddEvent');
             $('#taskName').val("Новая задача");
             $("#modalAddButton").html('Добавить');
             $("#taskAddInfo").val("");
@@ -390,7 +391,6 @@
 
         // Обновление задачи
         onUpdate: function (item, callback) {
-            $('#eventForm').attr('action', '/userChangeEvent/'+item.id);
             $("#modalAddButton").html('Сохранить');
             $('#taskStartTime').val(toLocaleDateTimeString(item.start));
             $('#taskEndTime').val(toLocaleDateTimeString(item.end));
@@ -556,5 +556,6 @@
     $("#userAge").html('Возраст: ' + declOfNum(getAge(getDateFromString('${user.ageDate}' + ' 00:00')), ['год', 'года', 'лет']));
 </script>
 </body>
+<div style="margin-bottom: 4rem;"/>
 <%@include file='footer.jsp'%>
 </html>

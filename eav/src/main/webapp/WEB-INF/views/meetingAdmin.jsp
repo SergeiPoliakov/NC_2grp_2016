@@ -273,9 +273,6 @@
     </div>
     <div id="log"></div>
 </div>
-
-<%@include file='footer.jsp'%>
-
 <script type="text/javascript">
     // Переключение между просмотром и редактированием
     $(".hideinput").hide();
@@ -577,5 +574,6 @@
     createTooltip();
 </script>
 </body>
-</body>
+<div style="margin-bottom: 4rem;"/>
+<%@include file='footer.jsp'%>
 </html>

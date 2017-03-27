@@ -98,10 +98,7 @@
 <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/resources/js/common.js"></script>
-
-<%@include file='footer.jsp'%>
-
-
-
 </body>
+<div style="margin-bottom: 8rem;"/>
+<%@include file='footer.jsp'%>
 </html>

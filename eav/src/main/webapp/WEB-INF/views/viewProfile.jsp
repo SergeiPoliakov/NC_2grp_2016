@@ -100,8 +100,6 @@
     <div id="log"></div>
 </div>
 
-<%@include file='footer.jsp'%>
-
 <script type="text/javascript">
     // Поле дополнительная информация eventID : info
     var addInfoArray = {
@@ -271,6 +269,8 @@
     $("#userAge").html('Возраст: ' + declOfNum(getAge(getDateFromString('${dataObject.getValue(5)}')), ['год', 'года', 'лет']));
 </script>
 </body>
+<div style="margin-bottom: 4rem;"/>
+<%@include file='footer.jsp'%>
 </html>
 
 

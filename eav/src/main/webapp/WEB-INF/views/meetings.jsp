@@ -30,6 +30,7 @@
     <script type="text/javascript" src="resources\js\bootstrap.min.js"></script>
     <script type="text/javascript" src="resources\js\bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
 
 </head>
 <body>
@@ -80,13 +81,13 @@
                         <div class='row '>
                             <div class='col-md-6'>
                                 <div class="input-group">
-                                    <span class="input-group-addon">Название</span>
-                                    <input type="text" class="form-control" name="title" id="meetingTitle" placeholder="Введите название задачи">
+                                    <label for="meetingTitle" class="control-label">Название:</label>
+                                    <input type="text" class="form-control" name="title" id="meetingTitle" placeholder="Введите название встречи">
                                 </div>
                             </div>
                             <div class='col-md-6'>
                                 <div class="input-group">
-                                    <span class="input-group-addon">Теги</span>
+                                    <label for="meetingTag" class="control-label">Теги:</label>
                                     <input type="text" class="form-control" name="tag" id="meetingTag" placeholder="Введите теги">
                                 </div>
                             </div>
@@ -94,18 +95,18 @@
                         <!-- DateTime Pickers -->
                         <div class='row top-buffer-2'>
                             <div class='col-md-6'>
+                                <label for="taskStartTime" class="control-label">Начало:</label>
                                 <div class='input-group date' id='datetimepicker1'>
-                                    <span class="input-group-addon">Начало</span>
-                                    <input type='text' name="date_start" class="form-control" id="taskStartTime" style="font-size: 13px;"/>
+                                    <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_start" class="form-control" id="taskStartTime"/>
                                     <span class="input-group-addon">
 										<span class="glyphicon glyphicon-calendar"></span>
 									</span>
                                 </div>
                             </div>
                             <div class='col-md-6'>
+                                <label for="taskEndTime" class="control-label">Окончание:</label>
                                 <div class='input-group date' id='datetimepicker2'>
-                                    <span class="input-group-addon">Конец</span>
-                                    <input type='text' name="date_end" class="form-control" id="taskEndTime" style="font-size: 13px;"/>
+                                    <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_end" class="form-control" id="taskEndTime"/>
                                     <span class="input-group-addon">
 										<span class="glyphicon glyphicon-calendar"></span>
 									</span>
@@ -115,7 +116,7 @@
                         <div class="row top-buffer-2">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <div class="input-group-addon textarea-addon">Дополнительная информация</div>
+                                    <label for="taskAddInfo" class="control-label">Дополнительная информация:</label>
                                     <textarea type='text' name="info" class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo"></textarea>
                                 </div>
                             </div>
@@ -132,8 +133,6 @@
     </div>
 </div>
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/tags.js"></script>
-
-<%@include file='footer.jsp'%>
 
 <script type="text/javascript">
 
@@ -194,4 +193,6 @@
     }
 </script>
 </body>
+<div style="margin-bottom: 4rem;"/>
+<%@include file='footer.jsp'%>
 </html>

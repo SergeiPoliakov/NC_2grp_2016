@@ -55,9 +55,6 @@
         </c:forEach>
     </div>
 </div>
-
-<%@include file='footer.jsp'%>
-
 <script type="text/javascript">
 
     // Преобразовать дату в строку формата DD.MM.YYYY hh:mm
@@ -84,4 +81,6 @@
     }
 </script>
 </body>
+<div style="margin-bottom: 8rem;"/>
+<%@include file='footer.jsp'%>
 </html>

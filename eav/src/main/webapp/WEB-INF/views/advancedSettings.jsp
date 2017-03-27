@@ -215,8 +215,7 @@
     </div>
 
 </div>
-
-<%@include file='footer.jsp'%>
-
 </body>
+<div style="margin-bottom: 8rem;"/>
+<%@include file='footer.jsp'%>
 </html>

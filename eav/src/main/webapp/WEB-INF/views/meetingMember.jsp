@@ -205,7 +205,6 @@
 </div>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/tags.js"></script>
-<%@include file='footer.jsp'%>
 
 <script type="text/javascript">
 
@@ -456,5 +455,6 @@
     createTooltip();
 </script>
 </body>
-</body>
+<div style="margin-bottom: 4rem;"/>
+<%@include file='footer.jsp'%>
 </html>

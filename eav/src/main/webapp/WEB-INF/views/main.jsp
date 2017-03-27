@@ -78,6 +78,7 @@
 
 <input name="animation" type="hidden">
 
+<div style="margin-bottom: 8rem;"/>
 <%@include file='footer.jsp'%>
 
 </body>

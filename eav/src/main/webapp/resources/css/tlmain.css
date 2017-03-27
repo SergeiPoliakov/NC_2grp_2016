@@ -212,7 +212,7 @@ body, html {
   border-radius: 5px;
   color: white;
   background-color: #e74c3c;
-  border-color: darkred;
+  border-color: #ecf0f1;
   opacity: 0.93;
 }
 /*Выделенный красный элемент*/
@@ -226,7 +226,7 @@ body, html {
   border-radius: 5px;
   color: white;
   background-color: #f39c12;
-  border-color: darkred;
+  border-color: #ecf0f1;
   opacity: 0.93;
 }
 /*Выделенный жёлтый элемент*/
@@ -240,7 +240,7 @@ body, html {
   border-radius: 5px;
   color: white;
   background-color: #3498db;
-  border-color: darkred;
+  border-color: #ecf0f1;
   opacity: 0.93;
 }
 /*Выделенный синий элемент*/
