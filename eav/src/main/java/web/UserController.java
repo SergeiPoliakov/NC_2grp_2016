@@ -173,8 +173,8 @@ public class UserController {
         loggerLog.add(Log.PAGE, "main-login", idUser); // Посещение страницы
 
         // 2017-03-23 Просто тест дерева тегов:
-        TagTreeManager ttm = new TagTreeManager();
-        ttm.test3();
+        // TagTreeManager ttm = new TagTreeManager();
+        // ttm.test3();
 
         return "main-login";
     }
