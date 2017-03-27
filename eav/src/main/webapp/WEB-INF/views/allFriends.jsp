@@ -21,7 +21,6 @@
     <meta charset="UTF-8">
     <script type="text/javascript" src="resources\js\jquery-1.9.1.min.js"> </script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 </head>
 <body>
 <div class="container top-buffer-20">

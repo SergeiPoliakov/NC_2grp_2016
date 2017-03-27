@@ -16,7 +16,6 @@
     <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-notifications.min.css">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/footer.css">
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/jquery.mCustomScrollbar.min.css">
 
     <!-- Если будут какие траблы - возможно из за tlmain..css -->
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tlmain.css">
@@ -24,7 +23,6 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/docs.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/header.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 
 </head>
 
@@ -58,7 +56,7 @@
                             </div>
                             <h3 class="dropdown-toolbar-title" id ="notificationSecondCounter">Уведомления (0)</h3>
                         </div><!-- /dropdown-toolbar -->
-                        <ul class="dropdown-menu navi mCustomScrollbar" data-mcs-theme="minimal-dark" id="notificationHolder">
+                        <ul class="dropdown-menu" id="notificationHolder">
                         </ul>
                         <div class="dropdown-footer text-center">
                             <a href="#">Просмотреть все</a>
