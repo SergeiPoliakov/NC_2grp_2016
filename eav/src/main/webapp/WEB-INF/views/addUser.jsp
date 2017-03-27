@@ -25,15 +25,6 @@
 <body>
 
 <%@include file='headerGuest.jsp'%>
-
-<div class="container">
-    <div class="alert alert-success hidden" id="success-alert">
-        <h2>Успех</h2>
-        <div>Ваши данные были успешно отправлены.</div>
-    </div>
-</div>
-
-
 <div class="container">
     <div class="row">
         <div class="col-lg-4 col-lg-offset-4">
@@ -42,53 +33,54 @@
                     <fieldset>
                         <legend>Регистрация</legend>
                         <div class="form-group has-feedback">
-                            <label class="control-label" for="surname">Введите фамилию</label>
-                            <input data-toggle="tooltip" type="text" class="form-control" name="surname" id="surname" placeholder="Фамилия" pattern="[A-Za-zА-яа-яЁё]{3,}" title="Только русские и английские буквы. Не менее 3 символов">
+                            <label class="control-label" for="surname">Фамилия*</label>
+                            <input required data-toggle="tooltip" type="text" class="form-control" name="surname" id="surname" placeholder="Фамилия" pattern="[A-Za-zА-яа-яЁё]{3,}" title="Только русские и английские буквы. Не менее 3 символов">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
 
                         <div class="form-group has-feedback">
-                            <label class="control-label" for="name">Введите Имя</label>
-                            <input data-toggle="tooltip" type="text" class="form-control " name="name" id="name" placeholder="Имя" pattern="[A-Za-zА-яа-яЁё]{3,}" title="Только русские и английские буквы. Не менее 3 символов">
+                            <label class="control-label" for="name">Имя*</label>
+                            <input required data-toggle="tooltip" type="text" class="form-control " name="name" id="name" placeholder="Имя" pattern="[A-Za-zА-яа-яЁё]{3,}" title="Только русские и английские буквы. Не менее 3 символов">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
 
                         <div class="form-group has-feedback">
-                            <label class="control-label" for="middle_name">Введите отчество</label>
+                            <label class="control-label" for="middle_name">Отчество</label>
                             <input data-toggle="tooltip" type="text" class="form-control " name="middle_name" id="middle_name" placeholder="Отчество" pattern="[A-Za-zА-яа-яЁё]{3,}" title="Только русские и английские буквы. Не менее 3 символов">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
 
                         <div class="form-group has-feedback">
-                            <label class="control-label" for="nickname">Введите никнейм</label>
-                            <input data-toggle="tooltip" type="text" class="form-control " name="nickname" id="nickname" placeholder="Никнейм" title="Только буквы и цифры, не менее 3 символов"
+                            <label class="control-label" for="nickname">Никнейм*</label>
+                            <input required data-toggle="tooltip" type="text" class="form-control " name="nickname" id="nickname" placeholder="Никнейм" title="Только буквы и цифры, не менее 3 символов"
                                    pattern="[A-Za-zА-яа-яЁё0-9]{3,}">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
 
                         <div class="form-group has-feedback">
-                            <label class="control-label" for="ageUser">Введите дату рождения</label>
-                            <input data-toggle="tooltip" type="date" class="form-control" name="ageUser" id="ageUser" placeholder="Дата рождения" >
+                            <label class="control-label" for="ageUser">Дата рождения*</label>
+                            <input required data-toggle="tooltip" type="date" class="form-control" name="ageUser" id="ageUser" placeholder="Дата рождения" >
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
 
                         <div class="form-group has-feedback">
-                            <label class="control-label" for="email">Введите email</label>
-                            <input data-toggle="tooltip" type="email" class="form-control" name="email" id="email" placeholder="Email" >
+                            <label class="control-label" for="email">Email*</label>
+                            <input required data-toggle="tooltip" type="email" class="form-control" name="email" id="email" placeholder="Email" >
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
 
                         <div class="form-group has-feedback">
-                            <label class="control-label" for="phone">Введите номер телефона</label>
+                            <label class="control-label" for="phone">Номер телефона</label>
                             <input data-toggle="tooltip" type="text" class="form-control" name="phone" id="phone" placeholder="Телефон" pattern="[1-9]{11}" title="Введите корректный номер телефона">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
 
                         <div class="form-group has-feedback">
-                            <label class="control-label" for="password">Введите пароль</label>
-                            <input data-toggle="tooltip" type="password" class="form-control" name="password" id="password" placeholder="Пароль" >
+                            <label class="control-label" for="password">Пароль*</label>
+                            <input required data-toggle="tooltip" type="password" class="form-control" name="password" id="password" placeholder="Пароль" >
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
+                        <div class="help-block">* отмечены обязательные поля</div>
                         <div class="text-center">
                             <button type="submit"  class="btn btn-success">Зарегистрироваться</button>
                         </div>
