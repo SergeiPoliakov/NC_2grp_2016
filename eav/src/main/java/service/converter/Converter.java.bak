@@ -23,7 +23,6 @@ public class Converter {
     Integer NOTIFICATIONS = 1007;
     Integer LOG = 1008;
     Integer FILE = 1009;
-    Integer TAG = 1010;  // c 700-ми атрибутами
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
@@ -335,28 +334,6 @@ public class Converter {
             if (log.getLinkId() != null) {
                 dataObject.setRefParams(log.getType(), log.getLinkId());
             }
-        }
-        else if (entitie instanceof TagNode) {
-            // Работаем с нодами тега
-            TagNode node = (TagNode) entitie;
-            dataObject.setId(node.getId());
-            dataObject.setObjectTypeId(TAG);
-            dataObject.setName(node.getName());
-            dataObject.setParams(701, String.valueOf(node.getValue()));
-            dataObject.setParams(702, String.valueOf(node.getUsage_count()));
-            if (dataObject.getId()> 90001){
-                dataObject.setRefParams(703, node.getRoot().getId());
-                for (int i = 0; i < node.getParents().size(); i++){
-                    TagNode parent = node.getParents(i);
-                    dataObject.setRefParams(704, parent.getId());
-                }
-                for (int i = 0; i < node.getUsers().size(); i++){
-                    Integer user_id = node.getUsers(i);
-                    dataObject.setRefParams(705, user_id);
-                }
-            }
-
-
         }
         else { // иначе сами не понимаем, что конвертируем
             dataObject = null;

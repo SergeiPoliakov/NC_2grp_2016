@@ -32,7 +32,6 @@ public class DBHelp {
     private final int NOTIFICATION = 1007;
     private final int LOG = 1008;
     private final int FILE = 1009;
-    private final int TAG = 1010;
 
     private final int START_ID_USER = 10_000;
     private final int START_ID_EVENT = 20_000;
@@ -43,8 +42,6 @@ public class DBHelp {
     private final int START_ID_NOTIFICATION = 60_000;
     private final int START_ID_LOG = 70_000;
     private final int START_ID_FILE = 80_000;
-    private final int START_ID_TAG = 90_000;
-
 
     private UserServiceImp userService = new UserServiceImp();
     private int attrId;
@@ -98,10 +95,9 @@ public class DBHelp {
                     } else if (objTypeID == LOG) {
                         objID = START_ID_LOG;
                     } else if (objTypeID == FILE) {
-                        objID = START_ID_FILE; // не обязательно было, но для единообразности
-                    } else if (objTypeID == TAG) {
-                        objID = START_ID_TAG;
-                    } else {
+                        objID = START_ID_FILE;
+                    } // не обязательно было, но для единообразности
+                    else {
                         System.out.println("Генератор id: Задан неизвестный тип объекта! [" + objTypeID + "]");
                         objID = -1;
                         break;
@@ -116,8 +112,6 @@ public class DBHelp {
                         (objTypeID == CALENDAR) & (objID >= START_ID_NOTIFICATION) ||
                         (objTypeID == NOTIFICATION) & (objID >= START_ID_LOG) ||
                         (objTypeID == LOG) & (objID >= START_ID_FILE) ||
-                        (objTypeID == FILE) & (objID >= START_ID_TAG) ||
-                        (objTypeID == TAG) & (objID >= 100_000) ||
                         (objTypeID == MEETING) & (objID >= START_ID_USER)) {
                     System.out.println("Генератор id: Выход за пределы диапазона выделенных IDs! [id=" + objID + "]");
                     objID = -2;
@@ -789,26 +783,7 @@ public class DBHelp {
         TreeMap<String, ArrayList<String>> params = filter.getParams();
 
         // в зависимости от типа фильтра
-        if (filter instanceof TagFilter) {
-            //  начинаем вытаскивать параметры и формировать строку запроса:
-            if (params.get(TagFilter.ALL) != null) { // если надо получить IDs всех нодов тегов,
-                sql += "WHERE ob.OBJECT_TYPE_ID = " + TAG;
-                //System.out.println("Формирую запрос " + sql);
-            } else if (params.get(TagFilter.WITHOUT_ID) != null) { // если надо получить IDs сех тегок, кроме перечисленных,
-                sql += "WHERE ob.OBJECT_TYPE_ID = " + TAG + " AND ob.OBJECT_ID NOT IN (";
-                ArrayList<String> tag_id = params.get(TagFilter.WITHOUT_ID);
-                int i;
-                for (i = 0; i < tag_id.size() - 1; i++) {
-                    sql += tag_id.get(i) + ", ";
-                }
-                sql += "0) ";
-
-            } else {
-                return null; // Иначе не нашли основного фильтра, не сможем составить запрос
-            }
-            sql += "ORDER BY ob.OBJECT_ID";
-
-        } else if (filter instanceof UserFilter) {
+        if (filter instanceof UserFilter) {
             //  начинаем вытаскивать параметры и формировать строку запроса:
             if (params.get(UserFilter.ALL) != null) { // если надо получить IDs всех пользователей,
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + USER;
@@ -1219,134 +1194,6 @@ public class DBHelp {
         String sql = parseGenerate(filter);
         return getListId_SQL_Executor(sql);
     }
-
-
-    //
-    /*...............................................................................................................*/
-    // 2017-03-26 Новый метод выгрузки датаобджектов-ТЕГов в базу (создание DO): (Поскольку надо сначала создать кипой все датаобджекты, а потом уже выставить им ссылки, иначе некуда будет привязываться
-    public void setDataObjectTag(ArrayList<DataObject> newTagList, ArrayList<DataObject> updTagList) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        // 1) Cначала создадим все ноды без ссылок друг на друга:
-        for (int i = 0; i < newTagList.size(); i++) {
-            //
-            DataObject dataObject = newTagList.get(i);
-
-            System.out.println("\n\nДля загрузки в базу пришел новый датаобджект:" +
-                    "\nid = " + dataObject.getId() +
-                    "\ntype = " + dataObject.getObjectTypeId() +
-                    "\nname = " + dataObject.getName() +
-                    "\nparams = " + dataObject.getParams() +
-                    "\nreferences = " + dataObject.getRefParams() +
-                    "");
-
-
-            int id = dataObject.getId();
-            try (Connection Con = getConnection();
-                 PreparedStatement PS = Con.prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?, ?, ?)");
-                 PreparedStatement PS1 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?, ?, ?)");) {
-
-                // A-1 Подготавливаем и заполняем в базе строку таблицы OBJECTS
-
-                System.out.println(">> Новый нод тега с id =" + id);
-                PS.setInt(1, id);
-                PS.setInt(2, dataObject.getObjectTypeId());
-                PS.setString(3, dataObject.getName());
-                PS.executeUpdate();
-
-                // A-2 Подготавливаем и заполняем в базе новые строки таблицы PARAMS
-                // Получаем список параметров:
-
-                while (!dataObject.getParams().isEmpty()) {
-                    Map.Entry<Integer, String> en = dataObject.getParams().pollFirstEntry();
-                    PS1.setInt(1, id);
-                    PS1.setInt(2, en.getKey());
-                    PS1.setString(3, en.getValue());
-                    PS1.addBatch();
-                }
-                PS1.executeBatch();
-            }
-        }
-
-
-        // 2) Затем таким же образом обойдем их и создадим необходимые ссылки
-        for (int i = 0; i < newTagList.size(); i++) {
-
-            DataObject dataObject = newTagList.get(i);
-
-            int id = dataObject.getId();
-            try (Connection Con = getConnection();
-                 PreparedStatement PS2 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");) {
-
-                // A-3 Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
-                // Получаем список параметров:
-                while (!dataObject.getRefParams().isEmpty()) {
-                    Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
-                    ArrayList<Integer> valueList = En.getValue(); // получаем значение
-                    for (Integer value : valueList) {
-                        if (value != null) {
-                            PS2.setInt(1, id);
-                            PS2.setInt(2, En.getKey());
-                            System.out.println("value = " + value);
-                            PS2.setInt(3, value);
-                            PS2.addBatch();
-                        }
-                    }
-                }
-                PS2.executeBatch();
-
-            }
-
-        }
-
-
-        // 3) И, наконец, обойдем все оставшиеся ноды, которые не надо добавлять, им нужно только обновить ссылки и параметры
-        System.out.println("Количество нодов на обновление: " + updTagList.size());
-        System.out.println("Ноды на обновление: " + updTagList);
-        for (int i = 0; i < updTagList.size(); i++) {
-
-            DataObject dataObject = updTagList.get(i);
-
-            int id = dataObject.getId();
-            try (Connection Con = getConnection();
-                 PreparedStatement PS3 = Con.prepareStatement("UPDATE PARAMS SET VALUE = ? WHERE OBJECT_ID = ? AND ATTR_ID = ?");
-                 PreparedStatement PS4 = Con.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?, ?, ?)");) {
-
-
-                // A-2 Подготавливаем и заполняем в базе новые строки таблицы PARAMS
-                // Получаем список параметров:
-
-                while (!dataObject.getParams().isEmpty()) {
-                    Map.Entry<Integer, String> en = dataObject.getParams().pollFirstEntry();
-                    PS3.setString(1, en.getValue());
-                    PS3.setInt(2, id);
-                    PS3.setInt(3, en.getKey());
-                    PS3.addBatch();
-                }
-                PS3.executeBatch();
-
-                // A-3 Подготавливаем и заполняем в базе новые строки таблицы REFERENCES
-                // Получаем список параметров:
-                while (!dataObject.getRefParams().isEmpty()) {
-                    Map.Entry<Integer, ArrayList<Integer>> En = dataObject.getRefParams().pollFirstEntry();
-                    ArrayList<Integer> valueList = En.getValue(); // получаем значение
-                    for (Integer value : valueList) {
-                        if (value != null) {
-                            PS4.setInt(1, id);
-                            PS4.setInt(2, En.getKey());
-                            System.out.println("Обновление value = " + value);
-                            PS4.setInt(3, value);
-                            PS4.addBatch();
-                        }
-                    }
-                }
-                PS4.executeBatch();
-
-            }
-
-        }
-
-
-    }
-
 
     /*...............................................................................................................*/
     // 2017-02-18 Новый метод выгрузки датаобджекта в базу (создание DO): (исправил 2017-03-02)
