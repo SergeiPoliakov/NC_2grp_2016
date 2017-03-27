@@ -90,7 +90,7 @@
 <div class="container top-buffer-20">
     <!-- Информация о пользователе -->
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
             <div class="card">
                 <h4 class="card-title text-center">${user.name} ${user.surname} ${user.middleName}</h4>
                 <div class="card-title text-center">
@@ -120,7 +120,7 @@
         </div>
         -->
         <!-- Список шаблонов задач -->
-        <div class="col-xs-12 col-sm-6 col-md-4 col-md-offset-4 col-lg-3 col-lg-offset-6">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-lg-offset-6">
             <div class="card">
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>

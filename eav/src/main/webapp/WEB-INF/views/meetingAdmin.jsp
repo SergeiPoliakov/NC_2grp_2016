@@ -52,7 +52,7 @@
 
     <!-- Информация о встрече -->
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
             <div class="card">
                 <h3 class="card-title text-center" id="pTitle">${meeting.title}</h3>
                 <ul class="list-group list-group-my list-group-flush" id="meetingInfo">
@@ -69,7 +69,7 @@
                         <p id="pDescription">Описание: ${meeting.info}</p>
                     </div>
                     <div class="list-group-item">
-                        <p id="pTag">Теги: ${meeting.tag}</p>
+                        <p id="pTag" >Теги: ${meeting.tag}</p>
                     </div>
                 </ul>
                 <form id="meetingUpdateForm" name="update" action="/updateMeeting${meeting.id}" method="post" style="margin-bottom: 0px;">
@@ -123,7 +123,7 @@
             </div>
         </div>
         <!-- ЧАТ -->
-        <div class="col-xs-12 col-sm-6 col-md-4 col-md-offset-4 col-lg-3 col-lg-offset-6">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-lg-offset-6">
             <div class="card">
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Чат</h3>
@@ -143,7 +143,7 @@
                         ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ
                     </li>
                 </ul>
-                <form id="messageSend" name="creation" action="/messageSend" method="post">
+                <form id="messageSend" name="creation" action="/messageSend" method="post" style="margin-bottom: 0px;">
                     <div class="input-group">
                         <textarea class="form-control custom-control" rows="2" style="resize:none"
                                   placeholder="Введите сообщение" maxlength="70" id="messageInput"></textarea>
@@ -273,6 +273,7 @@
     </div>
     <div id="log"></div>
 </div>
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/tags.js"></script>
 <script type="text/javascript">
     // Переключение между просмотром и редактированием
     $(".hideinput").hide();

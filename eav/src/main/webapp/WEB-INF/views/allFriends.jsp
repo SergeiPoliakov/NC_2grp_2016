@@ -27,7 +27,7 @@
     <div class="row">
         <c:forEach items="${allObject}" var="object">
             <!-- Карточка пользователя -->
-            <div class="col-md-3 col-sm-4">
+            <div class="col-sm-12 col-md-6 col-lg-3">
                 <div class="card style_prevu_kit_static_blue">
                     <h4 class="card-title text-center">${object.surname} ${object.name} ${object.middleName}</h4>
                     <div class="card-title text-center">

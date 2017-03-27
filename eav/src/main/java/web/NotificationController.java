@@ -115,8 +115,8 @@ public class NotificationController { // Тут вроде логировать 
         notifications.add(not3);
         */
         // Получаем айдищники всех непрочитанных сообщений (приглашения на встречи, новые сообщения, добавленяи в друзья и пр.)
-         ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
-        //ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_USER_WITH_ID, "10003", NotificationFilter.UNSEEN));
+        //ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
+        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_USER_WITH_ID, "10003", NotificationFilter.UNSEEN));
         ArrayList<Notification> notifications = new ArrayList<>();
         for(Integer id : al){
             Notification notification = converter.ToNotification(loadingService.getDataObjectByIdAlternative(id));

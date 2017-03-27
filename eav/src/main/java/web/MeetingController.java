@@ -2,7 +2,7 @@ package web;
 
 import com.google.common.cache.LoadingCache;
 import com.google.gson.Gson;
-import dbHelp.DBHelp;
+import service.converter.Converter;
 import entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +35,7 @@ import java.util.concurrent.ExecutionException;
 public class MeetingController {
     // Собственный внутренний логгер для контроллера
     private StaticticLogger loggerLog = new StaticticLogger();
+    private Converter converter = new Converter();
     private UserServiceImp userService = new UserServiceImp();
 
     Logger logger = LoggerFactory.getLogger(MeetingController.class);
@@ -113,7 +114,7 @@ public class MeetingController {
 
     // Просмотр встречи DO
     @RequestMapping(value = "/meeting{meetingID}", method = RequestMethod.GET)
-    public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
         Meeting meeting = new Meeting();
         try {
             meeting = new Meeting(doCache.get(meetingID));
@@ -125,15 +126,19 @@ public class MeetingController {
         ArrayList<User> organizerFriends = meeting.getOrganizer().getFriends();
         organizerFriends.removeAll(meetingUsers);
         m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
-        if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
-            return "/meetingAdmin";
-        else
-            if (meetingService.isMeetingMember(userService.getObjID(userService.getCurrentUsername()), meeting)) // Страницу запрашивает участник встречи
-                return "/meetingMember";
 
         // Логируем:
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.PAGE, "meeting", idUser);
+
+        DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+        User user = converter.ToUser(dataObject);
+
+        if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
+            return "/meetingAdmin";
+        else if (meeting.getUsers().contains(user)) // Страницу запрашивает участник встречи
+            return "/meetingMember";
+
         return "/main-login";
     }
 
@@ -188,6 +193,31 @@ public class MeetingController {
         // Логирвоание:
         loggerLog.add(Log.SEND_INVITE_MEETING, id);
         return "redirect:/meeting{meetingID}";
+    }
+
+    // Покинуть встречу
+    @RequestMapping(value = "/leaveMeeting{meetingID}", method = RequestMethod.GET)
+    public String leaveMeeting( @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
+
+        Meeting meeting = new Meeting();
+        try {
+            meeting = new Meeting(doCache.get(meetingID));
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+        User user = converter.ToUser(dataObject);
+        meeting.getUsers().remove(user);
+        if (meeting.getOrganizer().equals(user)) { // покидает организатор встречи
+            meeting.setOrganizer(meeting.getUsers().get(0)); // следующий участник становится организатором
+        }
+
+        int id = loadingService.updateDataObject(meeting.toDataObject());
+        doCache.refresh(meetingID);
+
+        // Логирвоание:
+        loggerLog.add(Log.SEND_INVITE_MEETING, id);
+        return "redirect:/meetings";
     }
 
     // Редактирование встречи DO
