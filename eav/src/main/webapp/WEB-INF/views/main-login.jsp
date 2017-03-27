@@ -334,7 +334,7 @@
         zoomMin: 60000, // 1 минута
         zoomMax: 157700000000, //5 лет
         snap: null, // Плавно перемещать элементы
-        start: new Date(), 
+        start: new Date(),
 
         // Добавление задачи
         onAdd: function (item, callback) {

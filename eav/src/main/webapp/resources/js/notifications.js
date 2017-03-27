@@ -60,6 +60,10 @@
 		
 		addNotification(data1);
 		addNotification(data2);
+		addNotification(data2);
+		addNotification(data2);
+		addNotification(data2);
+		addNotification(data2);
 		addNotification(data3);
 		addNotification(data4);
 		addNotification(data1);
