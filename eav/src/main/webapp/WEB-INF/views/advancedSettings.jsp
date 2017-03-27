@@ -32,56 +32,56 @@
 <div class="container">
 
 
-        <div class="page-header">
-            <h1>Netcracker <small>Расширенные настройки профиля ${user.email}</small></h1>
-        </div>
+    <div class="page-header">
+        <h1>Netcracker <small>Расширенные настройки профиля ${user.email}</small></h1>
+    </div>
 
-        <div class="modal fade" id="myModal">
-            <div class="modal-dialog">
-                <!--  <div class="modal-content"> -->
-                <div class=".col-xs-6 .col-md-4">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="text-center">
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <!--  <div class="modal-content"> -->
+            <div class=".col-xs-6 .col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="text-center">
 
-                                <h3><i class="fa fa-mobile fa-4x"></i></h3>
-                                <h2 class="text-center">Хотите получать уведомления на телефон?</h2>
-                                <p>Вы можете подтвердить ваш номер здесь.</p>
+                            <h3><i class="fa fa-mobile fa-4x"></i></h3>
+                            <h2 class="text-center">Хотите получать уведомления на телефон?</h2>
+                            <p>Вы можете подтвердить ваш номер здесь.</p>
 
-                                <div class="panel-body">
+                            <div class="panel-body">
 
-                                    <form action="/generatePhoneCode" method="get">
-                                        <fieldset>
+                                <form action="/generatePhoneCode" method="get">
+                                    <fieldset>
                                         <div class="form-group">
                                             <input class="btn btn-lg btn-primary btn-block" id="sendCode" value="Отправить код подтверждения" type="submit">
                                         </div>
-                                            </fieldset>
-                                    </form>
+                                    </fieldset>
+                                </form>
 
 
-                                    <form class="form" method="post" action="/confirmedPhone">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon"><i class="glyphicon-phone-alt glyphicon-envelope color-blue"></i></span>
+                                <form class="form" method="post" action="/confirmedPhone">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="glyphicon-phone-alt glyphicon-envelope color-blue"></i></span>
 
-                                                    <input id="emailInput" name="codeUser" id="InputCode" placeholder="Код подтверждения" class="form-control" type="text" >
-                                                </div>
+                                                <input id="emailInput" name="codeUser" id="InputCode" placeholder="Код подтверждения" class="form-control" type="text" >
                                             </div>
-                                            <div class="form-group">
-                                                <input class="btn btn-lg btn-primary btn-block" id="confirm" value="Подтвердить" type="submit">
-                                            </div>
-                                        </fieldset>
-                                    </form>
+                                        </div>
+                                        <div class="form-group">
+                                            <input class="btn btn-lg btn-primary btn-block" id="confirm" value="Подтвердить" type="submit">
+                                        </div>
+                                    </fieldset>
+                                </form>
 
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!--  </div> -->
             </div>
+            <!--  </div> -->
         </div>
+    </div>
 
 
 
@@ -101,7 +101,7 @@
         <form action="/updateSettings/${settings.id}" method="post">
             <!--  Тут будут настройки оповещения для email и телефона с кнопкой Сохранить. Нужен фронтенд. -->
 
-            <!--  ТУТ НАЧАТЬ ВЫПИЛИВАТЬ -->
+
             <div class="col-lg-offset-3 col-lg-6">
                 <div class="panel panel-default ">
                     <div class="panel-heading">Настройки уведомлений</div>
@@ -151,46 +151,9 @@
                     </ul>
                 </div>
             </div>
-            <!--  ТУТ ОКОНЧИТЬ ВЫПИЛИВАТЬ -->
+
 
             <div class="form-group col-lg-offset-4 col-lg-4">
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" name="emailNewMessage"  <c:if test="${settings.emailNewMessage eq true}">checked=checked</c:if> >
-                        Отправлять уведомления о новых сообщениях на почту
-                    </label>
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" name="emailNewFriend"  <c:if test="${settings.emailNewFriend eq true}">checked=checked</c:if> >
-                        Отправлять уведомления о новых заявках в друзья на почту
-                    </label>
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" name="emailMeetingInvite" <c:if test="${settings.emailMeetingInvite eq true}">checked=checked</c:if> >
-                        Отправлять уведомления о приглашениях на встречу на почту
-                    </label>
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" name="phoneNewMessage"  <c:if test="${settings.phoneNewMessage eq true}">checked=checked</c:if> >
-                        Отправлять уведомления о новых сообщениях на телефон
-                    </label>
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" name="phoneNewFriend"  <c:if test="${settings.phoneNewFriend eq true}">checked=checked</c:if> >
-                        Отправлять уведомления о новых заявках в друзья на телефон
-                    </label>
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox"  name="phoneMeetingInvite"  <c:if test="${settings.phoneMeetingInvite eq true}">checked=checked</c:if> >
-                        Отправлять уведомления о приглашениях на встречу на телефон
-                    </label>
-                </div>
-
                 <div>
                     <label>Кто может просматривать мой профиль</label>
                     <select name="privateProfile" class="selectpicker show-menu-arrow" data-style="btn-info">
@@ -208,8 +171,8 @@
                         <option <c:if test="${settings.privateMessage  eq 'nobody'}">selected</c:if> value="nobody">Никто</option>
                     </select>
                 </div>
-
             </div>
+
             <button type="submit" class="btn-lg btn-success col-lg-4 col-lg-offset-4">Сохранить</button>
         </form>
     </div>
