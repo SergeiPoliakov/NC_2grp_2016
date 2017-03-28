@@ -17,6 +17,8 @@
 
     <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/header.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/tlmain.css" rel="stylesheet">
+
     <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/footer.css">
 
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
@@ -45,7 +47,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Netcracker</a>
+            <a class="navbar-brand" href="/main">Netcracker</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -61,9 +63,6 @@
                 <button type="submit" class="btn btn-default">Поиск</button>
             </form> -->
             <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <p class="navbar-text">Уже зарегестрированы?</p>
-                </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Войти</b> <span class="caret"></span></a>
                     <ul id="login-dp" class="dropdown-menu">
@@ -71,9 +70,10 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     Войти с помощью
-                                    <div class="social-buttons">
-                                        <a href="#" class="btn btn-fb"><i class="fa fa-facebook"></i> Facebook</a>
-                                        <a href="#" class="btn btn-tw"><i class="fa fa-twitter"></i> Twitter</a>
+                                    <div class="form-group">
+                                        <button class="btn btn-vk btn-block">
+                                            <i class="fa fa-vk fa-2x"></i>
+                                        </button>
                                     </div>
                                     или
                                     <form class="form" role="form" method="post" action="<%=request.getContextPath()%>/j_spring_security_check" accept-charset="UTF-8" id="login-nav">
@@ -89,10 +89,13 @@
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary btn-block">Войти</button>
                                         </div>
-                                        <input id="remember_me"
-                                               name="_spring_security_remember_me"
-                                               type="checkbox"/> <!-- Флажок "запомнить" -->
-                                        <label for="remember_me" class="inline">Запомнить меня</label>
+                                        <div class="form-group">
+                                            Запомнить меня
+                                            <div class="material-switch pull-right">
+                                                <input id="remember_me" type="checkbox" name="_spring_security_remember_me">
+                                                <label for="remember_me" class="label-success"></label>
+                                            </div>
+                                        </div>
                                     </form>
                                 </div>
                                 <div class="bottom text-center">

@@ -56,7 +56,7 @@
                     <a href="/leaveMeeting${meeting.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Покинуть</span></button></a>
                 </div>
                 <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item">Организатор: <a href='/viewProfile/${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>
+                    <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>
                     <li class="list-group-item">Начало: ${meeting.date_start}</li>
                     <li class="list-group-item">Окончание: ${meeting.date_end}</li>
                     <li class="list-group-item">Описание: ${meeting.info}</li>

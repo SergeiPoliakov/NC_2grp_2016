@@ -556,7 +556,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/viewProfile/{id}")
+    @RequestMapping(value = "/user{id}")
     public String viewUser(@PathVariable("id") int userId,
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException, CustomException {
         DataObject dataObject = doCache.get(userId);

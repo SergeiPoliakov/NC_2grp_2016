@@ -21,19 +21,16 @@ body{
 #login-dp .social-buttons{
     margin:12px 0
 }
-#login-dp .social-buttons a{
-    width: 49%;
-}
 #login-dp .form-group {
     margin-bottom: 10px;
 }
-.btn-fb{
+.btn-vk{
     color: #fff;
-    background-color:#3b5998;
+    background-color:#587ea3;
 }
-.btn-fb:hover{
+.btn-vk:hover{
     color: #fff;
-    background-color:#496ebc
+    background-color:#4a6a89
 }
 .btn-tw{
     color: #fff;

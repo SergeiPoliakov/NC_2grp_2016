@@ -33,7 +33,7 @@
     </style>
 </head>
 <body>
-<section class="mbr-section mbr-parallax-background" id="msg-box4-e" style="padding-top: 120px; padding-bottom: 120px;">
+<section class="mbr-section mbr-parallax-background" id="msg-box4-e" style="padding-top: 4rem;">
     <div class="container">
         <div class="row">
             <div class="mbr-table-md-up">

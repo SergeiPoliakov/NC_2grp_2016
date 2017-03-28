@@ -54,7 +54,7 @@
                     <img src="https://fshoke.com/wp-content/uploads/2016/01/Sean-Penn-mixed-with-Leonardo-DiCaprio.jpg" class="img-responsive"  alt='Изображение' >
                 </div>
                 <div class="profile-userbuttons">
-                    <a href="/viewProfile/${user.id}"><button type="button" class="btn btn-primary btn-xs"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>
+                    <a href="/user${user.id}"><button type="button" class="btn btn-primary btn-xs"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>
                     <a href="/sendMessage/${user.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
                     <a href="/deleteFriend/${user.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
                 </div>

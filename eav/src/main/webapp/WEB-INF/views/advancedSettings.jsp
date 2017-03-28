@@ -100,8 +100,6 @@
     <div class="container">
         <form action="/updateSettings/${settings.id}" method="post">
             <!--  Тут будут настройки оповещения для email и телефона с кнопкой Сохранить. Нужен фронтенд. -->
-
-
             <div class="col-lg-offset-3 col-lg-6">
                 <div class="panel panel-default ">
                     <div class="panel-heading">Настройки уведомлений</div>

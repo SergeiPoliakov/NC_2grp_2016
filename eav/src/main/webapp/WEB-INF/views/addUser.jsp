@@ -22,7 +22,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
-    <title>Registration Page</title>
+    <title>Регистрация</title>
 
 </head>
 <body>

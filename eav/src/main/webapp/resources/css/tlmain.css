@@ -7,6 +7,28 @@ body, html {
     margin-left: 5px; 
 }
 
+/*NAVS*/
+
+.nav-tabs > li > a{
+	color: black;
+}
+
+
+.nav-tabs > li.active > a{
+	background-color: rgb(24, 188, 156);
+	color: white;
+}
+
+.nav-tabs > li.active > a:hover{
+	background-color: rgb(24, 188, 156);
+	color: white;
+}
+
+.nav-tabs > li.active > a:focus{
+	background-color: rgb(24, 188, 156);
+	color: white;
+}
+
 /*Modal*/
 /*#taskmodal .modal-dialog  {
 	width: 70rem;
@@ -215,10 +237,11 @@ body, html {
   border-color: #ecf0f1;
   opacity: 0.93;
 }
+
 /*Выделенный красный элемент*/
 .vis-item.vis-selected.Style1{
-  color: white;
-  background-color: #d62c1a;
+	color: white;
+	background-color: #d62c1a;
 }
 /*Стиль 2 (жёлтый элемент)*/
 .vis-item.Style2 {

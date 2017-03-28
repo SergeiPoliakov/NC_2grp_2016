@@ -57,7 +57,7 @@
                 <h3 class="card-title text-center" id="pTitle">${meeting.title}</h3>
                 <ul class="list-group list-group-my list-group-flush" id="meetingInfo">
                     <div class="list-group-item">
-                        <p id="pOrganizer">Организатор: <a href='/viewProfile/${meeting.organizer.id}'>Вы</a></p>
+                        <p id="pOrganizer">Организатор: <a href='/user${meeting.organizer.id}'>Вы</a></p>
                     </div>
                     <div class="list-group-item">
                         <p id="pDate_start">Начало: ${meeting.date_start}</p>
@@ -183,6 +183,9 @@
                     </div>
                     <div class="btn-group" role="group">
                         <button type="button" class="btn btn-default timeline-menu-button" id="showYearButton">Год</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showMeetingButton">Встреча</button>
                     </div>
                 </div>
                 <div id="visualization"></div>
@@ -391,7 +394,7 @@
         <c:forEach items="${meeting.users}" var="user">
         {
             id: ${user.id},
-            content: "<a href='/viewProfile/${user.id}'>${user.name} ${user.middleName} ${user.surname}</a>", 
+            content: "<a href='/user${user.id}'>${user.name} ${user.middleName} ${user.surname}</a>",
         },
         </c:forEach>
         {
@@ -436,6 +439,7 @@
         stack: false,
         multiselect: true,
         dataAttributes: 'all',
+        start: new Date(getDateFromString('${meeting.date_start}')).setHours(0,0,0,0),
 
         // Добавление задачи
         onAdd: function (item, callback) {
@@ -571,6 +575,13 @@
         var firstDay = new Date(currentDate.getFullYear(), 0, 1);
         var lastDay = new Date(currentDate.getFullYear(), 12, 0);
         timeline.setWindow(firstDay, lastDay);
+    };
+
+    // Просмотр встречи
+    document.getElementById('showMeetingButton').onclick = function () {
+        var start = new Date(getDateFromString('${meeting.date_start}'));
+        var end = new Date(getDateFromString('${meeting.date_end}'));
+        timeline.setWindow(start, end);
     };
     createTooltip();
 </script>
