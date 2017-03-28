@@ -6,7 +6,7 @@ import java.util.ArrayList;
  */
 // Класс узла нагруженного дерева тегов (хранит одну букву и кучу ссылок)
 public class TagNode  extends BaseEntitie {
-    public static final int objTypeID = 1010; // Тип сущности
+    public static final Integer objTypeID = 1010; // Тип сущности
 
     private Integer id; // Ключ - это айдишник нода  (выступает в роли ключа)
     private Integer type_id = objTypeID; // Тип сущности
@@ -14,7 +14,7 @@ public class TagNode  extends BaseEntitie {
 
     // парметры с номерами
     private char value; // 701 // Значение (буква)
-    private int usage_count; // 702 // Число использования // Количество использований данного тега (сколько юзеров привесили этот тег) // Если ноль, то это не основной нод, к нему не вешаются юзеры
+    private Integer usage_count; // 702 // Число использования // Количество использований данного тега (сколько юзеров привесили этот тег) // Если ноль, то это не основной нод, к нему не вешаются юзеры
 
 
 
@@ -46,8 +46,20 @@ public class TagNode  extends BaseEntitie {
 
 
     @Override
-    public String toString() { // Приведение к строке в виде {ключ:значение}
-        return "{" + this.id + ":" + this.value + "}";
+    public String toString() {
+        String root_id = "null";
+        if (this.root != null){
+            root_id = "" + this.root.getId();
+        }
+
+        String parents_word = "";
+        for(TagNode pa : parents){
+            parents_word += pa.getId() + ":" + pa.getValue() + " ";
+        }
+
+        return "{id=" + this.id + " ; name=" + this.name + " ; value=" + this.value +
+                " ; root=" + root_id + " ; parents=" + parents_word + " ; users=" +
+                this.users + " ; us_count=" + this.usage_count + "}";
     }
 
     public void addUserId(Integer user_id){
@@ -63,7 +75,7 @@ public class TagNode  extends BaseEntitie {
         */
     }
 
-    public static int getObjTypeID() {
+    public static Integer getObjTypeID() {
         return objTypeID;
     }
 
@@ -157,11 +169,11 @@ public class TagNode  extends BaseEntitie {
         }
     }
 
-    public int getUsage_count() {
+    public Integer getUsage_count() {
         return usage_count;
     }
 
-    public void setUsage_count(int usage_count) {
+    public void setUsage_count(Integer usage_count) {
         this.usage_count = usage_count;
     }
 }

@@ -40,6 +40,7 @@ public class TagTreeManager {
     }
 
     // 1) ОСНОВНОЙ Метод получения всех тегов, содержащих в себе заданный тег // идти по нодам рекурсивно, передавая вниз слово, и конкатенировать его с value текущего нода, пока не достигли конца, а потом помещать в лист
+    // (это надо будет для вывода подсказок в динамическом поиске на страницу):
     public ArrayList<String> getTagWordList(String base_word){
         ArrayList<String> tag_list = null;
         if (print_flag) System.out.println("Составляем спосок дочерних тегов для базового [" + base_word + "]");
@@ -102,7 +103,7 @@ public class TagTreeManager {
         return user_list;
     }
 
-    // 3) ОСНОВНОЙ метод получения ids всех юзеров, у которых есть теги, содерхащие данныйазовый тег:
+    // 3) ОСНОВНОЙ метод получения ids всех юзеров, у которых есть теги, содержащие данный базовый тег:
     public ArrayList<Integer> getUserListWithPartitionTag(String base_word){
         ArrayList<Integer> user_list = null;
         if (print_flag) System.out.println("Составляем спосок юзеров, у которых есть теги, содержащие в себе тег [" + base_word + "]");
@@ -152,7 +153,6 @@ public class TagTreeManager {
     public void addTag1(String word) throws SQLException {
         treeNode.insert(word);
     }
-
 
 
     // сделал - см выше - Метод, получающий всех юзеров, привешенных  именно к конкретному узлу
@@ -252,14 +252,14 @@ public class TagTreeManager {
         */
 
         // А теперь пробуем найти все теги, содержащие данный:
-        ArrayList<String> words = getTagWordList("авт");
+        ArrayList<String> words = getTagWordList("авто");
 
         // А теперь ищем всех юзеров с тегом "авто"
         System.out.println();
         ArrayList<Integer> ul = getUserListWithTag("авто");
         System.out.println();
 
-        // И все юзеров, у которыхеги содержат заданный тег "авто"
+        // И всех юзеров, у которых теги содержат заданный тег "авто"
         System.out.println();
         ArrayList<Integer> ul2 = getUserListWithPartitionTag("авто");
         System.out.println();
@@ -294,8 +294,8 @@ public class TagTreeManager {
         System.out.println("\n!!!!! Получена команда на добавление тега-слово [ав]");
         treeNode.insert("ав");
 
-        System.out.println("\n!!!!! Получена команда на добавление тега-слово [аc]");
-        treeNode.insert("аc", 10001);
-        System.out.println();
+        //System.out.println("\n!!!!! Получена команда на добавление тега-слово [аc]");
+        //treeNode.insert("аc", 10001);
+        //System.out.println();
     }
 }

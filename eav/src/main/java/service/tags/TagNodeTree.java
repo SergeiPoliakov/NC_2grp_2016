@@ -30,7 +30,7 @@ public class TagNodeTree {
 
     // private long height, depth, size; // Служебные поля: высота, глубина и размер дерева
 
-    private static final Integer max_count = 2; // 10 Максимальное количество нодов для хранения в накопителе, при превышении сброс нодов в базу
+    private static final Integer max_count = 50; // 10 Максимальное количество нодов для хранения в накопителе, при превышении сброс нодов в базу
     // Общая очередь новых нодов на всех юзеров
     private static final Queue<TagNode> newTagQueue = new ArrayBlockingQueue<>(max_count + 1); // Очередь новых нодов (их потом надо будет перенести в базу)
     // Общая очередь всех нодов, существующих в базе, но подлежащих обновлению (например, к ним добавили юзера или удалили юзера)
@@ -69,7 +69,7 @@ public class TagNodeTree {
         System.out.println("Список загружаемых из базы нодов :" + tag_node_ids);
         // Получаем список всех датаобджектов узлов тегов:
         //ArrayList<DataObject> tag_node_list = new DBHelp().getListObjectsByListIdAlternative(tag_node_ids); // лучше не так, а в цикле через одиночный метод, тогда все ноды будут точно отсортированы по
-        // айдишнику, поскольку список айди отсортиан по возрастанию, избежим лишней раьоты с поиском
+        // айдишнику, поскольку список айди отсортирован по возрастанию, избежим лишней работы с поиском
         // Получаем список всех датаобджектов узлов тегов:
         ArrayList<DataObject> tag_node_list = new ArrayList<>();
         for(int i = 0; i < tag_node_ids.size(); i++){
@@ -80,11 +80,13 @@ public class TagNodeTree {
         }
 
 
-        // и устанавливаем макимальный номер среди нодов дерева, чтобы потом генератор правильно работал:
+        // и устанавливаем максимальный номер среди нодов дерева, чтобы потом генератор правильно работал:
         max_id = tag_node_ids.get(tag_node_ids.size()-1);
 
         // Первый в списке и есть root_node, его возьмем и в рекурсии будем обходить весь список, развешивая потомков
         this.root = new TagNode(); // Создаем базовый узел
+
+
         createTagNodeTree(tag_node_list, tag_node_ids, root, 0); // рекурсивно строим дерево
 
 
@@ -98,7 +100,7 @@ public class TagNodeTree {
 
         node.setId(tag_node_ids.get(pos));
 
-        System.out.println("К этой позиции добавлен элемент " + tag_node_ids.get(pos));
+        System.out.println("К этой позиции добавлен элемент " + node.getId());
 
 
         node.setName(dataObject.getName());
@@ -156,7 +158,7 @@ public class TagNodeTree {
         }
 
         if (pos == 0) {
-            System.out.println("В дерево добавлен базовый нод тегов: {" + node.getId() + " : " + node.getName() + "}");
+            System.out.println("В дерево добавлен базовый нод тегов: {" + root.getId() + " : " + root.getName() + "}");
         }
         else{
             System.out.println("В дерево добавлен дочерний нод тегов: {" + node.getId() + " : " + node.getName() + "}");
@@ -264,6 +266,8 @@ public class TagNodeTree {
             parent.setId(generateId()); // Генерируем новый айди и вставляем его в потомка
             parent.setName("tag_node_" + parent.getId()); // Устанавливаем имя потомка
             node.setParents(parent); // и добавляем в список потомков текущего узла (родителя)
+            System.out.println("Текущее состояние родителя: " + node);
+            System.out.println("Текущее состояние потомка: " + parent);
 
             try {
                 addToNewTagQueue(parent); // !!!! Также добавляем в очередь на перенос в базу (создание) наследника

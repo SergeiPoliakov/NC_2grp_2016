@@ -689,14 +689,18 @@ public class DBHelp {
             // Обходим всю полученную таблицу и формируем поля датаобджекта
             while (RS.next()) {
                 Integer key = RS.getInt(1); // key
+
+
                 String value = RS.getString(2); // value
                 // Удаление дублирования строк (Вася Вася Вася):
                 value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
+                if (value != null) value = value.trim();
                 Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
                 // System.out.println(key + " : " + value); // для отладки
 
                 if (key == -2) { // Это пришел к нам айдишник
                     dataObject.setId(Integer.parseInt(value));
+                    System.out.println(dataObject.getId());
                 } else if (key == -1) { // Это пришло к нам имя
                     dataObject.setName(value);
                 } else if (key == 0) { // Это пришел к нам тип
@@ -745,6 +749,7 @@ public class DBHelp {
                     String value = RS.getString(2); // value
                     // Удаление дублирования строк (Вася Вася Вася):
                     value = (((value != null) && (value.indexOf('~') > 0)) ? value.substring(0, value.indexOf('~')) : value);
+                    if (value != null) value = value.trim();
                     Integer ref = RS.getInt(3); // ref (reference flag, 0 - not ref, 1 - ref)
                     Integer id = RS.getInt(4); // object id
 

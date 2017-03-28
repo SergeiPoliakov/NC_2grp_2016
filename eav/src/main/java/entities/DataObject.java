@@ -11,8 +11,8 @@ import java.util.TreeMap;
  */
 
 public class DataObject extends BaseEntitie{
-    private Integer id;
-    private Integer objectTypeId;
+    private int id;
+    private int objectTypeId;
     private String name;
     private Object file_body; // 2017-03-06 если же это отображение сущности файла, то держим двоичное тело файла
 
