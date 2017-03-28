@@ -13,18 +13,19 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <%@include file='headerGuest.jsp'%>
+
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-datetimepicker.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/moment-with-locales.min.js"> </script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
     <title>Registration Page</title>
 
 </head>
 <body>
-
-<%@include file='headerGuest.jsp'%>
 <div class="container">
     <div class="row">
         <div class="col-lg-4 col-lg-offset-4">
@@ -59,7 +60,7 @@
 
                         <div class="form-group has-feedback">
                             <label class="control-label" for="ageUser">Дата рождения*</label>
-                            <input required data-toggle="tooltip" type="date" class="form-control" name="ageUser" id="ageUser" placeholder="Дата рождения" >
+                            <input type='text' data-toggle="tooltip" pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" type="date" class="form-control" name="ageUser" id="ageUser" required/>
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
 
@@ -90,12 +91,15 @@
         </div>
     </div>
 </div>
-
-
-
-<script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
-
+<script type="text/javascript">
+    // Modal datetimepickers для создания новой задачи
+    $(function () {
+        $('#ageUser').datetimepicker({
+            viewMode: 'years',
+            locale: 'ru'
+        });
+    });
+</script>
 </body>
 <div style="margin-bottom: 8rem;"/>
 <%@include file='footer.jsp'%>
