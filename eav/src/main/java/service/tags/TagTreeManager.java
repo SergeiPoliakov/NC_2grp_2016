@@ -14,7 +14,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 // Класс-конструктор дерева тегов, тут же все вспомогательные методы работы с тегами (поиск-добавление, поиск юзеров и пр.)
 public class TagTreeManager {
 
-    private static final TagNodeTree treeNode = new TagNodeTree(); // собственно центральное дерево тегов, надо подгружать сюда его из базы
+    private static final TagNodeTree treeNode = TagNodeTree.getInstance(); // собственно центральное дерево тегов, надо подгружать сюда его из базы
     private boolean print_flag = true; // служебный флаг для включения возможности вывода в консоль служебной инфы
 
     // тут надо сделать метод подгрузки из базы тегов и создания полноценного дерева, а еще методы сброса в базу новых тегов
@@ -25,12 +25,6 @@ public class TagTreeManager {
     // потому что сначала будем из базы строить дерево, а потом работать с ним,
     // и в базу уже заносить только изменения, а не все дерево сначала
     // И тут же надо накапливать все логи, а потом при достижении какого-то фиксированного их значения заносить в базу
-
-
-
-
-
-
     // Конструктор:
 
 
@@ -272,7 +266,7 @@ public class TagTreeManager {
         //this.treeNode = new TagNodeTree();
         // Автоматически к нему вешается корневой узел root, к которому можно будет вешать все остальные
         // Пробуем повесить теги:
-        treeNode.insert("а", 10001);
+        treeNode.insert("а", 10003);
 
         // А теперь пробуем найти их:
         TagNode tagNode1 = this.treeNode.find("а");
@@ -299,3 +293,4 @@ public class TagTreeManager {
         //System.out.println();
     }
 }
+

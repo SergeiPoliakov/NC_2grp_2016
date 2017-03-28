@@ -21,22 +21,34 @@ import java.util.concurrent.ArrayBlockingQueue;
 // Класс нагруженного дерева тегов
 public class TagNodeTree {
 
+    private static volatile TagNodeTree instance;
+
     private boolean print_flag = true; // служебный флаг для включения возможности вывода в консоль служебной инфы
     private UserServiceImp userService = new UserServiceImp();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     // Поля и методы самого дерева:
-    private TagNode root; // Ссылка на корневой узел
+    private TagNode root = TagNode.getInstance(); // Ссылка на корневой узел
 
     // private long height, depth, size; // Служебные поля: высота, глубина и размер дерева
 
-    private static final Integer max_count = 50; // 10 Максимальное количество нодов для хранения в накопителе, при превышении сброс нодов в базу
+    private static final Integer max_count = 2; // 10 Максимальное количество нодов для хранения в накопителе, при превышении сброс нодов в базу
     // Общая очередь новых нодов на всех юзеров
     private static final Queue<TagNode> newTagQueue = new ArrayBlockingQueue<>(max_count + 1); // Очередь новых нодов (их потом надо будет перенести в базу)
     // Общая очередь всех нодов, существующих в базе, но подлежащих обновлению (например, к ним добавили юзера или удалили юзера)
     private static final Queue<TagNode> updTagQueue = new ArrayBlockingQueue<>(max_count + 1); // Очередь нодов на обновление (их потом надо будет обновить в базе)
 
     private static Integer max_id = 90_000; // переменная для хранения максимального значения айдишника нода в дереве тегов, чтобы потом можно было при генерации знать, от чего увеличивать id
+
+
+    public static TagNodeTree getInstance() {
+        if (instance == null)
+            synchronized (TagNodeTree.class) {
+                if (instance == null)
+                    instance = new TagNodeTree();
+            }
+        return instance;
+    }
 
     // Конструктор:
     public TagNodeTree() {
@@ -46,7 +58,7 @@ public class TagNodeTree {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            this.root = new TagNode();
+            this.root = TagNode.getInstance();
         }
         //this.height = 0;
         //this.depth = 0;
@@ -84,7 +96,7 @@ public class TagNodeTree {
         max_id = tag_node_ids.get(tag_node_ids.size()-1);
 
         // Первый в списке и есть root_node, его возьмем и в рекурсии будем обходить весь список, развешивая потомков
-        this.root = new TagNode(); // Создаем базовый узел
+        this.root = TagNode.getInstance(); // Создаем базовый узел
 
 
         createTagNodeTree(tag_node_list, tag_node_ids, root, 0); // рекурсивно строим дерево
@@ -131,7 +143,7 @@ public class TagNodeTree {
                     node.setUsage_count(us_count);
                     }*/
 
-                        // node.setUsage_count(Integer.getInteger(param.getValue()));
+                    // node.setUsage_count(Integer.getInteger(param.getValue()));
                     break;
             }
         }
@@ -151,7 +163,7 @@ public class TagNodeTree {
                     break;
                 case (705): // users
                     for (Integer refValue : reference.getValue()) {
-                    node.addUserId(refValue);
+                        node.addUserId(refValue);
                     }
                     break;
             }
@@ -178,7 +190,7 @@ public class TagNodeTree {
 
 
 
-            pos = tag_node_ids.indexOf((Object) parent_id); // Определяем следующую позицию
+            pos = tag_node_ids.indexOf(parent_id); // Определяем следующую позицию
             System.out.println("Следующая позиция: " + pos);
 
             // И рекурсивно заходим в потомка:
@@ -199,6 +211,8 @@ public class TagNodeTree {
         }
         // 2017-03-23 Надо еще автоматически приводить буквы в слове к нижнему регистру!!! Чтобы не дублировать одно и то же в разных регистрах
         tag_word = tag_word.toLowerCase();
+
+        System.out.println("ДО ОТПРАААААААААААВКИ" + this.root);
         insertKey(this.root, tag_word, 0, user_id);
     }
 
@@ -365,7 +379,7 @@ public class TagNodeTree {
         // Иначе же полноценно добавляем:
         newTagQueue.add(tagNode);
 
-            System.out.println(" ::: Добавление нового тега [" + tagNode.getName() + "] в очередь на добавление в базу, размер очереди: " + newTagQueue.size()); // System.out.println(log.getDate() + " ::: Добавление лога в очередь, размер очереди: " + logQueue.size());
+        System.out.println(" ::: Добавление нового тега [" + tagNode.getName() + "] в очередь на добавление в базу, размер очереди: " + newTagQueue.size()); // System.out.println(log.getDate() + " ::: Добавление лога в очередь, размер очереди: " + logQueue.size());
         // Проверяем, не пора ли переносить в базу:
         if (newTagQueue.size() == max_count) {
             loadToDB(); // Пора скидывать в базу
@@ -379,7 +393,7 @@ public class TagNodeTree {
         // Иначе же полноценно добавляем:
         updTagQueue.add(tagNode);
 
-            System.out.println(" ::: Добавление нового тега [" + tagNode.getName() + "] в очередь на обновление в базе, размер очереди: " + updTagQueue.size()); // System.out.println(log.getDate() + " ::: Добавление лога в очередь, размер очереди: " + logQueue.size());
+        System.out.println(" ::: Добавление нового тега [" + tagNode.getName() + "] в очередь на обновление в базе, размер очереди: " + updTagQueue.size()); // System.out.println(log.getDate() + " ::: Добавление лога в очередь, размер очереди: " + logQueue.size());
         // Проверяем, не пора ли переносить в базу:
         if (updTagQueue.size() == max_count) {
             loadToDB(); // Пора скидывать в базу

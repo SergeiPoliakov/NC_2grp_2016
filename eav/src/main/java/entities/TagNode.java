@@ -6,6 +6,9 @@ import java.util.ArrayList;
  */
 // Класс узла нагруженного дерева тегов (хранит одну букву и кучу ссылок)
 public class TagNode  extends BaseEntitie {
+
+    private static volatile TagNode instance;
+
     public static final Integer objTypeID = 1010; // Тип сущности
 
     private Integer id; // Ключ - это айдишник нода  (выступает в роли ключа)
@@ -22,6 +25,16 @@ public class TagNode  extends BaseEntitie {
     private TagNode root; // 703  ссылка на родителя
     private ArrayList<TagNode> parents; // 704 // лист ссылок на другие узлы тегов
     private ArrayList<Integer> users; // 705 // лист ids юзеров, для которых этот нод является конечным для заданного тега
+
+
+    public static TagNode getInstance() {
+        if (instance == null)
+            synchronized (TagNode.class) {
+                if (instance == null)
+                    instance = new TagNode();
+            }
+        return instance;
+    }
 
 
 
@@ -130,7 +143,7 @@ public class TagNode  extends BaseEntitie {
     public TagNode getParents(Integer position) {
         TagNode tagNode = null;
         if(parents.size()> position){ // если позиция в диапазоне размера списка, то
-           tagNode =  parents.get(position); //  вытаскиваем и отдаем
+            tagNode =  parents.get(position); //  вытаскиваем и отдаем
         }
         return tagNode;
     }
@@ -157,14 +170,14 @@ public class TagNode  extends BaseEntitie {
     }
 
     public void setUsers(Integer user) {
-        if(! this.users.contains((Object) user)){
+        if(! this.users.contains(user)){
             this.users.add(user);
         }
     }
 
     public void delUsers(Integer user) {
-        if(this.users.contains((Object) user)){
-            this.users.remove((Object) user);
+        if(this.users.contains(user)){
+            this.users.remove(user);
             this.usage_count--;
         }
     }
