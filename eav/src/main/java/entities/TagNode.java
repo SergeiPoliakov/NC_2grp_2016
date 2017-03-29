@@ -47,6 +47,7 @@ public class TagNode  extends BaseEntitie {
         this.users = new ArrayList<>();
         this.meetings = new ArrayList<>();
         this.usage_count = 0;
+        this.meetings_count = 0;
         this.name = "";
     }
 
@@ -58,6 +59,7 @@ public class TagNode  extends BaseEntitie {
         this.users = new ArrayList<>();
         this.meetings = new ArrayList<>();
         this.usage_count = 0;
+        this.meetings_count = 0;
         this.name = "";
     }
 
@@ -76,7 +78,8 @@ public class TagNode  extends BaseEntitie {
 
         return "{id=" + this.id + " ; name=" + this.name + " ; value=" + this.value +
                 " ; root=" + root_id + " ; parents=" + parents_word + " ; users=" +
-                this.users  + " ; meetings=" + this.meetings + " ; us_count=" + this.usage_count + "}";
+                this.users  + " ; meetings=" + this.meetings + " ; us_count=" +
+                this.usage_count+ " ; met_count=" + this.meetings_count + "}";
     }
 
     public void addUserId(Integer user_id){
@@ -85,11 +88,6 @@ public class TagNode  extends BaseEntitie {
             this.usage_count ++;
             System.out.println("Добавили юзера " + user_id);
         }
-
-        /*this.users.add(user_id);
-        this.usage_count ++;
-        System.out.println("-------------------->>>>> Добавили юзера " + user_id);
-        */
     }
 
     public static Integer getObjTypeID() {
