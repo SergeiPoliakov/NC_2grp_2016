@@ -191,6 +191,7 @@ public class TagNodeTree {
 
     }
 
+    // Работа с юзерами
 
     // 1) Метод добавления тега-слова для переданного юзера в дерево (основной):
     public void insertForUser(String tag_word, Integer user_id) {
@@ -362,7 +363,176 @@ public class TagNodeTree {
         }
     }
 
+    // ------------------------------------------------------------------------
 
+    // 2017-03-29 Работа со встречами
+
+    // 1) Метод добавления тега-слова для переданной встречи в дерево (основной):
+    public void insertForMeeting(String tag_word, Integer meeting_id) {
+        // Сначала дополнительные проверки:
+        if (tag_word == null) {
+            return;
+        }
+        if (tag_word.length() == 0) {
+            return;
+        }
+        // Надо еще автоматически приводить буквы в слове к нижнему регистру!!! Чтобы не дублировать одно и то же в разных регистрах
+        tag_word = tag_word.toLowerCase();
+        System.out.println("До отправки " + this.root);
+        insertKeyForMeeting(this.root, tag_word, 0, meeting_id);
+    }
+
+    // 2) Метод поиска тега-слова в дереве для встречи (основной):
+    public TagNode findForMeeting(String tag_word) {
+        // Сначала дополнительные проверки:
+        if (tag_word == null) {
+            return null;
+        }
+        if (tag_word.length() == 0) {
+            return null;
+        }
+        // Приводим к нижнему регистру
+        tag_word = tag_word.toLowerCase();
+        return findKeyForMeeting(this.root, tag_word, 0);
+    }
+
+    // 3) Метод удаления (удаляются только подписанные встречи из ключевых нодов, а не сами ноды! Иначе все другие встречи потеряют теги)
+    public void deleteMeetingFromTagNode(String tag_word, Integer meeting_id) {
+        // Сначала дополнительные проверки:
+        if (tag_word == null) {
+            return;
+        }
+        if (tag_word.length() == 0) {
+            return;
+        }
+        deleteKeyForMeeting(this.root, tag_word, 0, meeting_id);
+    }
+
+
+    // 1-1) Метод вставки узла в дерево (вспомогательный, рекурсия): // node - текущий узел, слово, номер буквы в слове, айди встречи-хранителя тега
+    private void insertKeyForMeeting(TagNode node, String word, int pos, int id_meeting) {
+        char w = word.charAt(pos);
+        if (print_flag) System.out.println("Находимся в ноде [" + node.getValue() + "]");
+        if (print_flag) System.out.println("Ищу узел для буквы [" + w + "] текущего тега [" + word + "]");
+
+        // А-1 Пробегаем по листу всех дочерних узлов (если это последний, то он будет пуст, не будет ссылок)
+        ArrayList<TagNode> tagNodes = node.getParents();
+        TagNode parent = null;
+
+        for (int i = 0; i < tagNodes.size(); i++) {
+            // и смотрим, есть ли подходящий
+            TagNode candidate = tagNodes.get(i);
+            if (candidate.getValue() == w) {
+                // Если содержит, все хорошо, запоминаем потомка и выходим из цикла:
+                parent = candidate;
+                if (print_flag) System.out.println("Нашли узел для буквы [" + w + "] текущего тега [" + word + "]");
+                break;
+            }
+        }
+
+        // A-2 если в процессе обхода ничего не нашли подходящего, создадим сами
+        if (parent == null){
+            if (print_flag) System.out.println("Не нашли узел для буквы [" + w + "] текущего тега [" + word + "]");
+            if (print_flag) System.out.println("Создаю узел для буквы [" + w + "] текущего тега [" + word + "]");
+            parent = new TagNode(); // Создаем новый узел с установкой ссылки на родителя и установкой значения буквы
+            parent.setRoot(node);
+            parent.setValue(w);
+            parent.setId(generateId()); // Генерируем новый айди и вставляем его в потомка
+            parent.setName("tag_node_" + parent.getId()); // Устанавливаем имя потомка
+            node.setParents(parent); // и добавляем в список потомков текущего узла (родителя)
+            System.out.println("Текущее состояние родителя: " + node);
+            System.out.println("Текущее состояние потомка: " + parent);
+
+            try {
+                addToNewTagQueue(parent); // !!!! Также добавляем в очередь на перенос в базу (создание) наследника
+                addToUpdTagQueue(node); // и обновляем в базе самого родителя (у него добавятся ссылки на потомков)
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // A-3 После этого проверяем, а не дошли ли мы до конца нашего слова-тега? (у нас уже точно есть новый нод, в который мы можем зайти)
+        if (pos == word.length() - 1) {
+            // Если долшли, то добавляем ссылки на встречу в наш parent-узел:
+            parent.addMeetingId(id_meeting); // добавляем встречу
+        }
+        else { // Иначе еще можно продолжать рекурсию, предварительно увеличив номер буквы в теге-слове
+            pos++;
+            insertKeyForMeeting(parent, word, pos, id_meeting); // и заходим в этого потомка
+        }
+
+        // К завершению метода обе очереди будут либо наполнены, либо наполнены и уже перенесены в базу
+    }
+
+    // 2-1) Метод поиска узла в дереве (вспомогательный, рекурсия)
+    private TagNode findKeyForMeeting(TagNode node, String word, int pos) {
+
+        char w = word.charAt(pos);
+        if (print_flag) System.out.println("Ищу узел для буквы [" + w + "] текущего тега [" + word + "]");
+
+        // А-1 Пробегаем по листу всех дочерних узлов (если это последний, то он будет пуст, не будет ссылок)
+        ArrayList<TagNode> tagNodes = node.getParents();
+        TagNode parent = null;
+        int i = 0;
+        for (; i < tagNodes.size(); i++) {
+            // и смотрим, есть ли подходящий
+            TagNode candidate = tagNodes.get(i);
+            if (candidate.getValue() == w) {
+                // Если содержит, все хорошо, запоминаем потомка и выходим из цикла:
+                parent = candidate;
+                if (print_flag) System.out.println("Нашли узел для буквы [" + w + "] текущего тега [" + word + "]");
+                break;
+            }
+        }
+
+        // A-2 если в процессе обхода ничего не нашли подходящего, значит нет такого тега
+        if (parent == null) {
+            if (print_flag) System.out.println("Не найден узел для буквы [" + w + "] текущего тега [" + word + "]. Поиск закончился недачей");
+            return null;
+        }
+
+
+        // A-3 После этого проверяем, а не дошли ли мы до конца нашего слова-тега?
+        if (pos == word.length() - 1) {
+            // Если долшли, то отдаем ссылку на нод, в котором совпала последняя буква
+            if (print_flag) System.out.println("Поиск успешно завершен!");
+            return parent;
+        }
+        else { // Иначе еще можно продолжать рекурсию, предварительно увеличив номер буквы в теге-слове
+            pos++;
+            return findKeyForMeeting(parent, word, pos); // и заходим в этого потомка
+        }
+
+    }
+
+    // 3-1)  Метод удаления тега у встречи (а точнее, удаляется встреча у тега) (вспомогательный)
+    private void deleteKeyForMeeting(TagNode node, String word, int pos, int id_meeting) {
+        if (print_flag)
+            System.out.println("Получил команду на удаление у встречи [" + id_meeting + "] тега с именем [" + word + "]");
+        // Сначала получим этот нод через поиск:
+        TagNode find_node = findKeyForUser(node, word, pos);
+        // А затем, если он не null, зайдем в него и удалим данню встречу (ее айди из листа):
+        if (find_node != null) {
+            if (find_node.getMeetings().contains(id_meeting)) {
+                find_node.delMeetings(id_meeting);
+                try {
+                    addToUpdTagQueue(node); // и обновляем в базе сам нод (у него удаляться ссылки на потомков)
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (print_flag) System.out.println("Удалили у встречи [" + id_meeting + "] тег с именем [" + word + "]");
+            } else {
+                if (print_flag)
+                    System.out.println("Удалять нечего, у встречи [" + id_meeting + "] нет тега с именем [" + word + "]");
+            }
+        } else {
+            if (print_flag) System.out.println("Не нашли в дереве тега с именем [" + word + "]");
+        }
+    }
+
+
+
+    // ------------------------------------------------------------------------
     // Методы обслуживания очередей нодов:
 
     // 4) Добавление нового узла на создание в базе

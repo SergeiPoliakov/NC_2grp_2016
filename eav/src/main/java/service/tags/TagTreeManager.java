@@ -32,6 +32,8 @@ public class TagTreeManager {
 
     }
 
+    // 2017-03-28 Работа с юзерами
+
     // 1) ОСНОВНОЙ Метод получения всех тегов, содержащих в себе заданный тег // идти по нодам рекурсивно, передавая вниз слово, и конкатенировать его с value текущего нода, пока не достигли конца, а потом помещать в лист
     // (это надо будет для вывода подсказок в динамическом поиске на страницу):
     public ArrayList<String> getTagWordListForUser(String base_word){
@@ -137,21 +139,140 @@ public class TagTreeManager {
         }
     }
 
-    // 4) Метод добавления нового тега в дерево
-    public void addTag(String word) throws SQLException {
+    // 4) Метод добавления нового тега в дерево для текущего юзера (юзера текущей сесиии)
+    public void addTagForUser(String word) throws SQLException {
         treeNode.insertForUser(word);
     }
 
-    // 5) Метод добавления нового тега в дерево
-    public void addTag1(String word) throws SQLException {
-        treeNode.insertForUser(word);
+    // 5) Метод добавления нового тега в дерево (ля переданного по айди юзера)
+    public void addTagForUser(String word, Integer user_id) throws SQLException {
+        treeNode.insertForUser(word, user_id);
     }
+
 
 
     // сделал - см выше - Метод, получающий всех юзеров, привешенных  именно к конкретному узлу
 
 
     // сделал - см выше - Метод, получающих всех юзеров НИЖе данного нода
+
+
+    // ----------------------------------------------------------------------------------------------------------
+
+    // 2017-03-29 Работа со встречами
+
+    // 1) ОСНОВНОЙ Метод получения всех тегов, содержащих в себе заданный тег (для встреч)
+    // (это надо будет для вывода подсказок в динамическом поиске на страницу):
+    public ArrayList<String> getTagWordListForMeeting(String base_word){
+        ArrayList<String> tag_list = null;
+        if (print_flag) System.out.println("Составляем список дочерних тегов для базового [" + base_word + "]");
+        // Сначала находим нужный нод, (то есть проходим весь путь до последней буквы)
+        TagNode node = treeNode.findForMeeting(base_word);
+        // Если такое такой тег нашли, можем продолжать
+        if (node != null){
+            tag_list = new ArrayList<>();
+            tagWordListForMeeting(tag_list, node, base_word); // Вызываем вспомогательный рекурсивный метод
+        }
+        // И когда выполнили весь обход, отдаем лист слов-тегов, которые содержат в себе базовый и также являются узловыми
+        return tag_list;
+    }
+
+    // 1-1) Вспомогательный для встреч (обходим все дочерние ноды):
+    private void tagWordListForMeeting(ArrayList<String> tag_list, TagNode node, String word){
+        // Проверяем, есть ли путь дальше вниз по узлам:
+        if (node.getParents().size() < 1){
+            // Если нет пути дальше, выходим из рекурсии, сохряняя предварительно слово в лист (НО только если к нему приписаны встречи, а если удалили, то такого тега как бы нет):
+            if (node.getMeetings().size() > 0){
+                tag_list.add(word);
+                if (print_flag) System.out.println("В список тегов добавлен новый тег [" + word + "]");
+            }
+            return;
+        }
+        // Иначе проверяем, может быть это не конечный, но все равно ключевой нод (если есть привешенные встречи):
+        if (node.getMeetings().size() > 0){
+            // Сохряняя предварительно слово в лист:
+            tag_list.add(word);
+            if (print_flag) System.out.println("В список тегов добавлен новый тег [" + word + "]");
+            // но уже из рекурсии не выходим, а продолжаем ее
+        }
+        // Иначе продолжаем рекурсию, обходим всех наследников:
+        for (int i = 0; i < node.getParents().size(); i++){
+            TagNode parent = node.getParents(i); // вытаскиваем ссылку на наследника,
+            char w = parent.getValue(); // и вытаскиваем значение буквы в узле
+            //word += w; // Конкатенируем со словом
+            tagWordListForMeeting(tag_list, parent, word + w); // и заходим по рекурсии в этого наследника
+        }
+    }
+
+
+    // 2) ОСНОВНОЙ метод получения ids всех встреч, "подписанных" на данный тег
+    public ArrayList<Integer> getMeetingListWithTag(String word){
+        ArrayList<Integer> meeting_list = null;
+        if (print_flag) System.out.println("Составляем список стреч, у которых есть тег [" + word + "]");
+        // Сначала находим нужный нод, (то есть проходим весь путиь до последней буквы)
+        TagNode node = treeNode.findForMeeting(word);
+        // Если такое такой тег нашли, можем продолжать
+        if (node != null){
+            meeting_list = node.getMeetings(); // Просто забираем список ids встреч у нода
+            // Но надо бы еще их и вывести:
+            if (print_flag){
+                for (Integer id : meeting_list){
+                    System.out.println("В список встреч добавлена новая встреча [" + id + "]");
+                }
+            }
+        }
+        // И отдаем лист ids
+        return meeting_list;
+    }
+
+    // 3) ОСНОВНОЙ метод получения ids всех встреч, у которых есть теги, СОДЕРЖАЩИЕ данный базовый тег:
+    public ArrayList<Integer> getMeetingListWithPartitionTag(String base_word){
+        ArrayList<Integer> meeting_list = null;
+        if (print_flag) System.out.println("Составляем список встреч, у которых есть теги, содержащие в себе тег [" + base_word + "]");
+        // Сначала находим нужный нод, (то есть проходим весь путь до последней буквы)
+        TagNode node = treeNode.findForMeeting(base_word);
+        // Если такое такой тег нашли, можем продолжать
+        if (node != null){
+            meeting_list = new ArrayList<>();
+            meetingWordList(meeting_list, node); // Вызываем вспомогательный рекурсивный метод
+        }
+        // И когда выполнили весь обход, отдаем лист слов-тегов, которые содержат в себе базовый и также являются узловыми
+        return meeting_list;
+    }
+
+    // 3-1) Вспомогательный для 3 для встреч (обходим все дочерние ноды):
+    private void meetingWordList(ArrayList<Integer> meeting_list, TagNode node){
+        // Проверяем, может быть это не конечный, но все равно ключевой нод (если есть привешенные встречи):
+        if (node.getMeetings().size() > 0){
+            // Сохряняем предварительно ids встреч в лист:
+            for(int i = 0; i < node.getMeetings().size(); i++){
+                Integer id = node.getMeetings(i);
+                if (!meeting_list.contains((Object) id)){ // Проверяем, вдруг такую встречу мы уже занесли в список, зачем же дублировать. Если ее нет, то вставляем
+                    meeting_list.add(id);
+                    if (print_flag) System.out.println("В список стреч добавлена новая встреча [" + id + "]");
+                }
+            }
+        }
+        // Проверяем, есть ли путь дальше вниз по узлам:
+        if (node.getParents().size() < 1){
+            // Если нет пути дальше, выходим из рекурсии:
+            return;
+        }
+
+        // Иначе продолжаем рекурсию, обходим всех наследников:
+        for (int i = 0; i < node.getParents().size(); i++){
+            TagNode parent = node.getParents(i); // вытаскиваем ссылку на наследника,
+            meetingWordList(meeting_list, parent); // и заходим по рекурсии в этого наследника
+        }
+    }
+
+    // 4) Метод добавления нового тега в дерево (для заданной встречи с айди)
+    public void addTagForMeeting(String word, Integer meeting_id) throws SQLException {
+        treeNode.insertForMeeting(word, meeting_id);
+    }
+
+
+    // ----------------------------------------------------------------------------------------------------------
 
 
     // 2017-03-29 Метод принудительной записи тег-нодов из очередей в базу, нужен, например, для обновления по таймеру
