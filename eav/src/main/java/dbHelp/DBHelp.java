@@ -11,11 +11,14 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
 import java.sql.*;
+import java.text.ParseException;
 import java.util.*;
 
 import service.calendar.CalendarSettings;
+import service.converter.Converter;
 import service.id_filters.*;
 import service.partition_filters.*;
+import service.tags.RootNode;
 
 /**
  * Created by Lawrence on 14.01.2017.
@@ -1229,7 +1232,7 @@ public class DBHelp {
     //
     /*...............................................................................................................*/
     // 2017-03-26 Новый метод выгрузки датаобджектов-ТЕГов в базу (создание DO): (Поскольку надо сначала создать кипой все датаобджекты, а потом уже выставить им ссылки, иначе некуда будет привязываться
-    public void setDataObjectTag(ArrayList<DataObject> newTagList, ArrayList<DataObject> updTagList) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public void setDataObjectTag(ArrayList<DataObject> newTagList, ArrayList<DataObject> updTagList) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
         // 1) Cначала создадим все ноды без ссылок друг на друга:
         for (int i = 0; i < newTagList.size(); i++) {
             //
@@ -1309,6 +1312,8 @@ public class DBHelp {
         for (int i = 0; i < updTagList.size(); i++) {
 
             DataObject dataObject = updTagList.get(i);
+            if (dataObject.getName().equals("ROOT_NODE")) dataObject = (new Converter()).toDO(RootNode.getRoot());
+            System.out.println("Текущий нод на обновление " + dataObject);
 
             int id = dataObject.getId();
             try (Connection Con = getConnection();

@@ -344,15 +344,16 @@ public class Converter {
             dataObject.setName(node.getName());
             dataObject.setParams(701, String.valueOf(node.getValue()));
             dataObject.setParams(702, String.valueOf(node.getUsage_count()));
-            if (dataObject.getId()> 90001){
-                dataObject.setRefParams(703, node.getRoot().getId());
+            if (dataObject.getId()> 90000){
+                if (node.getRoot() != null) dataObject.setRefParams(703, node.getRoot().getId());
+
                 for (int i = 0; i < node.getParents().size(); i++){
                     TagNode parent = node.getParents(i);
-                    dataObject.setRefParams(704, parent.getId());
+                    if (parent != null) dataObject.setRefParams(704, parent.getId());
                 }
                 for (int i = 0; i < node.getUsers().size(); i++){
                     Integer user_id = node.getUsers(i);
-                    dataObject.setRefParams(705, user_id);
+                    if (user_id != null) dataObject.setRefParams(705, user_id);
                 }
             }
 

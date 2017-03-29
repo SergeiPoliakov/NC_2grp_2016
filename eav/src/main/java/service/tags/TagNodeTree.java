@@ -170,7 +170,7 @@ public class TagNodeTree {
         }
 
         if (pos == 0) {
-            System.out.println("В дерево добавлен базовый нод тегов: {" + root.getId() + " : " + root.getName() + "}");
+            System.out.println("В дерево добавлен базовый нод тегов: {" + node.getId() + " : " + node.getName() + "}");
         }
         else{
             System.out.println("В дерево добавлен дочерний нод тегов: {" + node.getId() + " : " + node.getName() + "}");

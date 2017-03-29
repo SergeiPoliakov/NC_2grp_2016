@@ -37,7 +37,7 @@ public class TagTreeManager {
     // (это надо будет для вывода подсказок в динамическом поиске на страницу):
     public ArrayList<String> getTagWordList(String base_word){
         ArrayList<String> tag_list = null;
-        if (print_flag) System.out.println("Составляем спосок дочерних тегов для базового [" + base_word + "]");
+        if (print_flag) System.out.println("Составляем список дочерних тегов для базового [" + base_word + "]");
         // Сначала находим нужный нод, (то есть проходим весь путиь до последней буквы)
         TagNode node = treeNode.find(base_word);
         // Если такое такой тег нашли, можем продолжать
@@ -100,7 +100,7 @@ public class TagTreeManager {
     // 3) ОСНОВНОЙ метод получения ids всех юзеров, у которых есть теги, содержащие данный базовый тег:
     public ArrayList<Integer> getUserListWithPartitionTag(String base_word){
         ArrayList<Integer> user_list = null;
-        if (print_flag) System.out.println("Составляем спосок юзеров, у которых есть теги, содержащие в себе тег [" + base_word + "]");
+        if (print_flag) System.out.println("Составляем список юзеров, у которых есть теги, содержащие в себе тег [" + base_word + "]");
         // Сначала находим нужный нод, (то есть проходим весь путиь до последней буквы)
         TagNode node = treeNode.find(base_word);
         // Если такое такой тег нашли, можем продолжать
@@ -285,7 +285,7 @@ public class TagTreeManager {
     // Тестовый метод:
     public void test3() throws SQLException {
         // Создаем новое центральное дерево:
-        System.out.println("\n!!!!! Получена команда на добавление тега-слово [ав]");
+        System.out.println("\n!!!!! Получена команда на добавление тега-слова [ав]");
         treeNode.insert("ав");
 
         //System.out.println("\n!!!!! Получена команда на добавление тега-слово [аc]");

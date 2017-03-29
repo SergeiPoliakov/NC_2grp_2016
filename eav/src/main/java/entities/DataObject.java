@@ -60,6 +60,19 @@ public class DataObject extends BaseEntitie{
         this.setFile_body(file_body);
     }
 
+    // 2017-03-29
+    @Override
+    public String toString() {
+
+        String refs = "";
+        for (Map.Entry<Integer, ArrayList<Integer>> reference : this.getRefParams().entrySet()) {
+            refs += " refs : " + reference + ";";
+        }
+
+
+        return "{id=" + id + " : name=" + name + refs +"}";
+    }
+
     // 2017-03-06
     public Object getFile_body() {
         return file_body;

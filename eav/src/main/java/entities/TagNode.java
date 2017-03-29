@@ -143,7 +143,7 @@ public class TagNode  extends BaseEntitie {
     public TagNode getParents(Integer position) {
         TagNode tagNode = null;
         if(parents.size()> position){ // если позиция в диапазоне размера списка, то
-            tagNode =  parents.get(position); //  вытаскиваем и отдаем
+           tagNode =  parents.get(position); //  вытаскиваем и отдаем
         }
         return tagNode;
     }
@@ -170,14 +170,14 @@ public class TagNode  extends BaseEntitie {
     }
 
     public void setUsers(Integer user) {
-        if(! this.users.contains(user)){
+        if(! this.users.contains((Object) user)){
             this.users.add(user);
         }
     }
 
     public void delUsers(Integer user) {
-        if(this.users.contains(user)){
-            this.users.remove(user);
+        if(this.users.contains((Object) user)){
+            this.users.remove((Object) user);
             this.usage_count--;
         }
     }
