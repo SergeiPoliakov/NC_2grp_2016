@@ -421,7 +421,11 @@ public class UserController {
         try {
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
             User user = converter.ToUser(dataObject);
+            DataObject dataObjectSettings = doCache.get(user.getSettingsUD());
+            Settings settings = converter.ToSettings(dataObjectSettings);
             m.addAttribute(user);
+            m.addAttribute("settings", settings);
+
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
@@ -444,7 +448,7 @@ public class UserController {
          //sd.getBalance();
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.EDIT_SETTINGS, "generatePhoneCode", idUser); // Изменение настроек
-        return "redirect:/advancedSettings";
+        return "redirect:/profile";
     }
 
     @RequestMapping(value = "/confirmedPhone", method = RequestMethod.POST)
@@ -457,10 +461,10 @@ public class UserController {
             String confirmedPhone = "true";
             dataObject.setValue(17, confirmedPhone);
             loadingService.updateDataObject(dataObject);
-            return "redirect:/advancedSettings";
+            return "redirect:/profile";
         } else System.out.println("Неверный код подтверждения!");
 
-        return "redirect:/advancedSettings";
+        return "redirect:/profile";
     }
 
 
@@ -650,21 +654,6 @@ public class UserController {
         return "meeting";
     }
 
-    @RequestMapping(value = "/advancedSettings", method = RequestMethod.GET)
-    public String getAdvancedSettingsPage(ModelMap m)  {
-        try {
-            DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
-            User user = converter.ToUser(dataObject);
-            DataObject dataObjectSettings = doCache.get(user.getSettingsUD());
-            Settings settings = converter.ToSettings(dataObjectSettings);
-            m.addAttribute(user);
-            m.addAttribute("settings", settings);
-        } catch (ExecutionException | SQLException e) {
-            e.printStackTrace();
-        }
-        return "/advancedSettings";
-    }
-
     @RequestMapping(value = "/updateSettings/{settingsID}", method = RequestMethod.POST)
     public String updateSettings(HttpServletRequest request,
                                  HttpServletResponse res,
@@ -694,8 +683,8 @@ public class UserController {
         loadingService.updateDataObject(dataObject);
         doCache.invalidate(dataObject.getId());
         int idUser = userService.getObjID(userService.getCurrentUsername());
-        loggerLog.add(Log.PAGE, "advancedSettings", idUser); // Посещение страницы
-        return "redirect:/advancedSettings";
+        loggerLog.add(Log.PAGE, "profile", idUser); // Посещение страницы
+        return "redirect:/profile";
     }
 
     //Сброс пароля

@@ -141,48 +141,11 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="form-group ">
-                            <a href="#myModal" data-toggle="modal"> Изменить пароль </a>
-                        </div>
-                        <div class="modal fade" id="myModal">
-                            <div class="modal-dialog">
-                                <!--  <div class="modal-content"> -->
-                                <div class=".col-xs-6 .col-md-4">
-                                    <div class="panel panel-default">
-                                        <div class="panel-body">
-                                            <div class="text-center">
-                                                <h3><i class="fa fa-lock fa-4x"></i></h3>
-                                                <h2 class="text-center">Хотите изменить пароль?</h2>
-                                                <p>Вы можете изменить ваш пароль здесь.</p>
-                                                <div class="panel-body">
-                                                    <form method="post" id="passwordForm" action="/changePassword">
-                                                        <input type="password" class="input-lg form-control" name="password1" id="password1" placeholder="New Password" autocomplete="off">
-                                                        <div class="row">
-                                                            <div class="col-sm-6">
-                                                                <span id="8char" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Не менее 8 символов<br>
-                                                                <span id="ucase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна заглавная буква
-                                                            </div>
-                                                            <div class="col-sm-6">
-                                                                <span id="lcase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна строчная буква<br>
-                                                                <span id="num" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна цифра
-                                                            </div>
-                                                        </div>
-                                                        <input type="password" class="input-lg form-control" name="password2" id="password2" placeholder="Repeat Password" autocomplete="off">
-                                                        <div class="row">
-                                                            <div class="col-sm-12">
-                                                                <span id="pwmatch" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Пароли совпадают
-                                                            </div>
-                                                        </div>
-                                                        <input type="submit" class="col-xs-12 btn btn-primary btn-load btn-lg" data-loading-text="Changing Password..." value="Change Password">
-                                                    </form>
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+
+
+
                         <div class="form-group ">
                             <a href="/advancedSettings"> Расширенные настройки </a>
                         </div>
@@ -281,6 +244,102 @@
                 <h3>Безопасность</h3>
                 <div class="well bs-component">
                     <p>Смена пароля, подтверждение телефона и т.д.</p>
+                    <div class="form-group ">
+                        <a href="#myModalPassword" data-toggle="modal"> Изменить пароль </a>
+                    </div>
+                    <div class="form-group ">
+                        <a href="#myModalPhone" data-toggle="modal"> Подтвердить номер телефона </a>
+                    </div>
+
+
+                    <div class="modal fade" id="myModalPassword">
+                        <div class="modal-dialog">
+                            <!--  <div class="modal-content"> -->
+                            <div class=".col-xs-6 .col-md-4">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="text-center">
+                                            <h3><i class="fa fa-lock fa-4x"></i></h3>
+                                            <h2 class="text-center">Хотите изменить пароль?</h2>
+                                            <p>Вы можете изменить ваш пароль здесь.</p>
+                                            <div class="panel-body">
+                                                <form method="post" id="passwordForm" action="/changePassword">
+                                                    <input type="password" class="input-lg form-control" name="password1" id="password1" placeholder="New Password" autocomplete="off">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <span id="8char" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Не менее 8 символов<br>
+                                                            <span id="ucase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна заглавная буква
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <span id="lcase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна строчная буква<br>
+                                                            <span id="num" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна цифра
+                                                        </div>
+                                                    </div>
+                                                    <input type="password" class="input-lg form-control" name="password2" id="password2" placeholder="Repeat Password" autocomplete="off">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <span id="pwmatch" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Пароли совпадают
+                                                        </div>
+                                                    </div>
+                                                    <input type="submit" class="col-xs-12 btn btn-primary btn-load btn-lg" data-loading-text="Changing Password..." value="Change Password">
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="modal fade" id="myModalPhone">
+                        <div class="modal-dialog">
+                            <!--  <div class="modal-content"> -->
+                            <div class=".col-xs-6 .col-md-4">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="text-center">
+
+                                            <h3><i class="fa fa-mobile fa-4x"></i></h3>
+                                            <h2 class="text-center">Хотите получать уведомления на телефон?</h2>
+                                            <p>Вы можете подтвердить ваш номер здесь.</p>
+
+                                            <div class="panel-body">
+
+                                                <form action="/generatePhoneCode" method="get">
+                                                    <fieldset>
+                                                        <div class="form-group">
+                                                            <input class="btn btn-lg btn-primary btn-block" id="sendCode" value="Отправить код подтверждения" type="submit">
+                                                        </div>
+                                                    </fieldset>
+                                                </form>
+
+
+                                                <form class="form" method="post" action="/confirmedPhone">
+                                                    <fieldset>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><i class="glyphicon-phone-alt glyphicon-envelope color-blue"></i></span>
+
+                                                                <input id="emailInput" name="codeUser" id="InputCode" placeholder="Код подтверждения" class="form-control" type="text" >
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="btn btn-lg btn-primary btn-block" id="confirm" value="Подтвердить" type="submit">
+                                                        </div>
+                                                    </fieldset>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--  </div> -->
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
