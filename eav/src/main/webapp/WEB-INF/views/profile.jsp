@@ -283,35 +283,37 @@
                             <div class=".col-xs-6 .col-md-4">
                                 <div class="panel panel-default">
                                     <div class="panel-body">
-                                        <div class="text-center">
-                                            <h3><i class="fa fa-lock fa-4x"></i></h3>
-                                            <h2 class="text-center">Хотите изменить пароль?</h2>
-                                            <p>Вы можете изменить ваш пароль здесь.</p>
-                                            <div class="panel-body">
-                                                <form method="post" id="passwordForm" action="/changePassword">
-                                                    <input type="password" class="input-lg form-control" name="password1" id="password1" placeholder="New Password" autocomplete="off">
-                                                    <div class="row">
-                                                        <div class="col-sm-6">
-                                                            <span id="8char" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Не менее 8 символов<br>
-                                                            <span id="ucase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна заглавная буква
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <span id="lcase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна строчная буква<br>
-                                                            <span id="num" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна цифра
-                                                        </div>
-                                                    </div>
-                                                    <input type="password" class="input-lg form-control" name="password2" id="password2" placeholder="Repeat Password" autocomplete="off">
-                                                    <div class="row">
-                                                        <div class="col-sm-12">
-                                                            <span id="pwmatch" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Пароли совпадают
-                                                        </div>
-                                                    </div>
-                                                    <input type="submit" class="col-xs-12 btn btn-primary btn-load btn-lg" data-loading-text="Changing Password..." value="Change Password">
-                                                </form>
-
-                                            </div>
-                                        </div>
-                                    </div>
+										<form method="post" id="passwordForm" action="/changePassword">
+											<input type="password" class="input-lg form-control" name="password1" id="password1" placeholder="New Password" autocomplete="off">
+											<div class="row" style="margin-top:1rem;">
+												<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
+													<label>
+														<span id="8char" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Не менее 8 символов
+													</label>
+													<label>
+														<span id="ucase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна заглавная буква
+													</label>
+												</div>
+												<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-left">
+													<label>
+														<span id="lcase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна строчная буква<br>
+													</label>
+													<label>
+														<span id="num" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Одна цифра
+													</label>
+												</div>
+											</div>
+											<input type="password" class="input-lg form-control" name="password2" id="password2" placeholder="Повторите пароль" autocomplete="off">
+											<div class="row" style="margin-top:1rem;">
+												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+													<span id="pwmatch" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Пароли совпадают
+												</div>
+											</div>
+											<div style="margin-top:1rem;">
+												<input type="submit" class="col-xs-12 btn btn-primary btn-load btn-lg" data-loading-text="Изменение пароля..." value="Изменять пароль">
+											</div>
+										</form>
+									</div>
                                 </div>
                             </div>
                         </div>
