@@ -2,7 +2,6 @@ package service.tags;
 
 import dbHelp.DBHelp;
 import entities.DataObject;
-import entities.Event;
 import entities.TagNode;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
@@ -63,9 +62,6 @@ public class TagNodeTree {
         } finally {
             this.root = TagNode.getInstance();
         }
-        //this.height = 0;
-        //this.depth = 0;
-        //this.size = 0;
     }
 
     // Метод-генератор нового айди для нвоого нода:
@@ -129,24 +125,12 @@ public class TagNodeTree {
             switch (param.getKey()){
                 case (701): // 701 // Значение (буква)
                     if (pos > 0) node.setValue(param.getValue().charAt(0));
-                   /* {
-                        //
-                        String tmp = param.getValue();
-                        char [] chars = tmp.toCharArray();
-                        node.setValue(chars[0]);
-                        System.out.println("Текущая буква нода: " + node.getValue());
-                    }*/
-                    // node.setValue(param.getValue().charAt(0));
                     break;
-                case (702): // 702 // Число использования
+                case (702): // 702 // Число использования (количество юзеров)
                     if (pos > 0) node.setUsage_count(Integer.parseInt(param.getValue()));
-                    /*
-                    {
-                    int us_count = Integer.parseInt(param.getValue());
-                    node.setUsage_count(us_count);
-                    }*/
-
-                    // node.setUsage_count(Integer.getInteger(param.getValue()));
+                    break;
+                case (707): // 707 // Число использования 2 (количество привешенных встреч)
+                    if (pos > 0) node.setMeetings_count(Integer.parseInt(param.getValue()));
                     break;
             }
         }
@@ -167,6 +151,11 @@ public class TagNodeTree {
                 case (705): // users
                     for (Integer refValue : reference.getValue()) {
                         node.addUserId(refValue);
+                    }
+                    break;
+                case (706): // meetings
+                    for (Integer refValue : reference.getValue()) {
+                        node.addMeetingId(refValue);
                     }
                     break;
             }
@@ -204,7 +193,7 @@ public class TagNodeTree {
 
 
     // 1) Метод добавления тега-слова для переданного юзера в дерево (основной):
-    public void insert(String tag_word, Integer user_id) {
+    public void insertForUser(String tag_word, Integer user_id) {
         // Сначала дополнительные проверки:
         if (tag_word == null) {
             return;
@@ -216,17 +205,17 @@ public class TagNodeTree {
         tag_word = tag_word.toLowerCase();
 
         System.out.println("ДО ОТПРАААААААААААВКИ" + this.root);
-        insertKey(this.root, tag_word, 0, user_id);
+        insertKeyForUser(this.root, tag_word, 0, user_id);
     }
 
     // 1a) Метод добавления тега-слова для текущего юзера в дерево (основной):
-    public void insert(String tag_word) throws SQLException {
+    public void insertForUser(String tag_word) throws SQLException {
         Integer user_id = userService.getObjID(userService.getCurrentUsername());
-        insert(tag_word, user_id);
+        insertForUser(tag_word, user_id);
     }
 
     // 2) Метод поиска тега-слова в дереве (основной):
-    public TagNode find(String tag_word) {
+    public TagNode findForUser(String tag_word) {
         // Сначала дополнительные проверки:
         if (tag_word == null) {
             return null;
@@ -236,7 +225,7 @@ public class TagNodeTree {
         }
         // 2017-03-23 Надо еще автоматически приводить буквы в слове к нижнему регистру!!! Чтобы не дублировать одно и то же в разных регистрах
         tag_word = tag_word.toLowerCase();
-        return findKey(this.root, tag_word, 0);
+        return findKeyForUser(this.root, tag_word, 0);
     }
 
     // 3) Метод удаления (удаляются только подписанные юзеры из ключевых нодов, а не сами ноды! Иначе все другие юзеры потеряют теги)
@@ -248,12 +237,12 @@ public class TagNodeTree {
         if (tag_word.length() == 0) {
             return;
         }
-        deleteKey(this.root, tag_word, 0, user_id);
+        deleteKeyForUser(this.root, tag_word, 0, user_id);
     }
 
 
     // 1-1) Метод вставки узла в дерево (вспомогательный, рекурсия): // node - текущий узел, слово, номер буквы в слове, айди юзера-хранителя тега
-    private void insertKey(TagNode node, String word, int pos, int id_user) {
+    private void insertKeyForUser(TagNode node, String word, int pos, int id_user) {
         char w = word.charAt(pos);
         if (print_flag) System.out.println("Находимся в ноде [" + node.getValue() + "]");
         if (print_flag) System.out.println("Ищу узел для буквы [" + w + "] текущего тега [" + word + "]");
@@ -301,14 +290,14 @@ public class TagNodeTree {
         }
         else { // Иначе еще можно продолжать рекурсию, предварительно увеличив номер буквы в теге-слове
             pos++;
-            insertKey(parent, word, pos, id_user); // и заходим в этого потомка
+            insertKeyForUser(parent, word, pos, id_user); // и заходим в этого потомка
         }
 
         // К завершению метода обе очереди будут либо наполнены, либо наполнены и уже перенесены в базу
     }
 
     // 2-1) Метод поиска узла в дереве (вспомогательный, рекурсия)
-    private TagNode findKey(TagNode node, String word, int pos) {
+    private TagNode findKeyForUser(TagNode node, String word, int pos) {
 
         char w = word.charAt(pos);
         if (print_flag) System.out.println("Ищу узел для буквы [" + w + "] текущего тега [" + word + "]");
@@ -343,17 +332,17 @@ public class TagNodeTree {
         }
         else { // Иначе еще можно продолжать рекурсию, предварительно увеличив номер буквы в теге-слове
             pos++;
-            return findKey(parent, word, pos); // и заходим в этого потомка
+            return findKeyForUser(parent, word, pos); // и заходим в этого потомка
         }
 
     }
 
     // 3-1)  Метод удаления (вспомогательный)
-    private void deleteKey(TagNode node, String word, int pos, int id_user) {
+    private void deleteKeyForUser(TagNode node, String word, int pos, int id_user) {
         if (print_flag)
             System.out.println("Получил команду на удаление у юзера [" + id_user + "] тега с именем [" + word + "]");
         // Сначала получим этот нод через поиск:
-        TagNode find_node = findKey(node, word, pos);
+        TagNode find_node = findKeyForUser(node, word, pos);
         // А затем, если он не null, зайдем в него и удалим данного юзера (его айди из листа):
         if (find_node != null) {
             if (find_node.getUsers().contains(id_user)) {

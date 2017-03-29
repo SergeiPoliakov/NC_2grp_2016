@@ -327,7 +327,7 @@ public class CalendarService {
         event.setReminders(reminders);
 
         String calendarId = "primary";
-        event = service.events().insert(calendarId, event).execute();
+        event = service.events().insertForUser(calendarId, event).execute();
         System.out.printf("Событие синхронизировано с календарем: %s\n", event.getHtmlLink());
     }
     */

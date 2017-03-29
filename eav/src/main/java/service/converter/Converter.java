@@ -98,7 +98,7 @@ public class Converter {
             log.setDate(dataObject.getParameter(600));
             int i = 601;
             String params = null;
-            for ( ; i < 700; i++){
+            for (; i < 700; i++) {
                 params = dataObject.getParameter(i);
                 if (params != null) { // ищем валидный параметр
                     log.setType(i);
@@ -108,7 +108,7 @@ public class Converter {
             }
             i = 601;
             Integer referens = null;
-            for ( ; i < 700; i++){ // Ищем валидную ссылку
+            for (; i < 700; i++) { // Ищем валидную ссылку
                 referens = dataObject.getReference(i).get(0);
                 if (referens != null) {
                     log.setType(i);
@@ -159,6 +159,7 @@ public class Converter {
         }
         return users;
     }
+
     // 2017-02-28 Конвертер для массива датаобджектов в массив событий
     public ArrayList<Event> ToEvent(ArrayList<DataObject> aldo) {
         ArrayList<Event> events = new ArrayList<>();
@@ -335,8 +336,7 @@ public class Converter {
             if (log.getLinkId() != null) {
                 dataObject.setRefParams(log.getType(), log.getLinkId());
             }
-        }
-        else if (entitie instanceof TagNode) {
+        } else if (entitie instanceof TagNode) {
             // Работаем с нодами тега
             TagNode node = (TagNode) entitie;
             dataObject.setId(node.getId());
@@ -344,22 +344,25 @@ public class Converter {
             dataObject.setName(node.getName());
             dataObject.setParams(701, String.valueOf(node.getValue()));
             dataObject.setParams(702, String.valueOf(node.getUsage_count()));
-            if (dataObject.getId()> 90000){
-                if (node.getRoot() != null) dataObject.setRefParams(703, node.getRoot().getId());
+            dataObject.setParams(707, String.valueOf(node.getMeetings_count()));
 
-                for (int i = 0; i < node.getParents().size(); i++){
-                    TagNode parent = node.getParents(i);
-                    if (parent != null) dataObject.setRefParams(704, parent.getId());
-                }
-                for (int i = 0; i < node.getUsers().size(); i++){
-                    Integer user_id = node.getUsers(i);
-                    if (user_id != null) dataObject.setRefParams(705, user_id);
-                }
+            if (node.getRoot() != null) dataObject.setRefParams(703, node.getRoot().getId());
+
+            for (int i = 0; i < node.getParents().size(); i++) {
+                TagNode parent = node.getParents(i);
+                if (parent != null) dataObject.setRefParams(704, parent.getId());
+            }
+            for (int i = 0; i < node.getUsers().size(); i++) {
+                Integer user_id = node.getUsers(i);
+                if (user_id != null) dataObject.setRefParams(705, user_id);
+            }
+            for (int i = 0; i < node.getMeetings().size(); i++) {
+                Integer meeting_id = node.getMeetings(i);
+                if (meeting_id != null) dataObject.setRefParams(706, meeting_id);
             }
 
 
-        }
-        else { // иначе сами не понимаем, что конвертируем
+        } else { // иначе сами не понимаем, что конвертируем
             dataObject = null;
         }
         return dataObject;

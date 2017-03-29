@@ -1,14 +1,11 @@
 package service.tags;
 
-import entities.Log;
 import entities.TagNode;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Created by Hroniko on 23.03.2017.
@@ -37,22 +34,22 @@ public class TagTreeManager {
 
     // 1) ОСНОВНОЙ Метод получения всех тегов, содержащих в себе заданный тег // идти по нодам рекурсивно, передавая вниз слово, и конкатенировать его с value текущего нода, пока не достигли конца, а потом помещать в лист
     // (это надо будет для вывода подсказок в динамическом поиске на страницу):
-    public ArrayList<String> getTagWordList(String base_word){
+    public ArrayList<String> getTagWordListForUser(String base_word){
         ArrayList<String> tag_list = null;
         if (print_flag) System.out.println("Составляем список дочерних тегов для базового [" + base_word + "]");
         // Сначала находим нужный нод, (то есть проходим весь путиь до последней буквы)
-        TagNode node = treeNode.find(base_word);
+        TagNode node = treeNode.findForUser(base_word);
         // Если такое такой тег нашли, можем продолжать
         if (node != null){
             tag_list = new ArrayList<>();
-            tagWordList(tag_list, node, base_word); // Вызываем вспомогательный рекурсивный метод
+            tagWordListForUser(tag_list, node, base_word); // Вызываем вспомогательный рекурсивный метод
         }
         // И когда выполнили весь обход, отдаем лист слов-тегов, которые содержат в себе базовый и также являются узловыми
         return tag_list;
     }
 
     // 1-1) Вспомогательный (обходим все дочерние ноды):
-    private void tagWordList(ArrayList<String> tag_list, TagNode node, String word){
+    private void tagWordListForUser(ArrayList<String> tag_list, TagNode node, String word){
         // Проверяем, есть ли путь дальше вниз по узлам:
         if (node.getParents().size() < 1){
             // Если нет пути дальше, выходим из рекурсии, сохряняя предварительно слово в лист (НО только если к нему приписаны юзеры, а если удалили, то такого тега как бы нет):
@@ -74,7 +71,7 @@ public class TagTreeManager {
             TagNode parent = node.getParents(i); // вытаскиваем ссылку на наследника,
             char w = parent.getValue(); // и вытаскиваем значение буквы в узле
             //word += w; // Конкатенируем со словом
-            tagWordList(tag_list, parent, word + w); // и заходим по рекурсии в этого наследника
+            tagWordListForUser(tag_list, parent, word + w); // и заходим по рекурсии в этого наследника
         }
     }
 
@@ -84,7 +81,7 @@ public class TagTreeManager {
         ArrayList<Integer> user_list = null;
         if (print_flag) System.out.println("Составляем список юзеров, у которых есть тег [" + word + "]");
         // Сначала находим нужный нод, (то есть проходим весь путиь до последней буквы)
-        TagNode node = treeNode.find(word);
+        TagNode node = treeNode.findForUser(word);
         // Если такое такой тег нашли, можем продолжать
         if (node != null){
             user_list = node.getUsers(); // Просто забираем список ids юзеров у нода
@@ -104,7 +101,7 @@ public class TagTreeManager {
         ArrayList<Integer> user_list = null;
         if (print_flag) System.out.println("Составляем список юзеров, у которых есть теги, содержащие в себе тег [" + base_word + "]");
         // Сначала находим нужный нод, (то есть проходим весь путиь до последней буквы)
-        TagNode node = treeNode.find(base_word);
+        TagNode node = treeNode.findForUser(base_word);
         // Если такое такой тег нашли, можем продолжать
         if (node != null){
             user_list = new ArrayList<>();
@@ -142,12 +139,12 @@ public class TagTreeManager {
 
     // 4) Метод добавления нового тега в дерево
     public void addTag(String word) throws SQLException {
-        treeNode.insert(word);
+        treeNode.insertForUser(word);
     }
 
     // 5) Метод добавления нового тега в дерево
     public void addTag1(String word) throws SQLException {
-        treeNode.insert(word);
+        treeNode.insertForUser(word);
     }
 
 
@@ -170,25 +167,25 @@ public class TagTreeManager {
         // Автоматически к нему вешается корневой узел root, к которому можно будет вешать все остальные
         // Пробуем повесить теги:
         System.out.println("\n!!!!! Получена команда на добавление тега-слово [авто]");
-        treeNode.insert("авто");
+        treeNode.insertForUser("авто");
 
         System.out.println("\n!!!!! Получена команда на добавление тега-слово [автомобиль]");
-        treeNode.insert("автомобиль", 10001);
+        treeNode.insertForUser("автомобиль", 10001);
 
         System.out.println("\n!!!!! Получена команда на добавление тега-слово [АвтомобиЛЬ]");
-        treeNode.insert("АвтомобиЛЬ");
+        treeNode.insertForUser("АвтомобиЛЬ");
 
         System.out.println("\n!!!!! Получена команда на добавление тега-слово [автомойка]");
-        treeNode.insert("автомойка");
+        treeNode.insertForUser("автомойка");
 
         System.out.println("\n!!!!! Получена команда на добавление тега-слово [автомобильпроверкадлинных]");
-        treeNode.insert("автомобильпроверкадлинных");
-        //treeNode.insert("автомобильпроверкадлинных");
+        treeNode.insertForUser("автомобильпроверкадлинных");
+        //treeNode.insertForUser("автомобильпроверкадлинных");
 
         System.out.println();
 
         // А теперь пробуем найти их:
-        TagNode tagNode1 = treeNode.find("авто");
+        TagNode tagNode1 = treeNode.findForUser("авто");
         if (tagNode1 != null) {
             System.out.println("Нашли тег [авто]\n\n");
             System.out.println("Он содержит букву [" + tagNode1.getValue() + "] и ссылку на юзера [" + tagNode1.getUsers(0) + "]"); // System.out.println("Он содержит букву [" + tagNode1.getValue() + "] и ссылку на юзера [" + tagNode1.getUsers().get(0) + "]"); //
@@ -196,7 +193,7 @@ public class TagTreeManager {
             System.out.println("НЕ нашли тег [авто]\n\n");
         }
 
-        TagNode tagNode2 = treeNode.find("автомобиль");
+        TagNode tagNode2 = treeNode.findForUser("автомобиль");
         if (tagNode2 != null) {
             System.out.println("Нашли тег [автомобиль]");
             System.out.println("Он содержит букву [" + tagNode2.getValue()+ "] и ссылку на юзера [" + tagNode2.getUsers(0) + "]");
@@ -204,7 +201,7 @@ public class TagTreeManager {
             System.out.println("НЕ нашли тег [автомобиль]");
         }
 
-        TagNode tagNode3 = treeNode.find("АвтомобиЛЬ");
+        TagNode tagNode3 = treeNode.findForUser("АвтомобиЛЬ");
         if (tagNode3 != null) {
             System.out.println("Нашли тег [АвтомобиЛЬ]");
             System.out.println("Он содержит букву [" + tagNode3.getValue()+ "] и ссылку на юзера [" + tagNode3.getUsers(0) + "]");
@@ -212,7 +209,7 @@ public class TagTreeManager {
             System.out.println("НЕ нашли тег [АвтомобиЛЬ]");
         }
         // и те, которых нет
-        TagNode tagNode4 = treeNode.find("Автомо");
+        TagNode tagNode4 = treeNode.findForUser("Автомо");
         if (tagNode4 != null) {
             System.out.println("Нашли тег [Автомо]");
             System.out.println("Он содержит букву [" + tagNode4.getValue()+ "] и ссылку на юзера [" + tagNode4.getUsers(0) + "]");
@@ -220,7 +217,7 @@ public class TagTreeManager {
             System.out.println("НЕ нашли тег [Автомо]");
         }
 
-        TagNode tagNode5 = treeNode.find("Автобобин");
+        TagNode tagNode5 = treeNode.findForUser("Автобобин");
         if (tagNode5 != null) {
             System.out.println("Нашли тег [Автобобин]");
             System.out.println("Он содержит букву [" + tagNode5.getValue()+ "] и ссылку на юзера [" + tagNode5.getUsers(0) + "]");
@@ -232,7 +229,7 @@ public class TagTreeManager {
         treeNode.deleteUserFromTagNode("авто", 10001); // удаляем юзера, которого заведомо там нет
 
         // А теперь пробуем найти их:
-        tagNode1 = treeNode.find("авто");
+        tagNode1 = treeNode.findForUser("авто");
         if (tagNode1 != null) {
             System.out.println("Нашли тег [авто]");
             System.out.println("Он содержит букву [" + tagNode1.getValue() + "] и ссылку на юзера [" + tagNode1.getUsers(0) + "]"); // System.out.println("Он содержит букву [" + tagNode1.getValue() + "] и ссылку на юзера [" + tagNode1.getUsers().get(0) + "]"); //
@@ -244,7 +241,7 @@ public class TagTreeManager {
         this.treeNode.deleteUserFromTagNode("авто", 10003); // удаляем юзера, который точно там есть
 
         // А теперь пробуем найти их:
-        tagNode1 = this.treeNode.find("авто");
+        tagNode1 = this.treeNode.findForUser("авто");
         if (tagNode1 != null) {
             System.out.println("Нашли тег [авто]");
             System.out.println("Он содержит букву [" + tagNode1.getValue() + "] и ссылку на юзера [" + tagNode1.getUsers(0) + "]"); // System.out.println("Он содержит букву [" + tagNode1.getValue() + "] и ссылку на юзера [" + tagNode1.getUsers().get(0) + "]"); //
@@ -254,7 +251,7 @@ public class TagTreeManager {
         */
 
         // А теперь пробуем найти все теги, содержащие данный:
-        ArrayList<String> words = getTagWordList("авто");
+        ArrayList<String> words = getTagWordListForUser("авто");
 
         // А теперь ищем всех юзеров с тегом "авто"
         System.out.println();
@@ -274,10 +271,10 @@ public class TagTreeManager {
         //this.treeNode = new TagNodeTree();
         // Автоматически к нему вешается корневой узел root, к которому можно будет вешать все остальные
         // Пробуем повесить теги:
-        treeNode.insert("а", 10003);
+        treeNode.insertForUser("а", 10003);
 
         // А теперь пробуем найти их:
-        TagNode tagNode1 = this.treeNode.find("а");
+        TagNode tagNode1 = treeNode.findForUser("а");
         if (tagNode1 != null) {
             System.out.println("Нашли тег [а]");
             System.out.println("Он содержит букву [" + tagNode1.getValue() + "] и ссылку на юзера [" + tagNode1.getUsers(0) + "]"); //
@@ -294,10 +291,10 @@ public class TagTreeManager {
     public void test3() throws SQLException {
         // Создаем новое центральное дерево:
         System.out.println("\n!!!!! Получена команда на добавление тега-слова [ав]");
-        treeNode.insert("ав");
+        treeNode.insertForUser("ав");
 
         //System.out.println("\n!!!!! Получена команда на добавление тега-слово [аc]");
-        //treeNode.insert("аc", 10001);
+        //treeNode.insertForUser("аc", 10001);
         //System.out.println();
     }
 }
