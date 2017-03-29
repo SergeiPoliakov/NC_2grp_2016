@@ -26,15 +26,14 @@ import java.util.concurrent.ArrayBlockingQueue;
  * Класс для регистрации всех элементарных событий и действий юзера в базу
  * для последующего использования в менеджере статистики StatisticManager
  */
-@Component
-@EnableScheduling
+
 public class StaticticLogger {
 
     private static boolean on_off_logger = false; // Флаг включения/выключения работы логгера, по умолчанию выключен false
     private static boolean on_off_sheduler = false; // Флаг включения/выключения работы шедуллера, по умолчанию выключен false
 
     // И тут же надо накапливать все логи, а потом при достижении какого-то фиксированного их значения заносить в базу
-    private static final Integer max_count = 20; // Максимальное количество логов для хранения в накопителе, при превышении сброс логов в базу
+    private static Integer max_count = 20; // Максимальное количество логов для хранения в накопителе, при превышении сброс логов в базу
     // Будет одна общая очередь на всех
     private static final Queue<Log> logQueue = new ArrayBlockingQueue<>(max_count + 1); // Очередь логов
 
@@ -132,8 +131,7 @@ public class StaticticLogger {
 
     }
 
-    @Scheduled(fixedDelay = 120000)
-    public static void tictuck() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+    public static void tictack() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
         if (! on_off_sheduler) return;
         if (logQueue.size() < 1) return;
         loadToDB();
@@ -141,14 +139,17 @@ public class StaticticLogger {
 
     // 2017-03-17 Метод загрузки настройки логгера из настроечного файла приложения: // чтобы по ходу работы можно было менять, будет другой метод
     private void loadSetting() throws IOException {
-        SettingsLoader settingsLoader = new SettingsLoader();
-        String on_off_logger = settingsLoader.getSetting("logger");
-        if (on_off_logger.equals("on")){
-            this.on_off_logger = true;
+
+        String log_queue_max_size = SettingsLoader.getSetting("logger_queue_max_size");
+        max_count = Integer.parseInt(log_queue_max_size.trim());
+
+        String on_off_log = SettingsLoader.getSetting("logger");
+        if (on_off_log.equals("on")){
+            on_off_logger = true;
         }
-        String on_off_sheduler = settingsLoader.getSetting("sheduler");
-        if (on_off_sheduler.equals("on")){
-            this.on_off_sheduler = true;
+        String on_off_shedu = SettingsLoader.getSetting("logger_sheduler");
+        if (on_off_shedu.equals("on")){
+            on_off_sheduler = true;
         }
     }
 }

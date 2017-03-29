@@ -3,7 +3,9 @@ package service.tags;
 import entities.Log;
 import entities.TagNode;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -153,6 +155,12 @@ public class TagTreeManager {
 
 
     // сделал - см выше - Метод, получающих всех юзеров НИЖе данного нода
+
+
+    // 2017-03-29 Метод принудительной записи тег-нодов из очередей в базу, нужен, например, для обновления по таймеру
+    public static void loadToDB() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        treeNode.loadToDB();
+    }
 
 
     // Тестовый метод:

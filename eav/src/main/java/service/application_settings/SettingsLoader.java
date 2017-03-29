@@ -11,24 +11,24 @@ public class SettingsLoader {
 
     //private Properties property;
     public static final Properties property = new Properties();
-    public static boolean load_status = false; // Статус загрузки настроек, тобы повторно не загружать
+    private static boolean load_status = false; // Статус загрузки настроек, тобы повторно не загружать
 
-    public SettingsLoader() throws IOException {
-        // Сначала подгрузим наш файлик с параметрами (если еще не подгрузили)
-        if (! this.load_status)
-            refreshProps();
+    public SettingsLoader() {
+
     }
 
-    private void refreshProps() throws IOException {
+    private static void refreshProps() throws IOException {
         InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("app_settings.properties");
-        this.property.load(inputStream);
-        this.load_status = true;
+        property.load(inputStream);
+        load_status = true;
     }
 
     // Метод получения значения настройки по ее имени
-    public String getSetting(String setttingName){
+    public static String getSetting(String setttingName) throws IOException {
+        // Сначала проверяем, загружали ли мы настройки уже ранее, и если нет, то загружаем их:
+        if (! load_status) refreshProps();
         // Заходим в настройки и проверяем, есть ли настройка с таким именем в конфигурационном файле:
         // и если есть, то возвращаем ее значение:
-        return this.property.getProperty(setttingName);
+        return property.getProperty(setttingName);
     }
 }

@@ -6,9 +6,11 @@ import entities.Event;
 import entities.TagNode;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
+import service.application_settings.SettingsLoader;
 import service.converter.Converter;
 import service.id_filters.TagFilter;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -32,7 +34,7 @@ public class TagNodeTree {
 
     // private long height, depth, size; // Служебные поля: высота, глубина и размер дерева
 
-    private static final Integer max_count = 2; // 10 Максимальное количество нодов для хранения в накопителе, при превышении сброс нодов в базу
+    private static Integer max_count = 2; // 10 Максимальное количество нодов для хранения в накопителе, при превышении сброс нодов в базу
     // Общая очередь новых нодов на всех юзеров
     private static final Queue<TagNode> newTagQueue = new ArrayBlockingQueue<>(max_count + 1); // Очередь новых нодов (их потом надо будет перенести в базу)
     // Общая очередь всех нодов, существующих в базе, но подлежащих обновлению (например, к ним добавили юзера или удалили юзера)
@@ -40,8 +42,9 @@ public class TagNodeTree {
 
     private static Integer max_id = 90_000; // переменная для хранения максимального значения айдишника нода в дереве тегов, чтобы потом можно было при генерации знать, от чего увеличивать id
 
+    private static boolean on_off_sheduler = false;
 
-    public static TagNodeTree getInstance() {
+    public static TagNodeTree getInstance()  {
         if (instance == null)
             synchronized (TagNodeTree.class) {
                 if (instance == null)
@@ -52,8 +55,8 @@ public class TagNodeTree {
 
     // Конструктор:
     public TagNodeTree() {
-        //this.root = new TagNode();
         try {
+            loadSetting();
             this.loadAndCreateTagNodeTree();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -412,7 +415,7 @@ public class TagNodeTree {
     }
 
     // 6) Метод переноса новых узлов тегов в базу
-    public void loadToDB() throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
+    public static void loadToDB() throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
         // Берем очередь, обходим ее, вытаскиваем ноды, делаем из них датаобджекты и set в базу
         System.out.println(new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm").format( new java.util.Date()) + " :: Старт копирования новых тегов в базу (count = " + newTagQueue.size() + "): ");
         Converter converter = new Converter();
@@ -461,6 +464,31 @@ public class TagNodeTree {
     }
 
     public static Queue<TagNode> getUpdTagQueue() {
-        return updTagQueue;
+        return newTagQueue;
     }
+
+
+
+    // 2017-03-29 Метод загрузки настройки егирования из настроечного файла приложения:
+    private static void loadSetting() throws IOException {
+
+        String tag_queue_max_size = SettingsLoader.getSetting("tag_queue_max_size");
+        max_count = Integer.parseInt(tag_queue_max_size.trim());
+
+        String on_off_shedu = SettingsLoader.getSetting("tag_sheduler");
+        if (on_off_shedu.equals("on")){
+            on_off_sheduler = true;
+        }
+    }
+
+    // Для шедулера
+    public static void tictack() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        if (! on_off_sheduler) return;
+        if ((newTagQueue.size() < 1) & (newTagQueue.size() < 1)) return;
+        loadToDB();
+    }
+
+
+
+
 }
