@@ -25,6 +25,10 @@ public class Settings extends BaseEntitie {
 
     private String privateMessage;  //409
 
+    private String privateAddFriend; // 410
+
+    private String privateLookFriend; // 411
+
     public Integer getId() {
         return id;
     }
@@ -105,6 +109,22 @@ public class Settings extends BaseEntitie {
         this.privateProfile = privateProfile;
     }
 
+    public String getPrivateAddFriend() {
+        return privateAddFriend;
+    }
+
+    public void setPrivateAddFriend(String privateAddFriend) {
+        this.privateAddFriend = privateAddFriend;
+    }
+
+    public String getPrivateLookFriend() {
+        return privateLookFriend;
+    }
+
+    public void setPrivateLookFriend(String privateLookFriend) {
+        this.privateLookFriend = privateLookFriend;
+    }
+
     public Settings() {
 
     }
@@ -120,10 +140,12 @@ public class Settings extends BaseEntitie {
         this.phoneMeetingInvite = "false";
         this.privateProfile = "any";
         this.privateMessage = "any";
+        this.privateAddFriend = "any";
+        this.privateLookFriend = "any";
     }
 
     public Settings(Integer id, Integer user_id, String emailNewMessage, String emailNewFriend, String emailMeetingInvite,
-                    String phoneNewMessage, String phoneNewFriend, String phoneMeetingInvite, String privateProfile, String privateMessage) {
+                    String phoneNewMessage, String phoneNewFriend, String phoneMeetingInvite, String privateProfile, String privateMessage, String privateAddFriend, String privateLookFriend) {
         this.id = id;
         this.user_id = user_id;
         this.emailNewMessage = emailNewMessage;
@@ -134,5 +156,7 @@ public class Settings extends BaseEntitie {
         this.phoneMeetingInvite = phoneMeetingInvite;
         this.privateProfile = privateProfile;
         this.privateMessage = privateMessage;
+        this.privateAddFriend = privateAddFriend;
+        this.privateLookFriend = privateLookFriend;
     }
 }

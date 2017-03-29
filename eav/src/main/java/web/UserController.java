@@ -530,14 +530,23 @@ public class UserController {
     // Добавление пользователя в друзья (по его ID)
     @RequestMapping("/addFriend/{objectId}/{type}")
     public String addFriend(@PathVariable("objectId") Integer objectId,
-                            @PathVariable("type") String type) throws InvocationTargetException,
-            NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, IOException, MessagingException {
-        userService.setFriend(objectId);
+                            @PathVariable("type") String type,
+                            ModelMap m) throws InvocationTargetException,
+            NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, IOException, MessagingException, CustomException {
+
+        DataObject dataObjectTo = doCache.get(objectId);
+        User user = converter.ToUser(dataObjectTo);
+        Settings settings = converter.ToSettings(doCache.get(user.getSettingsUD()));
+
+        if ("nobody".equals((settings.getPrivateAddFriend())) && !"acceptFriend".equals(type)) {
+            throw new CustomException("Пользователь ограничил список пользователей, которые могут добавлять его в друзья");
+        } else {
+            userService.setFriend(objectId);
+        }
+
         if ("addFriend".equals(type)) {
             DataObject dataObjectFrom = doCache.get(userService.getObjID(userService.getCurrentUsername()));
-            DataObject dataObjectTo = doCache.get(objectId);
-            User user = converter.ToUser(dataObjectTo);
-            Settings settings = converter.ToSettings(doCache.get(user.getSettingsUD()));
+
             if ("true".equals(settings.getEmailNewFriend())) {
                 userService.fittingEmail("addFriend", dataObjectFrom.getId(), objectId);
             }
@@ -675,9 +684,12 @@ public class UserController {
         phoneMeetingInvite = convertParameters(phoneMeetingInvite);
         String privateProfile = request.getParameter("privateProfile");
         String privateMessage = request.getParameter("privateMessage");
+        String privateAddFriend = request.getParameter("privateAddFriend");
+        String privateLookFriend = request.getParameter("privateLookFriend");
 
         Settings settings = new Settings(settingsID, userService.getObjID(userService.getCurrentUsername()),
-                emailNewMessage, emailNewFriend, emailMeetingInvite, phoneNewMessage, phoneNewFriend, phoneMeetingInvite, privateProfile, privateMessage);
+                emailNewMessage, emailNewFriend, emailMeetingInvite, phoneNewMessage, phoneNewFriend, phoneMeetingInvite,
+                privateProfile, privateMessage, privateAddFriend, privateLookFriend);
 
         DataObject dataObject = converter.toDO(settings);
         loadingService.updateDataObject(dataObject);

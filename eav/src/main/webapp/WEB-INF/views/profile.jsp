@@ -62,6 +62,8 @@
                                        value=${user.middleName}>
                             </div>
 
+
+                                <!--  Тут нужно сделать так же, как и на странице регистрации или вернуть как было   -->
                             <div class="form-group  ">
                                 <label for="InputAge1">Введите вашу дату рождения</label>
                                 <input type="date" class="form-control" name="ageDate" id="InputAge1" value=${user.ageDate}>
@@ -160,9 +162,9 @@
                         <div class="col col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
                             <form action="/updateSettings/${settings.id}" method="post">
                                 <fieldset>
-                                    <!--  Тут будут настройки оповещения для email и телефона с кнопкой Сохранить. Нужен фронтенд. -->
                                     <div class="row">
                                         <div class="col col-xs-12 col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
+
                                             <div class="form-group">
                                                 <div class="text-center">
                                                     <label class="control-label" for="privateProfile">Кто может просматривать мой профиль</label>
@@ -173,6 +175,7 @@
                                                     </select>
                                                 </div>
                                             </div>
+
                                             <div class="form-group">
                                                 <div class="text-center">
                                                     <label class="control-label" for="privateMessage">Кто может писать мне личные сообщения</label>
@@ -183,6 +186,28 @@
                                                     </select>
                                                 </div>
                                             </div>
+
+                                            <div class="form-group">
+                                                <div class="text-center">
+                                                    <label class="control-label" for="privateAddFriend">Кто может добавлять меня в друзья</label>
+                                                    <select id="privateAddFriend" name="privateAddFriend" class="selectpicker show-menu-arrow" data-style="btn-info">
+                                                        <option <c:if test="${settings.privateAddFriend eq 'any'}">selected</c:if>  value="any">Все</option>
+                                                        <option <c:if test="${settings.privateAddFriend eq 'nobody'}">selected</c:if> value="nobody">Никто</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="text-center">
+                                                    <label class="control-label" for="privateLookFriend">Кто может cмотреть мой список друзей</label>
+                                                    <select id="privateLookFriend" name="privateLookFriend" class="selectpicker show-menu-arrow" data-style="btn-info">
+                                                        <option <c:if test="${settings.privateLookFriend eq 'any'}">selected</c:if>  value="any">Все</option>
+                                                        <option <c:if test="${settings.privateLookFriend  eq 'onlyFriend'}">selected</c:if> value="onlyFriend">Только друзья</option>
+                                                        <option <c:if test="${settings.privateLookFriend  eq 'nobody'}">selected</c:if> value="nobody">Никто</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                                     <div class="form-group">

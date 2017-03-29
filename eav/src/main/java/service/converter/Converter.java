@@ -199,6 +199,8 @@ public class Converter {
             settings.setPhoneMeetingInvite(dataObject.getParameter(407));
             settings.setPrivateProfile(dataObject.getParameter(408));
             settings.setPrivateMessage(dataObject.getParameter(409));
+            settings.setPrivateAddFriend(dataObject.getParameter(410));
+            settings.setPrivateLookFriend(dataObject.getParameter(411));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -304,6 +306,8 @@ public class Converter {
             dataObject.setParams(407, settings.getPhoneMeetingInvite());
             dataObject.setParams(408, settings.getPrivateProfile());
             dataObject.setParams(409, settings.getPrivateMessage());
+            dataObject.setParams(410, settings.getPrivateAddFriend());
+            dataObject.setParams(411, settings.getPrivateLookFriend());
         } else if (entitie instanceof Notification) {
             // Работаем с Уведомлениями
             Notification notification = (Notification) entitie;

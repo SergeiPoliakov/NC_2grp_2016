@@ -61,10 +61,24 @@
                     </div>
                 </form>
 
+                <form action="/addFriend/${user.id}/addFriend">
+                    <div class="profile-userbuttons">
+                        <button type="submit" class="btn btn-success btn-xs" >
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true">Добавить в друзья</span></button>
+                    </div>
+                </form>
+
+                <form action="">
+                    <div class="profile-userbuttons">
+                        <button type="submit" class="btn btn-success btn-xs"  >
+                            <span class="glyphicon" aria-hidden="true">Список друзей</span></button>
+                    </div>
+                </form>
+
                 <ul class="list-group list-group-my list-group-flush">
                     <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
                     <li class="list-group-item">Город: ${user.city}</li>
-                    <li class="list-group-item">Пол: ${user.city}</li>
+                    <li class="list-group-item">Пол: ${user.sex}</li>
                     <li class="list-group-item">О себе: ${user.additional_field}</li>
                 </ul>
             </div>
