@@ -24,6 +24,7 @@ import service.cache.DataObjectCache;
 import service.converter.Converter;
 import service.id_filters.EventFilter;
 import service.id_filters.UserFilter;
+import service.tags.NameNodeTree;
 import service.tags.TagTreeManager;
 
 import javax.mail.MessagingException;
@@ -175,6 +176,8 @@ public class UserController {
         // 2017-03-23 Просто тест дерева тегов:
          TagTreeManager ttm = new TagTreeManager();
          ttm.test();
+
+        NameNodeTree nnt = new NameNodeTree();
 
         return "main-login";
     }

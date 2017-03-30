@@ -1237,6 +1237,7 @@ public class DBHelp {
         for (int i = 0; i < newTagList.size(); i++) {
             //
             DataObject dataObject = newTagList.get(i);
+            if (dataObject.getObjectTypeId() != 1010) return; // Выходим, если случайно передали не тег
 
             System.out.println("\n\nДля загрузки в базу пришел новый датаобджект:" +
                     "\nid = " + dataObject.getId() +

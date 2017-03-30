@@ -1,6 +1,5 @@
 package service.search;
 
-import org.springframework.web.bind.annotation.RequestBody;
 import service.tags.TagTreeManager;
 
 import java.util.ArrayList;

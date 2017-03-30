@@ -5,11 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import service.search.FinderLogic;
 import service.search.FinderTagRequest;
 import service.search.FinderTagResponse;
-import service.search.SearchParser;
-import service.tags.TagTreeManager;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**

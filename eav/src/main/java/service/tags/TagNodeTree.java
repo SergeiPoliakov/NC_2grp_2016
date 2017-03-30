@@ -33,7 +33,7 @@ public class TagNodeTree {
 
     // private long height, depth, size; // Служебные поля: высота, глубина и размер дерева
 
-    private static Integer max_count = 200; // Временно 10 Максимальное количество нодов для хранения в накопителе, при превышении сброс нодов в базу
+    private static Integer max_count = 2000; // Временно 10 Максимальное количество нодов для хранения в накопителе, при превышении сброс нодов в базу
     // Общая очередь новых нодов на всех юзеров
     private static final Queue<TagNode> newTagQueue = new ArrayBlockingQueue<>(max_count + 1); // Очередь новых нодов (их потом надо будет перенести в базу)
     // Общая очередь всех нодов, существующих в базе, но подлежащих обновлению (например, к ним добавили юзера или удалили юзера)
@@ -72,7 +72,7 @@ public class TagNodeTree {
     }
 
     // 0) Нужен еще метод загрузки и создания дерева из базы:
-    private void loadAndCreateTagNodeTree() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    void loadAndCreateTagNodeTree() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         //this.root = new TagNode(); // Создаем базовый узел, на всякий пожарный, потом его перезапишем
         // И надо получить из базы список датаобджектов нодов, преобразовать в ноды и потом его обойти, находя в дереве место, куда подвесить этот нод
         // Получаем список всех узлов тегов:
