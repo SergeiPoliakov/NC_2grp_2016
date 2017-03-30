@@ -2,8 +2,10 @@ package web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import service.search.FinderLogic;
 import service.search.FinderTagRequest;
 import service.search.FinderTagResponse;
+import service.search.SearchParser;
 import service.tags.TagTreeManager;
 
 import java.lang.reflect.InvocationTargetException;
@@ -17,45 +19,19 @@ import java.util.ArrayList;
 @Controller
 public class SearchAndTagController {
 
-
+    // На подгрузку страницы поиска:
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String searchPage() {
         return "search";
     }
 
-    // 2017-03-30 Запрашиваем теги
+    // 2017-03-30 На запрос по тегу и поиск тега
     @RequestMapping(value = "/getTags", method = RequestMethod.POST, headers = {"Content-type=application/json"})
     @ResponseBody
-    public ArrayList<FinderTagResponse> getTags2(@RequestBody FinderTagRequest finder) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-
-        if (finder.getType().equals("user")){
-            // работаем с юзерами
-        }
-        else if (finder.getType().equals("meeting")){
-            // работаем со встречами
-        }
-
-        ArrayList<FinderTagResponse> finderTagResponseList = new ArrayList<>();
-        System.out.println("Пришел запрос на тег [" + finder.getText() + "]");
-
-
-
-
-        TagTreeManager ttm = new TagTreeManager();
-        ArrayList<String> anyTag = ttm.getTagWordListForUser(finder.getText());
-
-        for (int i = 0; i < anyTag.size(); i++){
-            FinderTagResponse finderTagResponse = new FinderTagResponse();
-            finderTagResponse.setId(i);
-            finderTagResponse.setText(anyTag.get(i));
-            finderTagResponseList.add(finderTagResponse);
-        }
-
-
-
-        return finderTagResponseList;
+    public ArrayList<FinderTagResponse> getTags(@RequestBody FinderTagRequest finder) {
+        // Запускаем логику обработки запроса и выбора подходящих тегов:
+        return FinderLogic.getWithLogic(finder);
     }
-
 
 
 }

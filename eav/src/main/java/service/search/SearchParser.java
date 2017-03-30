@@ -11,11 +11,12 @@ public class SearchParser {
     public SearchParser() {
     }
 
-    public ArrayList<String> parse(String search_string){
+    public static ArrayList<String> parse(String search_string){
         //String[] tag_strings = search_string.split("[\\p{P} \\t\\n\\r]");
 
         // Разделяем на отдельные слова:
-        String[] tag_strings = search_string.split("\\p{P}?[ \\t\\n\\r]+");
+        // String[] tag_strings = search_string.split("\\p{P}?[ \\t\\n\\r]+");
+        String[] tag_strings = search_string.split("[\\p{P} \\t\\n\\r]+");
         System.out.println(tag_strings);
         System.out.println();
         // Выкидываем слова короче 3 букв (предлоги и пр.), переводим в нижний регистр и вставляем в лист:

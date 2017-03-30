@@ -103,30 +103,25 @@
                         // Прячем подсказку
                         $('#search_advice_wrapper').hide();
                     }
-                    if ($(this).val().length > 2) {
+                    else {
                         input_initial_value = $(this).val();
-
 
                         $.ajax({
 
                             url: "/getTags",
                             type: 'POST',
                             dataType: 'json',
-                            contentType : "application/json",
+                            contentType: "application/json",
                             mimeType: 'application/json',
                             data: JSON.stringify({
                                 type: "user",       // user | meeting
-                                operation: "and",   // and | or
+                                operation: "or",   // and | or
                                 text: input_initial_value
                             }),
 
                             success: function (data) {
                                 var index;
                                 suggest_count = data.length;
-                                if (suggest_count < 1) {
-                                    // Прячем подсказку
-                                    $('#search_advice_wrapper').hide();
-                                }
                                 if (suggest_count > 0) {
                                     // перед показом слоя подсказки, его обнуляем
                                     $("#search_advice_wrapper").html("").show();
@@ -139,6 +134,10 @@
                                     }
                                 }
 
+                            },
+                            error: function () { // если ничего не нашли
+                                // Прячем подсказку
+                                $('#search_advice_wrapper').hide();
                             }
                         });
 
