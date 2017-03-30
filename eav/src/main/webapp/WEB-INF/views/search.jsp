@@ -20,7 +20,7 @@
 
     <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/search.css">
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/search.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/search_with_num.js"></script>
 
 </head>
 <body>
