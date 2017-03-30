@@ -32,6 +32,13 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
 
+    <style>
+        .disabled {
+            pointer-events: none;
+            cursor: default;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -48,22 +55,23 @@
         </div>
 
         <c:forEach items="${meetings}" var="meeting">
-        <div class="col-sm-12 col-md-6 col-lg-3" id="meeting">
-            <div class="card_meetings_list style_prevu_kit_static mCustomScrollbar" data-mcs-theme="minimal-dark">
-                <h3 class="card-title text-center">${meeting.title}</h3>
-                <div class="profile-userbuttons">
-                    <a href="/meeting${meeting.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"> Просмотр</span> </button></a>
-                    <a href="/leaveMeeting${meeting.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Покинуть</span></button></a>
+            <div class="col-sm-12 col-md-6 col-lg-3" id="meeting">
+                <div class="card_meetings_list style_prevu_kit_static mCustomScrollbar" data-mcs-theme="minimal-dark">
+                    <h3 class="card-title text-center">${meeting.title}</h3>
+                    <div class="profile-userbuttons">
+                        <a href="/meeting${meeting.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"> Просмотр</span> </button></a>
+                        <a href="/leaveMeeting${meeting.id}" <c:if test="${meeting.users.size() eq 1}"> class="disabled" </c:if> ><button type="button" class="btn btn-danger btn-sm" <c:if test="${meeting.users.size() eq 1}"> disabled </c:if>  ><span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span></button></a>
+                        <c:if test="${meeting.organizer eq user}">   <a href=""><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>  </c:if>
+                    </div>
+                    <ul class="list-group list-group-my list-group-flush">
+                        <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>
+                        <li class="list-group-item">Начало: ${meeting.date_start}</li>
+                        <li class="list-group-item">Окончание: ${meeting.date_end}</li>
+                        <li class="list-group-item">Описание: ${meeting.info}</li>
+                        <li class="list-group-item" name="tags">Теги: ${meeting.tag}</li>
+                    </ul>
                 </div>
-                <ul class="list-group list-group-my list-group-flush">
-                    <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>
-                    <li class="list-group-item">Начало: ${meeting.date_start}</li>
-                    <li class="list-group-item">Окончание: ${meeting.date_end}</li>
-                    <li class="list-group-item">Описание: ${meeting.info}</li>
-                    <li class="list-group-item" name="tags">Теги: ${meeting.tag}</li>
-                </ul>
             </div>
-        </div>
         </c:forEach>
     </div>
     <!-- Форма для создания новой встречи -->
@@ -192,6 +200,7 @@
         return dateObject;
     }
 </script>
+
 </body>
 <div style="margin-bottom: 4rem;"/>
 <%@include file='footer.jsp'%>

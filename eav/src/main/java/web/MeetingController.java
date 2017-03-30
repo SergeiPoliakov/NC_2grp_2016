@@ -84,8 +84,10 @@ public class MeetingController {
 
     // Список встреч пользователя
     @RequestMapping(value = "/meetings", method = RequestMethod.GET)
-    public String getUserPage(User user, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+    public String getUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         try {
+            DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+            User user = converter.ToUser(dataObjectUser);
             ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.FOR_CURRENT_USER));
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
@@ -94,7 +96,10 @@ public class MeetingController {
                 Meeting meeting = new Meeting(dataObject);
                 meetings.add(meeting);
             }
+
+
             m.addAttribute("meetings", meetings); // m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser));
+            m.addAttribute("user", user);
 
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -134,10 +139,12 @@ public class MeetingController {
         DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
         User user = converter.ToUser(dataObject);
 
+
         if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
             return "/meetingAdmin";
-        else if (meeting.getUsers().contains(user)) // Страницу запрашивает участник встречи
+        else if (meeting.getUsers().contains(user)) { // Страницу запрашивает участник встречи
             return "/meetingMember";
+        }
 
         return "/main-login";
     }
@@ -188,7 +195,7 @@ public class MeetingController {
         }
         meeting.setUsers(userList);
         int id = loadingService.updateDataObject(meeting.toDataObject());
-        doCache.refresh(meetingID);
+        doCache.invalidate(meetingID);
 
         // Логирвоание:
         loggerLog.add(Log.SEND_INVITE_MEETING, id);
@@ -207,13 +214,14 @@ public class MeetingController {
         }
         DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
         User user = converter.ToUser(dataObject);
+
         meeting.getUsers().remove(user);
         if (meeting.getOrganizer().equals(user)) { // покидает организатор встречи
             meeting.setOrganizer(meeting.getUsers().get(0)); // следующий участник становится организатором
         }
 
         int id = loadingService.updateDataObject(meeting.toDataObject());
-        doCache.refresh(meetingID);
+        doCache.invalidate(meetingID);
 
         // Логирвоание:
         loggerLog.add(Log.SEND_INVITE_MEETING, id);
@@ -237,7 +245,7 @@ public class MeetingController {
         meeting.setInfo(info);
         DataObject dataObject = meeting.toDataObject();
         int id = loadingService.updateDataObject(dataObject);
-        doCache.refresh(meetingID);
+        doCache.invalidate(meetingID);
 
         // Логирование:
         int idUser = userService.getObjID(userService.getCurrentUsername());
@@ -248,12 +256,12 @@ public class MeetingController {
     // Редактирование встречи Ajax
     @RequestMapping(value = "/updateMeetingAJAX{meetingID}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Response inviteUserAtMeetingWithAJAX(
-                                      @PathVariable("meetingID") Integer meetingID,
-                                      @RequestParam("title") String title,
-                                      @RequestParam("tag") String tag,
-                                      @RequestParam("date_start") String date_start,
-                                      @RequestParam("date_end") String date_end,
-                                      @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+            @PathVariable("meetingID") Integer meetingID,
+            @RequestParam("title") String title,
+            @RequestParam("tag") String tag,
+            @RequestParam("date_start") String date_start,
+            @RequestParam("date_end") String date_end,
+            @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
         Response response = new Response();
         logger.info("asdasd");
@@ -265,7 +273,7 @@ public class MeetingController {
         meeting.setInfo(info);
         DataObject dataObject = meeting.toDataObject();
         int id = loadingService.updateDataObject(dataObject);
-        doCache.refresh(meetingID);
+        doCache.invalidate(meetingID);
 
         // Логирование:
         int idUser = userService.getObjID(userService.getCurrentUsername());

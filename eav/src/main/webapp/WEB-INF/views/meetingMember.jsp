@@ -51,9 +51,11 @@
                     <li class="list-group-item">Описание: ${meeting.info}</li>
                     <li class="list-group-item" name="tags">Теги: ${meeting.tag}</li>
                 </ul>
-                <button type="button" class="btn btn-danger btn-block" id="leaveButton">
+
+                <a href="/leaveMeeting${meeting.id}"> <button type="button" class="btn btn-danger btn-block" id="leaveButton">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"> Покинуть встречу</span>
-                </button>
+                </button> </a>
+
             </div>
         </div>
         <!-- ЧАТ -->
