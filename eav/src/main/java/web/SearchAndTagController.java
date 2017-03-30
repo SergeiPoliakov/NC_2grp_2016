@@ -1,24 +1,14 @@
 package web;
 
-import dbHelp.DBHelp;
-import entities.DataObject;
-import entities.Message;
-import entities.Tag;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import service.id_filters.MessageFilter;
-import service.id_filters.NotificationFilter;
-import service.id_filters.UserFilter;
+import org.springframework.web.bind.annotation.*;
+import service.search.FinderTagRequest;
+import service.search.FinderTagResponse;
 import service.tags.TagTreeManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Hroniko on 29.03.2017.
@@ -34,37 +24,36 @@ public class SearchAndTagController {
     }
 
     // 2017-03-30 Запрашиваем теги
-    @RequestMapping(value = "/getTags", method = RequestMethod.GET)
-    public @ResponseBody
-    ArrayList<Tag> getTags(@RequestParam String text) { // text для проверки тут, какую именно инфу вернуть. ифы и ветвление по запросам ajax
+    @RequestMapping(value = "/getTags", method = RequestMethod.POST, headers = {"Content-type=application/json"})
+    @ResponseBody
+    public ArrayList<FinderTagResponse> getTags2(@RequestBody FinderTagRequest finder) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
-        ArrayList<Tag> tagList = new ArrayList<>();
-        System.out.println("Пришел запрос на тег [" + text + "]");
+        if (finder.getType().equals("user")){
+            // работаем с юзерами
+        }
+        else if (finder.getType().equals("meeting")){
+            // работаем со встречами
+        }
+
+        ArrayList<FinderTagResponse> finderTagResponseList = new ArrayList<>();
+        System.out.println("Пришел запрос на тег [" + finder.getText() + "]");
+
+
+
 
         TagTreeManager ttm = new TagTreeManager();
-        ArrayList<String> anyTag = ttm.getTagWordListForUser(text);
+        ArrayList<String> anyTag = ttm.getTagWordListForUser(finder.getText());
 
         for (int i = 0; i < anyTag.size(); i++){
-            Tag tag = new Tag();
-            tag.setId(i);
-            tag.setText(anyTag.get(i));
-            tagList.add(tag);
+            FinderTagResponse finderTagResponse = new FinderTagResponse();
+            finderTagResponse.setId(i);
+            finderTagResponse.setText(anyTag.get(i));
+            finderTagResponseList.add(finderTagResponse);
         }
 
 
-        /*
-        Tag tag = new Tag();
-        tag.setId(1);
-        tag.setText("Вася");
-        tagList.add(tag);
 
-        Tag tag2 = new Tag();
-        tag2.setId(2);
-        tag2.setText("Петя");
-        tagList.add(tag2);
-        */
-
-        return tagList;
+        return finderTagResponseList;
     }
 
 

@@ -1,17 +1,15 @@
-package entities;
-
-import java.util.ArrayList;
+package service.search;
 
 /**
- * Created by Hroniko on 22.03.2017.
+ * Created by Hroniko on 30.03.2017.
  */
-// Класс для хранения одного тега-слова
-public class Tag extends BaseEntitie {
+// Класс для хранения одного тега-слова помещаемого в массив-ответ на запрос тегов (AJAX)
+public class FinderTagResponse {
 
     private int id;
     private String text;
 
-    public Tag() {
+    public FinderTagResponse() {
     }
 
     public int getId() {

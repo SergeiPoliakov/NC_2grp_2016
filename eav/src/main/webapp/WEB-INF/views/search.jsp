@@ -108,16 +108,19 @@
 
 
                         $.ajax({
-                            url: '/getTags',
-                            type: 'GET',
+
+                            url: "/getTags",
+                            type: 'POST',
                             dataType: 'json',
-                            contentType: 'application/json',
+                            contentType : "application/json",
                             mimeType: 'application/json',
-                            data: ({
+                            data: JSON.stringify({
+                                type: "user",       // user | meeting
+                                operation: "and",   // and | or
                                 text: input_initial_value
                             }),
-                            success: function (data) {
 
+                            success: function (data) {
                                 var index;
                                 suggest_count = data.length;
                                 if (suggest_count < 1) {
@@ -184,7 +187,8 @@
                 $('#search_advice_wrapper').show();
             event.stopPropagation();
         });
-    });
+    })
+    ;
 
     function key_activate(n) {
         $('#search_advice_wrapper div').eq(suggest_selected - 1).removeClass('active');
