@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Created by Hroniko on 30.03.2017.
  */
 // Класс подвешенного дерева для быстрого поиска юзеров по их имени, фамилии, отчеству // нследуемся от дерева тегов и переопределяем часть методов
-public class NameNodeTree extends TagNodeTree {
+public class NameNodeTree {
 
     private static volatile TagNodeTree instance;
 
@@ -49,7 +49,6 @@ public class NameNodeTree extends TagNodeTree {
     }
 
     // Переопределяем метод загрузки из базы
-    @Override
     void loadAndCreateTagNodeTree() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         ArrayList<Integer> user_ids = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL));
         System.out.println("Список загружаемых из базы юзеров :" + user_ids);
@@ -70,16 +69,87 @@ public class NameNodeTree extends TagNodeTree {
         // И затем обходим всех юзеров и подвешиваем их имена к дереву
         for (int i = 0; i < users.size(); i++){
             User user = users.get(i);
-            super.insertForUser(user.getName(), user.getId()); // Вешаем на дерево имя
-            super.insertForUser(user.getSurname(), user.getId()); // Вешаем на дерево фамилию
-            if (user.getMiddleName().length() > 0) super.insertForUser(user.getMiddleName(), user.getId()); // Если еще и отчество есть, то и его вешаем
+            insertForUser(user.getName(), user.getId()); // Вешаем на дерево имя
+            insertForUser(user.getSurname(), user.getId()); // Вешаем на дерево фамилию
+            if (user.getMiddleName().length() > 0) insertForUser(user.getMiddleName(), user.getId()); // Если еще и отчество есть, то и его вешаем
         }
 
 
     }
 
 
-    @Override
+    // 1) Метод добавления тега-слова для переданного юзера в дерево (основной):
+    public void insertForUser(String tag_word, Integer user_id) {
+        // Сначала дополнительные проверки:
+        if (tag_word == null) {
+            return;
+        }
+        if (tag_word.length() == 0) {
+            return;
+        }
+        // 2017-03-23 Надо еще автоматически приводить буквы в слове к нижнему регистру!!! Чтобы не дублировать одно и то же в разных регистрах
+        tag_word = tag_word.toLowerCase();
+
+        System.out.println("ДО ОТПРАААААААААААВКИ" + this.root);
+        insertKeyForUser(this.root, tag_word, 0, user_id);
+    }
+
+    // 1a) Метод добавления тега-слова для текущего юзера в дерево (основной):
+    public void insertForUser(String tag_word) throws SQLException {
+        Integer user_id = userService.getObjID(userService.getCurrentUsername());
+        insertForUser(tag_word, user_id);
+    }
+
+
+    // 1-1) Метод вставки узла в дерево (вспомогательный, рекурсия): // node - текущий узел, слово, номер буквы в слове, айди юзера-хранителя тега
+    private void insertKeyForUser(TagNode node, String word, int pos, int id_user) {
+        char w = word.charAt(pos);
+        if (print_flag) System.out.println("Находимся в ноде [" + node.getValue() + "]");
+        if (print_flag) System.out.println("Ищу узел для буквы [" + w + "] текущего тега [" + word + "]");
+
+        // А-1 Пробегаем по листу всех дочерних узлов (если это последний, то он будет пуст, не будет ссылок)
+        ArrayList<TagNode> tagNodes = node.getParents();
+        TagNode parent = null;
+
+        for (int i = 0; i < tagNodes.size(); i++) {
+            // и смотрим, есть ли подходящий
+            TagNode candidate = tagNodes.get(i);
+            if (candidate.getValue() == w) {
+                // Если содержит, все хорошо, запоминаем потомка и выходим из цикла:
+                parent = candidate;
+                if (print_flag) System.out.println("Нашли узел для буквы [" + w + "] текущего тега [" + word + "]");
+                break;
+            }
+        }
+
+        // A-2 если в процессе обхода ничего не нашли подходящего, создадим сами
+        if (parent == null){
+            if (print_flag) System.out.println("Не нашли узел для буквы [" + w + "] текущего тега [" + word + "]");
+            if (print_flag) System.out.println("Создаю узел для буквы [" + w + "] текущего тега [" + word + "]");
+            parent = new TagNode(); // Создаем новый узел с установкой ссылки на родителя и установкой значения буквы
+            parent.setRoot(node);
+            parent.setValue(w);
+            parent.setName("tag_node_" + parent.getId()); // Устанавливаем имя потомка
+            node.setParents(parent); // и добавляем в список потомков текущего узла (родителя)
+            System.out.println("Текущее состояние родителя: " + node);
+            System.out.println("Текущее состояние потомка: " + parent);
+
+        }
+
+        // A-3 После этого проверяем, а не дошли ли мы до конца нашего слова-тега? (у нас уже точно есть новый нод, в который мы можем зайти)
+        if (pos == word.length() - 1) {
+            // Если долшли, то добавляем ссылки на юзера в наш parent-узел:
+            parent.addUserId(id_user); // добавляем юзера
+        }
+        else { // Иначе еще можно продолжать рекурсию, предварительно увеличив номер буквы в теге-слове
+            pos++;
+            insertKeyForUser(parent, word, pos, id_user); // и заходим в этого потомка
+        }
+
+        // К завершению метода обе очереди будут либо наполнены, либо наполнены и уже перенесены в базу
+    }
+
+
     // Метод поиска ФИО юзера в дереве (основной):
     public TagNode findForUser(String tag_word) {
         // Сначала дополнительные проверки:
