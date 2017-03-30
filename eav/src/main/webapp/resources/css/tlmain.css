@@ -1,6 +1,17 @@
 body, html {
 	background-color: #f5f4f4;
 }
+/*Select2*/
+
+.select2-selection__choice{
+	background-color: rgb(149, 165, 166) !important;
+	color: white !important;
+} 
+
+.select2-selection__choice__remove{
+	color: white !important;
+}
+
 /*Bootstrap*/
 
 .label {

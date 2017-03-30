@@ -16,6 +16,7 @@
     <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-notifications.min.css">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/footer.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/select2.min.css">
 
     <!-- Если будут какие траблы - возможно из за tlmain..css -->
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tlmain.css">
@@ -78,9 +79,17 @@
             </ul>
             <form action="/searchUser" class="navbar-form navbar-left" role="search" method="post">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="name" placeholder='Поиск'>
+                    <select multiple type="text" class="form-control searchBox" name="name" style="width: 30rem;">
+                        <option value="AL">Alabama2</option>
+                        <option value="AL2">Alabama23</option>
+                        <option value="AL3">Alabama234</option>
+                    </select>
                 </div>
-                <button type="submit" class="btn btn-success">Поиск</button>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success btn-md">
+                        <span class="glyphicon glyphicon-search"></span> Поиск
+                    </button>
+                </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/allUnconfirmedFriends" id="result_text_friend"></a></li> <!-- AJAX "Друзья: 5" -->
@@ -98,8 +107,20 @@
     </div>
     <!-- /.container-fluid -->
 </nav>
- <!-- Notification -->
+ <!-- Notification  theme: "bootstrap"-->
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/select2.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/ru.js"></script>
+<script type="text/javascript">
+    $(".searchBox").select2({
+        language: "ru",
+        tags: true,
+        tokenSeparators: [',', ' '],
+        placeholder: ' Поиск...'
+    });
+
+</script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/notifications.js"></script>
+
 </body>
 </html>
