@@ -126,3 +126,31 @@ function key_activate(n) {
         $("#search_box").val(input_initial_value);
     }
 }
+
+function getFind() {
+    input_initial_value = $("#search_box").val();
+    document.getElementById("search_box").value = '';
+
+    $.ajax({
+        url: "/getFind",
+        type: 'POST',
+        dataType: 'json',
+        contentType: "application/json",
+        mimeType: 'application/json',
+        data: JSON.stringify({
+            type: "user",       // user | meeting
+            operation: "or",   // and | or
+            text: input_initial_value
+        }),
+        success: function (data) {
+
+        }
+    });
+
+    var delay = 1000;
+    // и с задержкой переходим на страницу с результатами
+    setTimeout("document.location.href='/main-login'", delay);
+
+
+
+}

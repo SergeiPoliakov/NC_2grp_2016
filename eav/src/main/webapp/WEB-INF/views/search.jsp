@@ -25,10 +25,11 @@
 </head>
 <body>
 <div class="search_area">
-    <form action="" method="GET">
+
         <input type="text" name="query" id="search_box" value="" autocomplete="off">
-        <input type="submit" value="Поиск">
-    </form>
+        <button class="btn btn-warning btn-sm" id="btn-find"
+                onclick="getFind()">Поиск</button>
+
     <div id="search_advice_wrapper"></div>
 </div>
 
