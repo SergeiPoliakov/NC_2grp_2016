@@ -66,7 +66,7 @@
 
                         <div class="form-group has-feedback">
                             <label class="control-label" for="email">Email*</label>
-                            <input required data-toggle="tooltip" type="email" class="form-control" name="email" id="email" placeholder="Email" >
+                            <input required data-toggle="tooltip" type="email" class="form-control" name="email" id="email" placeholder="Email"  >
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
 

@@ -16,15 +16,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Настройки</title>
-    <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
+    <%@include file='header.jsp' %>
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/bootstrap-select.min.css">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tlmain.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/moment-with-locales.min.js"> </script>
     <script src="<%=request.getContextPath()%>/resources/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
 
 
-    <%@include file='header.jsp' %>
+
 
 </head>
 <body>
@@ -43,65 +47,78 @@
                 <div class="well bs-component">
                     <div class="row">
                     <div class="col col-lg-5 col-md-6">
-                        <form action="/changeProfile/${user.id}" method="post">
+                        <form action="/changeProfile/${user.id}" method="post" data-toggle="validator">
                             <fieldset>
-                            <div class="form-group  ">
-                                <label for="InputName1">Введите Имя</label>
-                                <input type="text" class="form-control " name="name" id="InputName1" value=${user.name}>
-                            </div>
-
-                            <div class="form-group ">
-                                <label for="InputSurname1">Введите фамилию</label>
-                                <input type="text" class="form-control" name="surname" id="InputSurname1"
-                                       value=${user.surname}>
-                            </div>
-
-                            <div class="form-group ">
-                                <label for="InputMiddleName1">Введите отчество</label>
-                                <input type="text" class="form-control" name="middle_name" id="InputMiddleName1"
-                                       value=${user.middleName}>
-                            </div>
-
-
-                                <!--  Тут нужно сделать так же, как и на странице регистрации или вернуть как было   -->
-                            <div class="form-group  ">
-                                <label for="InputAge1">Введите вашу дату рождения</label>
-                                <input type="date" class="form-control" name="ageDate" id="InputAge1" value=${user.ageDate}>
-                            </div>
-
-                            <div class="form-group  ">
-                                <label>Выберите ваш пол</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="sex" id="Gender1" value="мужской"  <c:if test="${user.sex eq 'мужской' or user.sex eq null}">checked</c:if> >
-                                        Мужской
-                                    </label>
+                                <div class="form-group has-feedback">
+                                    <label class="control-label" for="InputSurname1">Фамилия</label>
+                                    <input type="text" class="form-control" name="surname" id="InputSurname1"
+                                           value=${user.surname} data-toggle="tooltip"
+                                           pattern="[A-Za-zА-яа-яЁё]{3,}" title="Только русские и английские буквы. Не менее 3 символов" required>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                                 </div>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="sex" id="Gender2" value="женский" <c:if test="${user.sex eq 'женский'}">checked</c:if> >
-                                        Женский
-                                    </label>
+
+                                <div class="form-group  has-feedback">
+                                    <label for="InputName1">Имя</label>
+                                    <input type="text" class="form-control " name="name" id="InputName1" value=${user.name}
+                                            data-toggle="tooltip" placeholder="Имя" pattern="[A-Za-zА-яа-яЁё]{3,}"
+                                           title="Только русские и английские буквы. Не менее 3 символов" required>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                                 </div>
-                            </div>
 
-                            <div class="form-group  ">
-                                <label for="InputCity1">Введите ваш город</label>
-                                <input type="text" class="form-control" name="city" id="InputCity1" value=${user.city}>
-                            </div>
 
-                            <div class="form-group  ">
-                                <label for="InputPhone1">Введите ваш номер телефона</label>
-                                <input type="text" class="form-control" name="phone" id="InputPhone1" value=${user.phone}>
-                            </div>
+                                <div class="form-group has-feedback">
+                                    <label for="InputMiddleName1">Отчество</label>
+                                    <input type="text" class="form-control" name="middle_name" id="InputMiddleName1" value=${user.middleName}
+                                            data-toggle="tooltip" placeholder="Имя" pattern="[A-Za-zА-яа-яЁё]{3,}"
+                                           title="Только русские и английские буквы. Не менее 3 символов">
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                </div>
 
-                            <div class="form-group ">
-                                <label for="TextArea1">Расскажите немного о себе</label>
-                                <textarea rows="3" class="form-control noresize" name="info"
-                                          id="TextArea1">${user.additional_field}</textarea>
-                            </div>
 
-                            <button type="submit" class="btn btn-info col-lg-5 col-lg-offset-4">Сохранить</button>
+                                    <!--  Тут нужно сделать так же, как и на странице регистрации или вернуть как было   -->
+                                <div class="form-group has-feedback">
+                                    <label for="InputAge1">Дата рождения</label>
+                                    <input type="date" class="form-control" name="ageDate" id="InputAge1" value=${user.ageDate}
+                                            data-toggle="tooltip" pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" required>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Пол</label>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="sex" id="Gender1" value="мужской"  <c:if test="${user.sex eq 'мужской' or user.sex eq null}">checked</c:if> >
+                                            Мужской
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="sex" id="Gender2" value="женский" <c:if test="${user.sex eq 'женский'}">checked</c:if> >
+                                            Женский
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group has-feedback">
+                                    <label for="InputCity1">Город</label>
+                                    <input type="text" class="form-control" name="city" id="InputCity1" value=${user.city}>
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                </div>
+
+                                <div class="form-group has-feedback">
+                                    <label for="InputPhone1">Номер телефона</label>
+                                    <input type="text" class="form-control" name="phone" id="InputPhone1" value=${user.phone}
+                                            data-toggle="tooltip" pattern="[1-9]{11}" title="Введите корректный номер телефона">
+                                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="TextArea1">Расскажите немного о себе</label>
+                                    <textarea rows="3" class="form-control noresize" name="info"
+                                              id="TextArea1">${user.additional_field}</textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-info col-lg-5 col-lg-offset-4">Сохранить</button>
                         </fieldset>
                         </form>
                     </div>
@@ -377,13 +394,18 @@
             </div>
         </div>
     </div>
-
 </div>
+<script type="text/javascript">
+    // Modal datetimepickers для создания новой задачи
+    $(function () {
+        $('#InputAge1').datetimepicker({
+            locale: 'ru'
+        });
+    });
+</script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/profile.js"></script>
-
+</body>
 <div style="margin-bottom: 8rem;"/>
 <%@include file='footer.jsp'%>
-
-</body>
 </html>
 

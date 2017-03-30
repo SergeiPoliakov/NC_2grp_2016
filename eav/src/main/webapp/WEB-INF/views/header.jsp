@@ -20,7 +20,7 @@
 
     <!-- Если будут какие траблы - возможно из за tlmain..css -->
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tlmain.css">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/docs.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/header.js"></script>
@@ -68,7 +68,6 @@
                 <li><a href="/main-login">Расписание</a></li>
                 <li><a href="/meetings">Встречи</a></li>
                 <li><a href="/allFriends">Друзья</a></li>
-                <li><a href="/allUser">Пользователи</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Меню <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
@@ -86,7 +85,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-success btn-md">
+                    <button type="submit" class="btn btn-success btn-sm">
                         <span class="glyphicon glyphicon-search"></span> Поиск
                     </button>
                 </div>
