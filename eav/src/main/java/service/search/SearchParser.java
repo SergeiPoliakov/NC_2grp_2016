@@ -1,6 +1,7 @@
 package service.search;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Hroniko on 29.03.2017.
@@ -17,7 +18,7 @@ public class SearchParser {
         // Разделяем на отдельные слова:
         // String[] tag_strings = search_string.split("\\p{P}?[ \\t\\n\\r]+");
         String[] tag_strings = search_string.split("[\\p{P} \\t\\n\\r]+");
-        System.out.println(tag_strings);
+        System.out.println(Arrays.toString(tag_strings));
         System.out.println();
         // Выкидываем слова короче 3 букв (предлоги и пр.), переводим в нижний регистр и вставляем в лист:
         ArrayList<String> tags = new ArrayList<>();

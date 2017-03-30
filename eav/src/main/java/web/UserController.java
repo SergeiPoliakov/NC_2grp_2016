@@ -2,6 +2,9 @@ package web;
 
 import entities.*;
 import service.application_settings.SettingsLoader;
+import service.search.FinderLogic;
+import service.search.FinderTagRequest;
+import service.search.FinderTagResponse;
 import service.statistics.StaticticLogger;
 import com.google.common.cache.LoadingCache;
 import exception.CustomException;
@@ -32,6 +35,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -39,10 +43,7 @@ import java.security.Principal;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -52,6 +53,8 @@ import java.util.concurrent.ExecutionException;
 public class UserController {
     // Собственный внутренний логгер для контроллера
     private StaticticLogger loggerLog = new StaticticLogger();
+
+    private TagTreeManager tagTreeManager = new TagTreeManager();
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
@@ -130,7 +133,7 @@ public class UserController {
             e.printStackTrace();
         }
         try {
-        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER));
+            ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER));
             System.out.println("Ищем в кэше список событий данной пользователя ");
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
@@ -174,8 +177,8 @@ public class UserController {
         loggerLog.add(Log.PAGE, "main-login", idUser); // Посещение страницы
 
         // 2017-03-23 Просто тест дерева тегов:
-         TagTreeManager ttm = new TagTreeManager();
-         ttm.test();
+        TagTreeManager ttm = new TagTreeManager();
+        ttm.test();
 
         NameNodeTree nnt = new NameNodeTree();
 
@@ -220,6 +223,64 @@ public class UserController {
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.PAGE, "main", idUser); // Посещение страницы           // в консоле вылетает ошибка "violated - parent key not found"
         return "main";
+    }
+
+
+    @RequestMapping(value = "/searchUser", method = RequestMethod.GET)
+    public String searchUser(HttpServletRequest request, Map<String, Object> mapObjects) {
+
+
+        HttpSession session = request.getSession();
+        if (session.getAttribute("allUsers") != null) {
+            FinderTagRequest finder = (FinderTagRequest) session.getAttribute("allUsers");
+
+            System.out.println("finder пришел из сессии!!!" + finder.getText());
+
+
+            ArrayList<FinderTagResponse> finderTagResponseList = FinderLogic.getWithLogic(finder);
+            Set<Integer> usersID = new HashSet<>();
+            ArrayList<Integer> userListWithTag;
+
+
+            assert finderTagResponseList != null;
+            for (FinderTagResponse tag : finderTagResponseList
+                    ) {
+
+                String value = tag.getText();
+                userListWithTag = tagTreeManager.getUserListWithTag(value);
+                usersID.addAll(userListWithTag);
+            }
+
+            for (int index : usersID
+                    ) {
+                System.out.println("ЭТИ ОБЪЕКТЫ СЕЙЧАС БУДУТ ВЫВЕДЕНЫ!!!" + index);
+            }
+
+            try {
+                Map<Integer, DataObject> map = doCache.getAll(usersID);
+                ArrayList<DataObject> list = getListDataObject(map);
+                ArrayList<User> users = new ArrayList<>(list.size());
+                for (DataObject dataObject : list) {
+                    User user = converter.ToUser(dataObject);
+                    users.add(user);
+                }
+
+                for (User user : users
+                        ) {
+                    System.out.println("В ТЕГЕ НАХОДИТСЯ ЮЗЕР С ID " + user.getId());
+                }
+
+                mapObjects.put("allUsers", users);
+
+
+                session.invalidate();
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return "/searchUser";
     }
 
     @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
@@ -408,10 +469,10 @@ public class UserController {
     public String verificationToken(@PathVariable("token") String token,
                                     @PathVariable("id") Integer id) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
-            DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
-            String confirmedEmail = "true";
-            dataObject.setValue(15, confirmedEmail);
-            loadingService.updateDataObject(dataObject);
+        DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
+        String confirmedEmail = "true";
+        dataObject.setValue(15, confirmedEmail);
+        loadingService.updateDataObject(dataObject);
 
         return "/main";
     }
@@ -446,9 +507,9 @@ public class UserController {
         this.code = code;
         System.out.println("Сгенированыый код " + code);
 
-         //SMSCSender sd= new SMSCSender("Netcracker", "q7Sq2O_VqLhh", "utf-8", true);   //после теста закомментируйте обратно!!!!!
-         //sd.sendSms("7**********", "Код подтверждения: " + code, 0, "", "", 0, "NC", "");  // тут нужно указать ваш номер телефона
-         //sd.getBalance();
+        //SMSCSender sd= new SMSCSender("Netcracker", "q7Sq2O_VqLhh", "utf-8", true);   //после теста закомментируйте обратно!!!!!
+        //sd.sendSms("7**********", "Код подтверждения: " + code, 0, "", "", 0, "NC", "");  // тут нужно указать ваш номер телефона
+        //sd.getBalance();
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.EDIT_SETTINGS, "generatePhoneCode", idUser); // Изменение настроек
         return "redirect:/profile";
@@ -488,8 +549,8 @@ public class UserController {
         mapAttr.put(2, surname);
         mapAttr.put(3, middle_name);
         //mapAttr.put(4, nickname); убрал возможность пользователя менять свой ник, а то жирно. Будет платной функцией) На самом деле просто из-за добавление поля с телефеном у меня кнопка "Сохранить"
-                                    // уехала вниз футера и я не мог на нее нажать
-                                    // Вот тут надо сделать прокрутку на странице, а то ее нет. Тогда все будет помещаться
+        // уехала вниз футера и я не мог на нее нажать
+        // Вот тут надо сделать прокрутку на странице, а то ее нет. Тогда все будет помещаться
         mapAttr.put(5, ageDate);
 
         mapAttr.put(8, sex);

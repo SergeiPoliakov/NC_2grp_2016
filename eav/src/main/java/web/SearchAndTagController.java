@@ -17,6 +17,8 @@ import service.search.FinderTagResponse;
 import service.search.SearchParser;
 import service.tags.TagTreeManager;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -27,15 +29,6 @@ import java.util.concurrent.ExecutionException;
 // Класс-контроллер для поиска по тегам юзеров, встреч, работы с динамическим поиском, выводом реультатов поиска на страницу, добавление и удаления тегов
 @Controller
 public class SearchAndTagController {
-
-    private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
-
-    private LoadingServiceImp loadingService = new LoadingServiceImp();
-
-    private UserServiceImp userService = new UserServiceImp();
-
-    private Converter converter = new Converter();
-
 
     // На подгрузку страницы поиска:
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -53,17 +46,20 @@ public class SearchAndTagController {
 
     // 2017-03-30 Получаем тег и ищем подходящих юзеров (или встречи)
     @RequestMapping(value = "/getFind", method = RequestMethod.POST, headers = {"Content-type=application/json"})
-    public String getFind(@RequestBody FinderTagRequest finder) {
+    public String getFind(@RequestBody FinderTagRequest finder,
+                          Map<String, Object> mapObjects,
+                          HttpServletRequest request) {
         // А тут к нам пришли все нужные параметры, которые достаем и можем испольовать для логики поиска, а потмо подготовить список и отдать на какую-то сраницу
-        System.out.println(finder.getType());
-        System.out.println(finder.getOperation());
-        System.out.println(finder.getText());
-
-        // В то время как редирект случится в search,js
 
 
-        return "searchUser";
+        if (finder.getText() != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("allUsers", finder);
+        }
+
+        return "search";
     }
 
 
 }
+

@@ -149,7 +149,7 @@ function getFind() {
 
     var delay = 1000;
     // и с задержкой переходим на страницу с результатами
-    setTimeout("document.location.href='/main-login'", delay);
+    setTimeout("document.location.href='/searchUser'", delay);
 
 
 
