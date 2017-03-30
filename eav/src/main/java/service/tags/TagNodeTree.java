@@ -244,6 +244,7 @@ public class TagNodeTree {
 
     // 1-1) Метод вставки узла в дерево (вспомогательный, рекурсия): // node - текущий узел, слово, номер буквы в слове, айди юзера-хранителя тега
     private void insertKeyForUser(TagNode node, String word, int pos, int id_user) {
+        System.out.println("ДО ДОБАВЛЕНИЯ В ДЕРЕВО" + node);
         char w = word.charAt(pos);
         if (print_flag) System.out.println("Находимся в ноде [" + node.getValue() + "]");
         if (print_flag) System.out.println("Ищу узел для буквы [" + w + "] текущего тега [" + word + "]");
@@ -291,6 +292,7 @@ public class TagNodeTree {
         }
         else { // Иначе еще можно продолжать рекурсию, предварительно увеличив номер буквы в теге-слове
             pos++;
+            System.out.println("ПОСЛЕ ДОБАВЛЕНИЯ В ДЕРЕВО" + node);
             insertKeyForUser(parent, word, pos, id_user); // и заходим в этого потомка
         }
 

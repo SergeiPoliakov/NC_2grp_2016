@@ -1313,8 +1313,14 @@ public class DBHelp {
         for (int i = 0; i < updTagList.size(); i++) {
 
             DataObject dataObject = updTagList.get(i);
-            if (dataObject.getName().equals("ROOT_NODE")) dataObject = (new Converter()).toDO(RootNode.getRoot());
-            System.out.println("Текущий нод на обновление " + dataObject);
+            if (dataObject.getName().equals("ROOT_NODE")) dataObject = (new Converter()).toDO(dataObject);
+            System.out.println("\n\nДля обновления в базу пришел новый датаобджект:" +
+                    "\nid = " + dataObject.getId() +
+                    "\ntype = " + dataObject.getObjectTypeId() +
+                    "\nname = " + dataObject.getName() +
+                    "\nparams = " + dataObject.getParams() +
+                    "\nreferences = " + dataObject.getRefParams() +
+                    "");
 
             int id = dataObject.getId();
             try (Connection Con = getConnection();

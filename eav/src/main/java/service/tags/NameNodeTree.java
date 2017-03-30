@@ -19,7 +19,7 @@ import java.util.ArrayList;
 // Класс подвешенного дерева для быстрого поиска юзеров по их имени, фамилии, отчеству // нследуемся от дерева тегов и переопределяем часть методов
 public class NameNodeTree {
 
-    private static volatile TagNodeTree instance;
+    private static volatile NameNodeTree instance;
 
     private boolean print_flag = true; // служебный флаг для включения возможности вывода в консоль служебной инфы
     private UserServiceImp userService = new UserServiceImp();
@@ -28,11 +28,11 @@ public class NameNodeTree {
     private TagNode root = TagNode.getInstance(); // Ссылка на корневой узел
 
 
-    public static TagNodeTree getInstance()  {
+    public static NameNodeTree getInstance()  {
         if (instance == null)
-            synchronized (TagNodeTree.class) {
+            synchronized (NameNodeTree.class) {
                 if (instance == null)
-                    instance = new TagNodeTree();
+                    instance = new NameNodeTree();
             }
         return instance;
     }
@@ -40,7 +40,7 @@ public class NameNodeTree {
     // Конструктор:
     public NameNodeTree() {
         try {
-            this.loadAndCreateTagNodeTree();
+            this.loadAndCreateNameNodeTree();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
@@ -49,7 +49,7 @@ public class NameNodeTree {
     }
 
     // Переопределяем метод загрузки из базы
-    void loadAndCreateTagNodeTree() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    void loadAndCreateNameNodeTree() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         ArrayList<Integer> user_ids = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL));
         System.out.println("Список загружаемых из базы юзеров :" + user_ids);
         // Получаем список всех датаобджектов-юзеров:
@@ -64,7 +64,7 @@ public class NameNodeTree {
         ArrayList<User> users = new Converter().ToUser(user_list);
 
 
-        this.root = TagNode.getInstance(); // Создаем базовый узел
+        //this.root = TagNode.getInstance(); // Создаем базовый узел
 
         // И затем обходим всех юзеров и подвешиваем их имена к дереву
         for (int i = 0; i < users.size(); i++){
@@ -78,30 +78,20 @@ public class NameNodeTree {
     }
 
 
-    // 1) Метод добавления тега-слова для переданного юзера в дерево (основной):
+    // Метод добавления тега-слова для переданного юзера в дерево (основной):
     public void insertForUser(String tag_word, Integer user_id) {
-        // Сначала дополнительные проверки:
-        if (tag_word == null) {
-            return;
-        }
-        if (tag_word.length() == 0) {
-            return;
-        }
-        // 2017-03-23 Надо еще автоматически приводить буквы в слове к нижнему регистру!!! Чтобы не дублировать одно и то же в разных регистрах
         tag_word = tag_word.toLowerCase();
-
-        System.out.println("ДО ОТПРАААААААААААВКИ" + this.root);
         insertKeyForUser(this.root, tag_word, 0, user_id);
     }
 
-    // 1a) Метод добавления тега-слова для текущего юзера в дерево (основной):
+    // Метод добавления тега-слова для текущего юзера в дерево (основной):
     public void insertForUser(String tag_word) throws SQLException {
         Integer user_id = userService.getObjID(userService.getCurrentUsername());
         insertForUser(tag_word, user_id);
     }
 
 
-    // 1-1) Метод вставки узла в дерево (вспомогательный, рекурсия): // node - текущий узел, слово, номер буквы в слове, айди юзера-хранителя тега
+    // Метод вставки узла в дерево (вспомогательный, рекурсия): // node - текущий узел, слово, номер буквы в слове, айди юзера-хранителя тега
     private void insertKeyForUser(TagNode node, String word, int pos, int id_user) {
         char w = word.charAt(pos);
         if (print_flag) System.out.println("Находимся в ноде [" + node.getValue() + "]");
@@ -117,15 +107,15 @@ public class NameNodeTree {
             if (candidate.getValue() == w) {
                 // Если содержит, все хорошо, запоминаем потомка и выходим из цикла:
                 parent = candidate;
-                if (print_flag) System.out.println("Нашли узел для буквы [" + w + "] текущего тега [" + word + "]");
+                if (print_flag) System.out.println("Нашли узел для буквы [" + w + "] текущего имени [" + word + "]");
                 break;
             }
         }
 
-        // A-2 если в процессе обхода ничего не нашли подходящего, создадим сами
+        // если в процессе обхода ничего не нашли подходящего, создадим сами
         if (parent == null){
-            if (print_flag) System.out.println("Не нашли узел для буквы [" + w + "] текущего тега [" + word + "]");
-            if (print_flag) System.out.println("Создаю узел для буквы [" + w + "] текущего тега [" + word + "]");
+            if (print_flag) System.out.println("Не нашли узел для буквы [" + w + "] текущего имени [" + word + "]");
+            if (print_flag) System.out.println("Создаю узел для буквы [" + w + "] текущего имени [" + word + "]");
             parent = new TagNode(); // Создаем новый узел с установкой ссылки на родителя и установкой значения буквы
             parent.setRoot(node);
             parent.setValue(w);
@@ -136,7 +126,7 @@ public class NameNodeTree {
 
         }
 
-        // A-3 После этого проверяем, а не дошли ли мы до конца нашего слова-тега? (у нас уже точно есть новый нод, в который мы можем зайти)
+        // После этого проверяем, а не дошли ли мы до конца нашего слова-тега? (у нас уже точно есть новый нод, в который мы можем зайти)
         if (pos == word.length() - 1) {
             // Если долшли, то добавляем ссылки на юзера в наш parent-узел:
             parent.addUserId(id_user); // добавляем юзера
@@ -145,32 +135,21 @@ public class NameNodeTree {
             pos++;
             insertKeyForUser(parent, word, pos, id_user); // и заходим в этого потомка
         }
-
-        // К завершению метода обе очереди будут либо наполнены, либо наполнены и уже перенесены в базу
     }
 
 
     // Метод поиска ФИО юзера в дереве (основной):
     public TagNode findForUser(String tag_word) {
-        // Сначала дополнительные проверки:
-        if (tag_word == null) {
-            return null;
-        }
-        if (tag_word.length() == 0) {
-            return null;
-        }
-        // 2017-03-23 Надо еще автоматически приводить буквы в слове к нижнему регистру!!! Чтобы не дублировать одно и то же в разных регистрах
         tag_word = tag_word.toLowerCase();
         return findKeyForUser(this.root, tag_word, 0);
     }
 
     // Метод поиска узла в дереве (вспомогательный, рекурсия)
     private TagNode findKeyForUser(TagNode node, String word, int pos) {
-
         char w = word.charAt(pos);
         if (print_flag) System.out.println("Ищу узел для буквы [" + w + "] текущего имени [" + word + "]");
 
-        // А-1 Пробегаем по листу всех дочерних узлов (если это последний, то он будет пуст, не будет ссылок)
+        // Пробегаем по листу всех дочерних узлов (если это последний, то он будет пуст, не будет ссылок)
         ArrayList<TagNode> tagNodes = node.getParents();
         TagNode parent = null;
         int i = 0;
@@ -185,17 +164,17 @@ public class NameNodeTree {
             }
         }
 
-        // A-2 если в процессе обхода ничего не нашли подходящего, значит нет такого тега
+        // если в процессе обхода ничего не нашли подходящего, значит нет такого тега
         if (parent == null) {
             if (print_flag) System.out.println("Не найден узел для буквы [" + w + "] текущего имени [" + word + "]. Поиск закончился недачей");
             return null;
         }
 
 
-        // A-3 После этого проверяем, а не дошли ли мы до конца нашего имени?
+        // После этого проверяем, а не дошли ли мы до конца нашего имени?
         if (pos == word.length() - 1) {
             // Если долшли, то отдаем ссылку на нод, в котором совпала последняя буква
-            if (print_flag) System.out.println("Поиск успешно завершен!");
+            if (print_flag) System.out.println("Поиск имени успешно завершен!");
             return parent;
         }
         else { // Иначе еще можно продолжать рекурсию, предварительно увеличив номер буквы в теге-слове
