@@ -36,7 +36,7 @@
 <div class="container">
     <div class="container">
         <h2>Настройки</h2>
-        <ul class="nav nav-tabs nav-justified">
+        <ul class="nav nav-tabs nav-justified" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);">
             <li class="active"><a data-toggle="tab" href="#general">Основные</a></li>
             <li><a data-toggle="tab" href="#privacy">Уведомления и приватность</a></li>
             <li><a data-toggle="tab" href="#security">Безопасность</a></li>
@@ -44,8 +44,7 @@
 
         <div class="tab-content">
             <div id="general" class="tab-pane fade in active">
-                <h3>Основные</h3>
-                <div class="well bs-component">
+                <div class="well bs-component" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
                     <div class="row">
                     <div class="col col-lg-5 col-md-6">
                         <form action="/changeProfile/${user.id}" method="post" data-toggle="validator">
@@ -171,8 +170,7 @@
                 </div>
             </div>
             <div id="privacy" class="tab-pane fade">
-                <h3>Уведомления и приватность</h3>
-                <div class="well bs-component">
+                <div class="well bs-component" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
                     <div class="row">
                         <div class="col col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
                             <form action="/updateSettings/${settings.id}" method="post">
@@ -281,8 +279,7 @@
                 </div>
             </div>
             <div id="security" class="tab-pane fade">
-                <h3>Безопасность</h3>
-                <div class="well bs-component">
+                <div class="well bs-component" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
                     <p>Смена пароля, подтверждение телефона и т.д.</p>
                     <div class="form-group ">
                         <a href="#myModalPassword" data-toggle="modal"> Изменить пароль </a>

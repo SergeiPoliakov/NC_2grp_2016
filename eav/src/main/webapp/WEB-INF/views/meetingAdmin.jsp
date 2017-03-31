@@ -80,7 +80,7 @@
                         <p id="pTag" >Теги: ${meeting.tag}</p>
                     </div>
                 </ul>
-                <form id="meetingUpdateForm" name="update" action="/updateMeeting${meeting.id}" method="post" style="margin-bottom: 0px; padding-left: 1rem; border-top: 1px solid rgb(200, 200, 200);padding-right: 1rem;margin-top: 1rem;">
+                <form id="meetingUpdateForm" name="update" action="/updateMeeting${meeting.id}" method="post" style="margin-bottom: 0px; padding-left: 1rem; border-top: 1px solid rgb(200, 200, 200);padding-right: 1rem;margin-top: 0rem;">
                     <div class="form-group hideinput">
                         <label class="control-label" for="title">Название</label>
                         <input id="title" name="title" type="text" class="form-control">
@@ -135,16 +135,16 @@
                 </div>
                 <ul class="list-group list-group-my list-group-flush text-center chat mCustomScrollbar"
                     data-mcs-theme="minimal-dark" id="cardsholderItems" style="background-color: rgb(238, 238, 238);">
-                    <li class="list-group-item" style="background-color: rgb(238, 238, 238);">РАЗ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ДВА</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ТРИ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ЧЕТЫРЕ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ПЯТЬ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ШЕСТЬ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">СЕМЬ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ВОСЕМЬ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ДЕВЯТЬ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ
+                    <li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">РАЗ</li>
+                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ДВА</li>
+                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ТРИ</li>
+                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ЧЕТЫРЕ</li>
+                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ПЯТЬ</li>
+                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ШЕСТЬ</li>
+                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">СЕМЬ</li>
+                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ВОСЕМЬ</li>
+                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ДЕВЯТЬ</li>
+                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ
                         ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ
                     </li>
                 </ul>
