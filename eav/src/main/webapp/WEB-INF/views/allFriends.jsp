@@ -40,8 +40,8 @@
                         <img src="${object.picture}" onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
                     </div>
                     <div class="profile-userbuttons">
-                        <a href="/user${object.id}"><button type="button" class="btn btn-primary btn-xs"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>
-                        <a href="/sendMessage/${object.id}"><button type="button" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
+                        <a href="/user${object.id}"><button type="button" class="btn btn-primary btn-sm"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>
+                        <a href="/sendMessage/${object.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
                         <a href="/deleteFriend/${object.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
                     </div>
                     <ul class="list-group list-group-my list-group-flush">

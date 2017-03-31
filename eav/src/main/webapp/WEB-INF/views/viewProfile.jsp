@@ -56,12 +56,12 @@
 
                 <div class="profile-userbuttons">
                     <form action="/sendMessage/${user.id}">
-                        <button type="submit" class="btn btn-info btn-xs" <c:if test="${flagMessage eq false}"> disabled </c:if> >
+                        <button type="submit" class="btn btn-info btn-sm" <c:if test="${flagMessage eq false}"> disabled </c:if> >
                             <span class="glyphicon glyphicon-envelope" aria-hidden="true"> Чат</span>
                         </button>
                     </form>
                     <form action="/addFriend/${user.id}/addFriend">
-                        <button type="submit" class="btn btn-success btn-xs" >
+                        <button type="submit" class="btn btn-success btn-sm" >
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"> Добавить в друзья</span>
                         </button>
                     </form>

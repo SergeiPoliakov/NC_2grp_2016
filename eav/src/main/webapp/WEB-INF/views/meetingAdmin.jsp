@@ -39,7 +39,7 @@
             margin: 0px;
         }
         .hideinput{
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
         .input-group-addon-my{
             min-width: 9rem;
@@ -55,6 +55,14 @@
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
             <div class="card">
                 <h3 class="card-title text-center" id="pTitle">${meeting.title}</h3>
+                <div class="profile-userbuttons">
+                    <button type="button" class="btn btn-info btn-sm" id="settingsButton">
+                        <span class='glyphicon glyphicon-cog' aria-hidden='true'> Настройки</span>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" <c:if test="${meeting.users.size() eq 1}"> disabled </c:if>  >
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span>
+                    </button>
+                </div>
                 <ul class="list-group list-group-my list-group-flush" id="meetingInfo">
                     <div class="list-group-item">
                         <p id="pOrganizer">Организатор: <a href='/user${meeting.organizer.id}'>Вы</a></p>
@@ -72,30 +80,27 @@
                         <p id="pTag" >Теги: ${meeting.tag}</p>
                     </div>
                 </ul>
-                <form id="meetingUpdateForm" name="update" action="/updateMeeting${meeting.id}" method="post" style="margin-bottom: 0px;">
-                    <div class="input-group hideinput">
-                        <span class="input-group-addon input-group-addon-my">Название</span>
+                <form id="meetingUpdateForm" name="update" action="/updateMeeting${meeting.id}" method="post" style="margin-bottom: 0px; padding-left: 1rem; border-top: 1px solid rgb(200, 200, 200);padding-right: 1rem;margin-top: 1rem;">
+                    <div class="form-group hideinput">
+                        <label class="control-label" for="title">Название</label>
                         <input id="title" name="title" type="text" class="form-control">
                     </div>
-                    <div class="input-group hideinput">
-                        <span class="input-group-addon input-group-addon-my">Начало</span>
+                    <div class="form-group hideinput">
+                        <label class="control-label" for="date_start">Начало</label>
                         <input id="date_start" name="date_start" type="text" class="form-control">
                     </div>
-                    <div class="input-group hideinput">
-                        <span class="input-group-addon input-group-addon-my">Окончание</span>
+                    <div class="form-group hideinput">
+                        <label class="control-label" for="date_end">Окончание</label>
                         <input id="date_end" name="date_end" type="text" class="form-control">
                     </div>
-                    <div class="input-group hideinput">
-                        <span class="input-group-addon input-group-addon-my">Описание</span>
+                    <div class="form-group hideinput">
+                        <label class="control-label" for="description">Описание</label>
                         <input id="description" name="info" type="text" class="form-control">
                     </div>
-                    <div class="input-group hideinput">
-                        <span class="input-group-addon input-group-addon-my" id="basic-addon3">Теги</span>
+                    <div class="form-group hideinput">
+                        <label class="control-label" for="tag">Теги</label>
                         <input id="tag" name="tag" type="text" class="form-control">
                     </div>
-                    <button type="button" class="btn btn-info btn-block" id="settingsButton" style="margin-top: 0px;">
-                        <span class='glyphicon glyphicon-cog' aria-hidden='true'></span> Настройки
-                    </button>
                 </form>
                 <!-- СВЕРХУ НОВОЕ -->
                 <form id="meetingForm" name="addUser" action="/inviteUserAtMeeting${meeting.id}" method="post" style="margin-bottom: 0px;">
@@ -283,8 +288,8 @@
     $("#settingsButton").click(function(){
         var title = $("#pTitle").text();
 
-        if ($(this).html() == '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Принять'){
-            $(this).html('<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>  Настройки');
+        if ($(this).html() == '<span class="glyphicon glyphicon-ok" aria-hidden="true"> Принять</span>'){
+            $(this).html('<span class="glyphicon glyphicon-cog" aria-hidden="true"> Настройки</span>');
             //$(this).prop("type", "submit");
             callAJAX();
             $("#meetingInfo").toggle();
@@ -292,7 +297,7 @@
             return;
         }
         else {
-            $(this).html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Принять');
+            $(this).html('<span class="glyphicon glyphicon-ok" aria-hidden="true"> Принять</span>');
             $("#title").val(title);
             $("#date_start").val($("#pDate_start").text().substring(8, $("#pDate_start").text().length));
             $("#date_end").val($("#pDate_end").text().substring(11, $("#pDate_end").text().length));

@@ -60,7 +60,11 @@
                     <h3 class="card-title text-center">${meeting.title}</h3>
                     <div class="profile-userbuttons">
                         <a href="/meeting${meeting.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"> Просмотр</span> </button></a>
-                        <a href="/leaveMeeting${meeting.id}" <c:if test="${meeting.users.size() eq 1}"> class="disabled" </c:if> ><button type="button" class="btn btn-danger btn-sm" <c:if test="${meeting.users.size() eq 1}"> disabled </c:if>  ><span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span></button></a>
+                        <a href="/leaveMeeting${meeting.id}" <c:if test="${meeting.users.size() eq 1}"> class="disabled" </c:if> >
+                            <button type="button" class="btn btn-danger btn-xs" <c:if test="${meeting.users.size() eq 1}"> disabled </c:if>  >
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span>
+                            </button>
+                        </a>
                         <c:if test="${meeting.organizer eq user}">   <a href=""><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>  </c:if>
                     </div>
                     <ul class="list-group list-group-my list-group-flush">
