@@ -22,22 +22,108 @@
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
+
+        // 1
         google.charts.load('current', {packages: ['corechart']});
         google.charts.setOnLoadCallback(drawChart);
         function drawChart() {
             // Определяем тип диаграммы:
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Element');
-            data.addColumn('number', 'Percentage');
-            data.addRows([
-                ['Общие встречи', 0.68],
-                ['Принятые встречи', 0.21],
-                ['Отказы', 0.11]
-            ]);
+            var data_plot = new google.visualization.DataTable();
+            data_plot.addColumn('string', 'Element');
+            data_plot.addColumn('number', 'Percentage');
+            // Получаем данные через AJAX-запрос и формируем массив для отрисовки графика
+            $.ajax({
+                url: '/getStat',
+                type: 'POST',
+                dataType: 'json',
+                contentType: "application/json",
+                mimeType: 'application/json',
+                data: JSON.stringify({
+                    type: "round",       // plot | round
+                    operation: "round",   // plot
+                    text: "hop-hop"
+                }),
+                success: function (data) {
 
-            // Создаем и рисуем диаграмму:
-            var chart = new google.visualization.PieChart(document.getElementById('myPieChart'));
-            chart.draw(data, null);
+
+                    var myArray = [data.length];
+                    for (var i = 0; i < data.length; i++) {
+                        myArray[i] = [2];
+                        myArray[i][0] = (data[i]).skey;
+                        myArray[i][1] = parseFloat((data[i]).nvalue);
+
+                    }
+
+                    data_plot.addRows(myArray);
+                    console.log(myArray);
+
+                    // Создаем и рисуем диаграмму:
+                    var chart = new google.visualization.PieChart(document.getElementById('myPieChart'));
+                    chart.draw(data_plot, null);
+                }
+            });
+
+        }
+
+    </script>
+
+
+
+
+
+
+    <script type="text/javascript">
+        // 2
+        google.charts.load('current', {packages: ['corechart', 'line']});
+        google.charts.setOnLoadCallback(drawBackgroundColor);
+
+        function drawBackgroundColor() {
+            var data_plot = new google.visualization.DataTable();
+            data_plot.addColumn('number', 'X');
+            data_plot.addColumn('number', 'Уровень');
+
+            // Получаем данные через AJAX-запрос и формируем массив для отрисовки графика
+            $.ajax({
+                url: '/getStat',
+                type: 'POST',
+                dataType: 'json',
+                contentType: "application/json",
+                mimeType: 'application/json',
+                data: JSON.stringify({
+                    type: "plot",       // plot | round
+                    operation: "plot",   // plot
+                    text: "hop-hop"
+                }),
+                success: function (data) {
+
+
+                    var myArray = [data.length];
+                    for (var i = 0; i < data.length; i++) {
+                        myArray[i] = [2];
+                        myArray[i][0] = parseInt((data[i]).nkey, 10);
+                        myArray[i][1] = parseInt((data[i]).nvalue, 10);
+
+                    }
+
+                    data_plot.addRows(myArray);
+                    console.log(myArray);
+
+                    var options = {
+                        hAxis: {
+                            title: 'Время, мин'
+                        },
+                        vAxis: {
+                            title: 'Интенсивность работы'
+                        },
+                        backgroundColor: '#f1f8e9'
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                    chart.draw(data_plot, options);
+
+                }
+            });
+
         }
 
     </script>
@@ -47,7 +133,9 @@
 
 
 <!-- Место для вставки диаграммы -->
-<div id="myPieChart"/>
+<div id="myPieChart"></div>
+<!-- Место для вставки графика -->
+<div id="chart_div"></div>
 
 
 </body>
