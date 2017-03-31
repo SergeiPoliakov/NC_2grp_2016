@@ -1,6 +1,45 @@
 body, html {
 	background-color: #f5f4f4;
 }
+
+/*Select*/
+
+.myButton{
+	background-color: rgba(0,0,0,0);
+	color: rgb(44, 62, 80);
+	border: 2px solid rgb(220, 228, 236);
+	outline: none;
+}
+
+.myButton[aria-expanded="true"]{
+	background-color: rgba(0,0,0,0);
+	color: rgb(44, 62, 80);
+	border: 2px solid rgb(44, 62, 80);
+	outline: none;
+}
+
+.myButton:hover{
+	background-color: rgba(0,0,0,0);
+	color: rgb(44, 62, 80);
+}
+
+.myButton:active{
+	background-color: rgba(0,0,0,0);
+	color: rgb(44, 62, 80);
+	border: 2px solid rgb(44, 62, 80);
+	outline: none;
+}
+
+.myButton:focus{
+	background-color: rgba(0,0,0,0);
+	color: rgb(44, 62, 80);
+	border: 2px solid rgb(44, 62, 80);
+	outline: none;
+}
+
+
+
+
 /*Select2*/
 
 .select2-selection__choice{

@@ -198,7 +198,7 @@
                                 <div class="input-group" style="width: 1%;display: table-cell;">
                                     <div type="text" class="hidden" name="eventId" id="taskID" value = "eventId"></div>
                                     <label for="taskPriority" class="control-label">Приоритет:</label>
-                                    <select type="text" id="taskPriority" name="priority" class="selectpicker form-control" title="Выберите приоритет">
+                                    <select type="text" id="taskPriority" name="priority" class="selectpicker form-control" title="Выберите приоритет" data-style="myButton">
                                         <option style="background: #e74c3c; color: #fff;" value="Style1">Высокий</option>
                                         <option style="background: #f39c12; color: #fff;" value="Style2">Средний</option>
                                         <option style="background: #3498db; color: #fff;" value="Style3" selected>Низкий</option>

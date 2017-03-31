@@ -54,26 +54,18 @@
                     <img src="${user.picture}" onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
                 </div>
 
-                <form action="/sendMessage/${user.id}">
-                    <div class="profile-userbuttons">
+                <div class="profile-userbuttons">
+                    <form action="/sendMessage/${user.id}">
                         <button type="submit" class="btn btn-info btn-xs" <c:if test="${flagMessage eq false}"> disabled </c:if> >
-                            <span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button>
-                    </div>
-                </form>
-
-                <form action="/addFriend/${user.id}/addFriend">
-                    <div class="profile-userbuttons">
+                            <span class="glyphicon glyphicon-envelope" aria-hidden="true"> Чат</span>
+                        </button>
+                    </form>
+                    <form action="/addFriend/${user.id}/addFriend">
                         <button type="submit" class="btn btn-success btn-xs" >
-                            <span class="glyphicon glyphicon-plus" aria-hidden="true">Добавить в друзья</span></button>
-                    </div>
-                </form>
-
-                <form action="">
-                    <div class="profile-userbuttons">
-                        <button type="submit" class="btn btn-success btn-xs"  >
-                            <span class="glyphicon" aria-hidden="true">Список друзей</span></button>
-                    </div>
-                </form>
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"> Добавить в друзья</span>
+                        </button>
+                    </form>
+                </div>
 
                 <ul class="list-group list-group-my list-group-flush">
                     <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
