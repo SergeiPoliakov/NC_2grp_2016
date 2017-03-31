@@ -60,7 +60,7 @@
 
                         <div class="form-group has-feedback">
                             <label class="control-label" for="ageUser">Дата рождения*</label>
-                            <input type='text' data-toggle="tooltip" pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" type="date" class="form-control" name="ageUser" id="ageUser" required/>
+                            <input type='text' data-toggle="tooltip" pattern="\d{2}.\d{2}.\d{4}" type="date" class="form-control" name="ageUser" id="ageUser" required/>
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                         </div>
 
@@ -95,8 +95,10 @@
     // Modal datetimepickers для создания новой задачи
     $(function () {
         $('#ageUser').datetimepicker({
-            viewMode: 'years',
-            locale: 'ru'
+            locale: 'ru',
+            maxDate: new Date().setHours(0,0,0,0),
+            format: "DD.MM.YYYY",
+            viewMode: 'years'
         });
     });
 </script>

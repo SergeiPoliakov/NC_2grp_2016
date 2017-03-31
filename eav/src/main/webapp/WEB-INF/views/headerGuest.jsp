@@ -93,7 +93,7 @@
                                             Запомнить меня
                                             <div class="material-switch pull-right">
                                                 <input id="remember_me" type="checkbox" name="_spring_security_remember_me">
-                                                <label for="remember_me" class="label-success"></label>
+                                                <label for="remember_me" class="label-primary"></label>
                                             </div>
                                         </div>
                                     </form>

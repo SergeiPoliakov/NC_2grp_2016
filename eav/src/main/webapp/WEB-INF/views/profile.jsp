@@ -59,7 +59,7 @@
                                 </div>
 
                                 <div class="form-group  has-feedback">
-                                    <label for="InputName1">Имя</label>
+                                    <label class="control-label" for="InputName1">Имя</label>
                                     <input type="text" class="form-control " name="name" id="InputName1" value=${user.name}
                                             data-toggle="tooltip" placeholder="Имя" pattern="[A-Za-zА-яа-яЁё]{3,}"
                                            title="Только русские и английские буквы. Не менее 3 символов" required>
@@ -68,7 +68,7 @@
 
 
                                 <div class="form-group has-feedback">
-                                    <label for="InputMiddleName1">Отчество</label>
+                                    <label class="control-label" for="InputMiddleName1">Отчество</label>
                                     <input type="text" class="form-control" name="middle_name" id="InputMiddleName1" value=${user.middleName}
                                             data-toggle="tooltip" placeholder="Имя" pattern="[A-Za-zА-яа-яЁё]{3,}"
                                            title="Только русские и английские буквы. Не менее 3 символов">
@@ -78,36 +78,33 @@
 
                                     <!--  Тут нужно сделать так же, как и на странице регистрации или вернуть как было   -->
                                 <div class="form-group has-feedback">
-                                    <label for="InputAge1">Дата рождения</label>
+                                    <label class="control-label" for="InputAge1">Дата рождения</label>
                                     <input type="date" class="form-control" name="ageDate" id="InputAge1" value=${user.ageDate}
-                                            data-toggle="tooltip" pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" required>
+                                            data-toggle="tooltip" pattern="\d{2}.\d{2}.\d{4}" required>
                                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                                 </div>
-
                                 <div class="form-group">
-                                    <label>Пол</label>
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio" name="sex" id="Gender1" value="мужской"  <c:if test="${user.sex eq 'мужской' or user.sex eq null}">checked</c:if> >
-                                            Мужской
-                                        </label>
-                                    </div>
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio" name="sex" id="Gender2" value="женский" <c:if test="${user.sex eq 'женский'}">checked</c:if> >
-                                            Женский
-                                        </label>
+                                    <label for="fr">Пол</label>
+                                    <div id="fr" class="funkyradio">
+                                        <div class="funkyradio-success">
+                                            <input type="radio" name="sex" id="Gender1" value="мужской"  <c:if test="${user.sex eq 'мужской' or user.sex eq null}">checked</c:if> />
+                                            <label class="radio-inline" for="Gender1" style="margin-top: 0.5rem;">Мужской</label>
+                                        </div>
+                                        <div class="funkyradio-success">
+                                            <input type="radio" name="sex" id="Gender2" value="женский" <c:if test="${user.sex eq 'женский'}">checked</c:if> />
+                                            <label class="radio-inline" for="Gender2" style="margin-top: 0.5rem;">Женский</label>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group has-feedback">
-                                    <label for="InputCity1">Город</label>
+                                    <label class="control-label" for="InputCity1">Город</label>
                                     <input type="text" class="form-control" name="city" id="InputCity1" value=${user.city}>
                                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                                 </div>
 
                                 <div class="form-group has-feedback">
-                                    <label for="InputPhone1">Номер телефона</label>
+                                    <label class="control-label" for="InputPhone1">Номер телефона</label>
                                     <input type="text" class="form-control" name="phone" id="InputPhone1" value=${user.phone}
                                             data-toggle="tooltip" pattern="[1-9]{11}" title="Введите корректный номер телефона">
                                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
@@ -400,7 +397,10 @@
     // Modal datetimepickers для создания новой задачи
     $(function () {
         $('#InputAge1').datetimepicker({
-            locale: 'ru'
+            locale: 'ru',
+            maxDate: new Date().setHours(0,0,0,0),
+            format: "DD.MM.YYYY",
+            viewMode: 'years'
         });
     });
 </script>
