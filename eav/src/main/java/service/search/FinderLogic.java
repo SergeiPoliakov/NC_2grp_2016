@@ -30,11 +30,11 @@ public class FinderLogic {
 
                 switch (finder.getType()) {
                     case "user":
-                        // работаем с юзерами, загружаем подходящие теги с подвещенными юзерами
+                        // работаем с юзерами, загружаем подходящие теги с подвешенными юзерами
                         anyTagFromTree = ttm.getTagWordListForUser(part_tags.get(i));
                         break;
                     case "meeting":
-                        // работаем со встречами, загружаем подходящие теги с подвещенными встречами
+                        // работаем со встречами, загружаем подходящие теги с подвешенными встречами
                         anyTagFromTree = ttm.getTagWordListForMeeting(part_tags.get(i));
                         break;
                     default:

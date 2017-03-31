@@ -44,6 +44,13 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
 
     public static final int EDIT_SETTINGS = 671; // Изменение настроек (в том числе настроек логирования и отображения статистик) -- параметр
 
+    public static final int ADD_TAG =       681; // Добавление тега -- параметр
+    public static final int EDIT_TAG =      682; // Редактирование тега -- параметр
+    public static final int DEL_TAG =       683; // Удаление тега -- параметр
+    public static final int FIND_TAG =      684; // Поиск тега -- параметр
+    public static final int FIND_USER =     685; // Поиск юзера по тегу -- параметр
+    public static final int FIND_MEETING =  686; // Поиск встречи по тегу -- параметр
+
     //
 
     private Integer id;
@@ -241,6 +248,24 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
                 break;
             case (EDIT_SETTINGS): // Изменение настроек (в том числе настроек логирования и отображения статистик)
                 name = "EDIT_SETTINGS";
+                break;
+            case (ADD_TAG): // Добавление нового тега (к юзеру или ко встрече)
+                name = "ADD_TAG";
+                break;
+            case (EDIT_TAG): // Изменение тега
+                name = "EDIT_TAG";
+                break;
+            case (DEL_TAG): // Удаление тега
+                name = "DEL_TAG";
+                break;
+            case (FIND_TAG): // Поиск тега по дереву
+                name = "FIND_TAG";
+                break;
+            case (FIND_USER): // Поиск юзера с подходящим тегом
+                name = "FIND_USER";
+                break;
+            case (FIND_MEETING): // Поиск встречи с подходящим тегом
+                name = "FIND_MEETING";
                 break;
         }
 
