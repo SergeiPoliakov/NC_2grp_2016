@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import service.statistics.StatRequest;
 import service.statistics.StatResponse;
+import service.statistics.StatSetting;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -112,6 +113,27 @@ public class StatisticController {
             results.add(new StatResponse("Общие встречи", 0.68));
             results.add(new StatResponse("Принятые встречи", 0.21));
             results.add(new StatResponse("Отказы", 0.11));
+        }
+
+        return results;
+    }
+
+
+
+    // 2017-04-01 К запросу на получение настроек, какие данные для отрисовки диаграмм и графиков выставил юзер
+    @RequestMapping(value = "/getStatSettings", method = RequestMethod.POST, headers = {"Content-type=application/json"})
+    @ResponseBody
+    public ArrayList<StatSetting> getStatSettings(@RequestBody StatRequest statRequest) throws SQLException {
+
+        ArrayList<StatSetting> results = new ArrayList<>(); // Пока просто заглушка
+
+        if (statRequest.getPlotview().equals("settings")){ // Тест - отправляем на страницу статистик настройки
+            // Эти настройки надо из настроек из базы вытаскивать
+
+            results.add(new StatSetting("plot", "on", "activity", "day", "location_2", "Время, мин", "Интенсивность работы"));
+
+            results.add(new StatSetting("round", "on", "meeting", "day", "location_1"));
+
         }
 
         return results;

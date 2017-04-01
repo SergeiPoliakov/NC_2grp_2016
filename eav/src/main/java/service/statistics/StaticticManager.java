@@ -10,8 +10,8 @@ public class StaticticManager  {
 
     // Вид диаграммы:
 
-    private final String PLOT = "plot"; // обычный график
-    private final String ROUND = "round"; // Круговая диаграмма
+    private static final String PLOT = "plot"; // обычный график
+    private static final String ROUND = "round"; // Круговая диаграмма
 
 
     // Тип данных статистики

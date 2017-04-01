@@ -18,6 +18,11 @@ public class StatResponse {
 
     private String info; // Вспомогательное текстовое поле
 
+    // Вспомогательные поля (для
+
+    private String plotview;
+
+
     public StatResponse() {
     }
 
@@ -29,6 +34,11 @@ public class StatResponse {
     public StatResponse(String skey, Double nvalue) {
         this.skey = skey;
         this.nvalue = nvalue;
+    }
+
+    public StatResponse(String skey, String svalue) {
+        this.skey = skey;
+        this.svalue = svalue;
     }
 
     public Integer getId() {

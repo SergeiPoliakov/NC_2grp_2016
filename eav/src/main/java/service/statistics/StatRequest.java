@@ -6,7 +6,7 @@ package service.statistics;
 // Класс, соотвествующий AJAX-запросу на поиск тега
 public class StatRequest {
 
-    private String plotview; // Вид диаграммы: plot - график | round - круговая диаграмма
+    private String plotview; // Вид диаграммы: plot - график  | round - круговая диаграмма | settings - настройки
     private String datatype; // Тип данных для диаграммы: activity - активность юзера за период | meeting - соотношение встреч | message - соотношение сообщений ...
     private String period; // Период выборки: hour - за последний час | day - за последний день | week - за последнюю неделю | month - за последний месяц | year - за последний год
 
