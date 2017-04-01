@@ -29,7 +29,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-4 col-lg-offset-4">
-            <div class="well bs-component">
+            <div class="well bs-component" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);">
                 <form role="form" id="form" action="/addUser" method="post" data-toggle="validator">
                     <fieldset>
                         <legend>Регистрация</legend>
