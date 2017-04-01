@@ -231,52 +231,52 @@ public class UserController {
 
 
         HttpSession session = request.getSession();
-        if (session.getAttribute("allUsers") != null) {
-            FinderTagRequest finder = (FinderTagRequest) session.getAttribute("allUsers");
+        if (session.getAttribute("finder") != null) {
+            FinderTagRequest finder = (FinderTagRequest) session.getAttribute("finder");
 
             System.out.println("finder пришел из сессии!!!" + finder.getText());
 
+            if ("user".equals(finder.getType())) {
+                ArrayList<FinderTagResponse> finderTagResponseList = FinderLogic.getWithLogic(finder);
+                Set<Integer> usersID = new HashSet<>();
+                ArrayList<Integer> userListWithTag;
 
-            ArrayList<FinderTagResponse> finderTagResponseList = FinderLogic.getWithLogic(finder);
-            Set<Integer> usersID = new HashSet<>();
-            ArrayList<Integer> userListWithTag;
 
-
-            assert finderTagResponseList != null;
-            for (FinderTagResponse tag : finderTagResponseList
-                    ) {
-
-                String value = tag.getText();
-                userListWithTag = tagTreeManager.getUserListWithTag(value);
-                usersID.addAll(userListWithTag);
-            }
-
-            for (int index : usersID
-                    ) {
-                System.out.println("ЭТИ ОБЪЕКТЫ СЕЙЧАС БУДУТ ВЫВЕДЕНЫ!!!" + index);
-            }
-
-            try {
-                Map<Integer, DataObject> map = doCache.getAll(usersID);
-                ArrayList<DataObject> list = getListDataObject(map);
-                ArrayList<User> users = new ArrayList<>(list.size());
-                for (DataObject dataObject : list) {
-                    User user = converter.ToUser(dataObject);
-                    users.add(user);
-                }
-
-                for (User user : users
+                assert finderTagResponseList != null;
+                for (FinderTagResponse tag : finderTagResponseList
                         ) {
-                    System.out.println("В ТЕГЕ НАХОДИТСЯ ЮЗЕР С ID " + user.getId());
+
+                    String value = tag.getText();
+                    userListWithTag = tagTreeManager.getUserListWithTag(value);
+                    usersID.addAll(userListWithTag);
                 }
 
-                mapObjects.put("allUsers", users);
+                for (int index : usersID
+                        ) {
+                    System.out.println("ЭТИ ОБЪЕКТЫ СЕЙЧАС БУДУТ ВЫВЕДЕНЫ!!!" + index);
+                }
 
+                try {
+                    Map<Integer, DataObject> map = doCache.getAll(usersID);
+                    ArrayList<DataObject> list = getListDataObject(map);
+                    ArrayList<User> users = new ArrayList<>(list.size());
+                    for (DataObject dataObject : list) {
+                        User user = converter.ToUser(dataObject);
+                        users.add(user);
+                    }
 
-                session.invalidate();
+                    for (User user : users
+                            ) {
+                        System.out.println("В ТЕГЕ НАХОДИТСЯ ЮЗЕР С ID " + user.getId());
+                    }
 
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                    mapObjects.put("allUsers", users);
+
+                    session.removeAttribute("finder");
+
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -407,7 +407,7 @@ public class UserController {
         mapAttr.put(5, ageDate);
         mapAttr.put(6, email);
         mapAttr.put(7, bcryptPass);
-        mapAttr.put(8, "");
+        mapAttr.put(8, "не выбран");
         mapAttr.put(9, "");
         mapAttr.put(10, "");
         mapAttr.put(11, "ftp://" + this.ftp_server +"/upload/default/avatar.png"); // mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");

@@ -78,7 +78,7 @@
                                     <!--  Тут нужно сделать так же, как и на странице регистрации или вернуть как было   -->
                                 <div class="form-group has-feedback">
                                     <label class="control-label" for="InputAge1">Дата рождения</label>
-                                    <input type="date" class="form-control" name="ageDate" id="InputAge1" value="${user.ageDate}"
+                                    <input type="text" class="form-control" name="ageDate" id="InputAge1" value="${user.ageDate}"
                                             data-toggle="tooltip" pattern="\d{2}.\d{2}.\d{4}" required>
                                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                                 </div>
@@ -86,7 +86,7 @@
                                     <label for="fr">Пол</label>
                                     <div id="fr" class="funkyradio">
                                         <div class="funkyradio-success">
-                                            <input type="radio" name="sex" id="Gender1" value="мужской"  <c:if test="${user.sex eq 'мужской' or user.sex eq null}">checked</c:if> />
+                                            <input type="radio" name="sex" id="Gender1" value="мужской"  <c:if test="${user.sex eq 'мужской' or user.sex eq 'не выбран'}">checked</c:if> >
                                             <label class="radio-inline" for="Gender1" style="margin-top: 0.5rem;">Мужской</label>
                                         </div>
                                         <div class="funkyradio-success">

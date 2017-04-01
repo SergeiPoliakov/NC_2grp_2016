@@ -68,7 +68,7 @@ public class SearchAndTagController {
 
         if (finder.getText() != null) {
             HttpSession session = request.getSession();
-            session.setAttribute("allUsers", finder);
+            session.setAttribute("finder", finder);
         }
 
         return "search";
@@ -76,4 +76,5 @@ public class SearchAndTagController {
 
 
 }
+
 

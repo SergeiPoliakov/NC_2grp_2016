@@ -35,7 +35,7 @@ $(window).load(function () {
                         contentType: "application/json",
                         mimeType: 'application/json',
                         data: JSON.stringify({
-                            type: "user",       // user | meeting
+                            type: "meeting",       // user | meeting
                             operation: "or",   // and | or
                             text: input_initial_value
                         }),
@@ -138,7 +138,7 @@ function getFind() {
         contentType: "application/json",
         mimeType: 'application/json',
         data: JSON.stringify({
-            type: "user",       // user | meeting
+            type: "meeting",       // user | meeting
             operation: "or",   // and | or
             text: input_initial_value
         }),
@@ -149,8 +149,12 @@ function getFind() {
 
     var delay = 1000;
     // и с задержкой переходим на страницу с результатами
-    setTimeout("document.location.href='/searchUser'", delay);
+
+    // setTimeout("document.location.href='/searchUser'", delay);
+
+    setTimeout("document.location.href='/meetings'", delay);
 
 
 
 }
+

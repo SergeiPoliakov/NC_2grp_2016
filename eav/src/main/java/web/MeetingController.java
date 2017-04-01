@@ -15,8 +15,16 @@ import service.MeetingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.MeetingFilter;
+import service.search.FinderLogic;
+import service.search.FinderTagRequest;
+import service.search.FinderTagResponse;
+import service.search.SearchParser;
 import service.statistics.StaticticLogger;
+import service.tags.TagNodeTree;
+import service.tags.TagTreeManager;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -25,7 +33,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -38,7 +48,11 @@ public class MeetingController {
     private Converter converter = new Converter();
     private UserServiceImp userService = new UserServiceImp();
 
-    Logger logger = LoggerFactory.getLogger(MeetingController.class);
+    private TagTreeManager tagTreeManager = new TagTreeManager();
+
+    private TagNodeTree tagNodeTree = TagNodeTree.getInstance();
+
+    private Logger logger = LoggerFactory.getLogger(MeetingController.class);
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private MeetingServiceImp meetingService = MeetingServiceImp.getInstance();
@@ -84,27 +98,81 @@ public class MeetingController {
 
     // Список встреч пользователя
     @RequestMapping(value = "/meetings", method = RequestMethod.GET)
-    public String getUserPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        try {
-            DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
-            User user = converter.ToUser(dataObjectUser);
-            ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.FOR_CURRENT_USER));
-            Map<Integer, DataObject> map = doCache.getAll(il);
-            ArrayList<DataObject> list = getListDataObject(map);
-            ArrayList<Meeting> meetings = new ArrayList<>(list.size());
-            for (DataObject dataObject : list) {
-                Meeting meeting = new Meeting(dataObject);
-                meetings.add(meeting);
+    public String getUserPage(HttpServletRequest request, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+
+        HttpSession session = request.getSession();
+        if (session.getAttribute("finder") != null) {
+            FinderTagRequest finder = (FinderTagRequest) session.getAttribute("finder");
+
+            System.out.println("finder пришел из сессии!!!" + finder.getText());
+
+
+            if ("meeting".equals(finder.getType())) {
+                ArrayList<FinderTagResponse> finderTagResponseList = FinderLogic.getWithLogic(finder);
+                Set<Integer> meetingsID = new HashSet<>();
+                ArrayList<Integer> meetingsListWithTag;
+
+                assert finderTagResponseList != null;
+                for (FinderTagResponse tag : finderTagResponseList
+                        ) {
+
+                    String value = tag.getText();
+                    meetingsListWithTag = tagTreeManager.getMeetingListWithTag(value);
+                    meetingsID.addAll(meetingsListWithTag);
+                }
+
+                for (int index : meetingsID
+                        ) {
+                    System.out.println("ЭТИ ОБЪЕКТЫ СЕЙЧАС БУДУТ ВЫВЕДЕНЫ!!!" + index);
+                }
+
+                try {
+                    DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+                    User user = converter.ToUser(dataObjectUser);
+                    Map<Integer, DataObject> map = doCache.getAll(meetingsID);
+                    ArrayList<DataObject> list = getListDataObject(map);
+                    ArrayList<Meeting> meetings = new ArrayList<>(list.size());
+                    for (DataObject dataObject : list) {
+                        Meeting meeting = new Meeting(dataObject);
+                        meetings.add(meeting);
+                    }
+
+                    for (Meeting meeting : meetings
+                            ) {
+                        System.out.println("В ТЕГЕ НАХОДИТСЯ ВСТРЕЧА С ID " + meeting.getId());
+                    }
+
+                    m.put("meetings", meetings);
+                    m.addAttribute("user", user);
+
+                    session.removeAttribute("finder");
+
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
 
+        } else {
+            try {
+                DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+                User user = converter.ToUser(dataObjectUser);
+                ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.FOR_CURRENT_USER));
+                Map<Integer, DataObject> map = doCache.getAll(il);
+                ArrayList<DataObject> list = getListDataObject(map);
+                ArrayList<Meeting> meetings = new ArrayList<>(list.size());
+                for (DataObject dataObject : list) {
+                    Meeting meeting = new Meeting(dataObject);
+                    meetings.add(meeting);
+                }
 
-            m.addAttribute("meetings", meetings); // m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser));
-            m.addAttribute("user", user);
 
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+                m.addAttribute("meetings", meetings); // m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser));
+                m.addAttribute("user", user);
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
-
         /*
         user = userService.getCurrentUser(); // Получаем Объект текущего пользователя
         Integer idUser = userService.getObjID(userService.getCurrentUsername());
@@ -167,8 +235,22 @@ public class MeetingController {
         meeting.setUsers(users);
 
         DataObject dataObject = meeting.toDataObject();
+
         int id = loadingService.setDataObjectToDB(dataObject);
-        doCache.invalidate(dataObject.getId());
+        doCache.invalidate(id);
+
+        if (tag != null) {
+
+            ArrayList<String> tags = SearchParser.parse(tag);
+
+            assert tags != null;
+            for (String value : tags
+                    ) {
+                tagNodeTree.insertForMeeting(value, id);
+                System.out.println("КИНУЛ ID" + id);
+            }
+
+        }
 
         // Логирование:
         int idUser = userService.getObjID(userService.getCurrentUsername());
