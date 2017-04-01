@@ -73,7 +73,6 @@ public class StatisticManager {
 
         // Проверяем, какой механизм формирования статистики вызвать
         if (statRequest.getDatatype().equals(DataType.ACTIVITY)) {
-            System.out.println("ХОПХОП");
             results = getActivity(statRequest);
         }
         else if (statRequest.getDatatype().equals(DataType.MEETING)) {
@@ -148,7 +147,7 @@ public class StatisticManager {
             }
             else{ // иначе записываем точку и переходим к другой
                 // нормировать не стал, пока не привязался к базе
-                results.add(new StatResponse(j-24, sum));
+                results.add(new StatResponse(j, sum));
                 j ++;
                 sum = 0.0;
                 // Увеличиваем смещение

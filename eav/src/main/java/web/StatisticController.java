@@ -54,6 +54,7 @@ public class StatisticController {
         if (statRequest.getPlotview().equals("settings")){ // Тест - отправляем на страницу статистик настройки
             // Эти настройки надо из настроек из базы вытаскивать
 
+            // results.add(new StatSetting("plot", "on", "activity", "day", "location_2", "Время, часы", "Интенсивность работы"));
             results.add(new StatSetting("plot", "on", "activity", "day", "location_2", "Время, часы", "Интенсивность работы"));
 
             results.add(new StatSetting("round", "on", "meeting", "day", "location_1"));
