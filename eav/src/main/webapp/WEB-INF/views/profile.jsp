@@ -52,14 +52,14 @@
                                 <div class="form-group has-feedback">
                                     <label class="control-label" for="InputSurname1">Фамилия</label>
                                     <input type="text" class="form-control" name="surname" id="InputSurname1"
-                                           value=${user.surname} data-toggle="tooltip"
+                                           value="${user.surname}" data-toggle="tooltip"
                                            pattern="[A-Za-zА-яа-яЁё]{3,}" title="Только русские и английские буквы. Не менее 3 символов" required>
                                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                                 </div>
 
                                 <div class="form-group  has-feedback">
                                     <label class="control-label" for="InputName1">Имя</label>
-                                    <input type="text" class="form-control " name="name" id="InputName1" value=${user.name}
+                                    <input type="text" class="form-control " name="name" id="InputName1" value="${user.name}"
                                             data-toggle="tooltip" placeholder="Имя" pattern="[A-Za-zА-яа-яЁё]{3,}"
                                            title="Только русские и английские буквы. Не менее 3 символов" required>
                                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
@@ -68,7 +68,7 @@
 
                                 <div class="form-group has-feedback">
                                     <label class="control-label" for="InputMiddleName1">Отчество</label>
-                                    <input type="text" class="form-control" name="middle_name" id="InputMiddleName1" value=${user.middleName}
+                                    <input type="text" class="form-control" name="middle_name" id="InputMiddleName1" value="${user.middleName}"
                                             data-toggle="tooltip" placeholder="Имя" pattern="[A-Za-zА-яа-яЁё]{3,}"
                                            title="Только русские и английские буквы. Не менее 3 символов">
                                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
@@ -78,7 +78,7 @@
                                     <!--  Тут нужно сделать так же, как и на странице регистрации или вернуть как было   -->
                                 <div class="form-group has-feedback">
                                     <label class="control-label" for="InputAge1">Дата рождения</label>
-                                    <input type="date" class="form-control" name="ageDate" id="InputAge1" value=${user.ageDate}
+                                    <input type="date" class="form-control" name="ageDate" id="InputAge1" value="${user.ageDate}"
                                             data-toggle="tooltip" pattern="\d{2}.\d{2}.\d{4}" required>
                                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                                 </div>
@@ -98,13 +98,13 @@
 
                                 <div class="form-group has-feedback">
                                     <label class="control-label" for="InputCity1">Город</label>
-                                    <input type="text" class="form-control" name="city" id="InputCity1" value=${user.city}>
+                                    <input type="text" class="form-control" name="city" id="InputCity1" value="${user.city}">
                                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                                 </div>
 
                                 <div class="form-group has-feedback">
                                     <label class="control-label" for="InputPhone1">Номер телефона</label>
-                                    <input type="text" class="form-control" name="phone" id="InputPhone1" value=${user.phone}
+                                    <input type="text" class="form-control" name="phone" id="InputPhone1" value="${user.phone}"
                                             data-toggle="tooltip" pattern="[1-9]{11}" title="Введите корректный номер телефона">
                                     <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                                 </div>
@@ -115,7 +115,7 @@
                                               id="TextArea1">${user.additional_field}</textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-info col-lg-5 col-lg-offset-4">Сохранить</button>
+                                <button type="submit" class="btn btn-info col-lg-5 col-lg-offset-4 hidden" id="submit-form">Сохранить</button>
                         </fieldset>
                         </form>
                     </div>
@@ -167,6 +167,11 @@
                         </div>
                     </div>
                 </div>
+                    <div class="row">
+                        <div class="text-center">
+                            <label for="submit-form" class="btn btn-success" style="width: 50rem;">Сохранить</label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="privacy" class="tab-pane fade">
@@ -270,7 +275,7 @@
                                         </ul>
                                     </div>
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-success">Сохранить</button>
+                                        <button type="submit" class="btn btn-success" style="width: 50rem;">Сохранить</button>
                                     </div>
                                 </fieldset>
                             </form>
