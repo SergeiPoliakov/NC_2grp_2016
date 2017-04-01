@@ -7,7 +7,7 @@ import service.UserServiceImp;
 import service.search.FinderLogic;
 import service.search.FinderTagRequest;
 import service.search.FinderTagResponse;
-import service.statistics.StaticticLogger;
+import service.statistics.StatisticLogger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class SearchAndTagController {
 
     // Внутренний логгер для контроллера
-    private StaticticLogger loggerLog = new StaticticLogger();
+    private StatisticLogger loggerLog = new StatisticLogger();
 
     private UserServiceImp userService = new UserServiceImp();
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import service.UserServiceImp;
 import service.calendar.CalendarService;
 import service.calendar.CalendarSynhronizer;
-import service.statistics.StaticticLogger;
+import service.statistics.StatisticLogger;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -22,7 +22,7 @@ import java.text.ParseException;
 @Controller
 public class CalendarController {
     // Собственный логгер для контроллера
-    private StaticticLogger logger = new StaticticLogger();
+    private StatisticLogger logger = new StatisticLogger();
     private UserServiceImp userService = new UserServiceImp();
 
     public CalendarController() throws IOException {

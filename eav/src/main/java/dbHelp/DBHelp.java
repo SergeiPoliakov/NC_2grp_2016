@@ -797,7 +797,78 @@ public class DBHelp {
         TreeMap<String, ArrayList<String>> params = filter.getParams();
 
         // в зависимости от типа фильтра
-        if (filter instanceof TagFilter) {
+        // 2017-04-01 Update, добавлены логи
+        if (filter instanceof LogFilter) {
+            //  начинаем вытаскивать параметры и формировать строку запроса:
+            if (params.get(LogFilter.ALL) != null) { // если надо получить IDs всех логов,
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + LOG;
+            } else if (params.get(LogFilter.FOR_CURRENT_USER) != null) { // если надо получить ID всех логов текущего пользователей,
+                /*
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 31 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + LOG + " ";
+                sql += "AND ob2.OBJECT_NAME = " + "'" + userService.getCurrentUsername() + "'" + " ";
+                */
+
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE ";
+                sql += "AND re.ATTR_ID = 31 JOIN PARAMS pa ON pa.VALUE = " + "'" + userService.getCurrentUsername() + "'" + " AND pa.ATTR_ID = 4 ";
+
+
+
+
+
+            } else if (params.get(LogFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех логов пользователя с конкретным именем,
+                ArrayList<String> user_name = params.get(LogFilter.FOR_USER_WITH_NAME);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 31 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + LOG + " ";
+                sql += "AND ob2.OBJECT_NAME = " + user_name.get(0) + " ";
+            } else if (params.get(LogFilter.FOR_USER_WITH_ID) != null) { // если надо получить ID всех логов пользователя с конкретным id,
+                ArrayList<String> user_id = params.get(LogFilter.FOR_USER_WITH_ID);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 31 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + LOG + " ";
+                sql += "AND ob2.OBJECT_ID = " + user_id.get(0) + " ";
+            } else {
+                return null; // Иначе не нашли основного фильтра, не сможем составить запрос
+            }
+            sql += "ORDER BY ob.OBJECT_ID";
+
+            // Прикручиваем промежуточные фильтры:
+            if (params.get(LogFilter.WITH_TYPE) != null) { // если надо получить ID всех логов ДО какой-то даты,
+                ArrayList<String> type_id = params.get(LogFilter.WITH_TYPE);
+                String sql_1 = "";
+                for (int i = 0; i < type_id.size(); i++) {
+                    sql_1 += type_id.get(i) + ", ";
+                }
+                sql_1 += "0";
+
+                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID ";
+                sql += "WHERE pa.ATTR_ID IN (" + sql_1 + ") ";
+                sql += "UNION ";
+                sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID ";
+                sql += "WHERE re.ATTR_ID IN (" + sql_1 + ") ";
+            }
+
+            // Прикручиваем вспомогательные фильтры:
+            if (params.get(LogFilter.BEFORE_DATE) != null) { // если надо получить ID всех логов ДО какой-то даты,
+                ArrayList<String> before_date = params.get(LogFilter.BEFORE_DATE);
+                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 600 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE('" + before_date.get(0) + "', 'dd.mm.yyyy hh24:mi:ss'))";
+            } else if (params.get(LogFilter.AFTER_DATE) != null) { // если надо получить ID всех логов ПОСЛЕ какой-то даты,
+                ArrayList<String> after_date = params.get(LogFilter.AFTER_DATE);
+                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 600 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE('" + after_date.get(0) + "', 'dd.mm.yyyy hh24:mi:ss'))";
+            } else if (params.get(LogFilter.BETWEEN_TWO_DATES) != null) { // если надо получить ID всех логов МЕЖДУ двумя датами,
+                ArrayList<String> date = params.get(LogFilter.BETWEEN_TWO_DATES);
+                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 600 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') " +
+                        "BETWEEN TO_DATE('" + date.get(0) + "', 'dd.mm.yyyy hh24:mi:ss') AND TO_DATE('" + date.get(1) + "', 'dd.mm.yyyy hh24:mi:ss'))";
+            }
+
+        }
+
+        else if (filter instanceof TagFilter) {
             //  начинаем вытаскивать параметры и формировать строку запроса:
             if (params.get(TagFilter.ALL) != null) { // если надо получить IDs всех нодов тегов,
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + TAG;
@@ -950,7 +1021,7 @@ public class DBHelp {
                 sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
                         "AND pa.ATTR_ID = 101 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + after_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
             } else if (params.get(EventFilter.BETWEEN_TWO_DATES) != null) { // если надо получить ID всех событий МЕЖДУ двумя датами,
-                ArrayList<String> date = params.get(EventFilter.AFTER_DATE);
+                ArrayList<String> date = params.get(EventFilter.BETWEEN_TWO_DATES);
                 sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
                         "AND pa.ATTR_ID = 101 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') " +
                         "BETWEEN TO_DATE(" + date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss') AND TO_DATE(" + date.get(1) + ", 'dd.mm.yyyy hh24:mi:ss'))";

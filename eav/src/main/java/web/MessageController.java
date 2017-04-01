@@ -16,15 +16,13 @@ import service.converter.Converter;
 import service.id_filters.MessageFilter;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.*;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutionException;
-import org.springframework.ui.Model;
-import service.id_filters.UserFilter;
-import service.statistics.StaticticLogger;
+
+import service.statistics.StatisticLogger;
 
 import javax.mail.MessagingException;
 
@@ -32,7 +30,7 @@ import javax.mail.MessagingException;
 @Controller
 public class MessageController {
     // Собственный внутренний логгер для контроллера
-    private StaticticLogger loggerLog = new StaticticLogger();
+    private StatisticLogger loggerLog = new StatisticLogger();
     private UserServiceImp userService = new UserServiceImp();
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();

@@ -27,7 +27,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * для последующего использования в менеджере статистики StatisticManager
  */
 
-public class StaticticLogger {
+public class StatisticLogger {
 
     private static boolean on_off_logger = false; // Флаг включения/выключения работы логгера, по умолчанию выключен false
     private static boolean on_off_sheduler = false; // Флаг включения/выключения работы шедуллера, по умолчанию выключен false
@@ -40,7 +40,7 @@ public class StaticticLogger {
     // И еще одна общая очередь на всех уже для хранения id юзера, которому принадлежит лог
     private static final Queue<Integer> idQueue = new ArrayBlockingQueue<>(max_count + 1); // Очередь айди
 
-    public StaticticLogger() throws IOException {
+    public StatisticLogger() throws IOException {
         //this.logQueue = new ArrayBlockingQueue<Log>(max_count + 1);
         loadSetting();
     }

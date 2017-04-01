@@ -8,15 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
-import service.statistics.StaticticLogger;
+import service.statistics.StatisticLogger;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -25,7 +22,7 @@ import java.util.TreeMap;
 @Controller
 public class KKUserController {
     // Собственный внутренний логгер для контроллера
-    private StaticticLogger logger = new StaticticLogger();
+    private StatisticLogger logger = new StatisticLogger();
     private UserServiceImp userService = new UserServiceImp();
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();

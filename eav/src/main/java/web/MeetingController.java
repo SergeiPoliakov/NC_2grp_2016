@@ -19,17 +19,15 @@ import service.search.FinderLogic;
 import service.search.FinderTagRequest;
 import service.search.FinderTagResponse;
 import service.search.SearchParser;
-import service.statistics.StaticticLogger;
+import service.statistics.StatisticLogger;
 import service.tags.TagNodeTree;
 import service.tags.TagTreeManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -44,7 +42,7 @@ import java.util.concurrent.ExecutionException;
 @Controller
 public class MeetingController {
     // Собственный внутренний логгер для контроллера
-    private StaticticLogger loggerLog = new StaticticLogger();
+    private StatisticLogger loggerLog = new StatisticLogger();
     private Converter converter = new Converter();
     private UserServiceImp userService = new UserServiceImp();
 

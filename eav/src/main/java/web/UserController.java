@@ -5,7 +5,7 @@ import service.application_settings.SettingsLoader;
 import service.search.FinderLogic;
 import service.search.FinderTagRequest;
 import service.search.FinderTagResponse;
-import service.statistics.StaticticLogger;
+import service.statistics.StatisticLogger;
 import com.google.common.cache.LoadingCache;
 import exception.CustomException;
 import org.springframework.context.support.GenericXmlApplicationContext;
@@ -27,6 +27,7 @@ import service.cache.DataObjectCache;
 import service.converter.Converter;
 import service.id_filters.EventFilter;
 import service.id_filters.UserFilter;
+import service.statistics.StatisticManager;
 import service.tags.NameNodeTree;
 import service.tags.TagTreeManager;
 
@@ -52,7 +53,7 @@ import java.util.concurrent.ExecutionException;
 @Controller
 public class UserController {
     // Собственный внутренний логгер для контроллера
-    private StaticticLogger loggerLog = new StaticticLogger();
+    private StatisticLogger loggerLog = new StatisticLogger();
 
     private TagTreeManager tagTreeManager = new TagTreeManager();
 
@@ -95,7 +96,7 @@ public class UserController {
 
 
     @RequestMapping(value = {"/", "main"})
-    public ModelAndView index() throws IOException {
+    public ModelAndView index() throws IOException, ParseException {
 
         // Подгружаем настройки
         SettingsLoader settingsLoader = new SettingsLoader();

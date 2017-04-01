@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import service.UploadServiceImp;
 import service.UserServiceImp;
 import service.application_settings.SettingsLoader;
-import service.statistics.StaticticLogger;
+import service.statistics.StatisticLogger;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -35,7 +35,7 @@ import java.util.Random;
 public class FileUploadController {
 
     // Собственный внутренний логгер для контроллера
-    private StaticticLogger loggerLog = new StaticticLogger();
+    private StatisticLogger loggerLog = new StatisticLogger();
     private UserServiceImp userService = new UserServiceImp();
 
     private String  server; // = "nc2.hop.ru"; // String server = "netcracker.hop.ru";

@@ -15,7 +15,7 @@ import service.LoadingServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.EventFilter;
 import service.UserServiceImp;
-import service.statistics.StaticticLogger;
+import service.statistics.StatisticLogger;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 @Controller
 public class EventController {
     // Собственный логгер для контроллера
-    private StaticticLogger loggerLog = new StaticticLogger();
+    private StatisticLogger loggerLog = new StatisticLogger();
     private UserServiceImp userService = new UserServiceImp();
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
