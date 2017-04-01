@@ -24,63 +24,19 @@
     <script type="text/javascript">
 
         // 1
-        google.charts.load('current', {packages: ['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-        function drawChart() {
-            // Определяем тип диаграммы:
-            var data_plot = new google.visualization.DataTable();
-            data_plot.addColumn('string', 'Element');
-            data_plot.addColumn('number', 'Percentage');
-            // Получаем данные через AJAX-запрос и формируем массив для отрисовки графика
-            $.ajax({
-                url: '/getStat',
-                type: 'POST',
-                dataType: 'json',
-                contentType: "application/json",
-                mimeType: 'application/json',
-                data: JSON.stringify({
-                    type: "round",       // plot | round
-                    operation: "round",   // plot
-                    text: "hop-hop"
-                }),
-                success: function (data) {
-
-
-                    var myArray = [data.length];
-                    for (var i = 0; i < data.length; i++) {
-                        myArray[i] = [2];
-                        myArray[i][0] = (data[i]).skey;
-                        myArray[i][1] = parseFloat((data[i]).nvalue);
-
-                    }
-
-                    data_plot.addRows(myArray);
-                    console.log(myArray);
-
-                    // Создаем и рисуем диаграмму:
-                    var chart = new google.visualization.PieChart(document.getElementById('myPieChart'));
-                    chart.draw(data_plot, null);
-                }
-            });
-
-        }
-
-    </script>
-
-
-
-
-
-
-    <script type="text/javascript">
-        // 2
+        //google.charts.load('current', {packages: ['corechart']});
         google.charts.load('current', {packages: ['corechart', 'line']});
-        google.charts.setOnLoadCallback(drawBackgroundColor);
 
-        function drawBackgroundColor() {
-            var data_plot = new google.visualization.DataTable();
-            data_plot.addColumn('number', 'X');
-            data_plot.addColumn('number', 'Уровень');
+        // Тут задаются параметры, какую статистику и как отрисовывать:
+        //var plotview = "round";       // Вид диаграммы: plot - график | round - круговая диаграмма
+        //var datatype = "meeting";   // Тип данных для диаграммы: activity - активность юзера за период | meeting - соотношение встреч | message - соотношение сообщений ...
+        //var period = "day"; // Период выборки: hour - за последний час | day - за последний день | week - за последнюю неделю | month - за последний месяц | year - за последний год
+        //var location_id = "myPieChart";
+
+        google.charts.setOnLoadCallback(drawChart("round", "meeting", "day", "myPieChart"));
+        google.charts.setOnLoadCallback(drawChart("plot", "meeting", "day", "chart_div"));
+
+        function drawChart(plotview, datatype, period, location_id) { // Параметры - вид, тип данных, период выборки, позиция на странице
 
             // Получаем данные через AJAX-запрос и формируем массив для отрисовки графика
             $.ajax({
@@ -90,36 +46,69 @@
                 contentType: "application/json",
                 mimeType: 'application/json',
                 data: JSON.stringify({
-                    type: "plot",       // plot | round
-                    operation: "plot",   // plot
-                    text: "hop-hop"
+                    plotview: plotview,
+                    datatype: datatype,
+                    period: period
                 }),
                 success: function (data) {
 
-
+                    // Создаем массив под полученные данные:
                     var myArray = [data.length];
-                    for (var i = 0; i < data.length; i++) {
-                        myArray[i] = [2];
-                        myArray[i][0] = parseInt((data[i]).nkey, 10);
-                        myArray[i][1] = parseInt((data[i]).nvalue, 10);
+                    // Определяем тип диаграммы:
+                    var data_plot = new google.visualization.DataTable();
 
+                    // 1) Если хотим отрисовать курговоую диаграмму, такая логика:
+                    if (plotview == "round"){
+                        // Задаем поля:
+                        data_plot.addColumn('string', 'Element');
+                        data_plot.addColumn('number', 'Percentage');
+
+                        // Переносим данные из JSON в массив:
+                        for (var i = 0; i < data.length; i++) {
+                            myArray[i] = [2];
+                            myArray[i][0] = (data[i]).skey;
+                            myArray[i][1] = parseFloat((data[i]).nvalue);
+                        }
+
+                        data_plot.addRows(myArray);
+                        console.log(myArray);
+
+                        // Создаем и рисуем диаграмму:
+                        var chart = new google.visualization.PieChart(document.getElementById(location_id));
+                        chart.draw(data_plot, null);
+                    }
+                    // 2) Если же хотим отрисовать обычный график, такая логика:
+                    if (plotview == "plot"){
+                        // Задаем поля:
+                        data_plot.addColumn('number', 'X');
+                        data_plot.addColumn('number', 'Уровень');
+
+                        // Переносим данные из JSON в массив:
+                        for (var i = 0; i < data.length; i++) {
+                            myArray[i] = [2];
+                            myArray[i][0] = parseInt((data[i]).nkey, 10);
+                            myArray[i][1] = parseInt((data[i]).nvalue, 10);
+                        }
+
+                        data_plot.addRows(myArray);
+                        console.log(myArray);
+
+                        // Задаем дополнительные опции - подписываем оси и легенду
+                        var options = {
+                            hAxis: {
+                                title: 'Время, мин'
+                            },
+                            vAxis: {
+                                title: 'Интенсивность работы'
+                            },
+                            backgroundColor: '#f1f8e9'
+                        };
+
+                        // Создаем и рисуем диаграмму:
+                        var chart = new google.visualization.LineChart(document.getElementById(location_id));
+                        chart.draw(data_plot, options);
                     }
 
-                    data_plot.addRows(myArray);
-                    console.log(myArray);
-
-                    var options = {
-                        hAxis: {
-                            title: 'Время, мин'
-                        },
-                        vAxis: {
-                            title: 'Интенсивность работы'
-                        },
-                        backgroundColor: '#f1f8e9'
-                    };
-
-                    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-                    chart.draw(data_plot, options);
 
                 }
             });
@@ -127,6 +116,13 @@
         }
 
     </script>
+
+
+
+
+
+
+
 
 </head>
 <body>

@@ -19,6 +19,8 @@ import java.util.ArrayList;
 @Controller
 public class StatisticController {
 
+
+
     // На подгрузку страницы статистик:
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public String statPage() throws SQLException {
@@ -34,7 +36,7 @@ public class StatisticController {
         // Запускаем логику обработки статистики и формирования массива ответов StatResponse:
         ArrayList<StatResponse> results = new ArrayList<>(); // Пока просто заглушка
 
-        if (statRequest.getType().equals("plot")){ // Тест - отправляем на страницу статистик данные для графика нагрузки
+        if (statRequest.getPlotview().equals("plot")){ // Тест - отправляем на страницу статистик данные для графика нагрузки
             results.add(new StatResponse(0d, 0d));
             results.add(new StatResponse(1d, 10d));
             results.add(new StatResponse(2d, 23d));
@@ -106,7 +108,7 @@ public class StatisticController {
             results.add(new StatResponse(68d, 75d));
             results.add(new StatResponse(69d, 80d));
         }
-        else if (statRequest.getType().equals("round")){ // Тест - отправляем на страницу статистик данные для круговой диаграммы
+        else if (statRequest.getPlotview().equals("round")){ // Тест - отправляем на страницу статистик данные для круговой диаграммы
             results.add(new StatResponse("Общие встречи", 0.68));
             results.add(new StatResponse("Принятые встречи", 0.21));
             results.add(new StatResponse("Отказы", 0.11));

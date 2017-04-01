@@ -8,6 +8,15 @@ package service.statistics;
 public class StaticticManager  {
     // Скоро сделаю // 2017-03-31 получилось не очень скоро, но пора делать)
 
+    // Вид диаграммы:
+
+    private final String PLOT = "plot"; // обычный график
+    private final String ROUND = "round"; // Круговая диаграмма
+
+
+    // Тип данных статистики
+
+
 
 
 }
