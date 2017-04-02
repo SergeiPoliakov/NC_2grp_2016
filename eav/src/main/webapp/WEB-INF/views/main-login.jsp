@@ -98,7 +98,7 @@
                             class="glyphicon glyphicon-user"></span> ${user.login} </small>
                 </div>
                 <div class="profile-userpic">
-                    <img src="${user.picture}"
+                    <img  id="profilePic" src="${user.picture}"
                          onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
                 </div>
                 <ul class="list-group list-group-my">
@@ -189,7 +189,7 @@
                     <div class="modal-body">
                         <div class='row'>
                             <div class='col-md-6'>
-                                <div class="input-group">
+                                <div class="input-group" style="display: inline;">
                                     <label for="taskName" class="control-label">Название:</label>
                                     <input type="text" class="form-control" name="name" id="taskName" placeholder="Введите название задачи">
                                 </div>
@@ -304,8 +304,8 @@
 
     // Открытие полной картинки при нажатии
     $(function() {
-        $('.profile-userpic').on('click', function() {
-            $('.imagepreview').attr('src', $(this).find('img').attr('src'));
+        $('#profilePic').on('click', function() {
+            $('.imagepreview').attr('src', $(this).attr('src'));
             $('#imagemodal').modal('show');
         });
     });

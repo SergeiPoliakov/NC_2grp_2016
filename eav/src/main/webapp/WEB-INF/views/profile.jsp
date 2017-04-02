@@ -120,41 +120,27 @@
                         </form>
                     </div>
                     <div class="col col-lg-5 col-lg-offset-2 col-md-6">
-                        <%--
-                          <img src="http://nc2.hop.ru/upload/${user.id}/avatar/avatar_${user.id}.png"
-                             onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-polaroid"
-                             width="200">
-                        --%>
-                            <%--<img src="${user.picture}"
-                                 onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-polaroid"
-                                 width="200">--%>
-
                         <div class="form-group ">
-                            <%--Загрузка картинки-аватара--%><%--<label for="input-id">Аватар</label>--%>
                             <label for="input-id"></label>
                             <form method="POST" action="/uploadAvatar" enctype="multipart/form-data">
                                 <input type="hidden" name="MAX_FILE_SIZE" value="20971520"><%--Ограничение на максимальный размер файла = 20 Мб со стороны клиента--%>
                                 <input name="file" id="input-id" type="file" class="file"
                                              data-preview-file-type="text" accept="image/jpeg, image/png, image/gif" > <%--Ограничение на тип файла со стороны клиента--%>
-                                <%--<input type="submit" value="Загрузить">--%>
                             </form>
                         </div>
-
-
-                        <img src="https://lifehacker.ru/wp-content/uploads/2014/11/01_Comp-2.png" class="img-polaroid"
-                             width="200">
+                        <img src="https://lifehacker.ru/wp-content/uploads/2014/11/01_Comp-2.png" class="img-polaroid" width="200">
                         <div class="form-group ">
                             <%--Кнопка подключения календаря--%>
                             <label for="input-id">Подключите Google-календарь</label>
                             <div class="form-group ">
                                 <a href="/addCalendar">
-                                    <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-calendar"
-                                                                                     aria-hidden="true"> Подключить</span>
+                                    <button type="button" class="btn btn-info">
+                                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"> Подключить</span>
                                     </button>
                                 </a>
                                 <a href="/synchronizeCalendar">
-                                    <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-calendar"
-                                                                                     aria-hidden="true"> Синхронизировать</span>
+                                    <button type="button" class="btn btn-info">
+                                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"> Синхронизировать</span>
                                     </button>
                                 </a>
                             </div>
@@ -291,8 +277,6 @@
                     <div class="form-group ">
                         <a href="#myModalPhone" data-toggle="modal"> Подтвердить номер телефона </a>
                     </div>
-
-
                     <div class="modal fade" id="myModalPassword">
                         <div class="modal-dialog">
                             <!--  <div class="modal-content"> -->
@@ -363,8 +347,6 @@
                                                         </div>
                                                     </fieldset>
                                                 </form>
-
-
                                                 <form class="form" method="post" action="/confirmedPhone">
                                                     <fieldset>
                                                         <div class="form-group">
@@ -379,13 +361,11 @@
                                                         </div>
                                                     </fieldset>
                                                 </form>
-
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!--  </div> -->
                         </div>
                     </div>
 
@@ -405,7 +385,6 @@
         });
     });
 </script>
-
 
 <script>
     $("#input-id").fileinput({

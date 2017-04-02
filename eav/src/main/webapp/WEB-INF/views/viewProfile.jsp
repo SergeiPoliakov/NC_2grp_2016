@@ -51,7 +51,7 @@
                             class="glyphicon glyphicon-user"></span> ${user.login} </small>
                 </div>
                 <div class="profile-userpic">
-                    <img src="${user.picture}" onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
+                    <img id="profilePic" src="${user.picture}" onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
                 </div>
 
                 <div class="profile-userbuttons">
@@ -76,7 +76,17 @@
             </div>
         </div>
         <!-- Список шаблонов задач -->
-
+        <!-- Форма вывода полноразмерного изображения -->
+        <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <img src="" class="imagepreview" style="width: 100%;" >
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Timeline и кнопки -->
     <div class="row">
@@ -111,6 +121,14 @@
     var addInfoArray = {
     <c:forEach items="${allEvents}" var="event">${event.id}:'${event.info}',</c:forEach>
     };
+
+    // Открытие полной картинки при нажатии
+    $(function() {
+        $('#profilePic').on('click', function() {
+            $('.imagepreview').attr('src', $(this).attr('src'));
+            $('#imagemodal').modal('show');
+        });
+    });
     // Настройка кастомного скроллбара
 
     // Modal datetimepickers для создания новой задачи

@@ -92,13 +92,13 @@
                     <div class="modal-body">
                         <div class='row '>
                             <div class='col-md-6'>
-                                <div class="input-group">
+                                <div class="input-group" style="display: inline;">
                                     <label for="meetingTitle" class="control-label">Название:</label>
                                     <input type="text" class="form-control" name="title" id="meetingTitle" placeholder="Введите название встречи">
                                 </div>
                             </div>
                             <div class='col-md-6'>
-                                <div class="input-group">
+                                <div class="input-group" style="display: inline;">
                                     <label for="meetingTag" class="control-label">Теги:</label>
                                     <input type="text" class="form-control" name="tag" id="meetingTag" placeholder="Введите теги">
                                 </div>
