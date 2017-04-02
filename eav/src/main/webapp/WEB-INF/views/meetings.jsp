@@ -32,6 +32,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
 
+
     <style>
         .disabled {
             pointer-events: none;

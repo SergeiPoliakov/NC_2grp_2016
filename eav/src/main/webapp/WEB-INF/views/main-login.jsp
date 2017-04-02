@@ -16,7 +16,7 @@
 <!-- 249 СТРОКА, ДОБАВЛЕНИЕ ЗАДАЧИ -->
 <html>
 <head>
-    <title>${dataObject.getValue(1)} ${dataObject.getValue(2)}</title>
+    <title>Ваше расписание</title>
     <%@include file='header.jsp'%>
 
     <meta charset="UTF-8">
@@ -258,6 +258,7 @@
 </div>
 <br>
 <br>
+
 
 
 <script type="text/javascript">

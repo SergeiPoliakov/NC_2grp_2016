@@ -43,7 +43,8 @@ body, html {
 /*Select2*/
 
 .select2-selection__choice{
-	background-color: rgb(149, 165, 166) !important;
+	border-color: rgb(24, 188, 156) !important;
+	background-color: rgb(24, 188, 156) !important;
 	color: white !important;
 } 
 
