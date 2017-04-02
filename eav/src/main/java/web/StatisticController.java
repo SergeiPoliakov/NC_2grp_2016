@@ -37,9 +37,7 @@ public class StatisticController {
     @ResponseBody
     public ArrayList<StatResponse> getStat(@RequestBody StatRequest statRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException {
 
-        ArrayList<StatResponse> results = new StatisticManager().getStatistic(statRequest);
-
-        return results;
+        return new StatisticManager().getStatistic(statRequest);
     }
 
 

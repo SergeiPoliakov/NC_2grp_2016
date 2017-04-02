@@ -476,7 +476,7 @@ public class DBHelp {
                 meeting.setDate_end(RS.getString(4));
                 meeting.setInfo(RS.getString(5));
                 meeting.setOrganizer(this.getUserByUserID(RS.getInt(6)));
-                meeting.setTag(RS.getString(7));
+                meeting.setTag(new StringBuilder(RS.getString(7)));
                 Res.add(meeting);
             }
             RS.close();

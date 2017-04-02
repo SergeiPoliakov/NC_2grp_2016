@@ -22,7 +22,7 @@ public class Meeting extends BaseEntitie {
     private  String date_end; // 303
     private  String info; // 304
     private  User organizer; // 305
-    private  String tag; // 306
+    private  StringBuilder tag; // 306
     private  String members; // 307
     private ArrayList<User> users;
     private  ArrayList<Event> events;
@@ -91,11 +91,11 @@ public class Meeting extends BaseEntitie {
         this.info = info;
     }
 
-    public String getTag() {
+    public StringBuilder getTag() {
         return tag;
     }
 
-    public void setTag(String tag) {
+    public void setTag(StringBuilder tag) {
         this.tag = tag;
     }
 
@@ -109,7 +109,7 @@ public class Meeting extends BaseEntitie {
 
     public Meeting(){}
 
-    public Meeting(int id, String title, String date_start, String date_end, String info, User organizer, String tag, String members) {
+    public Meeting(int id, String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String members) {
         this.id = id;
         this.title = title;
         this.date_start = date_start;
@@ -120,7 +120,7 @@ public class Meeting extends BaseEntitie {
         this.members = members;
     }
 
-    public Meeting(String title, String date_start, String date_end, String info, User organizer, String tag, String members) {
+    public Meeting(String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String members) {
         this.title = title;
         this.date_start = date_start;
         this.date_end = date_end;
@@ -155,7 +155,7 @@ public class Meeting extends BaseEntitie {
                     this.organizer = user;
                     break;
                 case (306):
-                    this.tag = param.getValue();
+                    this.tag = new StringBuilder(param.getValue());
                     break;
             }
         }
@@ -191,7 +191,7 @@ public class Meeting extends BaseEntitie {
         dataObject.setParams(303, this.date_end);
         dataObject.setParams(304, this.info);
         dataObject.setParams(305, this.organizer.getId().toString());
-        dataObject.setParams(306, this.tag);
+        dataObject.setParams(306, new String(this.tag));
 
         for (User user: this.users) {
             dataObject.setRefParams(307, user.getId());

@@ -65,7 +65,7 @@
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span>
                             </button>
                         </a>
-                        <c:if test="${meeting.organizer eq user}">   <a href=""><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>  </c:if>
+                        <c:if test="${meeting.organizer eq user}">   <a href="/deleteMeeting${meeting.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>  </c:if>
                     </div>
                     <ul class="list-group list-group-my list-group-flush">
                         <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>

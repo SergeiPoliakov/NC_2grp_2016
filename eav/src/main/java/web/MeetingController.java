@@ -224,7 +224,22 @@ public class MeetingController {
                              @RequestParam("date_end") String date_end,
                              @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
-        Meeting meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), tag, "");
+        int id = userService.generationID(1004);
+
+        StringBuilder worlds = new StringBuilder();
+
+        if (tag != null) {
+            ArrayList<String> tags = SearchParser.parse(tag);
+            assert tags != null;
+            for (String value : tags
+                    ) {
+                tagNodeTree.insertForMeeting(value, id);
+                System.out.println("КИНУЛ ID" + id);
+                worlds.append(value).append(" ");
+            }
+        }
+
+        Meeting meeting = new Meeting(id, title, date_start, date_end, info, userService.getCurrentUser(), worlds, "");
 
         ArrayList<User> users = new ArrayList<>();
         User user = new User();
@@ -234,21 +249,10 @@ public class MeetingController {
 
         DataObject dataObject = meeting.toDataObject();
 
-        int id = loadingService.setDataObjectToDB(dataObject);
+        loadingService.setDataObjectToDB(dataObject);
         doCache.invalidate(id);
 
-        if (tag != null) {
 
-            ArrayList<String> tags = SearchParser.parse(tag);
-
-            assert tags != null;
-            for (String value : tags
-                    ) {
-                tagNodeTree.insertForMeeting(value, id);
-                System.out.println("КИНУЛ ID" + id);
-            }
-
-        }
 
         // Логирование:
         int idUser = userService.getObjID(userService.getCurrentUsername());
@@ -312,7 +316,7 @@ public class MeetingController {
     @RequestMapping(value = "/updateMeeting{meetingID}", method = RequestMethod.POST)
     public String inviteUserAtMeeting(@PathVariable("meetingID") Integer meetingID,
                                       @RequestParam("title") String title,
-                                      @RequestParam("tag") String tag,
+                                      @RequestParam("tag") StringBuilder tag,
                                       @RequestParam("date_start") String date_start,
                                       @RequestParam("date_end") String date_end,
                                       @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
@@ -338,16 +342,31 @@ public class MeetingController {
     public @ResponseBody Response inviteUserAtMeetingWithAJAX(
             @PathVariable("meetingID") Integer meetingID,
             @RequestParam("title") String title,
-            @RequestParam("tag") String tag,
+            @RequestParam("tag") StringBuilder tag,
             @RequestParam("date_start") String date_start,
             @RequestParam("date_end") String date_end,
             @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
+
         Response response = new Response();
         logger.info("asdasd");
         Meeting meeting = meetingService.getMeeting(meetingID);
+
+        StringBuilder worlds = new StringBuilder();
+
+        if (tag != null) {
+            ArrayList<String> tags = SearchParser.parse(new String(tag));
+            assert tags != null;
+            for (String value : tags
+                    ) {
+                tagNodeTree.insertForMeeting(value, meetingID);
+                System.out.println("КИНУЛ ID" + meetingID);
+                worlds.append(value).append(" ");
+            }
+        }
+
         meeting.setTitle(title);
-        meeting.setTag(tag);
+        meeting.setTag(worlds);
         meeting.setDate_start(date_start);
         meeting.setDate_end(date_end);
         meeting.setInfo(info);
@@ -360,5 +379,14 @@ public class MeetingController {
         loggerLog.add(Log.EDIT_MEETING, id, idUser);
         response.setText(new Gson().toJson(meeting));
         return response;
+    }
+
+    @RequestMapping(value = "/deleteMeeting{meetingID}", method = RequestMethod.GET)
+    public String deleteMeeting(@PathVariable("meetingID") Integer meetingID) throws InvocationTargetException,
+            SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
+
+        DataObject dataObject = doCache.get(meetingID);
+        loadingService.deleteDataObjectById(dataObject.getId());
+        return "redirect:/meetings";
     }
 }
