@@ -102,6 +102,7 @@
                         <option value="AL2">Alabama23</option>
                         <option value="AL3">Alabama234</option>
                     </select>
+                    <!--  <input type="text" class="form-control searchBox" name="name" style="width: 30rem;"> -->
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-success btn-sm">
@@ -122,11 +123,9 @@
                 </li>
             </ul>
         </div>
-        <!-- /.navbar-collapse -->
     </div>
-    <!-- /.container-fluid -->
 </nav>
- <!-- Notification  theme: "bootstrap"-->
+
 
 <script type="text/javascript">
     $(".searchBox").select2({
@@ -135,8 +134,8 @@
         tokenSeparators: [',', ' '],
         placeholder: ' Поиск...'
     });
-
 </script>
+
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/notifications.js"></script>
 
 </body>

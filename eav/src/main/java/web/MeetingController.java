@@ -2,6 +2,7 @@ package web;
 
 import com.google.common.cache.LoadingCache;
 import com.google.gson.Gson;
+import exception.CustomException;
 import service.converter.Converter;
 import entities.*;
 import org.slf4j.Logger;
@@ -67,6 +68,8 @@ public class MeetingController {
         return list;
     }
 
+
+
     // TEST
     @RequestMapping(value = "/notificationSendTo{recieverID}", method = RequestMethod.GET)
     public String notificationTestGet(@PathVariable("recieverID") String recieverID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
@@ -96,14 +99,11 @@ public class MeetingController {
 
     // Список встреч пользователя
     @RequestMapping(value = "/meetings", method = RequestMethod.GET)
-    public String getUserPage(HttpServletRequest request, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-
+    public String getUserPage(HttpServletRequest request, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException {
         HttpSession session = request.getSession();
         if (session.getAttribute("finder") != null) {
             FinderTagRequest finder = (FinderTagRequest) session.getAttribute("finder");
-
             System.out.println("finder пришел из сессии!!!" + finder.getText());
-
 
             if ("meeting".equals(finder.getType())) {
                 ArrayList<FinderTagResponse> finderTagResponseList = FinderLogic.getWithLogic(finder);
@@ -148,8 +148,9 @@ public class MeetingController {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
+            } else {
+                throw new CustomException("Неизвестная ошибка!");
             }
-
         } else {
             try {
                 DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
@@ -166,6 +167,8 @@ public class MeetingController {
 
                 m.addAttribute("meetings", meetings); // m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser));
                 m.addAttribute("user", user);
+
+                return "meetings";
 
             } catch (ExecutionException e) {
                 e.printStackTrace();

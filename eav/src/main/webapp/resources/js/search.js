@@ -154,7 +154,12 @@ function getFind() {
 
     setTimeout("document.location.href='/meetings'", delay);
 
+}
 
-
+function check() {
+    if ($('#search_box').val() != '')
+        $('#btn-find').removeAttr('disabled');
+    else
+        $('#btn-find').attr('disabled','disable');
 }
 

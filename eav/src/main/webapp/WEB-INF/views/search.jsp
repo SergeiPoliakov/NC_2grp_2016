@@ -26,9 +26,9 @@
 <body>
 <div class="search_area">
 
-        <input type="text" name="query" id="search_box" value="" autocomplete="off">
-        <button class="btn btn-warning btn-sm" id="btn-find"
-                onclick="getFind()">Поиск</button>
+    <input type="text" name="query" id="search_box" onkeyup="check()" value="" autocomplete="off">
+    <button class="btn btn-warning btn-sm" id="btn-find"
+            onclick="getFind()" disabled="disabled" >Поиск</button>
 
     <div id="search_advice_wrapper"></div>
 </div>

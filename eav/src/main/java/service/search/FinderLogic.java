@@ -21,8 +21,8 @@ public class FinderLogic {
 
         // По каждому тегу делаем запросы в дерево тегов:
 
-        assert part_tags != null;
-        if (!part_tags.isEmpty()) {
+
+        if (part_tags != null) {
             TagTreeManager ttm = new TagTreeManager();
             label:
             for (int i = 0; i < part_tags.size(); i++) {
@@ -39,6 +39,10 @@ public class FinderLogic {
                         break;
                     default:
                         break label;
+                }
+
+                if (anyTagFromTree == null) {
+                    return finderTagResponseList;
                 }
 
 
@@ -120,8 +124,9 @@ public class FinderLogic {
                 }
 
             }
-        } else return null;
+        } else return finderTagResponseList;
 
         return finderTagResponseList;
     }
 }
+

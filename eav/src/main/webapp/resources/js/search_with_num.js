@@ -163,7 +163,11 @@ function getFind() {
     var delay = 1000;
     // и с задержкой переходим на страницу с результатами
     setTimeout("document.location.href='/searchUser'", delay);
+}
 
-
-
+function check() {
+    if ($('#search_box').val() != '')
+        $('#btn-find').removeAttr('disabled');
+    else
+        $('#btn-find').attr('disabled','disable');
 }

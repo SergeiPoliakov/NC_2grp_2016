@@ -228,13 +228,11 @@ public class UserController {
 
 
     @RequestMapping(value = "/searchUser", method = RequestMethod.GET)
-    public String searchUser(HttpServletRequest request, Map<String, Object> mapObjects) {
-
+    public String searchUser(HttpServletRequest request, Map<String, Object> mapObjects) throws CustomException {
 
         HttpSession session = request.getSession();
         if (session.getAttribute("finder") != null) {
             FinderTagRequest finder = (FinderTagRequest) session.getAttribute("finder");
-
             System.out.println("finder пришел из сессии!!!" + finder.getText());
 
             if ("user".equals(finder.getType())) {
@@ -278,14 +276,16 @@ public class UserController {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
+            } else {
+                throw new CustomException("Неизвестная ошибка!");
             }
         }
-
         return "/searchUser";
     }
 
     @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
     public String searchUser(@RequestParam("name") String name, Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.SEARCH_USER, name));
 
         try {

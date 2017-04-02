@@ -54,7 +54,6 @@ public class SearchAndTagController {
     // 2017-03-30 Получаем тег и ищем подходящих юзеров (или встречи)
     @RequestMapping(value = "/getFind", method = RequestMethod.POST, headers = {"Content-type=application/json"})
     public String getFind(@RequestBody FinderTagRequest finder,
-                          Map<String, Object> mapObjects,
                           HttpServletRequest request) throws SQLException {
         // А тут к нам пришли все нужные параметры, которые достаем и можем испольовать для логики поиска, а потмо подготовить список и отдать на какую-то сраницу
         // Логирование
@@ -66,15 +65,12 @@ public class SearchAndTagController {
             loggerLog.add(Log.FIND_MEETING, finder.getText(), idUser); // Поиск встречи (запишем строку с именем из поиска)
         }
 
-        if (finder.getText() != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("finder", finder);
-        }
+        HttpSession session = request.getSession();
+        session.setAttribute("finder", finder);
 
         return "search";
     }
 
 
 }
-
 
