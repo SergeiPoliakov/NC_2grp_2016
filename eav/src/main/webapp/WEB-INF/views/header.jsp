@@ -25,6 +25,25 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/docs.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/header.js"></script>
 
+
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
+
+
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="<%=request.getContextPath()%>/resources/load/css/fileinput.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="<%=request.getContextPath()%>/resources/load/themes/explorer/theme.css" media="all" rel="stylesheet" type="text/css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="<%=request.getContextPath()%>/resources/load/js/plugins/sortable.js" type="text/javascript"></script>
+    <script src="<%=request.getContextPath()%>/resources/load/js/fileinput.js" type="text/javascript"></script>
+    <script src="<%=request.getContextPath()%>/resources/load/js/locales/ru.js" type="text/javascript"></script>
+    <script src="<%=request.getContextPath()%>/resources/load/themes/explorer/theme.js" type="text/javascript"></script>
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script> -->
+
+    <!--  <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery-1.9.1.min.js"></script> -->
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/select2.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/ru.js"></script>
+
+
 </head>
 
 <body>
@@ -107,9 +126,7 @@
     <!-- /.container-fluid -->
 </nav>
  <!-- Notification  theme: "bootstrap"-->
-<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/select2.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/ru.js"></script>
+
 <script type="text/javascript">
     $(".searchBox").select2({
         language: "ru",

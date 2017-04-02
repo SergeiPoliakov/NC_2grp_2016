@@ -125,25 +125,27 @@
                              onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-polaroid"
                              width="200">
                         --%>
-                        <img src="${user.picture}"
-                             onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-polaroid"
-                             width="200">
+                            <%--<img src="${user.picture}"
+                                 onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-polaroid"
+                                 width="200">--%>
 
                         <div class="form-group ">
-                            <%--Загрузка картинки-аватара--%>
-                            <label for="InputImg">Загрузка изображения</label>
+                            <%--Загрузка картинки-аватара--%><%--<label for="input-id">Аватар</label>--%>
+                            <label for="input-id"></label>
                             <form method="POST" action="/uploadAvatar" enctype="multipart/form-data">
                                 <input type="hidden" name="MAX_FILE_SIZE" value="20971520"><%--Ограничение на максимальный размер файла = 20 Мб со стороны клиента--%>
-                                Файл: <input name="file" type="file" id="InputImg"
-                                             accept="image/jpeg, image/png, image/gif"> <%--Ограничение на тип файла со стороны клиента--%>
-                                <input type="submit" value="Загрузить"> Загрузить
+                                <input name="file" id="input-id" type="file" class="file"
+                                             data-preview-file-type="text" accept="image/jpeg, image/png, image/gif" > <%--Ограничение на тип файла со стороны клиента--%>
+                                <%--<input type="submit" value="Загрузить">--%>
                             </form>
                         </div>
+
+
                         <img src="https://lifehacker.ru/wp-content/uploads/2014/11/01_Comp-2.png" class="img-polaroid"
                              width="200">
                         <div class="form-group ">
                             <%--Кнопка подключения календаря--%>
-                            <label for="InputImg">Подключите Google-календарь</label>
+                            <label for="input-id">Подключите Google-календарь</label>
                             <div class="form-group ">
                                 <a href="/addCalendar">
                                     <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-calendar"
@@ -157,9 +159,6 @@
                                 </a>
                             </div>
                         </div>
-
-
-
 
 
                         <div class="form-group ">
@@ -406,6 +405,28 @@
         });
     });
 </script>
+
+
+<script>
+    $("#input-id").fileinput({
+        language: 'ru',
+        allowedFileExtensions: ['jpg', 'png', 'gif'],
+        maxFileSize: 20000,
+        maxFilesNum: 1,
+
+        initialPreviewAsData: true,
+        initialPreview: [
+            "${user.picture}",
+        ],
+        initialPreviewConfig: [
+            {caption: "avatar.jpg", width: "120px", url: "{$url}", key: 1},
+        ],
+
+
+    });
+</script>
+
+
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/profile.js"></script>
 </body>
 <div style="margin-bottom: 8rem;"/>
