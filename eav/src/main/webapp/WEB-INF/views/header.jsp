@@ -95,6 +95,7 @@
                     <ul class="dropdown-menu" role="menu">
                         <li ><a href="/allEvent">Список событий</a></li>
                         <li ><a href="/allUser">Все пользователи</a></li>
+                        <li ><a href="/statistics">Статистика</a></li>
                     </ul>
                 </li>
             </ul>

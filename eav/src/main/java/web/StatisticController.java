@@ -59,9 +59,9 @@ public class StatisticController {
             // Эти настройки надо из настроек из базы вытаскивать
 
             // results.add(new StatSetting("plot", "on", "activity", "day", "location_2", "Время, часы", "Интенсивность работы"));
-            results.add(new StatSetting("plot", "on", "activity", "day", "location_2", "Время, часы", "Интенсивность работы"));
+            results.add(new StatSetting("plot", "on", "activity", "day", "location_2","Интенсивность работы за сутки", "Время, часы", "Интенсивность работы"));
 
-            results.add(new StatSetting("round", "on", "meeting", "day", "location_1"));
+            results.add(new StatSetting("round", "on", "meeting", "day", "location_1", "Процентаж встреч за текущий месяц"));
 
         }
 

@@ -18,48 +18,45 @@
 <head>
     <title>Статистики :: тестовая версия</title>
     <%@include file='header.jsp'%>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="resources\css\tlmain.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/jquery.mCustomScrollbar.min.css">
+
+    <!-- <script type="text/javascript" src="resources\js\jquery-1.9.1.min.js"> </script> -->
+    <script type="text/javascript" src="resources\js\moment-with-locales.min.js"> </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
+    <script type="text/javascript" src="resources\js\bootstrap.min.js"></script>
+
 
     <!-- <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery-1.9.1.min.js"></script> -->
     <!-- <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.touchSwipe.min.js"></script> -->
 
-    <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
-
-    <!-- Подгружаем стили и скрипты для загрузки статистик и для свайпинга бокового меню: -->
-    <link href="<%=request.getContextPath()%>/resources/css/stat_menu.css" media="all" rel="stylesheet" type="text/css"/>
+    <!-- Подгружаем скрипты для загрузки статистик: -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/stat_load.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/stat_menu_swipe.js"></script>
 
 
+    <style>
+        .card_statistic{
+            min-height: 30rem;
+            max-height: 30rem;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <div id="sidebar">
-        <ul>
-            <li><a href="#">Статистика 1</a><div id="location_1"></div></li>
-            <li><a href="#">Статистика 2</a><div id="location_2"></div></li>
-            <li><a href="#">Статистика 3</a></li>
-            <li><a href="#">Статистика 4</a></li>
-        </ul>
-    </div>
-    <div class="main-content">
-        <div class="swipe-area"></div>
-        <a href="#" data-toggle=".container" id="sidebar-toggle">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </a>
-        <div class="content">
-            <h1>Страница статистик с боковым меню (тестовая)</h1>
-            <p>Нажмите на копку слева в виде трех линий, раскроется меню со статистиками</p>
-        </div>
-    </div>
+
+<div id = "insert_place_col-lg-6" class="container top-buffer-20">
+
 </div>
 
-<!-- Место для вставки диаграммы -->
+<!-- Место для вставки диаграммы, чтобы не забыть-->
 <!-- <div id="location_1"></div> -->
 <!-- Место для вставки графика -->
 <!-- <div id="location_2"></div> -->
 
-
 </body>
+<div style="margin-bottom: 8rem;"/>
+<%@include file='footer.jsp'%>
 </html>

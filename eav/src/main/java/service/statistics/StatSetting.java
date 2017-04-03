@@ -25,6 +25,8 @@ public class StatSetting {
 
     private String ylabel; // Подпись осей по ОУ
 
+    private String title; // Подпись диаграммы (название диаграммы)
+
 
     public StatSetting() {
     }
@@ -43,6 +45,15 @@ public class StatSetting {
         this.location_id = location_id;
     }
 
+    public StatSetting(String plotview, String state, String datatype, String period, String location_id, String title) {
+        this.plotview = plotview;
+        this.state = state;
+        this.datatype = datatype;
+        this.period = period;
+        this.location_id = location_id;
+        this.title = title;
+    }
+
     public StatSetting(String plotview, String state, String datatype, String period, String location_id, String xlabel, String ylabel) {
         this.plotview = plotview;
         this.state = state;
@@ -53,6 +64,16 @@ public class StatSetting {
         this.ylabel = ylabel;
     }
 
+    public StatSetting(String plotview, String state, String datatype, String period, String location_id, String title, String xlabel, String ylabel) {
+        this.plotview = plotview;
+        this.state = state;
+        this.datatype = datatype;
+        this.period = period;
+        this.location_id = location_id;
+        this.title = title;
+        this.xlabel = xlabel;
+        this.ylabel = ylabel;
+    }
 
 
 
@@ -121,5 +142,13 @@ public class StatSetting {
 
     public void setYlabel(String ylabel) {
         this.ylabel = ylabel;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

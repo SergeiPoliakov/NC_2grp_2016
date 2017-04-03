@@ -22,6 +22,48 @@ function getStatSettings() {
             period: null
         }),
         success: function (dataSetting) {
+            // Сначала создаем необходимое количество карточек на странице:
+            console.log(dataSetting.length);
+            var count_div = (dataSetting.length / 2  | 0); // Необходимое количество полноценных сдвоенных каррточек
+            var count_mod = dataSetting.length - count_div*2;  // Необходимое количество одиночных карточек
+            var count_loc = 1;
+            for (var c = 0; c < count_div; c++){ // Создаем обычные карточки
+
+                var block_col_lg_6 = '<div class="row">';
+
+                block_col_lg_6 += '<div class="col-lg-6">';
+                block_col_lg_6 += '<div id="location_' + count_loc + '" class="card card_statistic mCustomScrollbar" data-mcs-theme="minimal-dark">';
+                block_col_lg_6 += '<h4 class="card-title text-center">Загрузка статистики... Пожалуйста, подождите </h4>';
+                block_col_lg_6 += '</div>';
+                block_col_lg_6 += '</div>';
+                count_loc ++;
+
+                block_col_lg_6 += '<div class="col-lg-6">';
+                block_col_lg_6 += '<div id="location_' + count_loc + '" class="card card_statistic mCustomScrollbar" data-mcs-theme="minimal-dark">';
+                block_col_lg_6 += '<h4 class="card-title text-center">Загрузка статистики... Пожалуйста, подождите </h4>';
+                block_col_lg_6 += '</div>';
+                block_col_lg_6 += '</div>';
+                block_col_lg_6 += '</div>';
+                count_loc ++;
+                $("#insert_place_col-lg-6").append(block_col_lg_6); // в элемент с id="insert_place_col-lg-6"
+            }
+
+            for (var d = 0; d < count_mod; d++){ // Создаем одинарные карточки
+
+                var block_col_lg_6 = '<div class="row">';
+
+                block_col_lg_6 += '<div class="col-lg-6">';
+                block_col_lg_6 += '<div id="location_' + count_loc + '" class="card card_statistic mCustomScrollbar" data-mcs-theme="minimal-dark">';
+                block_col_lg_6 += '<h4 class="card-title text-center">Загрузка статистики... Пожалуйста, подождите </h4>';
+                block_col_lg_6 += '</div>';
+                block_col_lg_6 += '</div>';
+
+                block_col_lg_6 += '</div>';
+                count_loc ++;
+                $("#insert_place_col-lg-6").append(block_col_lg_6); // вставляем в конец элемента с id="insert_place_col-lg-6"
+            }
+
+
             // Пробегаем по всему массиву переданных параметров и вытаскиваем настройки
             for (var j = 0; j < dataSetting.length; j++) {
 
@@ -32,6 +74,7 @@ function getStatSettings() {
                 var location_id = (dataSetting[j]).location_id;
                 var xlabel = (dataSetting[j]).xlabel;
                 var ylabel = (dataSetting[j]).ylabel;
+                var title = (dataSetting[j]).title;
 
                 if (state == "on") { // Если значение ключа текущей настройки ON, то надо выводить статистику
                     if (plotview == "round") {
@@ -69,9 +112,13 @@ function getStatSettings() {
                                     data_plot.addRows(myArray);
                                     console.log(myArray);
 
+                                    var options = {
+                                        title: title
+                                    };
+
                                     // Создаем и рисуем диаграмму:
                                     var chart = new google.visualization.PieChart(document.getElementById(location_id));
-                                    chart.draw(data_plot, null);
+                                    chart.draw(data_plot, options);
                                 }
                             });
 
@@ -115,13 +162,14 @@ function getStatSettings() {
                                     console.log(myArray);
 
                                     var options = {
+                                        title: title,
                                         hAxis: {
                                             title: xlabel
                                         },
                                         vAxis: {
                                             title: ylabel
-                                        },
-                                        backgroundColor: '#f1f8e9'
+                                        }//,
+                                        //backgroundColor: '#f1f8e9'
                                     };
 
                                     var chart = new google.visualization.LineChart(document.getElementById(location_id));
