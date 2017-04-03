@@ -58,11 +58,6 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-    <!-- Подгружаем стили и скрипты для загрузки статистик и для свайпинга бокового меню: -->
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/stat_load.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/stat_menu_swipe.js"></script>
-
     <script type="text/javascript">
         google.charts.load('current', {packages:['wordtree']});
         google.charts.setOnLoadCallback(drawChart);
@@ -93,189 +88,172 @@
 
 
 <div class="container top-buffer-20">
-    <!-- Место для бокового меню статистик: -->
-    <%@include file='statMenu.jsp'%>
-
-        <div class="main-content">
-            <div class="swipe-area"></div>
-            <a href="#" data-toggle=".container" id="sidebar-toggle">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </a>
-            <div class="content">
-
-                <!-- Информация о пользователе -->
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
-                        <div class="card">
-                            <h4 class="card-title text-center">${user.name} ${user.surname} ${user.middleName}</h4>
-                            <div class="card-title text-center">
-                                <small class=" text-muted"><span
-                                        class="glyphicon glyphicon-user"></span> ${user.login} </small>
-                            </div>
-                            <div class="profile-userpic">
-                                <img  id="profilePic" src="${user.picture}"
-                                      onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
-                            </div>
-                            <ul class="list-group list-group-my">
-                                <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
-                                <li class="list-group-item">Город: ${user.city}</li>
-                                <li class="list-group-item">Пол: ${user.sex}</li>
-                                <li class="list-group-item">О себе: ${user.additional_field}</li>
-                            </ul>
-                        </div>
+    <!-- Информация о пользователе -->
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+            <div class="card">
+                <h4 class="card-title text-center">${user.name} ${user.surname} ${user.middleName}</h4>
+                <div class="card-title text-center">
+                    <small class=" text-muted"><span
+                            class="glyphicon glyphicon-user"></span> ${user.login} </small>
+                </div>
+                <div class="profile-userpic">
+                    <img  id="profilePic" src="${user.picture}"
+                         onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
+                </div>
+                <ul class="list-group list-group-my">
+                    <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>
+                    <li class="list-group-item">Город: ${user.city}</li>
+                    <li class="list-group-item">Пол: ${user.sex}</li>
+                    <li class="list-group-item">О себе: ${user.additional_field}</li>
+                </ul>
+            </div>
+        </div>
+        <!--
+        <div class="col-md-4">
+            <div class="card-title text-center">
+                <h4>Дерево событий:</h4>
+            </div>
+            <div class="card-title text-center">
+                <div class="prokrutka" id="wordtree_basic"></div>
+            </div>
+        </div>
+        -->
+        <!-- Список шаблонов задач -->
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-lg-offset-6">
+            <div class="card">
+                <div class="card-title">
+                    <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>
+                </div>
+                <ul class="list-group list-group-my list-group-flush text-center navi mCustomScrollbar" data-mcs-theme="minimal-dark" id="cardsholderItems">
+                    <li class="list-group-item list-group-item-info">РАЗ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-danger">ДВА ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-info">ТРИ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-info">ЧЕТЫРЕ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-danger">ПЯТЬ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-warning">ШЕСТЬ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-danger">СЕМЬ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-warning">ВОСЕМЬ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-info">ДЕВЯТЬ ШАБЛОН</li>
+                    <li class="list-group-item list-group-item-warning">ДЕСЯТЬ ШАБЛОН</li>
+                </ul>
+                <button type="button" class="btn btn-success btn-block" id="templateAddButton">Добавить</button>
+            </div>
+        </div>
+    </div>
+    <!-- Timeline и кнопки -->
+    <div class="row top-buffer-5">
+        <div class="col-md-12">
+            <h4>Расписание</h4>
+            <div id ="timelineContainer">
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showTodayButton">Сегодня</button>
                     </div>
-                    <!--
-                    <div class="col-md-4">
-                        <div class="card-title text-center">
-                            <h4>Дерево событий:</h4>
-                        </div>
-                        <div class="card-title text-center">
-                            <div class="prokrutka" id="wordtree_basic"></div>
-                        </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showWeekButton">Неделя</button>
                     </div>
-                    -->
-                    <!-- Список шаблонов задач -->
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-lg-offset-6">
-                        <div class="card">
-                            <div class="card-title">
-                                <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>
-                            </div>
-                            <ul class="list-group list-group-my list-group-flush text-center navi mCustomScrollbar" data-mcs-theme="minimal-dark" id="cardsholderItems">
-                                <li class="list-group-item list-group-item-info">РАЗ ШАБЛОН</li>
-                                <li class="list-group-item list-group-item-danger">ДВА ШАБЛОН</li>
-                                <li class="list-group-item list-group-item-info">ТРИ ШАБЛОН</li>
-                                <li class="list-group-item list-group-item-info">ЧЕТЫРЕ ШАБЛОН</li>
-                                <li class="list-group-item list-group-item-danger">ПЯТЬ ШАБЛОН</li>
-                                <li class="list-group-item list-group-item-warning">ШЕСТЬ ШАБЛОН</li>
-                                <li class="list-group-item list-group-item-danger">СЕМЬ ШАБЛОН</li>
-                                <li class="list-group-item list-group-item-warning">ВОСЕМЬ ШАБЛОН</li>
-                                <li class="list-group-item list-group-item-info">ДЕВЯТЬ ШАБЛОН</li>
-                                <li class="list-group-item list-group-item-warning">ДЕСЯТЬ ШАБЛОН</li>
-                            </ul>
-                            <button type="button" class="btn btn-success btn-block" id="templateAddButton">Добавить</button>
-                        </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showMonthButton">Месяц</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default timeline-menu-button" id="showYearButton">Год</button>
                     </div>
                 </div>
-                <!-- Timeline и кнопки -->
-                <div class="row top-buffer-5">
-                    <div class="col-md-12">
-                        <h4>Расписание</h4>
-                        <div id ="timelineContainer">
-                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-default timeline-menu-button" id="showTodayButton">Сегодня</button>
-                                </div>
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-default timeline-menu-button" id="showWeekButton">Неделя</button>
-                                </div>
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-default timeline-menu-button" id="showMonthButton">Месяц</button>
-                                </div>
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-default timeline-menu-button" id="showYearButton">Год</button>
-                                </div>
-                            </div>
-                            <div id="visualization"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Форма вывода полноразмерного изображения -->
-                <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-body">
-                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                <img src="" class="imagepreview" style="width: 100%;" >
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Форма для создания новой задачи -->
-                <div id="taskmodal" class="modal fade">
-                    <div class="modal-dialog">
-                        <form id="eventForm" name="creation" data-toggle="validator">
-                            <div class="modal-content">
-                                <!-- Заголовок модального окна -->
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                    <h4 class="modal-title text-center">Создание новой задачи</h4>
-                                </div>
-                                <!-- Основное содержимое модального окна -->
-                                <div class="modal-body">
-                                    <div class='row'>
-                                        <div class='col-md-6'>
-                                            <div class="input-group" style="display: inline;">
-                                                <label for="taskName" class="control-label">Название:</label>
-                                                <input type="text" class="form-control" name="name" id="taskName" placeholder="Введите название задачи">
-                                            </div>
-                                        </div>
-                                        <div class='col-md-6'>
-                                            <div class="input-group" style="width: 1%;display: table-cell;">
-                                                <div type="text" class="hidden" name="eventId" id="taskID" value = "eventId"></div>
-                                                <label for="taskPriority" class="control-label">Приоритет:</label>
-                                                <select type="text" id="taskPriority" name="priority" class="selectpicker form-control" title="Выберите приоритет" data-style="myButton">
-                                                    <option style="background: #e74c3c; color: #fff;" value="Style1">Высокий</option>
-                                                    <option style="background: #f39c12; color: #fff;" value="Style2">Средний</option>
-                                                    <option style="background: #3498db; color: #fff;" value="Style3" selected>Низкий</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- DateTime Pickers -->
-                                    <div class='row top-buffer-2'>
-                                        <div class='col-md-6'>
-                                            <label for="taskStartTime" class="control-label">Начало:</label>
-                                            <div class='input-group date' id='datetimepicker1'>
-                                                <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_begin" class="form-control" id="taskStartTime" required/>
-                                                <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-6'>
-                                            <label for="taskEndTime" class="control-label">Окончание:</label>
-                                            <div class='input-group date' id='datetimepicker2'>
-                                                <input type='text' name="date_end" class="form-control" id="taskEndTime" required/>
-                                                <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row top-buffer-2">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="taskAddInfo" class="control-label">Дополнительная информация:</label>
-                                                <textarea type='text' name="info" class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <ul class="list-group list-group-my">
-                                        <li class="list-group-item">
-                                            Сохранить шаблон
-                                            <div class="material-switch pull-right">
-                                                <input id="SaveTemplateCheckBox" type="checkbox"/>
-                                                <label for="SaveTemplateCheckBox" class="label-primary"></label>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <!-- Футер модального окна -->
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                                    <button type="button" class="btn btn-primary" id="modalAddButton">Добавить</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                <div id="visualization"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Форма вывода полноразмерного изображения -->
+    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <img src="" class="imagepreview" style="width: 100%;" >
                 </div>
             </div>
         </div>
-
-
-
+    </div>
+    <!-- Форма для создания новой задачи -->
+    <div id="taskmodal" class="modal fade">
+        <div class="modal-dialog">
+            <form id="eventForm" name="creation" data-toggle="validator">
+                <div class="modal-content">
+                    <!-- Заголовок модального окна -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title text-center">Создание новой задачи</h4>
+                    </div>
+                    <!-- Основное содержимое модального окна -->
+                    <div class="modal-body">
+                        <div class='row'>
+                            <div class='col-md-6'>
+                                <div class="input-group" style="display: inline;">
+                                    <label for="taskName" class="control-label">Название:</label>
+                                    <input type="text" class="form-control" name="name" id="taskName" placeholder="Введите название задачи">
+                                </div>
+                            </div>
+                            <div class='col-md-6'>
+                                <div class="input-group" style="width: 1%;display: table-cell;">
+                                    <div type="text" class="hidden" name="eventId" id="taskID" value = "eventId"></div>
+                                    <label for="taskPriority" class="control-label">Приоритет:</label>
+                                    <select type="text" id="taskPriority" name="priority" class="selectpicker form-control" title="Выберите приоритет" data-style="myButton">
+                                        <option style="background: #e74c3c; color: #fff;" value="Style1">Высокий</option>
+                                        <option style="background: #f39c12; color: #fff;" value="Style2">Средний</option>
+                                        <option style="background: #3498db; color: #fff;" value="Style3" selected>Низкий</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- DateTime Pickers -->
+                        <div class='row top-buffer-2'>
+                            <div class='col-md-6'>
+                                <label for="taskStartTime" class="control-label">Начало:</label>
+                                <div class='input-group date' id='datetimepicker1'>
+                                    <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_begin" class="form-control" id="taskStartTime" required/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class='col-md-6'>
+                                <label for="taskEndTime" class="control-label">Окончание:</label>
+                                <div class='input-group date' id='datetimepicker2'>
+                                    <input type='text' name="date_end" class="form-control" id="taskEndTime" required/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top-buffer-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="taskAddInfo" class="control-label">Дополнительная информация:</label>
+                                    <textarea type='text' name="info" class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-my">
+                            <li class="list-group-item">
+                                Сохранить шаблон
+                                <div class="material-switch pull-right">
+                                    <input id="SaveTemplateCheckBox" type="checkbox"/>
+                                    <label for="SaveTemplateCheckBox" class="label-primary"></label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Футер модального окна -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-primary" id="modalAddButton">Добавить</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <div id="log"></div>
 </div>
 <br>

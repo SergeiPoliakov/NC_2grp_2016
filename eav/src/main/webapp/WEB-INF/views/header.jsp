@@ -42,6 +42,10 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/select2.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/ru.js"></script>
 
+    <!--  Для статистик и бокового меню со статистиками: -->
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.touchSwipe.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 
 </head>
 

@@ -29,6 +29,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/stat_load.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/stat_menu_swipe.js"></script>
 
+
 </head>
 <body>
 <div class="container">
