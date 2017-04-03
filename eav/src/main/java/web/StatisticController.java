@@ -24,6 +24,12 @@ import java.util.ArrayList;
 public class StatisticController {
 
 
+    // На подгрузку страницы статистик с карточками:
+    @RequestMapping(value = "/statistic", method = RequestMethod.GET)
+    public String statisticPage() throws SQLException {
+
+        return "statistic";
+    }
 
     // На подгрузку страницы статистик:
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
