@@ -59,9 +59,11 @@
                     <button type="button" class="btn btn-info btn-sm" id="settingsButton">
                         <span class='glyphicon glyphicon-cog' aria-hidden='true'> Настройки</span>
                     </button>
-                    <button type="button" class="btn btn-danger btn-sm" <c:if test="${meeting.users.size() eq 1}"> disabled </c:if>  >
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span>
-                    </button>
+                    <a href="/deleteMeeting${meeting.id}">
+                        <button type="button" class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span>
+                        </button>
+                    </a>
                 </div>
                 <ul class="list-group list-group-my list-group-flush" id="meetingInfo">
                     <div class="list-group-item">

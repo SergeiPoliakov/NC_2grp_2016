@@ -19,8 +19,10 @@
     <title>Ваши друзья</title>
     <%@include file='header.jsp'%>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/jquery.mCustomScrollbar.min.css">
     <script type="text/javascript" src="resources\js\jquery-1.9.1.min.js"> </script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 </head>
 <body>
 <div class="container top-buffer-20">
@@ -28,7 +30,7 @@
         <c:forEach items="${allObject}" var="object">
             <!-- Карточка пользователя -->
             <div class="col-sm-12 col-md-6 col-lg-3">
-                <div class="card style_prevu_kit_static_blue">
+                <div class="card style_prevu_kit_static_blue" >
                     <h4 class="card-title text-center">${object.surname} ${object.name} ${object.middleName}</h4>
                     <div class="card-title text-center">
                         <small class=" text-muted"><span
@@ -44,7 +46,7 @@
                         <a href="/sendMessage/${object.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
                         <a href="/deleteFriend/${object.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
                     </div>
-                    <ul class="list-group list-group-my list-group-flush">
+                    <ul class="list-group list-group-my list-group-flush mCustomScrollbar" style="max-height: 18.9rem;" data-mcs-theme="minimal-dark">
                         <li class="list-group-item">Дата рождения: ${object.ageDate}</li>
                         <li class="list-group-item">Город: ${object.city}</li>
                         <li class="list-group-item">Пол: ${object.sex}</li>
