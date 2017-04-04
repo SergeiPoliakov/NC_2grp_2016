@@ -186,7 +186,7 @@ public class UserController {
         NameNodeTree nnt = new NameNodeTree();
 
         // 2017-04-04 Тест записи и чтени я из бд уведомления
-        Notification notification = new Notification("Уведомление",10001, 10003, "1003", "03.04.2017 00:00");
+        Notification notification = new Notification("Уведомление",10001, 10003, "friendRequest", "03.04.2017 00:00");
         DataObject dataObject = new Converter().toDO(notification);
         new DBHelp().setDataObjectToDB(dataObject);
         ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));

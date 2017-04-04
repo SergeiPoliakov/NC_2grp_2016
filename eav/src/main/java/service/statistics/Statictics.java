@@ -1,10 +1,10 @@
-package entities;
+package service.statistics;
 
 /**
- * Created by Hroniko on 12.03.2017.
- * Сущность, представляющая набор статистик конкретного пользователя
+ * Created by Hroniko on 04.04.2017.
+ * Сущность, представляющая одну статистику (выборку точек графика или диаграммы) конкретного пользователя
  */
-public class Statictics extends BaseEntitie {
+public class Statictics{
 
     // Скоро сделаю
 

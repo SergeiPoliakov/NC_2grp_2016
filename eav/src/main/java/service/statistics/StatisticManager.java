@@ -5,6 +5,7 @@ import com.google.api.client.util.DateTime;
 import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.Log;
+import service.UserServiceImp;
 import service.converter.Converter;
 import service.id_filters.LogFilter;
 
@@ -23,6 +24,7 @@ import java.util.Date;
  */
 public class StatisticManager {
     // Скоро сделаю // 2017-03-31 получилось не очень скоро, но пора делать)
+    private UserServiceImp userService = new UserServiceImp();
 
 
     public StatisticManager() {
@@ -68,17 +70,24 @@ public class StatisticManager {
     // Получаем запрос на формирование статистики (ОСНОВНОЙ метод):
     public ArrayList<StatResponse> getStatistic(StatRequest statRequest) throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
 
-        // Запускаем логику обработки статистики и формирования массива ответов StatResponse:
-        ArrayList<StatResponse> results = new ArrayList<>();
+        // Получаем айди юзера
+        Integer root_id = userService.getCurrentUser().getId();
+        // Проверяем, есть ли такая статистика у нас в сейвере:
+        ArrayList<StatResponse> results = StatisticSaver.get(root_id, statRequest);
 
-        // Проверяем, какой механизм формирования статистики вызвать
-        if (statRequest.getDatatype().equals(DataType.ACTIVITY)) {
-            results = getActivity(statRequest);
-        }
-        else if (statRequest.getDatatype().equals(DataType.MEETING)) {
-            results = getMeeting(statRequest);
+        if (results == null){ // Если нет, то запускаем логику сбора логов из базы и формирования статистики:
+            // Проверяем, какой механизм формирования статистики вызвать
+            if (statRequest.getDatatype().equals(DataType.ACTIVITY)) {
+                results = getActivity(statRequest);
+            }
+            else if (statRequest.getDatatype().equals(DataType.MEETING)) {
+                results = getMeeting(statRequest);
+            }
+            // И конечно надо сохранить в сейвере результат - обсчитанную статистику:
+            StatisticSaver.add(root_id, statRequest, results);
         }
 
+        // И отдаем результат в контроллер:
         return results;
     }
 

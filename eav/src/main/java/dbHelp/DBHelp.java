@@ -805,17 +805,19 @@ public class DBHelp {
             } else if (params.get(LogFilter.FOR_CURRENT_USER) != null) { // если надо получить ID всех логов текущего пользователей,
                 /*
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 31 ";
-                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                    sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + LOG + " ";
                 sql += "AND ob2.OBJECT_NAME = " + "'" + userService.getCurrentUsername() + "'" + " ";
                 */
 
+                // Исправленный, 2017-04-04, выбор по айди пользователя
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE ";
-                sql += "AND re.ATTR_ID = 31 JOIN PARAMS pa ON pa.VALUE = " + "'" + userService.getCurrentUsername() + "'" + " AND pa.ATTR_ID = 4 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + LOG + " ";
+                sql += "AND ob2.OBJECT_ID = " + userService.getCurrentUser().getId() + " ";
 
-
-
-
+                //sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE ";
+                //sql += "AND re.ATTR_ID = 31 JOIN PARAMS pa ON pa.VALUE = " + "'" + userService.getCurrentUsername() + "'" + " AND pa.ATTR_ID = 4 ";
 
             } else if (params.get(LogFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех логов пользователя с конкретным именем,
                 ArrayList<String> user_name = params.get(LogFilter.FOR_USER_WITH_NAME);

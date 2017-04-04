@@ -4,6 +4,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import service.statistics.StatisticLogger;
+import service.statistics.StatisticSaver;
 import service.tags.TagNodeTree;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +29,12 @@ public class Sheduler {
     @Scheduled(fixedDelay = 1000*2*60) // 1 раз в 2 минуты
     public static void tagTimer() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
         TagNodeTree.tictack();
+    }
+
+    // Авточистка хранителя статистик (в памяти) по таймеру
+    @Scheduled(fixedDelay = 1000*60) // 1 раз в 1 минуту
+    public static void statTimer() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        StatisticSaver.tictack();
     }
 
 }
