@@ -20,7 +20,7 @@ public class Notification extends BaseEntitie{
 
     private int senderID; // 502
     private int recieverID; // 503
-    private int additionalID; // 504
+    private Integer additionalID; // 504
     private String type; // 505
     private String date; // 506
     private String isSeen; // 507 // Просмотренные
@@ -138,6 +138,25 @@ public class Notification extends BaseEntitie{
 
     public Notification(int id, String name,int senderID, int recieverID, int additionalID, String type, String date) {
         this.id = id;
+        this.name = name;
+        this.senderID = senderID;
+        this.recieverID = recieverID;
+        this.additionalID = additionalID;
+        this.type = type;
+        this.date = date;
+        this.isSeen = "false";
+    }
+
+    public Notification(String name,int senderID, int recieverID, String type, String date) {
+        this.name = name;
+        this.senderID = senderID;
+        this.recieverID = recieverID;
+        this.type = type;
+        this.date = date;
+        this.isSeen = "false";
+    }
+
+    public Notification(String name,int senderID, int recieverID, int additionalID, String type, String date) {
         this.name = name;
         this.senderID = senderID;
         this.recieverID = recieverID;

@@ -318,7 +318,13 @@ public class Converter {
             //
             dataObject.setRefParams(502, notification.getSenderID());
             dataObject.setRefParams(503, notification.getRecieverID());
-            dataObject.setRefParams(504, notification.getAdditionalID());
+            ///////dataObject.setRefParams(504, notification.getAdditionalID());
+            try{
+                dataObject.setRefParams(504, notification.getAdditionalID());
+            }
+            catch (Exception e){
+                System.out.println("Пустое поле с");
+            }
             dataObject.setParams(505, notification.getType());
             dataObject.setParams(506, notification.getDate());
             dataObject.setParams(507, notification.getIsSeen());

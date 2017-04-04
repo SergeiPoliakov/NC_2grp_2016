@@ -1214,7 +1214,11 @@ public class DBHelp {
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 503 "; // 503 - это получатель
                 sql += "JOIN OBJECTS ob2 ON re.REFERENCE = ob2.OBJECT_ID ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + NOTIFICATION + " ";
-                sql += "AND ob2.OBJECT_NAME = " + "'" + userService.getCurrentUsername() + "'" + " ";
+                sql += "AND ob2.OBJECT_ID = " + userService.getCurrentUser().getId() + " ";
+
+
+
+
             } else if (params.get(NotificationFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех уведомлений для пользователя с конкретным именем,
                 ArrayList<String> user_name = params.get(NotificationFilter.FOR_USER_WITH_NAME);
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 503 "; // 503 - это получатель

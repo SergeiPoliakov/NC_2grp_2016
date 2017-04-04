@@ -1,7 +1,9 @@
 package web;
 
+import dbHelp.DBHelp;
 import entities.*;
 import service.application_settings.SettingsLoader;
+import service.id_filters.NotificationFilter;
 import service.search.FinderLogic;
 import service.search.FinderTagRequest;
 import service.search.FinderTagResponse;
@@ -112,7 +114,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/main-login", method = RequestMethod.GET)
-    public String getUserPage(HttpServletRequest request, HttpServletResponse response, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException {
+    public String getUserPage(HttpServletRequest request, HttpServletResponse response, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException, ParseException {
 
         DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
         if (currentUser.getValue(15).equals("false")) {
@@ -182,6 +184,20 @@ public class UserController {
         ttm.test();
 
         NameNodeTree nnt = new NameNodeTree();
+
+        // 2017-04-04 Тест записи и чтени я из бд уведомления
+        Notification notification = new Notification("Уведомление",10001, 10003, "1003", "03.04.2017 00:00");
+        DataObject dataObject = new Converter().toDO(notification);
+        new DBHelp().setDataObjectToDB(dataObject);
+        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER));
+        // Для каждого айдишника вытаскиваем уведомление, сразу конвертируем к сущности и засовываем в список сущностей
+        ArrayList<Notification> notifications = new ArrayList<>();
+        for(Integer id : al){
+            // Notification notification2 = converter.ToNotification(loadingService.getDataObjectByIdAlternative(id));
+            DataObject notification2 = loadingService.getDataObjectByIdAlternative(id);
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!! " + notification2);
+        }
+
 
         return "main-login";
     }
