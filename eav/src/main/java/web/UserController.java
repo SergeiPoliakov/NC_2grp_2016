@@ -189,7 +189,7 @@ public class UserController {
         Notification notification = new Notification("Уведомление",10001, 10003, "1003", "03.04.2017 00:00");
         DataObject dataObject = new Converter().toDO(notification);
         new DBHelp().setDataObjectToDB(dataObject);
-        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER));
+        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
         // Для каждого айдишника вытаскиваем уведомление, сразу конвертируем к сущности и засовываем в список сущностей
         ArrayList<Notification> notifications = new ArrayList<>();
         for(Integer id : al){

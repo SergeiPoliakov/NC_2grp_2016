@@ -1215,10 +1215,6 @@ public class DBHelp {
                 sql += "JOIN OBJECTS ob2 ON re.REFERENCE = ob2.OBJECT_ID ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + NOTIFICATION + " ";
                 sql += "AND ob2.OBJECT_ID = " + userService.getCurrentUser().getId() + " ";
-
-
-
-
             } else if (params.get(NotificationFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех уведомлений для пользователя с конкретным именем,
                 ArrayList<String> user_name = params.get(NotificationFilter.FOR_USER_WITH_NAME);
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 503 "; // 503 - это получатель
@@ -1252,10 +1248,10 @@ public class DBHelp {
                         "AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + date.get(1) + ", 'dd.mm.yyyy hh24:mi:ss'))"; // Можно сделать и between'ом, в принципе
             } else if (params.get(NotificationFilter.UNSEEN) != null) { // если надо получить ID всех непросмотренных уведомлений, отправленных текущему пользователю,
                 sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
-                        "AND pa.ATTR_ID = 507 AND pa.VALUE = 0"; // Параметр 507
+                        "AND pa.ATTR_ID = 507 AND pa.VALUE = '0'"; // Параметр 507
             } else if (params.get(NotificationFilter.SEEN) != null) { // если надо получить ID всех просмотренных уведомлений, отправленных текущему пользователю,
                 sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
-                        "AND pa.ATTR_ID = 507 AND pa.VALUE = 1"; // Параметр 507
+                        "AND pa.ATTR_ID = 507 AND pa.VALUE = '1'"; // Параметр 507
             }
 
             if (params.get(NotificationFilter.WITH_TYPE) != null) { // если надо получить ID всех уведомлений конкретного типа,

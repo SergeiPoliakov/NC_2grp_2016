@@ -23,7 +23,7 @@ public class Notification extends BaseEntitie{
     private Integer additionalID; // 504
     private String type; // 505
     private String date; // 506
-    private String isSeen; // 507 // Просмотренные
+    private String isSeen = "0"; // 507 // 0 - Непросмотренные, 1 - Просмотренные
 
     private User sender;
     private User reciever;
@@ -144,7 +144,6 @@ public class Notification extends BaseEntitie{
         this.additionalID = additionalID;
         this.type = type;
         this.date = date;
-        this.isSeen = "false";
     }
 
     public Notification(String name,int senderID, int recieverID, String type, String date) {
@@ -153,7 +152,6 @@ public class Notification extends BaseEntitie{
         this.recieverID = recieverID;
         this.type = type;
         this.date = date;
-        this.isSeen = "false";
     }
 
     public Notification(String name,int senderID, int recieverID, int additionalID, String type, String date) {
@@ -163,7 +161,6 @@ public class Notification extends BaseEntitie{
         this.additionalID = additionalID;
         this.type = type;
         this.date = date;
-        this.isSeen = "false";
     }
 
     public Notification(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
