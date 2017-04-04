@@ -2,6 +2,7 @@ package web;
 
 import com.google.common.cache.LoadingCache;
 import com.google.gson.Gson;
+import dbHelp.DBHelp;
 import exception.CustomException;
 import service.converter.Converter;
 import entities.*;
@@ -16,6 +17,7 @@ import service.MeetingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.MeetingFilter;
+import service.id_filters.NotificationFilter;
 import service.search.FinderLogic;
 import service.search.FinderTagRequest;
 import service.search.FinderTagResponse;
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -72,25 +75,28 @@ public class MeetingController {
 
     // TEST
     @RequestMapping(value = "/notificationSendTo{recieverID}", method = RequestMethod.GET)
-    public String notificationTestGet(@PathVariable("recieverID") String recieverID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
-
-        logger.info("SD");
+    public String notificationTestGet(@PathVariable("recieverID") String recieverID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException, ParseException {
 
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
         String currentDate =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
 
 
-        // Это можно использовать в дальнейшем (наверное)
-        //Notification notification = new Notification(host_id.toString(), recieverID,"0","4",currentDate);
+        // 2017-04-04 Тест записи и чтени я из бд уведомления
+        Notification notification = new Notification("Уведомление",10003, 10003, "friendRequest", currentDate);
+        DataObject dataObject = new Converter().toDO(notification);
+        new DBHelp().setDataObjectToDB(dataObject);
 
-        // Добавить для себя, посмотреть чё там как
-        Notification notification = new Notification(123321, "wsa", 10003, 10003, 10003, "friendRequest",currentDate);
-
-        DataObject dataObject = notification.toDataObject();
-        loadingService.setDataObjectToDB(dataObject);
-
-        /*DataObject dataObject2 = loadingService.getDataObjectByIdAlternative(60009);
-        Notification notification2 = new Notification(dataObject2);*/
+        // Получение
+        /*
+        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER));
+        // Для каждого айдишника вытаскиваем уведомление, сразу конвертируем к сущности и засовываем в список сущностей
+        ArrayList<Notification> notifications = new ArrayList<>();
+        for(Integer id : al){
+            // Notification notification2 = converter.ToNotification(loadingService.getDataObjectByIdAlternative(id));
+            DataObject notification2 = loadingService.getDataObjectByIdAlternative(id);
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!! " + notification2);
+        }
+        */
 
         return "/main-login";
     }

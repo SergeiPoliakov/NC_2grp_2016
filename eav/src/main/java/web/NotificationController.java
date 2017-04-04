@@ -116,10 +116,18 @@ public class NotificationController { // Тут вроде логировать 
         */
         // Получаем айдищники всех непрочитанных сообщений (приглашения на встречи, новые сообщения, добавленяи в друзья и пр.)
         //ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
-        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_USER_WITH_ID, "10002", NotificationFilter.UNSEEN));
+
+        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER));
+        // Для каждого айдишника вытаскиваем уведомление, сразу конвертируем к сущности и засовываем в список сущностей
         ArrayList<Notification> notifications = new ArrayList<>();
         for(Integer id : al){
-            Notification notification = converter.ToNotification(loadingService.getDataObjectByIdAlternative(id));
+            // Notification notification2 = converter.ToNotification(loadingService.getDataObjectByIdAlternative(id));
+            DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
+            Notification notification = new Converter().ToNotification(dataObject);
+            notification.setSender(new Converter().ToUser(
+                                    loadingService.getDataObjectByIdAlternative(
+                                    notification.getSenderID())));
+            notifications.add(notification);
         }
         String json = new Gson().toJson(notifications);
 
