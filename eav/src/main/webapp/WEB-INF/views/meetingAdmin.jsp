@@ -56,14 +56,25 @@
             <div class="card">
                 <h3 class="card-title text-center" id="pTitle">${meeting.title}</h3>
                 <div class="profile-userbuttons">
-                    <button type="button" class="btn btn-info btn-sm" id="settingsButton">
-                        <span class='glyphicon glyphicon-cog' aria-hidden='true'> Настройки</span>
-                    </button>
-                    <a href="/deleteMeeting${meeting.id}">
-                        <button type="button" class="btn btn-danger btn-sm">
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span>
+                    <c:if test="${meeting.status eq 'active'}">
+                        <button type="button" class="btn btn-info btn-sm" id="settingsButton">
+                            <span class='glyphicon glyphicon-cog' aria-hidden='true'> Настройки</span>
                         </button>
-                    </a>
+                    </c:if>
+                    <c:if test="${meeting.status eq 'active'}">
+                        <a href="/closeMeeting${meeting.id}">
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"> Закрыть</span>
+                            </button>
+                        </a>
+                    </c:if>
+                    <c:if test="${meeting.status eq 'closed'}">
+                        <a href="/deleteMeeting${meeting.id}">
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span>
+                            </button>
+                        </a>
+                    </c:if>
                 </div>
                 <ul class="list-group list-group-my list-group-flush" id="meetingInfo">
                     <div class="list-group-item">
@@ -105,28 +116,30 @@
                     </div>
                 </form>
                 <!-- СВЕРХУ НОВОЕ -->
-                <form id="meetingForm" name="addUser" action="/inviteUserAtMeeting${meeting.id}" method="post" style="margin-bottom: 0px;">
-                    <input type="text" class="hidden" name="userIDs" id="userIDs" value = "userIDs"></input>
-                    <div class="form-inline" id="inviteAtMeetingForm">
-                        <select class="selectpicker form-control" id="inviteAtMeetingSelectPicker"
-                                multiple data-live-search="true"
-                                title="<span class='glyphicon glyphicon-th-list' aria-hidden='true'></span> Пригласить участников"
-                                data-selected-text-format="count>0" data-count-selected-text="Выбрано участников: {0}"
-                                data-none-results-text="Никого не найдено" data-actions-box="true"
-                                data-select-all-text="Выбрать всех" data-deselect-all-text="Убрать всех"
-                                data-size="8" data-dropup-auto="false"
-                                data-style="">
-                            <c:forEach items="${meeting.organizer.friends}" var="friend">
-                                <option value="${friend.id}">${friend.name} ${friend.surname}</option>
-                            </c:forEach>
-                        </select>
-                        <span class="form-group-btn">
+                <c:if test="${meeting.status eq 'active'}">
+                    <form id="meetingForm" name="addUser" action="/inviteUserAtMeeting${meeting.id}" method="post" style="margin-bottom: 0px;">
+                        <input type="text" class="hidden" name="userIDs" id="userIDs" value = "userIDs"></input>
+                        <div class="form-inline" id="inviteAtMeetingForm">
+                            <select class="selectpicker form-control" id="inviteAtMeetingSelectPicker"
+                                    multiple data-live-search="true"
+                                    title="<span class='glyphicon glyphicon-th-list' aria-hidden='true'></span> Пригласить участников"
+                                    data-selected-text-format="count>0" data-count-selected-text="Выбрано участников: {0}"
+                                    data-none-results-text="Никого не найдено" data-actions-box="true"
+                                    data-select-all-text="Выбрать всех" data-deselect-all-text="Убрать всех"
+                                    data-size="8" data-dropup-auto="false"
+                                    data-style="">
+                                <c:forEach items="${meeting.organizer.friends}" var="friend">
+                                    <option value="${friend.id}">${friend.name} ${friend.surname}</option>
+                                </c:forEach>
+                            </select>
+                            <span class="form-group-btn">
                             <button id="inviteButton" type="submit" class="btn btn-primary btn-group-justified">
                               <span class="glyphicon glyphicon glyphicon-user" aria-hidden="true"></span> Пригласить
                             </button>
                         </span>
-                    </div>
-                </form>
+                        </div>
+                    </form>
+                </c:if>
             </div>
         </div>
         <!-- ЧАТ -->

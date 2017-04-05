@@ -54,8 +54,7 @@ public class DataObjectCache {
 
     public static DataObject getDataObjectById(int id) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         System.out.println("Не нашли, лезем в базу и загружаем в кэш одиночный объект");
-        DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
-        return dataObject;
+        return loadingService.getDataObjectByIdAlternative(id);
     }
 
     public static Map<Integer,DataObject> getListDataObjectById(Iterable<? extends Integer> keys) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {

@@ -45,12 +45,16 @@
             <div class="card">
                 <h3 class="card-title text-center">${meeting.title}</h3>
                 <div class="profile-userbuttons">
-                    <a href="/leaveMeeting${meeting.id}" <c:if test="${meeting.users.size() eq 1}"> class="disabled" </c:if> >
-                        <button type="button" class="btn btn-danger btn-sm" <c:if test="${meeting.users.size() eq 1}"> disabled </c:if>  >
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span>
-                        </button>
-                    </a>
-                    <c:if test="${meeting.organizer eq user}">   <a href=""><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>  </c:if>
+                    <c:if test="${meeting.status eq 'active'}">
+                        <a href="/leaveMeeting${meeting.id}" <c:if test="${meeting.users.size() eq 1}"> class="disabled" </c:if> >
+                            <button type="button" class="btn btn-danger btn-sm" <c:if test="${meeting.users.size() eq 1}"> disabled </c:if>  >
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span>
+                            </button>
+                        </a>
+                    </c:if>
+                    <c:if test="${meeting.status eq 'closed'}">
+                        <a href="/deleteMeeting${meeting.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
+                    </c:if>
                 </div>
                 <ul class="list-group list-group-my list-group-flush">
                     <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>

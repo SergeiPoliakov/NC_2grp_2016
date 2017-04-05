@@ -47,7 +47,7 @@ public class User extends BaseEntitie{
 
     private ArrayList<Message> message; // 30
 
-    private Integer settingsUD; //19
+    private Integer settingsID; //19
 
     private ArrayList<Log> logs; // 31
 
@@ -187,12 +187,12 @@ public class User extends BaseEntitie{
         this.eventsUser = eventsUser;
     }
 
-    public Integer getSettingsUD() {
-        return settingsUD;
+    public Integer getSettingsID() {
+        return settingsID;
     }
 
-    public void setSettingsUD(Integer settingsUD) {
-        this.settingsUD = settingsUD;
+    public void setSettingsID(Integer settingsID) {
+        this.settingsID = settingsID;
     }
 
     // 2017-02-28
@@ -258,7 +258,7 @@ public class User extends BaseEntitie{
                     this.phone = param.getValue();
                     break;
                 case (19):
-                    this.settingsUD = Integer.parseInt(param.getValue());
+                    this.settingsID = Integer.parseInt(param.getValue());
                     break;
             }
         }

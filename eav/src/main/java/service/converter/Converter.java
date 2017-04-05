@@ -61,7 +61,7 @@ public class Converter {
             user.setAdditional_field(dataObject.getParameter(10));
             user.setPicture(dataObject.getParameter(11));
             user.setPhone(dataObject.getParameter(16));
-            user.setSettingsUD(Integer.parseInt(dataObject.getParameter(19)));
+            user.setSettingsID(Integer.parseInt(dataObject.getParameter(19)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -231,7 +231,7 @@ public class Converter {
             dataObject.setParams(10, user.getAdditional_field());
             dataObject.setParams(11, user.getPicture());
             dataObject.setParams(16, user.getPhone());
-            dataObject.setParams(19, String.valueOf(user.getSettingsUD()));
+            dataObject.setParams(19, String.valueOf(user.getSettingsID()));
 
             for (Map.Entry<Integer, ArrayList<Integer>> reference : dataObject.getRefParams().entrySet()) {
                 switch (reference.getKey()) {

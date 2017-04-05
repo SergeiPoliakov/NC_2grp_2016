@@ -502,7 +502,7 @@ public class UserController {
         try {
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
             User user = converter.ToUser(dataObject);
-            DataObject dataObjectSettings = doCache.get(user.getSettingsUD());
+            DataObject dataObjectSettings = doCache.get(user.getSettingsID());
             Settings settings = converter.ToSettings(dataObjectSettings);
             m.addAttribute(user);
             m.addAttribute("settings", settings);
@@ -617,7 +617,7 @@ public class UserController {
 
         DataObject dataObjectTo = doCache.get(objectId);
         User user = converter.ToUser(dataObjectTo);
-        Settings settings = converter.ToSettings(doCache.get(user.getSettingsUD()));
+        Settings settings = converter.ToSettings(doCache.get(user.getSettingsID()));
 
         if ("nobody".equals((settings.getPrivateAddFriend())) && !"acceptFriend".equals(type)) {
             throw new CustomException("Пользователь ограничил список пользователей, которые могут добавлять его в друзья");
@@ -655,7 +655,7 @@ public class UserController {
                            ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException, CustomException {
         DataObject dataObject = doCache.get(userId);
         User user = converter.ToUser(dataObject);
-        Settings settings = converter.ToSettings(doCache.get(user.getSettingsUD()));
+        Settings settings = converter.ToSettings(doCache.get(user.getSettingsID()));
 
         String flagProfile = "false";
         String flagMessage = "false";

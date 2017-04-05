@@ -100,7 +100,7 @@ public class MessageController {
         DataObject dataObjectTo = doCache.get(Integer.parseInt(to_id));
 
         User user = converter.ToUser(dataObjectTo);
-        Settings settings = converter.ToSettings(doCache.get(user.getSettingsUD()));
+        Settings settings = converter.ToSettings(doCache.get(user.getSettingsID()));
         if ("true".equals(settings.getEmailNewMessage())) {
             userService.fittingEmail("newMessage", from_id, Integer.parseInt(to_id));  //идет сборка будущего сообщения
         }

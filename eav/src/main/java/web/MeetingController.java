@@ -161,7 +161,13 @@ public class MeetingController {
             try {
                 DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
                 User user = converter.ToUser(dataObjectUser);
+
                 ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.FOR_CURRENT_USER));
+                ArrayList<Integer> deletedMeeting = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.DELETED_MEETING_FOR_USER, dataObjectUser.getName()));
+
+                System.out.println("УДАЛЯЕМ НЕУГОДНЫХ!!!");
+                il.removeAll(deletedMeeting);
+
                 Map<Integer, DataObject> map = doCache.getAll(il);
                 ArrayList<DataObject> list = getListDataObject(map);
                 ArrayList<Meeting> meetings = new ArrayList<>(list.size());
@@ -169,7 +175,6 @@ public class MeetingController {
                     Meeting meeting = new Meeting(dataObject);
                     meetings.add(meeting);
                 }
-
 
                 m.addAttribute("meetings", meetings); // m.addAttribute("meetings", meetingService.getUserMeetingsList(idUser));
                 m.addAttribute("user", user);
@@ -394,8 +399,33 @@ public class MeetingController {
     public String deleteMeeting(@PathVariable("meetingID") Integer meetingID) throws InvocationTargetException,
             SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
 
+        DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
+        User user = converter.ToUser(currentUser);
+        System.out.println("ЗАНОСИМ В СПИСОК НЕУГОДНЫХ!!!");
+        new DBHelp().setDeletedMeeting(user.getId(), meetingID);
+
+
+        // Логирование:
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.DELETED_MEETING, meetingID, idUser);
+        return "redirect:/meetings";
+    }
+
+
+    @RequestMapping(value = "/closeMeeting{meetingID}", method = RequestMethod.GET)
+    public String closeMeeting(@PathVariable("meetingID") Integer meetingID) throws InvocationTargetException,
+            SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
+
         DataObject dataObject = doCache.get(meetingID);
-        loadingService.deleteDataObjectById(dataObject.getId());
+        Meeting meeting = new Meeting(dataObject);
+        meeting.setStatus("closed");
+        DataObject newDataObject = meeting.toDataObject();
+        int id = loadingService.updateDataObject(newDataObject);
+        doCache.invalidate(meetingID);
+
+        // Логирование:
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.CLOSED_MEETING, id, idUser);
         return "redirect:/meetings";
     }
 }

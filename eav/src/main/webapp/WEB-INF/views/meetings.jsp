@@ -45,40 +45,91 @@
 
 <div class="container top-buffer-20">
 
-    <div class="row top-buffer-10">
-        <div class="col-sm-12 col-md-6 col-lg-3" id="createMeeting">
-            <div class="card_meetings_list" style="border-style: dashed;border-color: #18bc9c;">
-                <h3 class="card-title text-center">Создать встречу</h3>
-                <div class="hor-align">
-                    <i class="hovicon effect-1 sub-a" id="addMeetingButton"><b class="fa fa-plus"></b></i>
-                </div>
-            </div>
-        </div>
+    <div class="container">
+        <h2>Встречи</h2>
+        <ul class="nav nav-tabs nav-justified" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);">
+            <li class="active"><a data-toggle="tab" href="#active">Активные</a></li>
+            <li><a data-toggle="tab" href="#closed">Закрытые</a></li>
+        </ul>
 
-        <c:forEach items="${meetings}" var="meeting">
-            <div class="col-sm-12 col-md-6 col-lg-3" id="meeting">
-                <div class="card_meetings_list style_prevu_kit_static mCustomScrollbar" data-mcs-theme="minimal-dark">
-                    <h3 class="card-title text-center">${meeting.title}</h3>
-                    <div class="profile-userbuttons">
-                        <a href="/meeting${meeting.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"> Просмотр</span> </button></a>
-                        <a href="/leaveMeeting${meeting.id}" <c:if test="${meeting.users.size() eq 1}"> class="disabled" </c:if> >
-                            <button type="button" class="btn btn-danger btn-xs" <c:if test="${meeting.users.size() eq 1}"> disabled </c:if>  >
-                                <span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span>
-                            </button>
-                        </a>
-                        <c:if test="${meeting.organizer eq user}">   <a href="/deleteMeeting${meeting.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>  </c:if>
+        <div class="tab-content">
+            <div id="active" class="tab-pane fade in active">
+                <div class="well bs-component" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
+
+                    <div class="row top-buffer-10">
+                        <div class="col-sm-12 col-md-6 col-lg-3" id="createMeeting">
+                            <div class="card_meetings_list" style="border-style: dashed;border-color: #18bc9c;">
+                                <h3 class="card-title text-center">Создать встречу</h3>
+                                <div class="hor-align">
+                                    <i class="hovicon effect-1 sub-a" id="addMeetingButton"><b class="fa fa-plus"></b></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <c:forEach items="${meetings}" var="meeting">
+                            <c:if test="${meeting.status eq 'active'}">
+                                <div class="col-sm-12 col-md-6 col-lg-3" id="meeting">
+                                    <div class="card_meetings_list style_prevu_kit_static mCustomScrollbar" data-mcs-theme="minimal-dark">
+
+                                        <h3 class="card-title text-center">${meeting.title}</h3>
+                                        <div class="profile-userbuttons">
+                                            <a href="/meeting${meeting.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"> Просмотр</span> </button></a>
+                                            <a href="/leaveMeeting${meeting.id}" <c:if test="${meeting.users.size() eq 1}"> class="disabled" </c:if> >
+                                                <button type="button" class="btn btn-danger btn-xs" <c:if test="${meeting.users.size() eq 1}"> disabled </c:if>  >
+                                                    <span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span>
+                                                </button>
+                                            </a>
+                                            <!--       <c:if test="${meeting.organizer eq user}">   <a href="/deleteMeeting${meeting.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>  </c:if>  -->
+                                            <c:if test="${meeting.organizer eq user}">   <a href="/closeMeeting${meeting.id}">
+                                                <button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Закрыть</span>
+                                                </button></a> </c:if>
+                                        </div>
+                                        <ul class="list-group list-group-my list-group-flush">
+                                            <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>
+                                            <li class="list-group-item">Начало: ${meeting.date_start}</li>
+                                            <li class="list-group-item">Окончание: ${meeting.date_end}</li>
+                                            <li class="list-group-item">Описание: ${meeting.info}</li>
+                                            <li class="list-group-item" name="tags">Теги: ${meeting.tag}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </c:if>
+                        </c:forEach>
                     </div>
-                    <ul class="list-group list-group-my list-group-flush">
-                        <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>
-                        <li class="list-group-item">Начало: ${meeting.date_start}</li>
-                        <li class="list-group-item">Окончание: ${meeting.date_end}</li>
-                        <li class="list-group-item">Описание: ${meeting.info}</li>
-                        <li class="list-group-item" name="tags">Теги: ${meeting.tag}</li>
-                    </ul>
                 </div>
             </div>
-        </c:forEach>
+
+
+            <div id="closed" class="tab-pane fade">
+                <div class="well bs-component" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
+                    <div class="row top-buffer-10">
+                        <c:forEach items="${meetings}" var="meeting">
+                            <c:if test="${meeting.status eq 'closed'}">
+                                <div class="col-sm-12 col-md-6 col-lg-3" id="meeting">
+                                    <div class="card_meetings_list style_prevu_kit_static mCustomScrollbar" data-mcs-theme="minimal-dark">
+                                        <h3 class="card-title text-center">${meeting.title}</h3>
+                                        <div class="profile-userbuttons">
+                                            <a href="/meeting${meeting.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-user" aria-hidden="true"> Просмотр</span> </button></a>
+                                            <a href="/deleteMeeting${meeting.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
+                                        </div>
+                                        <ul class="list-group list-group-my list-group-flush">
+                                            <li class="list-group-item">Организатор: <a href='/user${meeting.organizer.id}'>${meeting.organizer.name} ${meeting.organizer.middleName} ${meeting.organizer.surname}</a></li>
+                                            <li class="list-group-item">Начало: ${meeting.date_start}</li>
+                                            <li class="list-group-item">Окончание: ${meeting.date_end}</li>
+                                            <li class="list-group-item">Описание: ${meeting.info}</li>
+                                            <li class="list-group-item" name="tags">Теги: ${meeting.tag}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
+
     <!-- Форма для создания новой встречи -->
     <div id="meetingmodal" class="modal fade">
         <div class="modal-dialog">
@@ -112,8 +163,8 @@
                                 <div class='input-group date' id='datetimepicker1'>
                                     <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_start" class="form-control" id="taskStartTime"/>
                                     <span class="input-group-addon">
-										<span class="glyphicon glyphicon-calendar"></span>
-									</span>
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
                                 </div>
                             </div>
                             <div class='col-md-6'>
@@ -121,8 +172,8 @@
                                 <div class='input-group date' id='datetimepicker2'>
                                     <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_end" class="form-control" id="taskEndTime"/>
                                     <span class="input-group-addon">
-										<span class="glyphicon glyphicon-calendar"></span>
-									</span>
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
                                 </div>
                             </div>
                         </div>
@@ -144,6 +195,7 @@
             </form>
         </div>
     </div>
+
 </div>
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/tags.js"></script>
 

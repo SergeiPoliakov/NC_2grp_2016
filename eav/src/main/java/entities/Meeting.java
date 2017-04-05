@@ -26,6 +26,7 @@ public class Meeting extends BaseEntitie {
     private  String members; // 307
     private ArrayList<User> users;
     private  ArrayList<Event> events;
+    private String status; // 309
 
     public ArrayList<Event> getEvents() {
         return events;
@@ -107,6 +108,18 @@ public class Meeting extends BaseEntitie {
         this.members = members;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public static int getObjTypeID() {
+        return objTypeID;
+    }
+
     public Meeting(){}
 
     public Meeting(int id, String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String members) {
@@ -118,6 +131,7 @@ public class Meeting extends BaseEntitie {
         this.organizer = organizer;
         this.tag = tag;
         this.members = members;
+        this.status = "active";
     }
 
     public Meeting(String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String members) {
@@ -128,6 +142,7 @@ public class Meeting extends BaseEntitie {
         this.organizer = organizer;
         this.tag = tag;
         this.members = members;
+        this.status = "active";
     }
 
     public Meeting(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -151,11 +166,13 @@ public class Meeting extends BaseEntitie {
                     this.info = param.getValue();
                     break;
                 case (305):
-                    User user =  new User(new DBHelp().getObjectsByIdAlternative(Integer.parseInt(param.getValue())));
-                    this.organizer = user;
+                    this.organizer = new User(new DBHelp().getObjectsByIdAlternative(Integer.parseInt(param.getValue())));
                     break;
                 case (306):
                     this.tag = new StringBuilder(param.getValue());
+                    break;
+                case (309):
+                    this.status = param.getValue();
                     break;
             }
         }
@@ -192,6 +209,7 @@ public class Meeting extends BaseEntitie {
         dataObject.setParams(304, this.info);
         dataObject.setParams(305, this.organizer.getId().toString());
         dataObject.setParams(306, new String(this.tag));
+        dataObject.setParams(309, this.status);
 
         for (User user: this.users) {
             dataObject.setRefParams(307, user.getId());
@@ -214,6 +232,7 @@ public class Meeting extends BaseEntitie {
         map.put(305, organizer.getId());
         map.put(306, tag);
         map.put(307, members);
+        map.put(309, status);
         return map;
     }
 

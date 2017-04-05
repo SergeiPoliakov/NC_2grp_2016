@@ -151,6 +151,21 @@ public class DBHelp {
     }
 
 
+    public void setDeletedMeeting(int userID, int meetingID) throws SQLException {
+        try (Connection Con = getConnection();
+             PreparedStatement PS = Con
+                     .prepareStatement("INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES (?,?,?)");) {
+            PS.setInt(1, meetingID);
+            PS.setInt(2, 310);
+            PS.setInt(3, userID);
+            ResultSet RS = PS.executeQuery();
+
+            RS.close();
+        }
+
+    }
+
+
     public ArrayList<Object> getEmail(String email)
             throws SQLException {
         ArrayList<Object> Res = new ArrayList<>();
@@ -1084,6 +1099,12 @@ public class DBHelp {
                     }
                 }
                 sql += sql + ") ";
+            } else if (params.get(MeetingFilter.DELETED_MEETING_FOR_USER) != null) {   // если надо получить ID встреч, которые пользователь удалил из своей истории
+                ArrayList<String> user_name = params.get(MeetingFilter.DELETED_MEETING_FOR_USER);
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 310 ";
+                sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
+                sql += "AND ob2.OBJECT_NAME = " + "'" + user_name.get(0) +"'" + " ";
             } else {
                 return null; // Иначе не нашли основного фильтра, не сможем составить запрос
             }

@@ -10,6 +10,7 @@ public class MeetingFilter extends BaseFilter {
     public static final String FOR_CURRENT_USER = "for_current_user";
     public static final String FOR_USER_WITH_NAME = "for_user_with_name";
     public static final String FOR_USER_WITH_ID = "for_user_with_id";
+    public static final String DELETED_MEETING_FOR_USER = "deleted_meeting_for_user";
 
     public static final String BETWEEN_USERS_WITH_NAMES = "between_users_with_names";
     public static final String BETWEEN_USERS_WITH_IDS = "between_users_with_ids";
@@ -25,6 +26,7 @@ public class MeetingFilter extends BaseFilter {
 
         count_1.put(FOR_USER_WITH_NAME, "");
         count_1.put(FOR_USER_WITH_ID, "");
+        count_1.put(DELETED_MEETING_FOR_USER, "");
         count_1.put(BEFORE_DATE, "");
         count_1.put(AFTER_DATE, "");
 
