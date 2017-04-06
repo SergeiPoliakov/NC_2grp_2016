@@ -169,7 +169,7 @@ public class StatisticManager {
         return results;
     }
 
-    // 1 Статистика: автивность юзера на сайте (можно, конечно, ввести весовую функцию, но пока просто считает общее время, проведенное на сайте, по отношению к периоду измерения)
+    // 2 Статистика: соотношение встреч юзера
     private ArrayList<StatResponse> getMeeting(StatRequest statRequest){
         ArrayList<StatResponse> results = new ArrayList<>(); // Пока просто заглушка
 

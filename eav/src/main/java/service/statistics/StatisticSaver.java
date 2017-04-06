@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 // Класс для хранения обсчитанных статистик в памяти для сокращения колчества запросов в базу
 // (т.е. тут будут готовые статистики, и если таймаут на их актуальность не вышел, забирать отсюда, а не из базы)
-    // ожно еще повесть шедуллер на удаление просроченных статистик
+    // Можно еще повесть шедуллер на удаление просроченных статистик
 public class StatisticSaver {
 
     private static volatile StatisticSaver instance;
@@ -18,7 +18,7 @@ public class StatisticSaver {
     // 1) Мапа для хранения готовых статистик, и будет составной ключ
     public static final Map<String, ArrayList<StatResponse>> saveMap = new ConcurrentHashMap<>();
 
-    // 2) Мапа для хранения реми создания готовых статистик, и будет составной ключ
+    // 2) Мапа для хранения времени создания готовых статистик, и будет составной ключ
     public static final Map<String, LocalDateTime> dateMap = new ConcurrentHashMap<>();
 
 
@@ -63,7 +63,7 @@ public class StatisticSaver {
 
     // Метод получения статистики по составному ключу
     synchronized public static ArrayList<StatResponse> get(Integer root_id, String plotview, String datatype, String period){
-        // Фиксируем текущее время апроса из мапы статистики:
+        // Фиксируем текущее время запроса из мапы статистики:
         LocalDateTime add_date = LocalDateTime.now();
         ArrayList<StatResponse> result = null;
 
