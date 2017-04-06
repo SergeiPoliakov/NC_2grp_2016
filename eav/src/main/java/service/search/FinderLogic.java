@@ -112,7 +112,9 @@ public class FinderLogic {
 
                                 // Проверяем флажок:
                                 if (!flagOK) { // Если флаг сброшен, то совпадений не нашли, потому надо удалить текущий тег из списка на отправку
-                                    finderTagResponseList.remove(k);
+                                    if (!finderTagResponseList.isEmpty()) {
+                                        finderTagResponseList.remove(k);
+                                    }
                                 }
 
                             }

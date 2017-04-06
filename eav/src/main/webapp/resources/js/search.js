@@ -35,8 +35,8 @@ $(window).load(function () {
                         contentType: "application/json",
                         mimeType: 'application/json',
                         data: JSON.stringify({
-                            type: "meeting",       // user | meeting
-                            operation: "or",   // and | or
+                            type: $('input[name="checkObject"]:checked').val(),       // user | meeting
+                            operation: $('input[name="checkLogic"]:checked').val(),   // and | or
                             text: input_initial_value
                         }),
 
@@ -138,8 +138,8 @@ function getFind() {
         contentType: "application/json",
         mimeType: 'application/json',
         data: JSON.stringify({
-            type: "meeting",       // user | meeting
-            operation: "or",   // and | or
+            type: $('input[name="checkObject"]:checked').val(),       // user | meeting
+            operation: $('input[name="checkLogic"]:checked').val(),   // and | or
             text: input_initial_value
         }),
         success: function (data) {
@@ -150,9 +150,11 @@ function getFind() {
     var delay = 1000;
     // и с задержкой переходим на страницу с результатами
 
-    // setTimeout("document.location.href='/searchUser'", delay);
-
-    setTimeout("document.location.href='/meetings'", delay);
+    if ($('input[name="checkObject"]:checked').val() == "user") {
+        setTimeout("document.location.href='/searchUser'", delay);
+    } else {
+        setTimeout("document.location.href='/meetings'", delay);
+    }
 
 }
 

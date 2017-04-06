@@ -35,5 +35,39 @@
 
 
 
+
+    <div class="form-group">
+        <label for="object">Что ищем?</label>
+        <div id="object" class="funkyradio">
+            <div class="funkyradio-success">
+                <input type="radio" name="checkObject" id="checkUser" value="user" checked="checked"  >
+                <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">User</label>
+            </div>
+            <div class="funkyradio-success">
+                <input type="radio" name="checkObject" id="checkMeeting" value="meeting"  />
+                <label class="radio-inline" for="checkMeeting" style="margin-top: 0.5rem;">Meeting</label>
+            </div>
+        </div>
+    </div>
+
+
+<div class="form-group">
+    <label for="logic">Критерий поиска</label>
+    <div id="logic" class="funkyradio">
+        <div class="funkyradio-success">
+            <input type="radio" name="checkLogic" id="checkOR" value="or" checked="checked"  >
+            <label class="radio-inline" for="checkOR" style="margin-top: 0.5rem;">OR</label>
+        </div>
+        <div class="funkyradio-success">
+            <input type="radio" name="checkLogic" id="checkAND" value="and"  />
+            <label class="radio-inline" for="checkAND" style="margin-top: 0.5rem;">AND</label>
+        </div>
+    </div>
+</div>
+
+
+
+
+
 </body>
 </html>
