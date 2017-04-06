@@ -69,7 +69,7 @@
                         <c:forEach items="${meetings}" var="meeting">
                             <c:if test="${meeting.status eq 'active'}">
                                 <div class="col-sm-12 col-md-6 col-lg-3" id="meeting">
-                                    <div class="card_meetings_list style_prevu_kit_static mCustomScrollbar" data-mcs-theme="minimal-dark">
+                                    <div class="card_meetings_list style_prevu_kit_static mCustomScrollbar" data-mcs-theme="minimal-dark" style="border-radius: 0.5rem;">
 
                                         <h3 class="card-title text-center">${meeting.title}</h3>
                                         <div class="profile-userbuttons">
