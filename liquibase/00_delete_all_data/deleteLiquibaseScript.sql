@@ -8,5 +8,5 @@ drop table OBJ_TYPES cascade constraints ;
 drop table OBJECTS cascade constraints ;
 drop table PARAMS cascade constraints ;
 drop table REFERENCES cascade constraints ;
-drop table DATABASECHANGELOG cascade constraints;
-drop table DATABASECHANGELOGLOCK cascade constraints;
+drop table DATABASECHANGELOGLOCK cascade constraints ;
+drop table DATABASECHANGELOG cascade constraints ;

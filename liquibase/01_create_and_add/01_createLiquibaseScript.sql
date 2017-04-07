@@ -5,7 +5,7 @@
 -- Table: Attributes
 CREATE TABLE Attributes (
     attr_id number(6,0)  NOT NULL,
-    attr_name varchar2(20)  NOT NULL,
+    attr_name varchar2(4000)  NOT NULL,
     CONSTRAINT attr_name UNIQUE (attr_name),
     CONSTRAINT Attributes_pk PRIMARY KEY (attr_id)
 ) ;
@@ -17,7 +17,7 @@ CREATE TABLE Obj_attributes (
 -- Table: Obj_types
 CREATE TABLE Obj_types (
     object_type_id number(6,0)  NOT NULL,
-    name varchar2(20)  NOT NULL,
+    name varchar2(4000)  NOT NULL,
     CONSTRAINT Obj_types_ak_1 UNIQUE (name),
     CONSTRAINT Obj_types_pk PRIMARY KEY (object_type_id)
 ) ;
@@ -25,14 +25,14 @@ CREATE TABLE Obj_types (
 CREATE TABLE Objects (
     object_id number(6,0)  NOT NULL,
     object_type_id number(6,0)  NOT NULL,
-    object_name varchar2(70),
+    object_name varchar2(4000),
     CONSTRAINT Objects_pk PRIMARY KEY (object_id)
 ) ;
 -- Table: Params
 CREATE TABLE Params (
     object_id number(6,0)  NOT NULL,
     attr_id number(6,0)  NOT NULL,
-    value varchar2(70)
+    value varchar2(4000)
 ) ;
 -- Table: References
 CREATE TABLE References (
@@ -520,7 +520,7 @@ INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '684');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '685');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1008', '686');
 
---Notifications 2017-03-25, update 2017-03-29
+--Tag 2017-03-25, update 2017-03-29
 --
 --Obj_Types(1001-2000)
 INSERT INTO Obj_types (OBJECT_TYPE_ID, NAME) VALUES ('1010', 'Tag');
@@ -552,3 +552,51 @@ INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('90001', '707', '0');  --
 --INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('90001', '704', '90001'); -- tag_parent_id
 --INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('90001', '705', '10001'); -- tag_user_id
 --INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('90001', '706', '0'); -- tag_user_id
+
+--Files (UserFiles) 2017-04-07
+--
+--Obj_Types(1001-2000)
+INSERT INTO Obj_types (OBJECT_TYPE_ID, NAME) VALUES ('1009', 'File');
+--Tag_Attributes (800-899)
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('801', 'file_date_create');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('802', 'file_date_change');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('803', 'file_date_download');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('804', 'file_name_original');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('805', 'file_name_current');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('806', 'file_extension');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('807', 'file_puth');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('808', 'file_size');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('809', 'file_count_download');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('810', 'file_share');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('811', 'file_exist');
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('812', 'file_holder_id'); -- link
+--File Object_Attributes
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '801');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '802');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '803');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '804');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '805');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '806');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '807');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '808');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '809');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '810');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '811');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1009', '812');
+--
+--Create new Object File id 80001
+INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES ('80001','1009', 'first_test_file');
+--Create Attributes for File id 80001
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '801', '07.04.2017 12:05');
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '802', '07.04.2017 12:11');
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '803', '07.04.2017 12:12');
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '804', 'test.txt');
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '805', 'cv54vcn4n8g54g.txt');
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '806', 'txt');
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '807', 'ftp://netcracker.ddns.net/upload/10003/file/cv54vcn4n8g54g.txt');
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '808', '1.48');
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '809', '1');
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '810', 'private');
+INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES ('80001', '811', 'yes');
+--Create new Reference for File id 80001
+INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES ('80001', '812', '10001'); -- holder_id

@@ -51,6 +51,8 @@ public class User extends BaseEntitie{
 
     private ArrayList<Log> logs; // 31
 
+    private ArrayList<UserFile> files; // 32 // Список пользовательских файлов
+
     public CalendarCredential getCalendarIdentificator() {
         return calendarIdentificator;
     }
