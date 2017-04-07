@@ -55,7 +55,7 @@
                 <div class="container col-lg-4 pull-right">
 
                     <img src="http://nc2.hop.ru/upload/${user.id}/avatar/avatar_${user.id}.png"
-                         onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-polaroid"
+                         onerror="this.src = '<%=request.getContextPath()%>/resources/img/avatar.png'" class="img-polaroid"
                          width="200">
 
 

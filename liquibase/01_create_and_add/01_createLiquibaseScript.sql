@@ -220,7 +220,7 @@ INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '7', '$2a$06$F2.
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '8', 'мужской'); --sex
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '9', 'Воронеж'); --city
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '10', 'Тут дополнительная информация'); --additional_field
-INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '11', 'pic.jpg'); --picture
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '11', '/resources/img/avatar.png'); --picture
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '12', ''); -- friends
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '13', ''); --task_id
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10001', '15', 'true'); --confirmedEmail
@@ -248,7 +248,7 @@ INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '7', '$2a$06$.ZN
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '8', 'мужской'); --sex
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '9', 'Москва'); --city
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '10', 'Тут дополнительная информация о Васе'); --additional_field
-INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '11', 'picvasya.jpg'); --picture
+INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '11', '/resources/img/avatar.png'); --picture
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '12', ''); -- friends
 INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES ('10002', '12', '10001'); --friend
 INSERT INTO Params (OBJECT_ID, ATTR_ID, VALUE) VALUES ('10002', '13', ''); --task_id

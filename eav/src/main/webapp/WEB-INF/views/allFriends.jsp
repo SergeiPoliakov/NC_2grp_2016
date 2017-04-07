@@ -39,7 +39,7 @@
                     </div>
                     <div class="profile-userpic">
                             <%-- <img src="${object.picture}" onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' > --%>
-                        <img src="${object.picture}" onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
+                        <img src="${object.picture}" onerror="this.src = '<%=request.getContextPath()%>/resources/img/avatar.png'" class="img-responsive"  alt='Изображение' >
                     </div>
                     <div class="profile-userbuttons">
                         <a href="/user${object.id}"><button type="button" class="btn btn-primary btn-sm"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>

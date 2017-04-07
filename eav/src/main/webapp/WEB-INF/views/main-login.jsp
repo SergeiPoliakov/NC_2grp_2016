@@ -56,7 +56,7 @@
                 </div>
                 <div class="profile-userpic">
                     <img  id="profilePic" src="${user.picture}"
-                          onerror="this.src = 'ftp://netcracker.ddns.net/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
+                          onerror="this.src = '<%=request.getContextPath()%>/resources/img/avatar.png'" class="img-responsive"  alt='Изображение' >
                 </div>
                 <ul class="list-group list-group-my">
                     <li class="list-group-item" id="userAge">Дата рождения: ${user.ageDate}</li>

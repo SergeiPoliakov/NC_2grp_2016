@@ -427,7 +427,7 @@ public class UserController {
         mapAttr.put(8, "не выбран");
         mapAttr.put(9, "");
         mapAttr.put(10, "");
-        mapAttr.put(11, "ftp://" + this.ftp_server +"/upload/default/avatar.png"); // mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");
+        mapAttr.put(11, "/resources/img/avatar.png"); // mapAttr.put(11, "ftp://" + this.ftp_server +"/upload/default/avatar.png"); // mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");
         mapAttr.put(15, "true");  //изначально должно быть false
         mapAttr.put(16, phone);
         mapAttr.put(17, "true");  //изначально должно быть false

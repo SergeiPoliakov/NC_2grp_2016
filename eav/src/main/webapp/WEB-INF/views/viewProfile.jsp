@@ -51,7 +51,7 @@
                             class="glyphicon glyphicon-user"></span> ${user.login} </small>
                 </div>
                 <div class="profile-userpic">
-                    <img id="profilePic" src="${user.picture}" onerror="this.src = 'http://nc2.hop.ru/upload/default/avatar.png'" class="img-responsive"  alt='Изображение' >
+                    <img id="profilePic" src="${user.picture}" onerror="this.src = '<%=request.getContextPath()%>/resources/img/avatar.png'" class="img-responsive"  alt='Изображение' >
                 </div>
 
                 <div class="profile-userbuttons">

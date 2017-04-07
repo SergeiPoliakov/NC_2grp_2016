@@ -18,7 +18,7 @@ public class UserFile extends BaseEntitie {
     private String date_create; // 801 // Дата создания (загрузки на сервер)
     private String date_change; // 802 // Дата изменения имени
     private String date_download; // 803 // Дата последнего скачиввания
-    private String name_origanal; // 804 // Исходное имя файла
+    private String name_original; // 804 // Исходное имя файла
     private String name_current; // 805 // Имя файла на сервере
     private String extension; // 806 // Расширение файла
     private String puth; // 807 // Путь к файлу на серверу
@@ -92,11 +92,11 @@ public class UserFile extends BaseEntitie {
     }
 
     public String getName_origanal() {
-        return name_origanal;
+        return name_original;
     }
 
     public void setName_origanal(String name_origanal) {
-        this.name_origanal = name_origanal;
+        this.name_original = name_origanal;
     }
 
     public String getName_current() {
