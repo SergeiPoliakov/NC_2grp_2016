@@ -27,6 +27,7 @@ import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.NotificationFilter;
 import service.id_filters.UserFilter;
+import service.notifications.NotificationThread;
 import service.notifications.UsersNotifications;
 
 
@@ -109,7 +110,7 @@ public class NotificationController { // Тут вроде логировать 
 
         // Ожидание новых уведомлений
         while ( oldSize == notifications.size()){
-            Thread.yield();
+            Thread.currentThread().yield();
         }
 
         // Получение НОВЫХ уведомлений

@@ -3,6 +3,7 @@ package web;
 import entities.*;
 import service.application_settings.SettingsLoader;
 import service.id_filters.NotificationFilter;
+import service.notifications.NotificationService;
 import service.search.FinderLogic;
 import service.search.FinderTagRequest;
 import service.search.FinderTagResponse;
@@ -628,7 +629,7 @@ public class UserController {
     public String addFriend(@PathVariable("objectId") Integer objectId,
                             @PathVariable("type") String type,
                             ModelMap m) throws InvocationTargetException,
-            NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, IOException, MessagingException, CustomException {
+            NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, IOException, MessagingException, CustomException, ParseException {
 
         DataObject dataObjectTo = doCache.get(objectId);
         User user = converter.ToUser(dataObjectTo);
@@ -651,6 +652,9 @@ public class UserController {
             }
         }
         int idUser = userService.getObjID(userService.getCurrentUsername());
+
+        NotificationService.sendNotification(new Notification("Уведомление",idUser, objectId, "friendRequest"));
+        
         loggerLog.add(Log.ADD_FRIEND, objectId, idUser); // Добавление пользователя в друзья
         return "/addFriend";
     }

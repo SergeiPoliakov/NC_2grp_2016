@@ -95,9 +95,8 @@ public class MeetingController {
                 loadingService.getDataObjectByIdAlternative(
                         notification.getSenderID())));
 
-        Integer userID =  userService.getObjID(userService.getCurrentUsername());
         UsersNotifications usersNotifications = UsersNotifications.getInstance();
-        usersNotifications.getNotifications(userID).add(notification);
+        usersNotifications.getNotifications(notification.getRecieverID()).add(notification);
 
         // Получение
         /*

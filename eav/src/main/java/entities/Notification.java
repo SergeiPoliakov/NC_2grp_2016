@@ -154,6 +154,14 @@ public class Notification extends BaseEntitie{
         this.date = date;
     }
 
+    public Notification(String name,int senderID, int recieverID, String type) {
+        this.name = name;
+        this.senderID = senderID;
+        this.recieverID = recieverID;
+        this.type = type;
+        this.date = "11.11.1111 11:11";
+    }
+
     public Notification(String name,int senderID, int recieverID, int additionalID, String type, String date) {
         this.name = name;
         this.senderID = senderID;
@@ -161,6 +169,15 @@ public class Notification extends BaseEntitie{
         this.additionalID = additionalID;
         this.type = type;
         this.date = date;
+    }
+
+    public Notification(String name,int senderID, int recieverID, int additionalID, String type) {
+        this.name = name;
+        this.senderID = senderID;
+        this.recieverID = recieverID;
+        this.additionalID = additionalID;
+        this.type = type;
+        this.date = "11.11.1111 11:11";
     }
 
     public Notification(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
