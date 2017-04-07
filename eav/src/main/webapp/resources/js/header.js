@@ -62,17 +62,22 @@ function doAjaxNotifications() {
         dataType: 'json',
         contentType: 'application/json',
         mimeType: 'application/json',
+
+        error: function(){
+            alert("О ЛЯ ЛЯ");
+        },
         success: function (data) {
             console.log(data);
 
             var notifications = JSON.parse(data.text);
-            $.each(notifications, function(index, notification) {    // Iterate over the JSON array.
-                   //alert(index + " " + notification.senderID);
-                addNotification(notification);
-            });
-
+            var arrayLength = notifications.length;
+            for (var  i = 0; i < notifications.length; i++){
+                addNotification(notifications[i]);
+            }
+            doAjaxNotifications();
             //$( "#notificationCount" ).attr( "data-count", data.count);
         }
     });
 }
-setInterval(doAjaxNotifications, 10000);
+
+//setInterval(doAjaxNotifications, 30000);

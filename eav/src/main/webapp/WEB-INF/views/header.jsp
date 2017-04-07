@@ -142,5 +142,11 @@
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/notifications.js"></script>
 
+<script type="text/javascript">
+    $(function() {
+        doAjaxNotifications();
+    });
+</script>
+
 </body>
 </html>

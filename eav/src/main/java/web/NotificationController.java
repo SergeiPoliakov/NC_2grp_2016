@@ -27,6 +27,7 @@ import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.NotificationFilter;
 import service.id_filters.UserFilter;
+import service.notifications.UsersNotifications;
 
 
 /**
@@ -35,6 +36,7 @@ import service.id_filters.UserFilter;
 @Controller
 public class NotificationController { // Тут вроде логировать не нужно, тут только подсвечиваются уведомления 2017-03-17
     private LoadingServiceImp loadingService = new LoadingServiceImp();
+    private UserServiceImp userService = new UserServiceImp();
     private Converter converter = new Converter();
 
     // 2017-02-24 Уведомления о новых сообщениях (вывод в хедер) // Старый метод, используйте универсальный getNewNotification
@@ -98,43 +100,58 @@ public class NotificationController { // Тут вроде логировать 
     @RequestMapping(value = "/getNotification", method = RequestMethod.GET)
     public @ResponseBody
     Response getNotification() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-        LoggerFactory.getLogger(NotificationController.class).info("asdasd");
-        /*
-        ArrayList<Notification> notifications = new ArrayList<>();
 
-        Notification not1 = new Notification("10001", "10003", "", "infoFriendAccept", "23.03.2017 11:00");
-        Notification not2 = new Notification("10001", "10003", "", "infoFriendAccept", "24.03.2017 11:00");
-        Notification not3 = new Notification("10001", "10003", "", "infoFriendAccept", "25.03.2017 11:00");
+        UsersNotifications usersNotifications = UsersNotifications.getInstance();
+        Integer userID =  userService.getObjID(userService.getCurrentUsername());
+        ArrayList<Notification> notifications = usersNotifications.getNotifications(userID);
+        ArrayList<Notification> oldNotifications = (ArrayList<Notification>) usersNotifications.getNotifications(userID).clone();
+        Integer oldSize = notifications.size();
 
-        not1.setSender(new User(new DBHelp().getObjectsByIdAlternative(Integer.parseInt(not1.getSenderID()))));
-        not2.setSender(new User(new DBHelp().getObjectsByIdAlternative(Integer.parseInt(not2.getSenderID()))));
-        not3.setSender(new User(new DBHelp().getObjectsByIdAlternative(Integer.parseInt(not3.getSenderID()))));
-
-        notifications.add(not1);
-        notifications.add(not2);
-        notifications.add(not3);
-        */
-        // Получаем айдищники всех непрочитанных сообщений (приглашения на встречи, новые сообщения, добавленяи в друзья и пр.)
-        //ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
-
-        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER));
-        // Для каждого айдишника вытаскиваем уведомление, сразу конвертируем к сущности и засовываем в список сущностей
-        ArrayList<Notification> notifications = new ArrayList<>();
-        for(Integer id : al){
-            // Notification notification2 = converter.ToNotification(loadingService.getDataObjectByIdAlternative(id));
-            DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
-            Notification notification = new Converter().ToNotification(dataObject);
-            notification.setSender(new Converter().ToUser(
-                                    loadingService.getDataObjectByIdAlternative(
-                                    notification.getSenderID())));
-            notifications.add(notification);
+        // Ожидание новых уведомлений
+        while ( oldSize == notifications.size()){
+            Thread.yield();
         }
-        String json = new Gson().toJson(notifications);
+
+        // Получение НОВЫХ уведомлений
+
+        ArrayList<Notification> newNotifications = (ArrayList<Notification>) notifications.clone();
+        newNotifications.removeAll(oldNotifications);
+
+        String json = new Gson().toJson(newNotifications);
 
         Response response = new Response();
         response.setText(json);
-        response.setCount(notifications.size());
+        response.setCount(newNotifications.size());
         return response;
     }
+
+    /*
+    public static void main(String[] args) {
+
+        ArrayList<Integer> a = new ArrayList<>();
+        ArrayList<Integer> b = new ArrayList<>();
+        ArrayList<Integer> c = new ArrayList<>();
+
+
+        a.add(1);a.add(2);a.add(3);a.add(4);
+        b.add(1);b.add(2);b.add(3);b.add(4);b.add(5);b.add(6);
+
+        print(a);
+        print(b);
+
+        c = (ArrayList<Integer>) b.clone();
+        c.removeAll(a);
+
+        System.out.println("Result");
+        print(c);
+    }
+
+    public static void print(ArrayList<Integer> list){
+        for (Integer i : list){
+            System.out.print(i + " ");
+        }
+        System.out.println();
+    }
+    */
 
 }

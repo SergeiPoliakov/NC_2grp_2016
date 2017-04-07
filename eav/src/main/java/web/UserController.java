@@ -1,6 +1,5 @@
 package web;
 
-import dbHelp.DBHelp;
 import entities.*;
 import service.application_settings.SettingsLoader;
 import service.id_filters.NotificationFilter;
@@ -29,7 +28,6 @@ import service.cache.DataObjectCache;
 import service.converter.Converter;
 import service.id_filters.EventFilter;
 import service.id_filters.UserFilter;
-import service.statistics.StatisticManager;
 import service.tags.NameNodeTree;
 import service.tags.TagTreeManager;
 
@@ -48,6 +46,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import service.notifications.UsersNotifications;
 
 /**
  * Created by Lawrence on 20.01.2017.
@@ -185,6 +184,7 @@ public class UserController {
 
         NameNodeTree nnt = new NameNodeTree();
 
+        /*
         // 2017-04-04 Тест записи и чтени я из бд уведомления
         Notification notification = new Notification("Уведомление",10001, 10003, "friendRequest", "03.04.2017 00:00");
         DataObject dataObject = new Converter().toDO(notification);
@@ -197,7 +197,22 @@ public class UserController {
             DataObject notification2 = loadingService.getDataObjectByIdAlternative(id);
             System.out.println("!!!!!!!!!!!!!!!!!!!!!! " + notification2);
         }
+        */
 
+        // Получение уведомлений из БД
+        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
+        ArrayList<Notification> notifications = new ArrayList<>();
+        for(Integer id : al){
+            DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
+            Notification notification = new Converter().ToNotification(dataObject);
+            notification.setSender( new Converter().ToUser(
+                                    loadingService.getDataObjectByIdAlternative(
+                                    notification.getSenderID())));
+            notifications.add(notification);
+        }
+        // Добавление уведомлений в глобальный список
+        UsersNotifications usersNotifications = UsersNotifications.getInstance();
+        usersNotifications.setNotifications(currentUser.getId(), notifications);
 
         return "main-login";
     }

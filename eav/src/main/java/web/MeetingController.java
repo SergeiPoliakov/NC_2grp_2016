@@ -18,6 +18,7 @@ import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.MeetingFilter;
 import service.id_filters.NotificationFilter;
+import service.notifications.UsersNotifications;
 import service.search.FinderLogic;
 import service.search.FinderTagRequest;
 import service.search.FinderTagResponse;
@@ -77,6 +78,7 @@ public class MeetingController {
     @RequestMapping(value = "/notificationSendTo{recieverID}", method = RequestMethod.GET)
     public String notificationTestGet(@PathVariable("recieverID") String recieverID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException, ParseException {
 
+        /*
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
         String currentDate =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
 
@@ -85,6 +87,17 @@ public class MeetingController {
         Notification notification = new Notification("Уведомление",10003, 10003, "friendRequest", currentDate);
         DataObject dataObject = new Converter().toDO(notification);
         new DBHelp().setDataObjectToDB(dataObject);
+        */
+
+        String currentDate =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        Notification notification = new Notification("Уведомление",10003, 10003, "friendRequest", currentDate);
+        notification.setSender( new Converter().ToUser(
+                loadingService.getDataObjectByIdAlternative(
+                        notification.getSenderID())));
+
+        Integer userID =  userService.getObjID(userService.getCurrentUsername());
+        UsersNotifications usersNotifications = UsersNotifications.getInstance();
+        usersNotifications.getNotifications(userID).add(notification);
 
         // Получение
         /*
@@ -98,7 +111,7 @@ public class MeetingController {
         }
         */
 
-        return "/main-login";
+        return "";
     }
     //END TEST
 
