@@ -17,7 +17,6 @@ import service.MeetingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.id_filters.MeetingFilter;
-import service.id_filters.NotificationFilter;
 import service.notifications.UsersNotifications;
 import service.search.FinderLogic;
 import service.search.FinderTagRequest;
@@ -33,13 +32,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Костя on 07.02.2017.
@@ -70,6 +68,19 @@ public class MeetingController {
             list.add(e.getValue());
         }
         return list;
+    }
+
+    public long duration(String start, String end) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+        long timeStart = format.parse(start).getTime();
+        long timeEnd = format.parse(end).getTime();
+        long diff = timeEnd - timeStart;
+
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+
+        System.out.println("РАЗНИЦА В МИНУТАХ!!! " + minutes);
+        return minutes;
     }
 
 
@@ -177,7 +188,6 @@ public class MeetingController {
                 ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.FOR_CURRENT_USER));
                 ArrayList<Integer> deletedMeeting = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.DELETED_MEETING_FOR_USER, dataObjectUser.getName()));
 
-                System.out.println("УДАЛЯЕМ НЕУГОДНЫХ!!!");
                 il.removeAll(deletedMeeting);
 
                 Map<Integer, DataObject> map = doCache.getAll(il);
@@ -211,13 +221,15 @@ public class MeetingController {
 
     // Просмотр встречи DO
     @RequestMapping(value = "/meeting{meetingID}", method = RequestMethod.GET)
-    public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
+    public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException, ParseException {
         Meeting meeting = new Meeting();
         try {
             meeting = new Meeting(doCache.get(meetingID));
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
+
         // Выпиливаются приглашённые друзья
         ArrayList<User> meetingUsers = meeting.getUsers();
         ArrayList<User> organizerFriends = meeting.getOrganizer().getFriends();
@@ -248,13 +260,14 @@ public class MeetingController {
                              @RequestParam("tag") String tag,
                              @RequestParam("date_start") String date_start,
                              @RequestParam("date_end") String date_end,
-                             @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+                             @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException,
+            NoSuchMethodException, ParseException {
 
         int id = userService.generationID(1004);
 
         StringBuilder worlds = new StringBuilder();
 
-        if (tag != null) {
+        if (!Objects.equals(tag, "")) {
             ArrayList<String> tags = SearchParser.parse(tag);
             assert tags != null;
             for (String value : tags
@@ -263,9 +276,11 @@ public class MeetingController {
                 System.out.println("КИНУЛ ID" + id);
                 worlds.append(value).append(" ");
             }
-        }
+        } else worlds.append("встреча");
 
-        Meeting meeting = new Meeting(id, title, date_start, date_end, info, userService.getCurrentUser(), worlds, "");
+        long duration = duration(date_start, date_end);
+
+        Meeting meeting = new Meeting(id, title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", String.valueOf(duration));
 
         ArrayList<User> users = new ArrayList<>();
         User user = new User();
@@ -413,7 +428,6 @@ public class MeetingController {
 
         DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
         User user = converter.ToUser(currentUser);
-        System.out.println("ЗАНОСИМ В СПИСОК НЕУГОДНЫХ!!!");
         new DBHelp().setDeletedMeeting(user.getId(), meetingID);
 
 

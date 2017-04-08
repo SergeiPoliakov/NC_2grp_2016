@@ -20,10 +20,13 @@ import service.statistics.StatisticLogger;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class EventController {
@@ -47,6 +50,19 @@ public class EventController {
         return list;
     }
 
+    public long duration(String start, String end) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+        long timeStart = format.parse(start).getTime();
+        long timeEnd = format.parse(end).getTime();
+        long diff = timeEnd - timeStart;
+
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+
+        System.out.println("РАЗНИЦА В МИНУТАХ!!! " + minutes);
+        return minutes;
+    }
+
     @RequestMapping(value = "/addEvent", method = RequestMethod.GET)
     public String getEventPage() {
         return "addEvent";
@@ -59,13 +75,13 @@ public class EventController {
                                @ModelAttribute("date_begin") String date_begin,
                                @ModelAttribute("date_end") String date_end,
                                @ModelAttribute("info") String info
-    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, "");
+        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
@@ -169,13 +185,13 @@ public class EventController {
                               @ModelAttribute("date_begin") String date_begin,
                               @ModelAttribute("date_end") String date_end,
                               @ModelAttribute("info") String info
-    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, null);
+        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
 

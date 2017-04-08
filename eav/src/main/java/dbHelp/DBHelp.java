@@ -156,7 +156,7 @@ public class DBHelp {
              PreparedStatement PS = Con
                      .prepareStatement("INSERT INTO References (OBJECT_ID, ATTR_ID, reference) VALUES (?,?,?)");) {
             PS.setInt(1, meetingID);
-            PS.setInt(2, 310);
+            PS.setInt(2, 311);
             PS.setInt(3, userID);
             ResultSet RS = PS.executeQuery();
 
@@ -1101,7 +1101,7 @@ public class DBHelp {
                 sql += sql + ") ";
             } else if (params.get(MeetingFilter.DELETED_MEETING_FOR_USER) != null) {   // если надо получить ID встреч, которые пользователь удалил из своей истории
                 ArrayList<String> user_name = params.get(MeetingFilter.DELETED_MEETING_FOR_USER);
-                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 310 ";
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 311 ";
                 sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
                 sql += "AND ob2.OBJECT_NAME = " + "'" + user_name.get(0) +"'" + " ";
@@ -1549,9 +1549,9 @@ public class DBHelp {
 
                     // 5) Добавление 13-го параметра в PARAMS (task_id для текущего пользователя):
                     try (PreparedStatement PS4 = Con.prepareStatement("INSERT INTO PARAMS (OBJECT_ID, ATTR_ID, VALUE) VALUES (?,?,?)");) {
-                        PS4.setInt(1, host_id);
+                        PS4.setInt(1, id);   // поменял местами с host_id, а то при удалении события эта строчка не удалялась
                         PS4.setInt(2, attrId);
-                        PS4.setObject(3, id);
+                        PS4.setObject(3, host_id);
                         PS4.executeQuery();
                     }
 

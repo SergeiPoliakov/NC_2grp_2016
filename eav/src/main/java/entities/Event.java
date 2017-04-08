@@ -25,7 +25,7 @@ public class Event extends BaseEntitie{
     private String date_end; // 102
     private String priority; // 105
     private String info; // 104
-    // еще продолжительность 103
+    private String duration; // еще продолжительность 103
 
 
     public int getId() {
@@ -75,14 +75,21 @@ public class Event extends BaseEntitie{
     public String getDate_end() { return date_end; }
     public void setDate_end(String data_end) { this.date_end = data_end; }
 
+    public String getDuration() {
+        return duration;
+    }
 
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
 
     public Event() {}
 
-    public Event(String name, String date_begin, String date_end, String priority, String info) {
+    public Event(String name, String date_begin, String date_end, String duration, String priority, String info) {
         this.name = name;
         this.date_begin = date_begin;
         this.date_end = date_end;
+        this.duration = duration;
         this.priority = priority;
         this.info = info;
 
@@ -100,7 +107,7 @@ public class Event extends BaseEntitie{
                     this.date_end = param.getValue();
                     break;
                 case (103):
-                    // duration
+                    this.duration = param.getValue();// duration
                     break;
                 case (105):
                     this.priority = param.getValue();
@@ -120,6 +127,7 @@ public class Event extends BaseEntitie{
         dataObject.setName(this.name);
         dataObject.setParams(101, this.date_begin);
         dataObject.setParams(102, this.date_end);
+        dataObject.setParams(103, this.duration);
         dataObject.setParams(104, this.info);
         dataObject.setParams(105, this.priority);
         return dataObject;
@@ -129,7 +137,7 @@ public class Event extends BaseEntitie{
         TreeMap<Integer, Object> map = new TreeMap<>();
         map.put(101, date_begin);
         map.put(102, date_end);
-        map.put(103, null); // Продолжительность события. Пока что так, потом исправить, вставить расчет
+        map.put(103, duration); // Продолжительность события. Пока что так, потом исправить, вставить расчет.      Исправлено!
         map.put(104, info);
         map.put(105, priority);
         return map;

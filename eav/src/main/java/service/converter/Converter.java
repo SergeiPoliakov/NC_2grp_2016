@@ -178,6 +178,7 @@ public class Converter {
             event.setHost_id(dataObject.getReference(141).get(0)); // 141 Ссылка на Юзера-Создателя
             event.setDate_begin(dataObject.getParameter(101));
             event.setDate_end(dataObject.getParameter(102));
+            event.setDuration(dataObject.getParameter(103));
             event.setInfo(dataObject.getParameter(104));
             event.setPriority(dataObject.getParameter(105));
         } catch (Exception e) {
@@ -275,6 +276,7 @@ public class Converter {
             //
             dataObject.setParams(101, event.getDate_begin());
             dataObject.setParams(102, event.getDate_end());
+            dataObject.setParams(103, event.getDuration());
             dataObject.setParams(104, event.getInfo());
             dataObject.setParams(105, event.getPriority());
             //

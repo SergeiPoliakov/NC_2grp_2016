@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Костя on 02.02.2017.
@@ -31,6 +33,19 @@ public class KKUserController {
     public KKUserController() throws IOException {
     }
 
+    public long duration(String start, String end) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+        long timeStart = format.parse(start).getTime();
+        long timeEnd = format.parse(end).getTime();
+        long diff = timeEnd - timeStart;
+
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+
+        System.out.println("РАЗНИЦА В МИНУТАХ!!! " + minutes);
+        return minutes;
+    }
+
 
     @RequestMapping(value = "/userAddEvent", method = RequestMethod.POST)
     public String addEventToCurrentUser(@ModelAttribute("name") String name,
@@ -38,13 +53,13 @@ public class KKUserController {
                            @ModelAttribute("date_begin") String date_begin,
                            @ModelAttribute("date_end") String date_end,
                            @ModelAttribute("info") String info
-    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, "");
+        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
@@ -68,13 +83,13 @@ public class KKUserController {
                                     @ModelAttribute("date_begin") String date_begin,
                                     @ModelAttribute("date_end") String date_end,
                                     @ModelAttribute("info") String info
-    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, "");
+        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
         mapAttr.put(141, meeting_id); // Ссылка на встречу, к которой прикреплено событие
@@ -113,7 +128,7 @@ public class KKUserController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, "");
+        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
@@ -140,14 +155,14 @@ public class KKUserController {
                               @ModelAttribute("priority") String priority,
                               @ModelAttribute("date_begin") String date_begin,
                               @ModelAttribute("date_end") String date_end,
-                              @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+                              @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
         Response response = new Response();
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, "");
+        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
 
@@ -171,13 +186,13 @@ public class KKUserController {
                               @ModelAttribute("priority") String priority,
                               @ModelAttribute("date_begin") String date_begin,
                               @ModelAttribute("date_end") String date_end,
-                              @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+                              @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, "");
+        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
 
