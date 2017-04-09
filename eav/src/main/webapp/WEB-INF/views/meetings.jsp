@@ -133,66 +133,164 @@
     <!-- Форма для создания новой встречи -->
     <div id="meetingmodal" class="modal fade">
         <div class="modal-dialog">
-            <form id="eventForm" name="creation" action="/addMeeting" method="post">
-                <div class="modal-content">
-                    <!-- Заголовок модального окна -->
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title text-center">Создание новой встречи</h4>
+
+                <ul class="nav nav-tabs nav-justified" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);">
+                    <li class="active"><a data-toggle="tab" href="#fixedMeeting">Фиксированная</a></li>
+                    <li><a data-toggle="tab" href="#floatingMeeting">Плавающая</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="fixedMeeting" class="tab-pane fade in active">
+                        <div class="well bs-component" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
+
+                        <form id="eventForm" name="creation" action="/addMeeting" method="post">
+                            <div class="modal-content">
+                                <!-- Заголовок модального окна -->
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title text-center">Создание новой встречи</h4>
+                                </div>
+                                <!-- Основное содержимое модального окна -->
+                                <div class="modal-body">
+                                    <div class='row '>
+                                        <div class='col-md-6'>
+                                            <div class="input-group" style="display: inline;">
+                                                <label for="meetingTitle" class="control-label">Название:</label>
+                                                <input type="text" class="form-control" name="title" id="meetingTitle" placeholder="Введите название встречи">
+                                            </div>
+                                        </div>
+                                        <div class='col-md-6'>
+                                            <div class="input-group" style="display: inline;">
+                                                <label for="meetingTag" class="control-label">Теги:</label>
+                                                <input type="text" class="form-control" name="tag" id="meetingTag" placeholder="Введите теги">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- DateTime Pickers -->
+                                    <div class='row top-buffer-2'>
+                                        <div class='col-md-6'>
+                                            <label for="taskStartTime" class="control-label">Начало:</label>
+                                            <div class='input-group date' id='datetimepicker1'>
+                                                <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_start" class="form-control" id="taskStartTime"/>
+                                                <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                            </div>
+                                        </div>
+                                        <div class='col-md-6'>
+                                            <label for="taskEndTime" class="control-label">Окончание:</label>
+                                            <div class='input-group date' id='datetimepicker2'>
+                                                <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_end" class="form-control" id="taskEndTime"/>
+                                                <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row top-buffer-2">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="taskAddInfo" class="control-label">Дополнительная информация:</label>
+                                                <textarea type='text' name="info" class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Футер модального окна -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                                    <button type="submit" class="btn btn-primary" id="modalAddButton">Добавить</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        </div>
                     </div>
-                    <!-- Основное содержимое модального окна -->
-                    <div class="modal-body">
-                        <div class='row '>
-                            <div class='col-md-6'>
-                                <div class="input-group" style="display: inline;">
-                                    <label for="meetingTitle" class="control-label">Название:</label>
-                                    <input type="text" class="form-control" name="title" id="meetingTitle" placeholder="Введите название встречи">
+
+
+                    <div id="floatingMeeting" class="tab-pane fade">
+                        <div class="well bs-component" style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
+
+                            <form id="formFloatingMeeting" name="creation" action="/addMeeting" method="post">
+                                <div class="modal-content">
+                                    <!-- Заголовок модального окна -->
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h4 class="modal-title text-center">Создание новой встречи</h4>
+                                    </div>
+                                    <!-- Основное содержимое модального окна -->
+                                    <div class="modal-body">
+                                        <div class='row '>
+                                            <div class='col-md-6'>
+                                                <div class="input-group" style="display: inline;">
+                                                    <label for="meetingTitle2" class="control-label">Название:</label>
+                                                    <input type="text" class="form-control" name="title" id="meetingTitle2" placeholder="Введите название встречи">
+                                                </div>
+                                            </div>
+                                            <div class='col-md-6'>
+                                                <div class="input-group" style="display: inline;">
+                                                    <label for="meetingTag2" class="control-label">Теги:</label>
+                                                    <input type="text" class="form-control" name="tag" id="meetingTag2" placeholder="Введите теги">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- DateTime Pickers -->
+                                        <div class='row top-buffer-2'>
+                                            <div class='col-md-6'>
+                                                <label for="taskStartTime" class="control-label">Начало:</label>
+                                                <div class='input-group date' id='datetimepicker3'>
+                                                    <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_start" class="form-control" id="taskStartTime2"/>
+                                                    <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                            <div class='col-md-6'>
+                                                <label for="taskEndTime" class="control-label">Окончание:</label>
+                                                <div class='input-group date' id='datetimepicker4'>
+                                                    <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_end" class="form-control" id="taskEndTime2"/>
+                                                    <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class='row top-buffer-2'>
+                                        <div class='col-md-6'>
+                                            <label for="taskDuration" class="control-label">Продолжительность в минутах:</label>
+                                            <input type='text'  name="duration" class="form-control" id="taskDuration" />
+                                        </div>
+                                        <div class='col-md-6'>
+                                        <label for="taskDecisionTime" class="control-label">Согласовать до:</label>
+                                        <div class='input-group date' id='datetimepicker5'>
+                                            <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_start" class="form-control" id="taskDecisionTime"/>
+                                            <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                        </div>
+                                        </div>
+                                        </div>
+                                        <div class="row top-buffer-2">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="taskAddInfo" class="control-label">Дополнительная информация:</label>
+                                                    <textarea type='text' name="info" class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo2"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Футер модального окна -->
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                                        <button type="submit" class="btn btn-primary" id="modalAddButton2">Добавить</button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class='col-md-6'>
-                                <div class="input-group" style="display: inline;">
-                                    <label for="meetingTag" class="control-label">Теги:</label>
-                                    <input type="text" class="form-control" name="tag" id="meetingTag" placeholder="Введите теги">
-                                </div>
-                            </div>
+                            </form>
+
                         </div>
-                        <!-- DateTime Pickers -->
-                        <div class='row top-buffer-2'>
-                            <div class='col-md-6'>
-                                <label for="taskStartTime" class="control-label">Начало:</label>
-                                <div class='input-group date' id='datetimepicker1'>
-                                    <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_start" class="form-control" id="taskStartTime"/>
-                                    <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                </div>
-                            </div>
-                            <div class='col-md-6'>
-                                <label for="taskEndTime" class="control-label">Окончание:</label>
-                                <div class='input-group date' id='datetimepicker2'>
-                                    <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}" name="date_end" class="form-control" id="taskEndTime"/>
-                                    <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row top-buffer-2">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="taskAddInfo" class="control-label">Дополнительная информация:</label>
-                                    <textarea type='text' name="info" class="form-control noresize textarea-for-modal" rows="5" id="taskAddInfo"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Футер модального окна -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                        <button type="submit" class="btn btn-primary" id="modalAddButton">Добавить</button>
                     </div>
                 </div>
-            </form>
+
         </div>
     </div>
 
@@ -213,10 +311,34 @@
             viewMode: 'months',
             useCurrent: false
         });
+        $('#datetimepicker3').datetimepicker({
+            locale: 'ru',
+            viewMode: 'months',
+            useCurrent: false
+        });
+        $('#datetimepicker4').datetimepicker({
+            locale: 'ru',
+            viewMode: 'months',
+            useCurrent: false
+        });
+        $('#datetimepicker5').datetimepicker({
+            locale: 'ru',
+            viewMode: 'months',
+            useCurrent: false
+        });
         $("#datetimepicker1").on("dp.change", function (e) {
             $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
         });
         $("#datetimepicker2").on("dp.change", function (e) {
+            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+        });
+        $("#datetimepicker3").on("dp.change", function (e) {
+            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+        });
+        $("#datetimepicker4").on("dp.change", function (e) {
+            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+        });
+        $("#datetimepicker5").on("dp.change", function (e) {
             $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
         });
     });
@@ -225,8 +347,12 @@
         $('#meetingmodal').modal('show');
         $('#meetingmodal').on('shown.bs.modal', function () {
             $('#meetingTitle').val("Новая встреча");
+            $('#meetingTitle2').val("Новая встреча");
             $('#meetingTitle').focus();
+            $('#meetingTitle2').focus();
             $('#meetingTitle').select();
+            $('#meetingTitle2').select();
+
         });
     };
 
