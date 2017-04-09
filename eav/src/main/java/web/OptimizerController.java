@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Hroniko on 08.04.2017.
@@ -33,7 +34,7 @@ public class OptimizerController {
     // К запросу на получение данных по свободным слотам
     @RequestMapping(value = "/getFreeSlots", method = RequestMethod.POST, headers = {"Content-type=application/json"})
     @ResponseBody
-    public ArrayList<Slot> getStat(@RequestBody SlotRequest slotRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException {
+    public ArrayList<Slot> getStat(@RequestBody SlotRequest slotRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         return new SlotManager().getFreeSlots(slotRequest);
     }
 }

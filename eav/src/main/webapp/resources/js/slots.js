@@ -13,8 +13,9 @@ function doAjaxFreeSlots() {
         mimeType: 'application/json',
         data: JSON.stringify({
             user: "10003",
-            start: "02.04.2017 00:00",
-            end: "09.04.2017 00:00"
+            meeting: document().getAttribute(meeting_id),
+            start: "03.04.2017 00:00",
+            end: "10.04.2017 00:00"
         }),
         success: function (data) {
 
@@ -32,7 +33,7 @@ function doAjaxFreeSlots() {
                     '<div class="header">' +
                     '<small class=" text-muted"><span class="glyphicon ' +
                     'glyphicon-time"></span>' + (data[index]).string_start + ' - ' + (data[index]).string_end + '</small>' +
-                    '<strong class="pull-right primary-font">' + 'Свободный слот' +
+                    '<strong class="pull-right primary-font">' + 'Свободный слот для встречи' +
                     '</strong>' +
                     '</div>' +
                     '<p>' + (data[index]).string_start + ' - ' + (data[index]).string_end +

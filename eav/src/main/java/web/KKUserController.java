@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
+import service.converter.DateConverter;
 import service.statistics.StatisticLogger;
 
 import java.io.IOException;
@@ -29,21 +30,9 @@ public class KKUserController {
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
+    private DateConverter dateConverter = new DateConverter();
 
     public KKUserController() throws IOException {
-    }
-
-    public long duration(String start, String end) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
-        long timeStart = format.parse(start).getTime();
-        long timeEnd = format.parse(end).getTime();
-        long diff = timeEnd - timeStart;
-
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
-
-        System.out.println("РАЗНИЦА В МИНУТАХ!!! " + minutes);
-        return minutes;
     }
 
 
@@ -59,7 +48,7 @@ public class KKUserController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
+        mapAttr.put(103, String.valueOf(dateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
@@ -89,7 +78,7 @@ public class KKUserController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
+        mapAttr.put(103, String.valueOf(dateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
         mapAttr.put(141, meeting_id); // Ссылка на встречу, к которой прикреплено событие
@@ -128,7 +117,7 @@ public class KKUserController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
+        mapAttr.put(103, String.valueOf(dateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
@@ -162,7 +151,7 @@ public class KKUserController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
+        mapAttr.put(103, String.valueOf(dateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
 
@@ -192,7 +181,7 @@ public class KKUserController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
+        mapAttr.put(103, String.valueOf(dateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
 

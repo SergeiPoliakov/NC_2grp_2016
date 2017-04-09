@@ -35,8 +35,9 @@
     <div class="row">
         <div class="col-md-5">
             <div class="panel panel-primary">
+
                 <div class="panel-heading" id="accordion">
-                    <span class="glyphicon glyphicon-comment"></span> Список свободных слотов за текущую неделю
+                    <span class="glyphicon glyphicon-comment"></span> Список свободных слотов для встречи за текущую неделю
                     <div class="btn-group pull-right">
                         <a type="button" class="btn btn-default btn-xs" data-toggle="collapse" data-parent="#accordion"
                            href="#collapseOne">
@@ -44,6 +45,7 @@
                         </a>
                     </div>
                 </div>
+
                 <div class="panel-collapse in" id="collapseOne">
                     <div class="panel-body">
                         <ul class="chat">

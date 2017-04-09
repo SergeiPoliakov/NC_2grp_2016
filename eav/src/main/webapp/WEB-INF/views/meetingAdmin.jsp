@@ -34,6 +34,7 @@
     <script type="text/javascript" src="/resources/js/bootstrap-select.min.js"> </script>
     <script type="text/javascript" src="/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 
+
     <style type="text/css">
         p{
             margin: 0px;
@@ -45,6 +46,62 @@
             min-width: 9rem;
         }
     </style>
+
+
+    <script>
+        function doAjaxFreeSlots() {
+
+            var sendText = 'test';
+
+            $.ajax({
+                url: '/getFreeSlots',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                mimeType: 'application/json',
+                data: JSON.stringify({
+                    user: ${meeting.organizer},
+                    meeting: ${meeting.id},
+                    start: "03.04.2017 00:00",
+                    end: "10.04.2017 00:00"
+                }),
+                success: function (data) {
+
+
+                    var result = '';
+
+                    var index;
+                    for (index = 0; index < data.length; ++index) {
+                        console.log(data[index]);
+
+                        result += '' +
+                            '<li class="right clearfix"><span class="chat-img pull-right">';
+                        result += '</span>' +
+                            '<div class="chat-body clearfix">' +
+                            '<div class="header">' +
+                            '<small class=" text-muted"><span class="glyphicon ' +
+                            'glyphicon-time"></span>' + (data[index]).string_start + ' - ' + (data[index]).string_end + '</small>' +
+                            '<strong class="pull-right primary-font">' + 'Свободный слот для встречи' +
+                            '</strong>' +
+                            '</div>' +
+                            '<p>' + (data[index]).string_start + ' - ' + (data[index]).string_end +
+                            '</p>' +
+                            '</div>' +
+                            '</li>';
+
+
+                    }
+                    $("#result_array").html(result);
+
+                }
+            });
+        }
+        setInterval(doAjaxFreeSlots, 1000);
+    </script>
+
+
+
+
 
 </head>
 <body>
@@ -142,6 +199,41 @@
                 </c:if>
             </div>
         </div>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="panel panel-primary">
+
+                        <div class="panel-heading" id="accordion">
+                            <span class="glyphicon glyphicon-comment"></span> Список свободных слотов для встречи за текущую неделю
+                            <div class="btn-group pull-right">
+                                <a type="button" class="btn btn-default btn-xs" data-toggle="collapse" data-parent="#accordion"
+                                   href="#collapseOne">
+                                    <span class="glyphicon glyphicon-chevron-down"></span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="panel-collapse in" id="collapseOne">
+                            <div class="panel-body">
+                                <ul class="chat">
+
+                                    <p id="result_array"></p>
+
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
         <!-- ЧАТ -->
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-lg-offset-6">
             <div class="card">
@@ -605,6 +697,8 @@
     };
     createTooltip();
 </script>
+
+
 </body>
 <div style="margin-bottom: 8rem;"/>
 <%@include file='footer.jsp'%>

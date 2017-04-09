@@ -20,28 +20,30 @@ public class Slot implements Comparable<Slot> {
 
     private String string_end;
 
+    private DateConverter dateConverter = new DateConverter();
+
     public Slot() {
     }
 
     public Slot(LocalDateTime start, LocalDateTime end) throws ParseException {
         this.start = start;
         this.end = end;
-        this.string_start = DateConverter.dateToString(start);
-        this.string_end = DateConverter.dateToString(end);
+        this.string_start = dateConverter.dateToString(start);
+        this.string_end = dateConverter.dateToString(end);
     }
 
     public Slot(String string_start, String string_end) throws ParseException {
         this.string_start = string_start;
         this.string_end = string_end;
-        this.start = DateConverter.stringToDate(string_start);
-        this.end = DateConverter.stringToDate(string_end);
+        this.start = dateConverter.stringToDate(string_start);
+        this.end = dateConverter.stringToDate(string_end);
     }
 
     public Slot(Event event) throws ParseException {
         this.string_start = event.getDate_begin();
         this.string_end = event.getDate_end();
-        this.start = DateConverter.stringToDate(this.string_start);
-        this.end = DateConverter.stringToDate(this.string_end);
+        this.start = dateConverter.stringToDate(this.string_start);
+        this.end = dateConverter.stringToDate(this.string_end);
     }
 
     public LocalDateTime getStart() {

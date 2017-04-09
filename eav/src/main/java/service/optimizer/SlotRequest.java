@@ -8,6 +8,8 @@ public class SlotRequest {
 
     private String user;
 
+    private String meeting;
+
     private String start;
 
     private String end;
@@ -21,6 +23,14 @@ public class SlotRequest {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getMeeting() {
+        return meeting;
+    }
+
+    public void setMeeting(String meeting) {
+        this.meeting = meeting;
     }
 
     public String getStart() {

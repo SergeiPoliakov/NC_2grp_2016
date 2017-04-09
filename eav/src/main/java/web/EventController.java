@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
 import service.cache.DataObjectCache;
+import service.converter.DateConverter;
 import service.id_filters.EventFilter;
 import service.UserServiceImp;
 import service.statistics.StatisticLogger;
@@ -36,6 +37,7 @@ public class EventController {
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
+    private DateConverter dateConverter = new DateConverter();
 
     public EventController() throws IOException {
     }
@@ -48,19 +50,6 @@ public class EventController {
         }
 
         return list;
-    }
-
-    public long duration(String start, String end) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
-        long timeStart = format.parse(start).getTime();
-        long timeEnd = format.parse(end).getTime();
-        long diff = timeEnd - timeStart;
-
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
-
-        System.out.println("РАЗНИЦА В МИНУТАХ!!! " + minutes);
-        return minutes;
     }
 
     @RequestMapping(value = "/addEvent", method = RequestMethod.GET)
@@ -81,7 +70,7 @@ public class EventController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
+        mapAttr.put(103, String.valueOf(dateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
@@ -191,7 +180,7 @@ public class EventController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, String.valueOf(duration(date_begin, date_end)));
+        mapAttr.put(103, String.valueOf(dateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
 

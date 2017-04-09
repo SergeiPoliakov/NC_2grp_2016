@@ -16,6 +16,7 @@ import service.LoadingServiceImp;
 import service.MeetingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
+import service.converter.DateConverter;
 import service.id_filters.MeetingFilter;
 import service.notifications.UsersNotifications;
 import service.search.FinderLogic;
@@ -58,6 +59,7 @@ public class MeetingController {
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private MeetingServiceImp meetingService = MeetingServiceImp.getInstance();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
+    private DateConverter dateConverter = new DateConverter();
 
     public MeetingController() throws IOException {
     }
@@ -69,20 +71,6 @@ public class MeetingController {
         }
         return list;
     }
-
-    public long duration(String start, String end) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
-        long timeStart = format.parse(start).getTime();
-        long timeEnd = format.parse(end).getTime();
-        long diff = timeEnd - timeStart;
-
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
-
-        System.out.println("РАЗНИЦА В МИНУТАХ!!! " + minutes);
-        return minutes;
-    }
-
 
 
     // TEST
@@ -148,10 +136,6 @@ public class MeetingController {
                     meetingsID.addAll(meetingsListWithTag);
                 }
 
-                for (int index : meetingsID
-                        ) {
-                    System.out.println("ЭТИ ОБЪЕКТЫ СЕЙЧАС БУДУТ ВЫВЕДЕНЫ!!!" + index);
-                }
 
                 try {
                     DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
@@ -162,11 +146,6 @@ public class MeetingController {
                     for (DataObject dataObject : list) {
                         Meeting meeting = new Meeting(dataObject);
                         meetings.add(meeting);
-                    }
-
-                    for (Meeting meeting : meetings
-                            ) {
-                        System.out.println("В ТЕГЕ НАХОДИТСЯ ВСТРЕЧА С ID " + meeting.getId());
                     }
 
                     m.put("meetings", meetings);
@@ -229,7 +208,6 @@ public class MeetingController {
             e.printStackTrace();
         }
 
-
         // Выпиливаются приглашённые друзья
         ArrayList<User> meetingUsers = meeting.getUsers();
         ArrayList<User> organizerFriends = meeting.getOrganizer().getFriends();
@@ -278,7 +256,7 @@ public class MeetingController {
             }
         } else worlds.append("встреча");
 
-        long duration = duration(date_start, date_end);
+        long duration = dateConverter.duration(date_start, date_end);
 
         Meeting meeting = new Meeting(id, title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", String.valueOf(duration));
 
@@ -360,13 +338,14 @@ public class MeetingController {
                                       @RequestParam("tag") StringBuilder tag,
                                       @RequestParam("date_start") String date_start,
                                       @RequestParam("date_end") String date_end,
-                                      @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+                                      @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
         Meeting meeting = meetingService.getMeeting(meetingID);
         meeting.setTitle(title);
         meeting.setTag(tag);
         meeting.setDate_start(date_start);
         meeting.setDate_end(date_end);
+        meeting.setDuration(String.valueOf(dateConverter.duration(date_start, date_end)));
         meeting.setInfo(info);
         DataObject dataObject = meeting.toDataObject();
         int id = loadingService.updateDataObject(dataObject);
@@ -386,7 +365,7 @@ public class MeetingController {
             @RequestParam("tag") StringBuilder tag,
             @RequestParam("date_start") String date_start,
             @RequestParam("date_end") String date_end,
-            @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+            @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
 
         Response response = new Response();
@@ -410,10 +389,11 @@ public class MeetingController {
         meeting.setTag(worlds);
         meeting.setDate_start(date_start);
         meeting.setDate_end(date_end);
+        meeting.setDuration(String.valueOf(dateConverter.duration(date_start, date_end)));
         meeting.setInfo(info);
         DataObject dataObject = meeting.toDataObject();
         int id = loadingService.updateDataObject(dataObject);
-        doCache.invalidate(meetingID);
+        doCache.refresh(meetingID);
 
         // Логирование:
         int idUser = userService.getObjID(userService.getCurrentUsername());
