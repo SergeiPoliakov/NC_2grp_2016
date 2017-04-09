@@ -23,6 +23,18 @@
     </properties>
 
     <dependencies>
+
+        <!-- STOMP -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>4.2.1.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>4.2.1.RELEASE</version>
+        </dependency>
         <!-- Для парсинга JSON -->
         <dependency>
             <groupId>com.google.code.gson</groupId>

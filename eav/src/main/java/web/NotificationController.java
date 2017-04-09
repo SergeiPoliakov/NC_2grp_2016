@@ -3,13 +3,11 @@ package web;
  * Created by Hroniko on 23.02.2017.
  * Контроллер для системы оповещения (новые события, сообщения, напоминания)
  */
-import com.google.common.cache.LoadingCache;
+import WebSocket.SocketMessage;
 import com.google.gson.Gson;
-import dbHelp.DBHelp;
-import entities.DataObject;
 import entities.Notification;
-import entities.User;
-import org.slf4j.LoggerFactory;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import service.converter.Converter;
@@ -18,16 +16,12 @@ import service.id_filters.MessageFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
 import service.LoadingServiceImp;
 import service.UserServiceImp;
-import service.cache.DataObjectCache;
 import service.id_filters.NotificationFilter;
 import service.id_filters.UserFilter;
-import service.notifications.NotificationThread;
 import service.notifications.UsersNotifications;
 
 
@@ -126,33 +120,25 @@ public class NotificationController { // Тут вроде логировать 
         return response;
     }
 
-    /*
-    public static void main(String[] args) {
+    // На подгрузку тестовой страницы с веб-сокетами:
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public String testPage() throws SQLException {
 
-        ArrayList<Integer> a = new ArrayList<>();
-        ArrayList<Integer> b = new ArrayList<>();
-        ArrayList<Integer> c = new ArrayList<>();
-
-
-        a.add(1);a.add(2);a.add(3);a.add(4);
-        b.add(1);b.add(2);b.add(3);b.add(4);b.add(5);b.add(6);
-
-        print(a);
-        print(b);
-
-        c = (ArrayList<Integer>) b.clone();
-        c.removeAll(a);
-
-        System.out.println("Result");
-        print(c);
+        return "test";
     }
 
-    public static void print(ArrayList<Integer> list){
-        for (Integer i : list){
-            System.out.print(i + " ");
-        }
-        System.out.println();
+
+    // Работа через STOMP
+    @MessageMapping("/notify")
+    @SendTo("/topic/notifications")
+    public SocketMessage getMessage(SocketMessage message) throws Exception {
+
+        // 1 Сформировать уведомление
+        // 2. Прикрепить уведомление к пользователю (либо записать в базу, если он нективен)
+        // NotificationService.sendNotification(new Notification("Уведомление",idUser, objectId, "friendRequest")); - так выглядит добавление
+        // 3. Вернуть его. Нужно или сформировать канал для каждого пользователя, либо хз
+        return  message;
     }
-    */
+
 
 }

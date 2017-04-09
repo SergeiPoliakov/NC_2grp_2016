@@ -51,20 +51,3 @@
 		}
 		notificationCountIncrease();
 	}
-	
-	// TEST BLOCK
-		/*var data1 = {senderID: 221, meetingID: 225, type: "friendRequest"};
-		var data2 = {senderID: 222, meetingID: 226, type: "meetingInvite"};
-		var data3 = {senderID: 223, meetingID: 227, type: "meetingRequest"};
-		var data4 = {senderID: 224, meetingID: 228, type: "infoFriendAccept"};
-		
-		addNotification(data1);
-		addNotification(data2);
-		addNotification(data2);
-		addNotification(data2);
-		addNotification(data2);
-		addNotification(data2);
-		addNotification(data3);
-		addNotification(data4);
-		addNotification(data1);*/
-	// END TEST BLOCK

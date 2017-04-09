@@ -24,10 +24,7 @@ public class NotificationService {
     // Активен - если запись о нём есть в UsersNotifications
     public static void sendNotification(Notification notification) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
-        String currentDate =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-
         notification.setSender( new Converter().ToUser(loadingService.getDataObjectByIdAlternative(notification.getSenderID())));
-        notification.setDate(currentDate);
 
         UsersNotifications usersNotifications = UsersNotifications.getInstance();
         ArrayList<Notification> userNotifications =  usersNotifications.getNotifications(notification.getRecieverID());
