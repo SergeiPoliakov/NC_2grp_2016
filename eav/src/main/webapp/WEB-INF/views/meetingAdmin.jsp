@@ -35,6 +35,7 @@
     <script type="text/javascript" src="/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 
 
+
     <style type="text/css">
         p{
             margin: 0px;
@@ -47,60 +48,14 @@
         }
     </style>
 
-
     <script>
-        function doAjaxFreeSlots() {
+        var m_id = ${meeting.id};
 
-            var sendText = 'test';
-
-            $.ajax({
-                url: '/getFreeSlots',
-                type: 'POST',
-                dataType: 'json',
-                contentType: 'application/json',
-                mimeType: 'application/json',
-                data: JSON.stringify({
-                    user: ${meeting.organizer},
-                    meeting: ${meeting.id},
-                    start: "03.04.2017 00:00",
-                    end: "10.04.2017 00:00"
-                }),
-                success: function (data) {
-
-
-                    var result = '';
-
-                    var index;
-                    for (index = 0; index < data.length; ++index) {
-                        console.log(data[index]);
-
-                        result += '' +
-                            '<li class="right clearfix"><span class="chat-img pull-right">';
-                        result += '</span>' +
-                            '<div class="chat-body clearfix">' +
-                            '<div class="header">' +
-                            '<small class=" text-muted"><span class="glyphicon ' +
-                            'glyphicon-time"></span>' + (data[index]).string_start + ' - ' + (data[index]).string_end + '</small>' +
-                            '<strong class="pull-right primary-font">' + 'Свободный слот для встречи' +
-                            '</strong>' +
-                            '</div>' +
-                            '<p>' + (data[index]).string_start + ' - ' + (data[index]).string_end +
-                            '</p>' +
-                            '</div>' +
-                            '</li>';
-
-
-                    }
-                    $("#result_array").html(result);
-
-                }
-            });
-        }
-        setInterval(doAjaxFreeSlots, 1000);
+        var u_id = ${meeting.organizer.id};
     </script>
 
 
-
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/slots.js"></script>
 
 
 </head>

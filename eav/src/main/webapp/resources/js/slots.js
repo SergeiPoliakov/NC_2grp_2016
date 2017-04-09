@@ -12,8 +12,8 @@ function doAjaxFreeSlots() {
         contentType: 'application/json',
         mimeType: 'application/json',
         data: JSON.stringify({
-            user: "10003",
-            meeting: document().getAttribute(meeting_id),
+            user: u_id,
+            meeting: m_id,
             start: "03.04.2017 00:00",
             end: "10.04.2017 00:00"
         }),

@@ -90,7 +90,7 @@ public class SlotManager {
         System.out.println("КОЛИЧЕСТВО СВОБОДНЫХ СЛОТОВ :" + count);
 
         // и оставим точку сохранения в слот-сейвере:
-        //slotSaver.add(user_id,  events, usageSlots, freeSlotsForMeeting, date_start, date_end);
+        slotSaver.add(user_id,  events, usageSlots, freeSlotsForMeeting, date_start, date_end);
 
         return freeSlotsForMeeting;
     }
