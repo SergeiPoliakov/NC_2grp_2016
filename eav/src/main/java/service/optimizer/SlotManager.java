@@ -17,6 +17,8 @@ import java.util.*;
 // Класс для работы со свободными слотами
 public class SlotManager {
 
+    private SlotSaver slotSaver = new SlotSaver();
+
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     private UserServiceImp userService = new UserServiceImp();
@@ -36,38 +38,35 @@ public class SlotManager {
         if (start == null | end == null) return freeSlots; // Выходим из метода, если не удалось сконвертировать
         // Выбираем все события из расписаеия юзера за заданный период:
         ArrayList<Integer> ids = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER, EventFilter.BETWEEN_TWO_DATES, date_start, date_end));
-        // if (ids.size() > 0) {
-            ArrayList<DataObject> aldo = loadingService.getListDataObjectByListIdAlternative(ids); // allSlots
-            ArrayList<Event> events = new Converter().ToEvent(aldo);
-            ArrayList<Slot> usageSlots = new ArrayList<>();
-            // Обходим занятые слоты и переносим в список занятых слотов:
-            for (int i = 0; i < events.size(); i++){
-                usageSlots.add(new Slot(events.get(i)));
-            }
-            // и надо еще как-то отсортировать а порядке увеличения даты // ок, сделал
-            Collections.sort(usageSlots);
+        ArrayList<DataObject> aldo = loadingService.getListDataObjectByListIdAlternative(ids); // allSlots
+        ArrayList<Event> events = new Converter().ToEvent(aldo);
+        ArrayList<Slot> usageSlots = new ArrayList<>();
+        // Обходим занятые слоты и переносим в список занятых слотов:
+        for (int i = 0; i < events.size(); i++) {
+            usageSlots.add(new Slot(events.get(i)));
+        }
+        // и надо еще как-то отсортировать а порядке увеличения даты // ок, сделал
+        Collections.sort(usageSlots);
 
-            // А затем обойти отсортированные занятые слоты и вытащить свободные:
-            for (int i = 0; i < usageSlots.size(); i++){
-                LocalDateTime newend = usageSlots.get(i).getStart();
-                // если есть свободное место
-                if (start.isBefore(newend)){
-                    freeSlots.add(new Slot(start, newend));
-                }
-                start = usageSlots.get(i).getEnd();
+        // А затем обойти отсортированные занятые слоты и вытащить свободные:
+        for (int i = 0; i < usageSlots.size(); i++) {
+            LocalDateTime newend = usageSlots.get(i).getStart();
+            // если есть свободное место
+            if (start.isBefore(newend)) {
+                freeSlots.add(new Slot(start, newend));
             }
-            // И в конце может остаться кусочек в самом конце отрезка времени (или же весь отрезок, если занятыхслотов в нем не было), добавляем его:
-            if (start.isBefore(end)){
-                freeSlots.add(new Slot(start, end));
-            }
-        // }
+            start = usageSlots.get(i).getEnd();
+        }
+        // И в конце может остаться кусочек в самом конце отрезка времени (или же весь отрезок, если занятых слотов в нем не было), добавляем его:
+        if (start.isBefore(end)) {
+            freeSlots.add(new Slot(start, end));
+        }
+
+        // и оставим точку сохранения в слот-сейвере:
+        slotSaver.add(user_id,  events, usageSlots, freeSlots, date_start, date_end);
 
         return freeSlots;
     }
-
-
-
-
 
 
 }

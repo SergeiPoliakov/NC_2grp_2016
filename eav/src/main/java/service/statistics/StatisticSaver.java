@@ -36,7 +36,7 @@ public class StatisticSaver {
 
     }
 
-    // Метод обавления статистики по составному ключу
+    // Метод добавления статистики по составному ключу
     synchronized public static void add(Integer root_id, String plotview, String datatype, String period, ArrayList<StatResponse> statResponses){
         // Фиксируем текущее время загрузки в мапу нашей статистики:
         LocalDateTime add_date = LocalDateTime.now();
@@ -52,7 +52,7 @@ public class StatisticSaver {
         saveMap.put(key, statResponses);
     }
 
-    // Метод получения статистики по запрсу и ответу
+    // Метод добавления статистики по запрсу и ответу
     public static void add(Integer root_id, StatRequest statRequest, ArrayList<StatResponse> statResponses){
         String plotview = statRequest.getPlotview();
         String datatype = statRequest.getDatatype();
