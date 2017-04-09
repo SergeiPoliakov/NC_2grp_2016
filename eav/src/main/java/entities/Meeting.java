@@ -167,17 +167,17 @@ public class Meeting extends BaseEntitie {
     }
 
     // 2017-04-09 21-52 Самое то для новых встреч
-    public Meeting(String title, String date_start, String date_end, String info, String date_edit, User organizer, StringBuilder tag, String members, String duration) {
+    public Meeting(String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String members, String duration, String date_edit) {
         this.title = title;
         this.date_start = date_start;
         this.date_end = date_end;
-        this.date_edit = date_edit;
         this.info = info;
         this.organizer = organizer;
         this.tag = tag;
         this.members = members;
         this.status = "active";
         this.duration = duration;
+        this.date_edit = date_edit;
     }
 
 

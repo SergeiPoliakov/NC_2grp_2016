@@ -37,7 +37,6 @@ public class EventController {
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
-    private DateConverter dateConverter = new DateConverter();
 
     public EventController() throws IOException {
     }
@@ -70,7 +69,7 @@ public class EventController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, String.valueOf(dateConverter.duration(date_begin, date_end)));
+        mapAttr.put(103, String.valueOf(DateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
@@ -180,7 +179,7 @@ public class EventController {
 
         mapAttr.put(101, date_begin);
         mapAttr.put(102, date_end);
-        mapAttr.put(103, String.valueOf(dateConverter.duration(date_begin, date_end)));
+        mapAttr.put(103, String.valueOf(DateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
 

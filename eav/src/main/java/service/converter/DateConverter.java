@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class DateConverter {
     // 2017-04-08 Конвертер даты из Java-8 строку
-    public String dateToString(LocalDateTime ldt) throws ParseException {
+    public static String dateToString(LocalDateTime ldt) throws ParseException {
         String res = null;
         try{
             res = ldt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
@@ -23,7 +23,7 @@ public class DateConverter {
     }
 
     // 2017-04-08 Конвертер строки в дату из Java-8
-    public LocalDateTime stringToDate(String str) throws ParseException {
+    public static LocalDateTime stringToDate(String str) throws ParseException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime res = null;
         try{
@@ -35,7 +35,7 @@ public class DateConverter {
         return res;
     }
 
-    public long duration(String start, String end) throws ParseException {
+    public static long duration(String start, String end) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
         long timeStart = format.parse(start).getTime();

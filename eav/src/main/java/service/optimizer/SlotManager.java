@@ -24,7 +24,7 @@ public class SlotManager {
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
-    private DateConverter dateConverter = new DateConverter();
+
 
     private UserServiceImp userService = new UserServiceImp();
 
@@ -38,8 +38,8 @@ public class SlotManager {
         ArrayList<Slot> freeSlots = new ArrayList<>();
         ArrayList<Slot> freeSlotsForMeeting = new ArrayList<>();  // свободные слоты для встечи
         // Пробуем преобразовать даты из строки к обычным датам
-        LocalDateTime start = dateConverter.stringToDate(date_start);
-        LocalDateTime end = dateConverter.stringToDate(date_end);
+        LocalDateTime start = DateConverter.stringToDate(date_start);
+        LocalDateTime end = DateConverter.stringToDate(date_end);
 
         if (start == null | end == null) return freeSlots; // Выходим из метода, если не удалось сконвертировать
         // Выбираем все события из расписаеия юзера за заданный период:
@@ -71,14 +71,14 @@ public class SlotManager {
 
         for (Slot freeSlot : freeSlots
              ) {
-            System.out.println(dateConverter.duration(freeSlot.getString_start(), freeSlot.getString_end()));
+            System.out.println(DateConverter.duration(freeSlot.getString_start(), freeSlot.getString_end()));
         }
 
         int count = 0;
         for (Slot freeSlot : freeSlots) {
             String startTime = freeSlot.getString_start();
             String endTime = freeSlot.getString_end();
-            long duration = dateConverter.duration(startTime, endTime);
+            long duration = DateConverter.duration(startTime, endTime);
 
             if (duration >= Long.parseLong(meeting.getDuration())) {
                 System.out.println("ПРОДОЛЖИТЕЛЬНОСТЬ СВОБОДНОГО СЛОТА" + duration);

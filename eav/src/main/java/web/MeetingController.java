@@ -59,7 +59,6 @@ public class MeetingController {
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private MeetingServiceImp meetingService = MeetingServiceImp.getInstance();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
-    private DateConverter dateConverter = new DateConverter();
 
     public MeetingController() throws IOException {
     }
@@ -232,7 +231,7 @@ public class MeetingController {
     }
 
     //Добавление встречи DO
-    @RequestMapping(value = "/addMeeting", method = RequestMethod.POST)
+   /* @RequestMapping(value = "/addMeeting", method = RequestMethod.POST)
     public String addMeeting(ModelMap m,
                              @RequestParam("title") String title,
                              @RequestParam("tag") String tag,
@@ -256,7 +255,7 @@ public class MeetingController {
             }
         } else worlds.append("встреча");
 
-        long duration = dateConverter.duration(date_start, date_end);
+        long duration = DateConverter.duration(date_start, date_end);
 
         Meeting meeting = new Meeting(id, title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", String.valueOf(duration));
 
@@ -277,7 +276,7 @@ public class MeetingController {
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.ADD_MEETING, id, idUser);
         return "redirect:/meetings";
-    }
+    }  */
 
     // Добавить пользователя на встречу DO
     @RequestMapping(value = "/inviteUserAtMeeting{meetingID}", method = RequestMethod.POST)
@@ -345,7 +344,7 @@ public class MeetingController {
         meeting.setTag(tag);
         meeting.setDate_start(date_start);
         meeting.setDate_end(date_end);
-        meeting.setDuration(String.valueOf(dateConverter.duration(date_start, date_end)));
+        meeting.setDuration(String.valueOf(DateConverter.duration(date_start, date_end)));
         meeting.setInfo(info);
         DataObject dataObject = meeting.toDataObject();
         int id = loadingService.updateDataObject(dataObject);
@@ -389,7 +388,7 @@ public class MeetingController {
         meeting.setTag(worlds);
         meeting.setDate_start(date_start);
         meeting.setDate_end(date_end);
-        meeting.setDuration(String.valueOf(dateConverter.duration(date_start, date_end)));
+        meeting.setDuration(String.valueOf(DateConverter.duration(date_start, date_end)));
         meeting.setInfo(info);
         DataObject dataObject = meeting.toDataObject();
         int id = loadingService.updateDataObject(dataObject);

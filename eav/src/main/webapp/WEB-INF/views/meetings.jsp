@@ -173,7 +173,7 @@
                     <div class="well bs-component"
                          style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
 
-                        <form id="eventForm" name="creation" action="/addMeeting" method="post">
+                        <form id="eventForm" name="creation" >
                             <div class="modal-content">
                                 <!-- Заголовок модального окна -->
                                 <div class="modal-header">
@@ -252,7 +252,7 @@
                     <div class="well bs-component"
                          style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
 
-                        <form id="formFloatingMeeting" name="creation" action="/addMeeting" method="post">
+                        <form id="formFloatingMeeting" name="creation" >
                             <div class="modal-content">
                                 <!-- Заголовок модального окна -->
                                 <div class="modal-header">
@@ -457,6 +457,7 @@
             }),
             success: function (data) {
                 if (data.status == 'OK') {
+                    document.location.href='redirect:/meetings';
                     console.log(data);
                 }
                 else {
@@ -487,6 +488,7 @@
             }),
             success: function (data) {
                 if (data.status == 'OK') {
+                    document.location.href='redirect:/meetings';
                     console.log(data);
                 }
                 else {
