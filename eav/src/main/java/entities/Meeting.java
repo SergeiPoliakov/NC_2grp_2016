@@ -16,18 +16,20 @@ public class Meeting extends BaseEntitie {
 
     public static final int objTypeID = 1004;
 
-    private  int  id;
-    private  String title; // 301
-    private  String date_start; // 302
-    private  String date_end; // 303
-    private  String info; // 304
-    private  User organizer; // 305
-    private  StringBuilder tag; // 306
-    private  String members; // 307
+    private int  id;
+    private String title; // 301
+    private String date_start; // 302
+    private String date_end; // 303
+    private String info; // 304
+    private User organizer; // 305
+    private StringBuilder tag; // 306
+    private String members; // 307
     private ArrayList<User> users;
-    private  ArrayList<Event> events;
+    private ArrayList<Event> events;
     private String status; // 309
     private String duration; //310
+    // 311 - ссылка на удаленного (-ых) из встречи юзеров, в базе есть
+    private String date_edit; // 312
 
     public ArrayList<Event> getEvents() {
         return events;
@@ -129,6 +131,14 @@ public class Meeting extends BaseEntitie {
         this.duration = duration;
     }
 
+    public String getDate_edit() {
+        return date_edit;
+    }
+
+    public void setDate_edit(String date_edit) {
+        this.date_edit = date_edit;
+    }
+
     public Meeting(){}
 
     public Meeting(int id, String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String members, String duration) {
@@ -155,6 +165,21 @@ public class Meeting extends BaseEntitie {
         this.status = "active";
         this.duration = duration;
     }
+
+    // 2017-04-09 21-52 Самое то для новых встреч
+    public Meeting(String title, String date_start, String date_end, String info, String date_edit, User organizer, StringBuilder tag, String members, String duration) {
+        this.title = title;
+        this.date_start = date_start;
+        this.date_end = date_end;
+        this.date_edit = date_edit;
+        this.info = info;
+        this.organizer = organizer;
+        this.tag = tag;
+        this.members = members;
+        this.status = "active";
+        this.duration = duration;
+    }
+
 
     public Meeting(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         this.users = new ArrayList<>();
@@ -187,6 +212,9 @@ public class Meeting extends BaseEntitie {
                     break;
                 case (310):
                     this.duration = param.getValue();
+                    break;
+                case (312):
+                    this.date_edit = param.getValue();
                     break;
             }
         }
@@ -225,6 +253,7 @@ public class Meeting extends BaseEntitie {
         dataObject.setParams(306, new String(this.tag));
         dataObject.setParams(309, this.status);
         dataObject.setParams(310, this.duration);
+        dataObject.setParams(312, this.date_edit);
 
         for (User user: this.users) {
             dataObject.setRefParams(307, user.getId());
@@ -249,6 +278,7 @@ public class Meeting extends BaseEntitie {
         map.put(307, members);
         map.put(309, status);
         map.put(310, duration);
+        map.put(312, date_edit);
         return map;
     }
 
