@@ -36,15 +36,9 @@ public class NewMeetingManager {
     private LoadingServiceImp loadingService = new LoadingServiceImp();
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
-    // 1) Метод для создания новой встречи
-    public NewMeetingResponce setNewMeeting(NewMeetingRequest meetingRequest) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
-        return setNewMeeting(meetingRequest.getTitle(), meetingRequest.getDate_start(),
-                meetingRequest.getDate_end(), meetingRequest.getDate_edit(),
-                meetingRequest.getInfo(), meetingRequest.getTag(), meetingRequest.getDuration());
-    }
 
-    // 2) Метод для создания новой встречи
-    public NewMeetingResponce setNewMeeting(String title, String date_start, String date_end, String date_edit, String info, String tag, String duration) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
+    // 1) Метод для создания новой встречи
+    public Integer setNewMeeting(String title, String date_start, String date_end, String date_edit, String info, String tag, String duration) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
         // Создаем новую встречу
         int id = userService.generationID(1004);
 
@@ -79,6 +73,6 @@ public class NewMeetingManager {
         loadingService.setDataObjectToDB(dataObject);
         doCache.invalidate(id);
 
-        return new NewMeetingResponce(id);
+        return id;
     }
 }

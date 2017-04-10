@@ -1,10 +1,7 @@
 package web;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import service.meetings.NewMeetingManager;
 import service.meetings.NewMeetingRequest;
 import service.meetings.NewMeetingResponce;
@@ -23,19 +20,37 @@ import java.util.concurrent.ExecutionException;
 @Controller
 public class NewMeetingController {
 
-    // На подгрузку страницы добавления новой встречи:
+    // 1) На подгрузку страницы добавления новой встречи:
     @RequestMapping(value = "/newMeeting", method = RequestMethod.GET)
     public String newMeetingPage() throws SQLException {
         return "newMeeting";
     }
 
-    // К запросу на формирование новой встречи
-    @RequestMapping(value = "/addNewMeeting", method = RequestMethod.POST, headers = {"Content-type=application/json"})
-    @ResponseBody
-    public NewMeetingResponce addNewMeeting(@RequestBody NewMeetingRequest meetingRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
-        return new NewMeetingManager().setNewMeeting(meetingRequest);
+    // 2) К запросу на формирование новой встречи
+    @RequestMapping(value = "/addNewMeeting", method = RequestMethod.POST)
+    public String addNewMeeting(@RequestParam("title") String title,
+                                @RequestParam("date_start") String date_start,
+                                @RequestParam("date_end") String date_end,
+                                @RequestParam("info") String info,
+                                @RequestParam("tag") String tag) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
+        Integer id = new NewMeetingManager().setNewMeeting(title, date_start, date_end, null, info, tag, null); // Не знаю, нужен ли нам будет этот айдишник
+
+        return "redirect:/meetings";
     }
 
+    // 3) К запросу на формирование новой встречи с плавающими границами
+    @RequestMapping(value = "/addNewFloatingMeeting", method = RequestMethod.POST)
+    public String addNewFloatingMeeting(@RequestParam("title") String title,
+                                @RequestParam("date_start") String date_start,
+                                @RequestParam("date_end") String date_end,
+                                @RequestParam("date_edit") String date_edit,
+                                @RequestParam("info") String info,
+                                @RequestParam("tag") String tag,
+                                @RequestParam("duration") String duration) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
+        Integer id = new NewMeetingManager().setNewMeeting(title, date_start, date_end, date_edit, info, tag, duration);
+
+        return "redirect:/meetings";
+    }
 
 
 }

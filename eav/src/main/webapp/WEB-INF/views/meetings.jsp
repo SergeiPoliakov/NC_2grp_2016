@@ -173,7 +173,7 @@
                     <div class="well bs-component"
                          style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
 
-                        <form id="eventForm" name="creation" >
+                        <form id="eventForm" name="creation" action="/addNewMeeting" method="post">
                             <div class="modal-content">
                                 <!-- Заголовок модального окна -->
                                 <div class="modal-header">
@@ -237,8 +237,7 @@
                                 <!-- Футер модального окна -->
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                                    <button type="submit" class="btn btn-primary" id="modalAddButton"
-                                            OnClick="ajaxCreateNewMeeting();">Добавить
+                                    <button type="submit" class="btn btn-primary" id="modalAddButton">Добавить
                                     </button>
                                 </div>
                             </div>
@@ -252,7 +251,7 @@
                     <div class="well bs-component"
                          style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
 
-                        <form id="formFloatingMeeting" name="creation" >
+                        <form id="formFloatingMeeting" name="creation" action="/addNewFloatingMeeting" method="post">
                             <div class="modal-content">
                                 <!-- Заголовок модального окна -->
                                 <div class="modal-header">
@@ -311,7 +310,7 @@
                                             <label for="taskDecisionTime" class="control-label">Согласовать до:</label>
                                             <div class='input-group date' id='datetimepicker5'>
                                                 <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
-                                                       name="date_start" class="form-control" id="taskDecisionTime"/>
+                                                       name="date_edit" class="form-control" id="taskDecisionTime"/>
                                                 <span class="input-group-addon">
                                                             <span class="glyphicon glyphicon-calendar"></span>
                                                         </span>
@@ -321,7 +320,7 @@
                                     <div class="row top-buffer-2">
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label for="taskAddInfo" class="control-label">Дополнительная
+                                                <label for="taskAddInfo2" class="control-label">Дополнительная
                                                     информация:</label>
                                                 <textarea type='text' name="info"
                                                           class="form-control noresize textarea-for-modal" rows="5"
@@ -333,8 +332,7 @@
                                 <!-- Футер модального окна -->
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                                    <button type="submit" class="btn btn-primary" id="modalAddButton2"
-                                            OnClick="ajaxCreateNewMeeting2();">Добавить
+                                    <button type="submit" class="btn btn-primary" id="modalAddButton2">Добавить
                                     </button>
                                 </div>
                             </div>
@@ -435,72 +433,6 @@
         );
         return dateObject;
     }
-</script>
-
-<script type="text/javascript">
-    // Функции для создания новых встреч по новому типу 2017-04-09
-    function ajaxCreateNewMeeting() {
-        $.ajax({
-            url: "/addNewMeeting",
-            type: 'POST',
-            dataType: 'json',
-            contentType: "application/json",
-            mimeType: 'application/json',
-            data: JSON.stringify({
-                title: $("#meetingTitle").val(),
-                date_start: $("#taskStartTime").val(),
-                date_end: $("#taskEndTime").val(),
-                date_edit: null,
-                info: $("#taskAddInfo").val(),
-                tag: $("#meetingTag").val(),
-                duration: null
-            }),
-            success: function (data) {
-                if (data.status == 'OK') {
-                    document.location.href='redirect:/meetings';
-                    console.log(data);
-                }
-                else {
-                    console.log('Error: add Meeting error');
-                }
-            },
-            error: function () { // если ничего не нашли
-                console.log('Error: response error');
-            }
-        });
-    }
-
-    function ajaxCreateNewMeeting2() {
-        $.ajax({
-            url: "/addNewMeeting",
-            type: 'POST',
-            dataType: 'json',
-            contentType: "application/json",
-            mimeType: 'application/json',
-            data: JSON.stringify({
-                title: $("#meetingTitle2").val(),
-                date_start: $("#taskStartTime2").val(),
-                date_end: $("#taskEndTime2").val(),
-                date_edit: $("#taskDecisionTime").val(),
-                info: $("#taskAddInfo2").val(),
-                tag: $("#meetingTag2").val(),
-                duration:  $("#taskDuration").val()
-            }),
-            success: function (data) {
-                if (data.status == 'OK') {
-                    document.location.href='redirect:/meetings';
-                    console.log(data);
-                }
-                else {
-                    console.log('Error: add Meeting error');
-                }
-            },
-            error: function () { // если ничего не нашли
-                console.log('Error: timeout Responce error');
-            }
-        });
-    }
-
 </script>
 
 </body>
