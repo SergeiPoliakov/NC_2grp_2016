@@ -140,5 +140,4 @@ public class NotificationController { // Тут вроде логировать 
         return  message;
     }
 
-
 }

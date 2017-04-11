@@ -18,7 +18,6 @@ import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.converter.DateConverter;
 import service.id_filters.MeetingFilter;
-import service.notifications.NotificationService;
 import service.notifications.UsersNotifications;
 import service.search.FinderLogic;
 import service.search.FinderTagRequest;
@@ -286,10 +285,10 @@ public class MeetingController {
         return "redirect:/meetings";
     }  */
 
-    // Добавить пользователя на встречу DO, 2017-04-11 добавил создание уведомления о добавлении ко стрече для юзеров
+    // Добавить пользователя на встречу DO
     @RequestMapping(value = "/inviteUserAtMeeting{meetingID}", method = RequestMethod.POST)
     public String inviteUserAtMeeting(@RequestParam("userIDs") String userIDs,
-                                      @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException, ParseException {
+                                      @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
 
         String[] users = userIDs.split(",");
         Meeting meeting = new Meeting();
@@ -298,22 +297,14 @@ public class MeetingController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        Integer idSender = userService.getCurrentUser().getId(); // получаем айди текущего юзера (он создатель встречи и отправитель приглашения на встречу)
         ArrayList<User> userList = meeting.getUsers();   //исправлено
         for (String userID: users) {
-            Integer idReceiver = Integer.parseInt(userID); // Приглашаемый юзер (и он же получатель уведомления)
-            User user = new User(doCache.get(idReceiver));
+            User user = new User(doCache.get(Integer.parseInt(userID)));
             userList.add(user);
-            // Формируем уведомление
-            Notification notification = new Notification("Приглашение на встречу",idSender, idReceiver, Notification.MEETING_INVITE);
-            // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
-            NotificationService.sendNotification(notification);
         }
         meeting.setUsers(userList);
         int id = loadingService.updateDataObject(meeting.toDataObject());
         doCache.invalidate(meetingID);
-
-        //
 
         // Логирвоание:
         loggerLog.add(Log.SEND_INVITE_MEETING, id);

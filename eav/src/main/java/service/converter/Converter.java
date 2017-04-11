@@ -181,6 +181,11 @@ public class Converter {
             event.setDuration(dataObject.getParameter(103));
             event.setInfo(dataObject.getParameter(104));
             event.setPriority(dataObject.getParameter(105));
+
+            event.setType_event(dataObject.getParameter(106));
+            event.setEditable(dataObject.getParameter(107));
+            event.setFloating_date_begin(dataObject.getParameter(108));
+            event.setFloating_date_end(dataObject.getParameter(109));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -267,7 +272,7 @@ public class Converter {
             dataObject.setParams(207, message.getTo_name());
 
         } else if (entitie instanceof Event) {
-            // 2017-02-28 Работаем с Событиями
+            // 2017-02-28 Работаем с Событиями, 2017-04-11 Новые поля для отображения встречи на пользовательские события
             Event event = (Event) entitie;
 
             dataObject.setId(event.getId());
@@ -279,6 +284,11 @@ public class Converter {
             dataObject.setParams(103, event.getDuration());
             dataObject.setParams(104, event.getInfo());
             dataObject.setParams(105, event.getPriority());
+
+            if (event.getType_event() != null) dataObject.setParams(106, event.getType_event());
+            if (event.getEditable() != null) dataObject.setParams(107, event.getEditable());
+            if (event.getFloating_date_begin() != null) dataObject.setParams(108, event.getFloating_date_begin());
+            if (event.getFloating_date_end() != null) dataObject.setParams(109, event.getFloating_date_end());
             //
             dataObject.setRefParams(141, event.getHost_id());
         } else if (entitie instanceof Meeting) {

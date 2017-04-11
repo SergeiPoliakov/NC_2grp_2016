@@ -13,6 +13,14 @@ import java.util.Map;
 // 1007
 public class Notification extends BaseEntitie{
 
+    // 2017-11-04 Константы класса - типы уведомлений:
+    public static final String FRIEND_REQUEST = "friendRequest";
+    public static final String MEETING_INVITE = "meetingInvite";
+    public static final String MEETING_ACCEPT = "meetingAccept"; // уведомление о принятии встречи
+    public static final String MEETING_REFUSE = "meetingRefuse"; // уведомление об отказе от встречи
+    public static final String MEETING_REQUEST = "meetingRequest";
+    public static final String INFO_FRIEND_ACCEPT = "infoFriendAccept";
+
     public static final int objTypeID = 1007;
 
     private  int  id; // не 501, это не параметр, это ключ из таблицы обджектов

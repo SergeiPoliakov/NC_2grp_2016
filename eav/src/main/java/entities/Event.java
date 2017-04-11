@@ -17,6 +17,10 @@ import java.util.TreeMap;
 public class Event extends BaseEntitie{
 
     public static final int objTypeID = 1002;
+    public static final String BASE_EVENT = "base_event";
+    public static final String DUPLICATE_EVENT = "duplicate_event";
+    public static final String EDITABLE = "editable";
+    public static final String UNEDITABLE = "uneditable";
 
     private int id; // 1
     private int host_id; // 141
@@ -26,6 +30,16 @@ public class Event extends BaseEntitie{
     private String priority; // 105
     private String info; // 104
     private String duration; // еще продолжительность 103
+
+    // 2017-04-11 Теперь еще поскольку события могут быть не просто событиями, а отображениями встречи на расписание пользователя,
+    // надо их как-то пометить и особым образом обрабатывать (у них будет 4ый приоритет, флаг редактирования / нередактирования
+    // и границы редактирования (плавающие границы по аналогии со встречей с плавающими границами). И редактировать такие
+    // отображения можно будет только через редактор оптимизатора (не сохраняя сразу в базу, а только по кнопке Сохранить):
+
+    private String type_event; // 106 // Тип события - базовое или отображение встречи, base_event | duplicate_event
+    private String editable; // 107 // Свойства события: редактируемое или нет ( editable | uneditable )
+    private String floating_date_begin; // 108 // Плавающая граница слева
+    private String floating_date_end; // 109 // Плавающая граница справа
 
 
     public int getId() {
@@ -83,6 +97,39 @@ public class Event extends BaseEntitie{
         this.duration = duration;
     }
 
+
+    public String getType_event() {
+        return type_event;
+    }
+
+    public void setType_event(String type_event) {
+        this.type_event = type_event;
+    }
+
+    public String getEditable() {
+        return editable;
+    }
+
+    public void setEditable(String editable) {
+        this.editable = editable;
+    }
+
+    public String getFloating_date_begin() {
+        return floating_date_begin;
+    }
+
+    public void setFloating_date_begin(String floating_date_begin) {
+        this.floating_date_begin = floating_date_begin;
+    }
+
+    public String getFloating_date_end() {
+        return floating_date_end;
+    }
+
+    public void setFloating_date_end(String floating_date_end) {
+        this.floating_date_end = floating_date_end;
+    }
+
     public Event() {}
 
     public Event(String name, String date_begin, String date_end, String duration, String priority, String info) {
@@ -115,6 +162,19 @@ public class Event extends BaseEntitie{
                 case (104):
                     this.info = param.getValue();
                     break;
+
+                case (106):
+                    this.type_event = param.getValue();
+                    break;
+                case (107):
+                    this.editable = param.getValue();
+                    break;
+                case (108):
+                    this.floating_date_begin = param.getValue();
+                    break;
+                case (109):
+                    this.floating_date_end = param.getValue();
+                    break;
             }
             this.name = dataObject.getName();
         }
@@ -130,6 +190,12 @@ public class Event extends BaseEntitie{
         dataObject.setParams(103, this.duration);
         dataObject.setParams(104, this.info);
         dataObject.setParams(105, this.priority);
+
+        if (this.type_event != null) dataObject.setParams(106, this.type_event);
+        if (this.editable != null) dataObject.setParams(107, this.editable);
+        if (this.floating_date_begin != null) dataObject.setParams(108, this.floating_date_begin);
+        if (this.floating_date_end != null) dataObject.setParams(109, this.floating_date_end);
+
         return dataObject;
     }
 
@@ -140,6 +206,11 @@ public class Event extends BaseEntitie{
         map.put(103, duration); // Продолжительность события. Пока что так, потом исправить, вставить расчет.      Исправлено!
         map.put(104, info);
         map.put(105, priority);
+
+        map.put(106, type_event);
+        map.put(107, editable);
+        map.put(108, floating_date_begin);
+        map.put(109, floating_date_end);
         return map;
     }
 

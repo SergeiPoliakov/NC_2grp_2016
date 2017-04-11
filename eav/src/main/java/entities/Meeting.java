@@ -1,9 +1,12 @@
 package entities;
 
 import dbHelp.DBHelp;
+import service.LoadingServiceImp;
+import service.converter.Converter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -26,6 +29,7 @@ public class Meeting extends BaseEntitie {
     private String members; // 307
     private ArrayList<User> users;
     private ArrayList<Event> events;
+    private ArrayList<Event> duplicates; // 313 // Копии задач-отображений встречи на расписание подписанных пользователей (участников встречи)
     private String status; // 309
     private String duration; //310
     // 311 - ссылка на удаленного (-ых) из встречи юзеров, в базе есть
@@ -138,6 +142,50 @@ public class Meeting extends BaseEntitie {
     public void setDate_edit(String date_edit) {
         this.date_edit = date_edit;
     }
+
+    public ArrayList<Event> getDuplicates() {
+        return duplicates;
+    }
+
+    public void setDuplicates(ArrayList<Event> duplicates) {
+        this.duplicates = duplicates;
+    }
+
+    public void setDuplicates(Event duplicate) {
+        this.duplicates.add(duplicate);
+    }
+
+    // 2017-04-11 Метод создания дубликата встречи (события) как отображения в пользовательское расписание:
+    public void createDuplicate(Integer user_id) throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
+        Event duplicate = new Event();
+        duplicate.setHost_id(user_id);
+        duplicate.setName(this.title);
+        duplicate.setDate_begin(this.date_start);
+        duplicate.setDate_end(this.date_end);
+        duplicate.setPriority("Style4"); // 4-ый приоритет, соотвествующий дубликату встречи, надо сделать для него другой цвет (и полупрозрачность) на страничке
+        duplicate.setInfo(this.info);
+        duplicate.setType_event(Event.DUPLICATE_EVENT);
+        // И проверяем, что у нас за встреча:
+        if (this.duration == null){
+            // имеем дело со встречей с фиксированными границами
+            duplicate.setEditable(Event.UNEDITABLE);
+        }
+        else{
+            // иначе имеем дело со встречей с плавающими границами
+            duplicate.setDuration(this.duration);
+            duplicate.setType_event(Event.DUPLICATE_EVENT);
+            duplicate.setEditable(Event.EDITABLE);
+            duplicate.setFloating_date_begin(this.date_start);
+            duplicate.setFloating_date_end(this.date_end);
+        }
+
+        // Привешиваем дубликат к нашей встрече
+        this.setDuplicates(duplicate);
+        // и сохраняем в базу:
+        DataObject dataObject = new Converter().toDO(duplicate);
+        new LoadingServiceImp().setDataObjectToDB(dataObject);
+    }
+
 
     public Meeting(){}
 
