@@ -6,6 +6,7 @@ import service.*;
 import service.cache.DataObjectCache;
 import service.converter.*;
 import service.id_filters.EventFilter;
+import service.search.SearchParser;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -30,11 +31,18 @@ public class SlotManager {
 
     // 1) Метод для получения списка свободных слотов для юзера с айди user_id за период времени с date_start до date_end
     public ArrayList<Slot> getFreeSlots(SlotRequest slotRequest) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
-        return getFreeSlots(new Integer(slotRequest.getUser().trim()), new Integer(slotRequest.getMeeting().trim()), slotRequest.getStart().trim(), slotRequest.getEnd().trim());
+        ArrayList<Integer> listIds = new ArrayList<>();
+        ArrayList<String> listSting = SearchParser.parse(slotRequest.getUser());
+        assert listSting != null;
+        for (String str: listSting
+                ) {
+            listIds.add(Integer.parseInt(str));
+        }
+        return getFreeSlots(listIds, new Integer(slotRequest.getMeeting().trim()), slotRequest.getStart().trim(), slotRequest.getEnd().trim());
     }
 
-    // 2) Метод для получения списка свободных слотов для юзера с айди user_id за период времени с date_start до date_end
-    public ArrayList<Slot> getFreeSlots(Integer user_id, Integer meeting_id, String date_start, String date_end) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
+    // 2) Метод для получения списка свободных слотов для всех юзеров встречи за период времени с date_start до date_end
+    public ArrayList<Slot> getFreeSlots(ArrayList<Integer> users, Integer meeting_id, String date_start, String date_end) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
         ArrayList<Slot> freeSlots = new ArrayList<>();
         ArrayList<Slot> freeSlotsForMeeting = new ArrayList<>();  // свободные слоты для встечи
         // Пробуем преобразовать даты из строки к обычным датам
@@ -43,7 +51,13 @@ public class SlotManager {
 
         if (start == null | end == null) return freeSlots; // Выходим из метода, если не удалось сконвертировать
         // Выбираем все события из расписаеия юзера за заданный период:
-        ArrayList<Integer> ids = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER, EventFilter.BETWEEN_TWO_DATES, date_start, date_end));
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (Integer user: users
+                ) {
+            ArrayList<Integer> list = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_USER_WITH_ID, String.valueOf(user), EventFilter.BETWEEN_TWO_DATES, date_start, date_end));
+            ids.addAll(list);
+        }
+
         ArrayList<DataObject> aldo = loadingService.getListDataObjectByListIdAlternative(ids); // allSlots
         ArrayList<Event> events = new Converter().ToEvent(aldo);
         ArrayList<Slot> usageSlots = new ArrayList<>();
@@ -70,7 +84,7 @@ public class SlotManager {
         }
 
         for (Slot freeSlot : freeSlots
-             ) {
+                ) {
             System.out.println(DateConverter.duration(freeSlot.getString_start(), freeSlot.getString_end()));
         }
 
@@ -88,6 +102,8 @@ public class SlotManager {
             }
         }
         System.out.println("КОЛИЧЕСТВО СВОБОДНЫХ СЛОТОВ :" + count);
+
+        int user_id = userService.getObjID(userService.getCurrentUsername());
 
         // и оставим точку сохранения в слот-сейвере:
         slotSaver.add(user_id,  events, usageSlots, freeSlotsForMeeting, date_start, date_end);

@@ -12,10 +12,10 @@ function doAjaxFreeSlots() {
         contentType: 'application/json',
         mimeType: 'application/json',
         data: JSON.stringify({
-            user: u_id,
+            user: str,
             meeting: m_id,
-            start: "03.04.2017 00:00",
-            end: "10.04.2017 00:00"
+            start: "05.04.2017 00:00",
+            end: "12.04.2017 00:00"
         }),
         success: function (data) {
 

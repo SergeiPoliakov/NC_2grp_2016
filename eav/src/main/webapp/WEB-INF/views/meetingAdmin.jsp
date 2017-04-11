@@ -48,10 +48,15 @@
         }
     </style>
 
+
     <script>
         var m_id = ${meeting.id};
+        var str = "";
 
-        var u_id = ${meeting.organizer.id};
+        <c:forEach items="${ids}" var="users_id">
+                str = str + ${users_id} + ", ";
+        </c:forEach>
+
     </script>
 
 

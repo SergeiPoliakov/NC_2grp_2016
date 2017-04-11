@@ -220,6 +220,13 @@ public class MeetingController {
         DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
         User user = converter.ToUser(dataObject);
 
+        ArrayList<Integer> listIds = new ArrayList<>();
+        for (User user_id: meetingUsers
+             ) {
+            listIds.add(user_id.getId());
+        }
+        m.addAttribute("ids", listIds);
+
 
         if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
             return "/meetingAdmin";
