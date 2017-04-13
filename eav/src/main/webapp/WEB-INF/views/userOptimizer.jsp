@@ -300,10 +300,13 @@
                 $('#taskmodal').modal('hide');
                 // Изменение элемента на таймлайне, наверное уже не нужно, т.к. сервер сам перегружает данные, но на всякий пусть останется
                 $.ajax({
-                    url : '/userAddEventAJAX',
+                    url : '/userOptimizerAddEventAJAX',
                     type: 'POST',
                     dataType: 'json',
                     data : {
+                        meeting_id: ${meeting_id},
+                        meeting_date_start: ${meeting_date_start},
+                        meeting_date_end: ${meeting_date_end},
                         name: item.content,
                         priority: item.className,
                         date_begin: toLocaleDateTimeString(item.start),
@@ -326,9 +329,14 @@
             //$('#eventForm').attr('action', '/userRemoveEvent/'+item.id);
             //$( "#eventForm" ).submit();
             $.ajax({
-                url : '/userRemoveEventAJAX/' + item.id,
+                url : '/userOptimizerRemoveEventAJAX/' + item.id,
                 type: 'POST',
                 dataType: 'json',
+                data : {
+                    meeting_id: ${meeting_id},
+                    meeting_date_start: ${meeting_date_start},
+                    meeting_date_end: ${meeting_date_end}
+                },
                 success: function (data) {
                     addInfoArray[item.id] = "";
                     callback(item);
@@ -356,10 +364,13 @@
                 item.content = document.getElementById('taskName').value;
                 $('#taskmodal').modal('hide');
                 $.ajax({
-                    url : '/userChangeEventAJAX/' + item.id,
+                    url : '/userOptimizerChangeEventAJAX/' + item.id,
                     type: 'POST',
                     dataType: 'json',
                     data : {
+                        meeting_id: ${meeting_id},
+                        meeting_date_start: ${meeting_date_start},
+                        meeting_date_end: ${meeting_date_end},
                         name: item.content,
                         priority: item.className,
                         date_begin: toLocaleDateTimeString(item.start),
@@ -381,10 +392,13 @@
         // Перемещение задачи
         onMove: function (item, callback) {
             $.ajax({
-                url : '/userChangeEventAJAX/' + item.id,
+                url : '/userOptimizerChangeEventAJAX/' + item.id,
                 type: 'POST',
                 dataType: 'json',
                 data : {
+                    meeting_id: ${meeting_id},
+                    meeting_date_start: ${meeting_date_start},
+                    meeting_date_end: ${meeting_date_end},
                     name: item.content,
                     priority: item.className,
                     date_begin: toLocaleDateTimeString(item.start),

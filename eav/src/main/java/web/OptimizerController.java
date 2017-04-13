@@ -13,6 +13,7 @@ import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.converter.Converter;
+import service.converter.DateConverter;
 import service.id_filters.EventFilter;
 import service.id_filters.NotificationFilter;
 import service.notifications.UsersNotifications;
@@ -37,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -65,7 +67,7 @@ public class OptimizerController {
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
         ArrayList<DataObject> list = new ArrayList<>();
 
-        for(Map.Entry<Integer, DataObject> e : map.entrySet()) {
+        for (Map.Entry<Integer, DataObject> e : map.entrySet()) {
             list.add(e.getValue());
         }
 
@@ -100,19 +102,6 @@ public class OptimizerController {
 
         DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
 
-        //date_start = "02.04.2017 00:00"; // Временно
-        //date_end = "17.04.2017 00:00";
-        // збавляемся от разделительных пробелов, если они есть
-        System.out.println(date_start);
-        System.out.println(date_end);
-
-
-        //date_start = date_start.replace ("_", " ");
-       // date_end = date_end.replace ("_", " ");
-
-        //System.out.println(date_start);
-       // System.out.println(date_end);
-
         Integer meet_id = new Integer(meeting_id.trim());
         // Пытаемся получить финальную точку сохранения эвентов из сейвера по составному ключу
         ArrayList<Event> events = SlotSaver.getEventFinalPoint(currentUser.getId(), meet_id, date_start, date_end);
@@ -139,6 +128,10 @@ public class OptimizerController {
 
                 m.addAttribute("allEvents", events);
 
+                m.addAttribute("meeting_id", meeting_id);
+                m.addAttribute("meeting_date_start", date_start);
+                m.addAttribute("meeting_date_end", date_end);
+
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
@@ -155,8 +148,98 @@ public class OptimizerController {
     }
 
 
+    // 2017-04-13 На подгрузку страницы оптимизации расписания конкретного юзера: (все работает через сайвер, в отличие от методов в других контроллерах) Integer meeting_id
+    /*@RequestMapping(value = "/userOptimizer/{meeting_id}/{date_start}/{date_end}", method = RequestMethod.GET)
+    public String userOptimizerPage(@PathVariable("meeting_id") String meeting_id,
+                                    @PathVariable("date_start") String date_start,
+                                    @PathVariable("date_end") String date_end,
+
+*/
+
+    // 2017-04-13 На добавление события через AJAX в сейвер
+    @RequestMapping(value = "/userOptimizerAddEventAJAX", method = RequestMethod.POST)
+    @ResponseBody
+    public Response userOptimizerAddEventAJAX(@ModelAttribute("meeting_id") String meeting_id,
+                                              @ModelAttribute("meeting_date_start") String meeting_date_start,
+                                              @ModelAttribute("meeting_date_end") String meeting_date_end,
+
+                                              @ModelAttribute("name") String name,
+                                              @ModelAttribute("priority") String priority,
+                                              @ModelAttribute("date_begin") String date_begin,
+                                              @ModelAttribute("date_end") String date_end,
+                                              @ModelAttribute("info") String info
+    ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException, ExecutionException {
+
+        Response response = new Response();
+
+        // Формируем новое событие
+        Long duration = DateConverter.duration(date_begin, date_end);
+        Event event = new Event(name, date_begin, date_end, duration.toString(), priority, info);
+        Integer root_id = userService.getObjID(userService.getCurrentUsername());
+        Integer meet_id = new Integer(meeting_id.trim());
+
+        // и заносим в сейвер наше событие, (а там автоматом сформируются для него свободные и занятые слоты)
+        SlotSaver.addEvent(root_id, meet_id, event, meeting_date_start, meeting_date_end);
+
+        response.setText("OK");
+        return response;
+    }
 
 
+    // 2017-04-13 На редактирование события через AJAX в сейвер
+    @RequestMapping(value = "/userOptimizerChangeEventAJAX/{eventId}", method = RequestMethod.POST)
+    @ResponseBody
+    public Response userOptimizerChangeEventAJAX(@PathVariable("eventId") Integer event_id,
+
+                                                 @ModelAttribute("meeting_id") String meeting_id,
+                                                 @ModelAttribute("meeting_date_start") String meeting_date_start,
+                                                 @ModelAttribute("meeting_date_end") String meeting_date_end,
+
+                                                 @ModelAttribute("name") String name,
+                                                 @ModelAttribute("priority") String priority,
+                                                 @ModelAttribute("date_begin") String date_begin,
+                                                 @ModelAttribute("date_end") String date_end,
+                                                 @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException, ExecutionException {
+
+        Response response = new Response();
+
+        // Формируем новое событие
+        Long duration = DateConverter.duration(date_begin, date_end);
+        Event event = new Event(name, date_begin, date_end, duration.toString(), priority, info);
+        event.setId(event_id);
+        Integer root_id = userService.getObjID(userService.getCurrentUsername());
+        Integer meet_id = new Integer(meeting_id.trim());
+
+        // и обновляем в сейвере наше событие, (а там автоматом сформируются для него свободные и занятые слоты)
+        SlotSaver.updateEvent(root_id, meet_id, event, meeting_date_start, meeting_date_end);
+
+        response.setText("OK");
+        return response;
+    }
+
+
+    // 2017-04-14 На удаление события через AJAX из сейвера
+    @RequestMapping(value = "/userOptimizerRemoveEventAJAX/{eventId}", method = RequestMethod.POST)
+    @ResponseBody
+    public Response userOptimizerRemoveEventAJAX(@PathVariable("eventId") Integer event_id,
+
+                                                 @ModelAttribute("meeting_id") String meeting_id,
+                                                 @ModelAttribute("meeting_date_start") String meeting_date_start,
+                                                 @ModelAttribute("meeting_date_end") String meeting_date_end
+
+    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException {
+
+        Response response = new Response();
+
+        Integer root_id = userService.getObjID(userService.getCurrentUsername());
+        Integer meet_id = new Integer(meeting_id.trim());
+
+        // удаляем из сейвера наше событие, (а там автоматом пересчитаются свободные и занятые слоты)
+        SlotSaver.removeEvent(root_id, meet_id, event_id, meeting_date_start, meeting_date_end);
+
+        response.setText("OK");
+        return response;
+    }
 
 
     // На подгрузку страницы оптимизации встречи для администртора встречи:
