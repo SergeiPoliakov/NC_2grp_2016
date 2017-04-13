@@ -1,21 +1,42 @@
 package web;
 
+import com.google.common.cache.LoadingCache;
+import entities.*;
+import exception.CustomException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+import service.LoadingServiceImp;
+import service.UserServiceImp;
+import service.cache.DataObjectCache;
+import service.converter.Converter;
+import service.id_filters.EventFilter;
+import service.id_filters.NotificationFilter;
+import service.notifications.UsersNotifications;
 import service.optimizer.Slot;
 import service.optimizer.SlotManager;
 import service.optimizer.SlotRequest;
+import service.optimizer.SlotSaver;
 import service.statistics.StatRequest;
 import service.statistics.StatResponse;
+import service.statistics.StatisticLogger;
 import service.statistics.StatisticManager;
+import service.tags.NameNodeTree;
+import service.tags.TagTreeManager;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -24,6 +45,32 @@ import java.util.concurrent.ExecutionException;
 // Класс-контроллер для работы с оптимизатором встреч
 @Controller
 public class OptimizerController {
+
+    // Собственный внутренний логгер для контроллера
+    private StatisticLogger loggerLog = new StatisticLogger();
+
+    private TagTreeManager tagTreeManager = new TagTreeManager();
+
+    private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
+
+    private LoadingServiceImp loadingService = new LoadingServiceImp();
+
+    private UserServiceImp userService = new UserServiceImp();
+
+    private Converter converter = new Converter();
+
+    public OptimizerController() throws IOException {
+    }
+
+    private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
+        ArrayList<DataObject> list = new ArrayList<>();
+
+        for(Map.Entry<Integer, DataObject> e : map.entrySet()) {
+            list.add(e.getValue());
+        }
+
+        return list;
+    }
 
     // На подгрузку страницы cвободных слотов:
     @RequestMapping(value = "/slots", method = RequestMethod.GET)
@@ -37,4 +84,91 @@ public class OptimizerController {
     public ArrayList<Slot> getStat(@RequestBody SlotRequest slotRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         return new SlotManager().getFreeSlots(slotRequest);
     }
+
+    // На подгрузку страницы оптимизации расписания конкретного юзера:
+    @RequestMapping(value = "/userOptimizer", method = RequestMethod.GET)
+    public String userOptimizerPage() throws SQLException {
+        return "userOptimizer";
+    }
+
+    // 2017-04-13 На подгрузку страницы оптимизации расписания конкретного юзера: (все работает через сайвер, в отличие от методов в других контроллерах) Integer meeting_id
+    @RequestMapping(value = "/userOptimizer/{meeting_id}/{date_start}/{date_end}", method = RequestMethod.GET)
+    public String userOptimizerPage(@PathVariable("meeting_id") String meeting_id,
+                                    @PathVariable("date_start") String date_start,
+                                    @PathVariable("date_end") String date_end,
+                                    ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException, ParseException {
+
+        DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
+
+        //date_start = "02.04.2017 00:00"; // Временно
+        //date_end = "17.04.2017 00:00";
+        // збавляемся от разделительных пробелов, если они есть
+        System.out.println(date_start);
+        System.out.println(date_end);
+
+
+        //date_start = date_start.replace ("_", " ");
+       // date_end = date_end.replace ("_", " ");
+
+        //System.out.println(date_start);
+       // System.out.println(date_end);
+
+        Integer meet_id = new Integer(meeting_id.trim());
+        // Пытаемся получить финальную точку сохранения эвентов из сейвера по составному ключу
+        ArrayList<Event> events = SlotSaver.getEventFinalPoint(currentUser.getId(), meet_id, date_start, date_end);
+        // Если они есть, то уже начинали оптимизировать, о не успели сохранить в базу, и дальше работаем с ними, иначе надо выбрать из кэша (и из базы) нужные события и положить их в сейвер, а затем отправить на страницу
+        if (events == null){
+            try {
+                ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER, EventFilter.BETWEEN_TWO_DATES, date_start, date_end));
+                System.out.println("Ищем в кэше список событий данного пользователя ");
+                Map<Integer, DataObject> map = doCache.getAll(il);
+                ArrayList<DataObject> list = getListDataObject(map);
+                events = new ArrayList<>(list.size());
+                for (DataObject dataObject : list) {
+                    Event event = new Event(dataObject);
+                    events.add(event);
+                    // и заодно заносим в сейвер наши события, предварительно сформировав для них свободные и занятые слоты
+                    ArrayList<Slot> usageSlots = new SlotManager().getUsageSlots(events, date_start, date_end);
+                    ArrayList<Slot> freeSlots = new SlotManager().getFreeSlots(meet_id, events, date_start, date_end);
+                    int user_id = userService.getObjID(userService.getCurrentUsername());
+                    SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // и заносим точку сохранения в слот-сейвере:
+                }
+
+                User user = userService.getCurrentUser();
+                m.addAttribute(user);
+
+                m.addAttribute("allEvents", events);
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+        // Логирование
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.PAGE, "userOptimizer", idUser); // Посещение страницы
+
+
+        return "userOptimizer";
+    }
+
+
+
+
+
+
+    // На подгрузку страницы оптимизации встречи для администртора встречи:
+    @RequestMapping(value = "/adminOptimizer", method = RequestMethod.GET)
+    public String adminOptimizerPage() throws SQLException {
+        return "adminOptimizer";
+    }
+
+    // На прием измененных данных о расписании пользователя в сейвер (со страницы оптимизации расписания конкретного юзера):
+    /* @RequestMapping(value = "/addToUserSlotSaver", method = RequestMethod.GET)
+    public String userOptimizerPage() throws SQLException {
+        return "userOptimizer";
+    }
+    */ // Тут еще надо продумать, как отправлять и что, напрямер, в json кидать ил и просто через @RequestParam
 }

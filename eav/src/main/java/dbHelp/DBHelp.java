@@ -808,7 +808,7 @@ public class DBHelp {
     public String parseGenerate(BaseFilter filter) throws SQLException {
         System.out.println("Запускаю parseGenerate");
 
-        String sql = "SELECT ob.OBJECT_ID FROM OBJECTS ob ";
+        String sql = "SELECT DISTINCT ob.OBJECT_ID FROM OBJECTS ob ";
         TreeMap<String, ArrayList<String>> params = filter.getParams();
 
         // в зависимости от типа фильтра
@@ -978,10 +978,18 @@ public class DBHelp {
             if (params.get(EventFilter.ALL) != null) { // если надо получить IDs всех событий в системе,
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT;
             } else if (params.get(EventFilter.FOR_CURRENT_USER) != null) { // если надо получить ID всех событий текущего пользователей,
+
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT + " ";
+                sql += "AND re.OBJECT_ID = " + userService.getCurrentUser().getId() + " ";
+
+
+                /*
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
                 sql += "JOIN PARAMS pa ON re.OBJECT_ID = pa.OBJECT_ID ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT + " ";
                 sql += "AND pa.VALUE = " + "'" + userService.getCurrentUsername() + "'" + " ";
+                */
             } else if (params.get(EventFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех событий пользователя с конкретным именем,
                 ArrayList<String> user_name = params.get(EventFilter.FOR_USER_WITH_NAME);
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
@@ -1039,9 +1047,16 @@ public class DBHelp {
                         "AND pa.ATTR_ID = 101 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi') > TO_DATE('" + after_date.get(0) + "', 'dd.mm.yyyy hh24:mi'))"; // dd.mm.yyyy hh24:mi:ss
             } else if (params.get(EventFilter.BETWEEN_TWO_DATES) != null) { // если надо получить ID всех событий МЕЖДУ двумя датами,
                 ArrayList<String> date = params.get(EventFilter.BETWEEN_TWO_DATES);
-                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
-                        "AND pa.ATTR_ID = 101 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi') " +
-                        "BETWEEN TO_DATE('" + date.get(0) + "', 'dd.mm.yyyy hh24:mi') AND TO_DATE('" + date.get(1) + "', 'dd.mm.yyyy hh24:mi'))"; // dd.mm.yyyy hh24:mi:ss
+                sql = "SELECT DISTINCT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND ( pa.ATTR_ID = 101 OR pa.ATTR_ID = 102 ) " +
+                        "AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi') > TO_DATE('" + date.get(0) + "', 'dd.mm.yyyy hh24:mi')) " +
+                        "AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi') < TO_DATE('" + date.get(1) + "', 'dd.mm.yyyy hh24:mi')) ";
+
+
+                /*sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND ( pa.ATTR_ID = 101 OR pa.ATTR_ID = 102 ) AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi') " +
+                        "> TO_DATE('" + date.get(0) + "', 'dd.mm.yyyy hh24:mi') AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi') < TO_DATE('" + date.get(1) + "', 'dd.mm.yyyy hh24:mi'))"; // dd.mm.yyyy hh24:mi:ss
+                */
             }
 
             //sql += "ORDER BY ob.OBJECT_ID"; // И группируем. Возможно придется сабрать в каждую else, если не сработает с INTERSECT

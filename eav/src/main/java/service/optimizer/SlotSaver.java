@@ -46,11 +46,11 @@ public class SlotSaver {
     }
 
     // Метод добавления точки сохранения состояния слотов по составному ключу
-    synchronized public static void add(Integer root_id, ArrayList<Event> events, ArrayList<Slot> usageSlots, ArrayList<Slot> freeSlots, String date_start, String date_end){
+    synchronized public static void add(Integer root_id, Integer meeting_id, ArrayList<Event> events, ArrayList<Slot> usageSlots, ArrayList<Slot> freeSlots, String date_start, String date_end){
         // Фиксируем текущее время загрузки в мапу точки сохранения:
         LocalDateTime savePointDate = LocalDateTime.now();
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) == null){ // если нет, то создаем ячейку для серии точек сохранения
             eventMap.put(key, new ArrayList<>());
@@ -68,10 +68,10 @@ public class SlotSaver {
     //------------------------------------------------------------------------------------------------
 
     // GF1) Метод получения финальной точки сохранения занятых слотов по составному ключу
-    synchronized public static ArrayList<Slot> getUsageSlotFinalPoint(Integer root_id, String date_start, String date_end){
+    synchronized public static ArrayList<Slot> getUsageSlotFinalPoint(Integer root_id, Integer meeting_id, String date_start, String date_end){
         ArrayList<Slot> result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null){ // если есть, то отдаем последнюю сохраненную
             result = usageSlotMap.get(key).get(usageSlotMap.get(key).size()-1);
@@ -81,10 +81,10 @@ public class SlotSaver {
     }
 
     // GS1) Метод получения стартовой точки сохранения занятых слотов по составному ключу
-    synchronized public static ArrayList<Slot> getUsageSlotStartPoint(Integer root_id, String date_start, String date_end){
+    synchronized public static ArrayList<Slot> getUsageSlotStartPoint(Integer root_id, Integer meeting_id, String date_start, String date_end){
         ArrayList<Slot> result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null){ // если есть, то отдаем последнюю сохраненную
             result = usageSlotMap.get(key).get(0);
@@ -94,10 +94,10 @@ public class SlotSaver {
     }
 
     // GP1) Метод получения промежуточной точки сохранения занятых слотов по составному ключу
-    synchronized public static ArrayList<Slot> getUsageSlotFinalPoint(Integer root_id, String date_start, String date_end, int posPoint){
+    synchronized public static ArrayList<Slot> getUsageSlotPoint(Integer root_id, Integer meeting_id, String date_start, String date_end, int posPoint){
         ArrayList<Slot> result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null){ // если есть, то отдаем последнюю сохраненную
             result = usageSlotMap.get(key).get(posPoint);
@@ -109,10 +109,10 @@ public class SlotSaver {
     //------------------------------------------------------------------------------------------------
 
     // GF2) Метод получения финальной точки сохранения свободных слотов по составному ключу
-    synchronized public static ArrayList<Slot> getFreeSlotFinalPoint(Integer root_id, String date_start, String date_end){
+    synchronized public static ArrayList<Slot> getFreeSlotFinalPoint(Integer root_id, Integer meeting_id, String date_start, String date_end){
         ArrayList<Slot> result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null){ // если есть, то отдаем последнюю сохраненную
             result = freeSlotMap.get(key).get(freeSlotMap.get(key).size()-1);
@@ -122,10 +122,10 @@ public class SlotSaver {
     }
 
     // GS2) Метод получения стартовой точки сохранения свободных слотов по составному ключу
-    synchronized public static ArrayList<Slot> getFreeSlotStartPoint(Integer root_id, String date_start, String date_end){
+    synchronized public static ArrayList<Slot> getFreeSlotStartPoint(Integer root_id, Integer meeting_id, String date_start, String date_end){
         ArrayList<Slot> result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null){ // если есть, то отдаем последнюю сохраненную
             result = freeSlotMap.get(key).get(0);
@@ -135,10 +135,10 @@ public class SlotSaver {
     }
 
     // GP2) Метод получения промежуточной точки сохранения свободных слотов по составному ключу
-    synchronized public static ArrayList<Slot> getFreeSlotFinalPoint(Integer root_id, String date_start, String date_end, int posPoint){
+    synchronized public static ArrayList<Slot> getFreeSlotPoint(Integer root_id, Integer meeting_id, String date_start, String date_end, int posPoint){
         ArrayList<Slot> result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null){ // если есть, то отдаем последнюю сохраненную
             result = freeSlotMap.get(key).get(posPoint);
@@ -150,10 +150,10 @@ public class SlotSaver {
     //------------------------------------------------------------------------------------------------
 
     // GF3) Метод получения финальной точки сохранения эвентов по составному ключу
-    synchronized public static ArrayList<Event> getEventFinalPoint(Integer root_id, String date_start, String date_end){
+    synchronized public static ArrayList<Event> getEventFinalPoint(Integer root_id, Integer meeting_id, String date_start, String date_end){
         ArrayList<Event> result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null){ // если есть, то отдаем последнюю сохраненную
             result = eventMap.get(key).get(eventMap.get(key).size()-1);
@@ -163,10 +163,10 @@ public class SlotSaver {
     }
 
     // GS3) Метод получения стартовой точки сохранения эвентов по составному ключу
-    synchronized public static ArrayList<Event> getEventStartPoint(Integer root_id, String date_start, String date_end){
+    synchronized public static ArrayList<Event> getEventStartPoint(Integer root_id, Integer meeting_id, String date_start, String date_end){
         ArrayList<Event> result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null){ // если есть, то отдаем последнюю сохраненную
             result = eventMap.get(key).get(0);
@@ -176,10 +176,10 @@ public class SlotSaver {
     }
 
     // GP3) Метод получения промежуточной точки сохранения эвентов по составному ключу
-    synchronized public static ArrayList<Event> getEventFinalPoint(Integer root_id, String date_start, String date_end, int posPoint){
+    synchronized public static ArrayList<Event> getEventPoint(Integer root_id, Integer meeting_id, String date_start, String date_end, int posPoint){
         ArrayList<Event> result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null){ // если есть, то отдаем последнюю сохраненную
             result = eventMap.get(key).get(posPoint);
@@ -193,9 +193,9 @@ public class SlotSaver {
     // Метод удаления всех точек сохранения для банного составного ключа
     // (например, когда уже нажали кнопку сохранить на странице и все изменения зокоммитились в базу, можно сайвер освободить от истории изменений)
     // но можно и оставить самую финальную, чтобы из бызы потом не тянуть
-    synchronized public static void remove(Integer root_id, String date_start, String date_end){
+    synchronized public static void remove(Integer root_id, Integer meeting_id, String date_start, String date_end){
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + date_start + "~" + date_end; // то-то типа "10003~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null){ // если есть, то вытаскиваем последнюю сохраненную
             // ArrayList<Event> events = eventMap.get(key).get(eventMap.get(key).size()-1);

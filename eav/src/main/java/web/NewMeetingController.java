@@ -93,6 +93,16 @@ public class NewMeetingController {
         // а затем подписать юзера на встречу (но хотя сейчас сделано так, что он уже подписан) и сделать копию встречи как отображение новой задачей в базу пользователю и посмотреть, нет ли пересечений с расписанием, и если есть, вывести новое уведомление
         meeting.createDuplicate(idSender);
 
+        // И заодно проверяем, не перекрывается ли его расписание новой встречей
+        ArrayList<Event> overlapEvents = new SlotManager().getOverlapEvents(meeting);
+        if (overlapEvents != null){
+            // Если перекрывается, выводим уведомление пользователю:
+            // Формируем уведомление // Тут бы в качетсве отправителя выставить систе юзера, а его еще надо создать!!
+            Notification notification = new Notification("Встреча " + meeting.getTitle() + " совпадает по времени с задачами в Вашем расписании. Нажмите \"Продолжить\" для оптимизации", idSender, idSender, Notification.MEETING_OVERLAP);
+            // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
+            NotificationService.sendNotification(notification);
+        }
+
         return "redirect:/meetings";
     }
 
