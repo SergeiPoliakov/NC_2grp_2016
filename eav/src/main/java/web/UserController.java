@@ -786,10 +786,11 @@ public class UserController {
         String privateMessage = request.getParameter("privateMessage");
         String privateAddFriend = request.getParameter("privateAddFriend");
         String privateLookFriend = request.getParameter("privateLookFriend");
+        String privateMeetingInvite = request.getParameter("privateMeetingInvite");
 
         Settings settings = new Settings(settingsID, userService.getObjID(userService.getCurrentUsername()),
                 emailNewMessage, emailNewFriend, emailMeetingInvite, phoneNewMessage, phoneNewFriend, phoneMeetingInvite,
-                privateProfile, privateMessage, privateAddFriend, privateLookFriend);
+                privateProfile, privateMessage, privateAddFriend, privateLookFriend, privateMeetingInvite);
 
         DataObject dataObject = converter.toDO(settings);
         loadingService.updateDataObject(dataObject);

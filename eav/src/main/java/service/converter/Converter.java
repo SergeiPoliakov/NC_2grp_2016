@@ -207,6 +207,7 @@ public class Converter {
             settings.setPrivateMessage(dataObject.getParameter(409));
             settings.setPrivateAddFriend(dataObject.getParameter(410));
             settings.setPrivateLookFriend(dataObject.getParameter(411));
+            settings.setPrivateMeetingInvite(dataObject.getParameter(412));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -320,6 +321,7 @@ public class Converter {
             dataObject.setParams(409, settings.getPrivateMessage());
             dataObject.setParams(410, settings.getPrivateAddFriend());
             dataObject.setParams(411, settings.getPrivateLookFriend());
+            dataObject.setParams(412, settings.getPrivateMeetingInvite());
         } else if (entitie instanceof Notification) {
             // Работаем с Уведомлениями
             Notification notification = (Notification) entitie;

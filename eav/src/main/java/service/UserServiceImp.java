@@ -124,9 +124,8 @@ public class UserServiceImp implements UserService {
             MessagingException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
         //TODO: Здесь будем отправлять оповещения пользователю.
         // Подгружаем настройки
-        SettingsLoader settingsLoader = new SettingsLoader();
-        host_name = settingsLoader.getSetting("host_name");
-        String port = settingsLoader.getSetting("host_port");
+        host_name = SettingsLoader.getSetting("host_name");
+        String port = SettingsLoader.getSetting("host_port");
         if (!port.equals("80")) host_port = ":" + port;
         //
         try (GenericXmlApplicationContext context = new GenericXmlApplicationContext()) {
@@ -160,6 +159,10 @@ public class UserServiceImp implements UserService {
             } else if ("addFriend".equals(type)) {
                 String url = "http://" + host_name + host_port + "/allUnconfirmedFriends";
                 helper.setText("Пользователь " + userFrom.getLogin() + " хочет стать вашим другом. " +
+                        "<html><body><a href=" + url + ">" + "Подробнее" + "</a></body></html>", true);
+            } else if ("meetingInvite".equals(type)) {
+                String url = "http://" + host_name + host_port + "/meetings";
+                helper.setText("Пользователь " + userFrom.getLogin() + " приглашает вас на встречу. " +
                         "<html><body><a href=" + url + ">" + "Подробнее" + "</a></body></html>", true);
             }
 
@@ -200,6 +203,8 @@ public class UserServiceImp implements UserService {
                 sd.sendSms(userTo.getPhone(), "У вас новое сообщение от " + userFrom.getLogin() + ".", 0, "", "", 0, "NC", "");
             } else if ("addFriend".equals(type)) {
                 sd.sendSms(userTo.getPhone(), "Пользователь " + userFrom.getLogin() + " хочет стать вашим другом.", 0, "", "", 0, "NC", "");
+            } else if ("meetingInvite".equals(type)) {
+                sd.sendSms(userTo.getPhone(), "Пользователь " + userFrom.getLogin() + " приглашает вас на встречу.", 0, "", "", 0, "NC", "");
             }
             sd.getBalance();
         }

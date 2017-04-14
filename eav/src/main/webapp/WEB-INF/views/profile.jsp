@@ -181,6 +181,17 @@
 
                                             <div class="form-group">
                                                 <div class="text-center">
+                                                    <label class="control-label" for="privateMeetingInvite">Кто может приглашать меня на встречи</label>
+                                                    <select id="privateMeetingInvite" name="privateMeetingInvite" class="selectpicker show-menu-arrow" data-style="btn-info">
+                                                        <option <c:if test="${settings.privateMeetingInvite eq 'any'}">selected</c:if>  value="any">Все</option>
+                                                        <option <c:if test="${settings.privateMeetingInvite  eq 'onlyFriend'}">selected</c:if> value="onlyFriend">Только друзья</option>
+                                                        <option <c:if test="${settings.privateMeetingInvite  eq 'nobody'}">selected</c:if> value="nobody">Никто</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="text-center">
                                                     <label class="control-label" for="privateMessage">Кто может писать мне личные сообщения</label>
                                                     <select id="privateMessage" name="privateMessage" class="selectpicker show-menu-arrow" data-style="btn-info">
                                                         <option <c:if test="${settings.privateMessage eq 'any'}">selected</c:if>  value="any">Все</option>
