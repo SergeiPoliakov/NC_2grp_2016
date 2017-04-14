@@ -304,9 +304,9 @@
                     type: 'POST',
                     dataType: 'json',
                     data : {
-                        meeting_id: ${meeting_id},
-                        meeting_date_start: ${meeting_date_start},
-                        meeting_date_end: ${meeting_date_end},
+                        meeting_id: '${meeting_id}',
+                        meeting_date_start: '${meeting_date_start}',
+                        meeting_date_end: '${meeting_date_end}',
                         name: item.content,
                         priority: item.className,
                         date_begin: toLocaleDateTimeString(item.start),
@@ -333,9 +333,9 @@
                 type: 'POST',
                 dataType: 'json',
                 data : {
-                    meeting_id: ${meeting_id},
-                    meeting_date_start: ${meeting_date_start},
-                    meeting_date_end: ${meeting_date_end}
+                    meeting_id: '${meeting_id}',
+                    meeting_date_start: '${meeting_date_start}',
+                    meeting_date_end: '${meeting_date_end}'
                 },
                 success: function (data) {
                     addInfoArray[item.id] = "";
@@ -368,9 +368,9 @@
                     type: 'POST',
                     dataType: 'json',
                     data : {
-                        meeting_id: ${meeting_id},
-                        meeting_date_start: ${meeting_date_start},
-                        meeting_date_end: ${meeting_date_end},
+                        meeting_id: '${meeting_id}',
+                        meeting_date_start: '${meeting_date_start}',
+                        meeting_date_end: '${meeting_date_end}',
                         name: item.content,
                         priority: item.className,
                         date_begin: toLocaleDateTimeString(item.start),
@@ -396,9 +396,9 @@
                 type: 'POST',
                 dataType: 'json',
                 data : {
-                    meeting_id: ${meeting_id},
-                    meeting_date_start: ${meeting_date_start},
-                    meeting_date_end: ${meeting_date_end},
+                    meeting_id: '${meeting_id}',
+                    meeting_date_start: '${meeting_date_start}',
+                    meeting_date_end: '${meeting_date_end}',
                     name: item.content,
                     priority: item.className,
                     date_begin: toLocaleDateTimeString(item.start),
