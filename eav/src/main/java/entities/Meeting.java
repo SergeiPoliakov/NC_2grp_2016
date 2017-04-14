@@ -29,7 +29,7 @@ public class Meeting extends BaseEntitie {
     private String members; // 307
     private ArrayList<User> users;
     private ArrayList<Event> events;
-    private ArrayList<Event> duplicates; // 313 // Копии задач-отображений встречи на расписание подписанных пользователей (участников встречи)
+    private ArrayList<Event> duplicates = new ArrayList<>(); // 313 // Копии задач-отображений встречи на расписание подписанных пользователей (участников встречи) // надо бы повесить загрузчик из базы
     private String status; // 309
     private String duration; //310
     // 311 - ссылка на удаленного (-ых) из встречи юзеров, в базе есть

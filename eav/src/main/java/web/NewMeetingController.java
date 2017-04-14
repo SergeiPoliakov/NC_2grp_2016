@@ -4,8 +4,10 @@ import com.google.common.cache.LoadingCache;
 import entities.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
+import service.converter.Converter;
 import service.meetings.NewMeetingManager;
 import service.meetings.NewMeetingRequest;
 import service.meetings.NewMeetingResponce;
@@ -28,6 +30,7 @@ public class NewMeetingController {
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private UserServiceImp userService = new UserServiceImp();
+    private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     // 1) На подгрузку страницы добавления новой встречи:
     @RequestMapping(value = "/newMeeting", method = RequestMethod.GET)
@@ -42,7 +45,12 @@ public class NewMeetingController {
                                 @RequestParam("date_end") String date_end,
                                 @RequestParam("info") String info,
                                 @RequestParam("tag") String tag) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
-        Integer id = new NewMeetingManager().setNewMeeting(title, date_start, date_end, null, info, tag, null); // Не знаю, нужен ли нам будет этот айдишник
+        Integer id = new NewMeetingManager().setNewMeeting(title, date_start, date_end, null, info, tag, null);
+        // И надо организатору добавить копию встречи - событие в расписание
+        DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
+        Integer user_id = userService.getCurrentUser().getId();
+        Meeting meeting = new Meeting(dataObject);
+        meeting.createDuplicate(user_id);
 
         return "redirect:/meetings";
     }
@@ -57,6 +65,11 @@ public class NewMeetingController {
                                         @RequestParam("tag") String tag,
                                         @RequestParam("duration") String duration) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         Integer id = new NewMeetingManager().setNewMeeting(title, date_start, date_end, date_edit, info, tag, duration);
+        // И надо организатору добавить копию встречи - событие в расписание
+        DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
+        Integer user_id = userService.getCurrentUser().getId();
+        Meeting meeting = new Meeting(dataObject);
+        meeting.createDuplicate(user_id);
 
         return "redirect:/meetings";
     }

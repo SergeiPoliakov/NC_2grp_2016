@@ -105,7 +105,7 @@ public class OptimizerController {
         Integer meet_id = new Integer(meeting_id.trim());
         // Пытаемся получить финальную точку сохранения эвентов из сейвера по составному ключу
         ArrayList<Event> events = SlotSaver.getEventFinalPoint(currentUser.getId(), meet_id, date_start, date_end);
-        // Если они есть, то уже начинали оптимизировать, о не успели сохранить в базу, и дальше работаем с ними, иначе надо выбрать из кэша (и из базы) нужные события и положить их в сейвер, а затем отправить на страницу
+        // Если они есть, то уже начинали оптимизировать, но не успели сохранить в базу, и дальше работаем с ними, иначе надо выбрать из кэша (и из базы) нужные события и положить их в сейвер, а затем отправить на страницу
         if (events == null){
             try {
                 ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER, EventFilter.BETWEEN_TWO_DATES, date_start, date_end));
@@ -123,27 +123,27 @@ public class OptimizerController {
                     SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // и заносим точку сохранения в слот-сейвере:
                 }
 
-                User user = userService.getCurrentUser();
-                m.addAttribute(user);
 
-                m.addAttribute("allEvents", events);
-
-                m.addAttribute("meeting_id", meeting_id);
-                m.addAttribute("meeting_date_start", date_start);
-                m.addAttribute("meeting_date_end", date_end);
 
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
         }
+        User user = userService.getCurrentUser();
+        m.addAttribute(user);
 
+        m.addAttribute("allEvents", events);
+
+        m.addAttribute("meeting_id", meeting_id);
+        m.addAttribute("meeting_date_start", date_start);
+        m.addAttribute("meeting_date_end", date_end);
 
 
         // Логирование
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.PAGE, "userOptimizer", idUser); // Посещение страницы
 
-
+        System.out.println("СПИСОК СОБЫТИЙ ССОСТОИТ ИЗ " + events.size());
         return "userOptimizer";
     }
 
