@@ -125,9 +125,8 @@ public class SlotSaver {
         events = copyEvents(getEventFinalPoint(root_id, meeting_id, meeting_date_start, meeting_date_end));
         // Находим в ней данное событие:
         Event old_event = null;
-        for (int i = 0; i < events.size(); i++){
-            Event tmp_event = events.get(i);
-            if (event.getId() == tmp_event.getId()){
+        for (Event tmp_event : events) {
+            if (event.getId() == tmp_event.getId()) {
                 // Если айдишки совпадают, заканчиваем поиск
                 old_event = tmp_event;
                 break;
@@ -137,11 +136,12 @@ public class SlotSaver {
             addEvent(root_id, meeting_id, event, meeting_date_start, meeting_date_end); //
         } // иначе обновляем (заменяем новым):
         else{
+            events.remove(old_event);
             old_event = event;
+            events.add(old_event);
+
         }
 
-        // Добавляем к списку событий новое событие
-        events.add(event);
         // Пересчитываем занятые и свободные слоты:
         usageSlots = new SlotManager().getUsageSlots(events, meeting_date_start, meeting_date_end);
         freeSlots = new SlotManager().getFreeSlots(meeting_id, events, meeting_date_start, meeting_date_end);
@@ -192,9 +192,7 @@ public class SlotSaver {
     // 2017-04-14 Просто метод копирования событий
     synchronized public static ArrayList<Event> copyEvents(ArrayList<Event> old_events){
         ArrayList<Event> new_events = new ArrayList<>();
-        for (Event event : old_events) {
-            new_events.add(event);
-        }
+        new_events.addAll(old_events);
         return new_events;
     }
 
