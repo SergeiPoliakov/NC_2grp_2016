@@ -19,6 +19,8 @@ public class Notification extends BaseEntitie{
     public static final String MEETING_ACCEPT = "meetingAccept"; // уведомление о принятии встречи
     public static final String MEETING_REFUSE = "meetingRefuse"; // уведомление об отказе от встречи
     public static final String MEETING_OVERLAP = "meetingOverlap"; // уведомление о перекрытии расписания принятой встречей
+    public static final String OPTIMIZATION_IS_GOOD = "optimization_is_good"; // уведомление об успешном завершении оптимизации
+    public static final String OPTIMIZATION_IS_BAD = "optimization_is_bad"; // уведомление о неудачном завершении оптимизации
     public static final String MEETING_REQUEST = "meetingRequest";
     public static final String INFO_FRIEND_ACCEPT = "infoFriendAccept";
 

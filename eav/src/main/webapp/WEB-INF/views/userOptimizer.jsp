@@ -90,7 +90,24 @@
     <!-- Timeline и кнопки -->
     <div class="row top-buffer-5">
         <div class="col-md-12">
-            <h4>Расписание</h4>
+            <h4>Оптимизация расписания для встречи с [${meeting_date_start}] до [${meeting_date_end}]</h4>
+            <div id ="optimizerButtons">
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                    <a href="/meeting5">
+                        <button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"> Встреча</span></button>
+                    </a>
+                    <a href="/userOptimizerExecutorAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">
+                        <button type="button" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-flash" aria-hidden="true"> Оптимизировать</span></button>
+                    </a>
+                    <a href="/meeting5">
+                        <button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отменить</span></button>
+                    </a>
+                    <a href="/meeting5">
+                        <button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Сохранить</span></button>
+                    </a>
+                </div>
+            </div>
+
             <div id ="timelineContainer">
                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                     <div class="btn-group" role="group">

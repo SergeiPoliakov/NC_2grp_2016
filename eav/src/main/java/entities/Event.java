@@ -4,23 +4,33 @@ package entities;
  * Created by Hroniko on 31.01.2017.
  */
 import dbHelp.DBHelp;
+import service.converter.DateConverter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Event extends BaseEntitie{
+public class Event extends BaseEntitie implements Comparable<Event>  {
 
     public static final int objTypeID = 1002;
     public static final String BASE_EVENT = "base_event";
     public static final String DUPLICATE_EVENT = "duplicate_event";
     public static final String EDITABLE = "editable";
     public static final String UNEDITABLE = "uneditable";
+
+    // Приоритеты:
+    public static final String PRIOR_HIGH = "Style1"; // Высокий
+    public static final String PRIOR_MIDDLE = "Style2"; // Средний
+    public static final String PRIOR_LOW = "Style3"; // Низкий
+    public static final String PRIOR_DUPLICATE = "Style4"; // Дубликат встречи в пользовательском расписании
+
 
     private int id; // 1
     private int host_id; // 141
@@ -214,4 +224,26 @@ public class Event extends BaseEntitie{
         return map;
     }
 
+    @Override // Сравнение по длительности
+    public int compareTo(Event otherEvent) {
+        try {
+            return (this.getDlitelnost().compareTo(otherEvent.getDlitelnost()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public LocalDateTime getStart() throws ParseException {
+        return DateConverter.stringToDate(this.getDate_begin());
+    }
+
+    public LocalDateTime getEnd() throws ParseException {
+        return DateConverter.stringToDate(this.getDate_end());
+    }
+
+    public Duration getDlitelnost() throws ParseException {
+        Duration duration = Duration.between(this.getStart(), this.getEnd()); // Продолжительность
+        return duration;
+    }
 }

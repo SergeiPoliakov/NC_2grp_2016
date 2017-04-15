@@ -27,8 +27,8 @@ public class Meeting extends BaseEntitie {
     private User organizer; // 305
     private StringBuilder tag; // 306
     private String members; // 307
-    private ArrayList<User> users;
-    private ArrayList<Event> events;
+    private ArrayList<User> users = new ArrayList<>(); // 307
+    private ArrayList<Event> events = new ArrayList<>(); // 308
     private ArrayList<Event> duplicates = new ArrayList<>(); // 313 // Копии задач-отображений встречи на расписание подписанных пользователей (участников встречи) // надо бы повесить загрузчик из базы
     private String status; // 309
     private String duration; //310
@@ -284,6 +284,15 @@ public class Meeting extends BaseEntitie {
                         }
                     }
                     break;
+
+                // Events duplicates
+                case (313):
+                    if (reference != null) {
+                        for (Integer refValue : reference.getValue()) {
+                            this.duplicates.add(new Event(new DBHelp().getObjectsByIdAlternative(refValue)));
+                        }
+                    }
+                    break;
             }
         }
     }
@@ -309,7 +318,13 @@ public class Meeting extends BaseEntitie {
 
         if (this.events != null) {
             for (Event event : this.events) {
-                dataObject.setRefParams(307, event.getId());
+                dataObject.setRefParams(308, event.getId());
+            }
+        }
+
+        if (this.duplicates != null) {
+            for (Event duplicate : this.duplicates) {
+                dataObject.setRefParams(313, duplicate.getId());
             }
         }
         return dataObject;
@@ -328,6 +343,15 @@ public class Meeting extends BaseEntitie {
         map.put(310, duration);
         map.put(312, date_edit);
         return map;
+    }
+
+    // Метод получения айдишников дубликатов встречи - ее отображений в виде события на расписание юзеров
+    public ArrayList<Integer> getDuplicateIDs(){
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (Event dublicate: this.duplicates) {
+            ids.add(dublicate.getId());
+        }
+        return ids;
     }
 
 }

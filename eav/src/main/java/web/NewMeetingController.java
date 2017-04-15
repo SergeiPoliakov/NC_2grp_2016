@@ -65,11 +65,14 @@ public class NewMeetingController {
                                         @RequestParam("tag") String tag,
                                         @RequestParam("duration") String duration) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         Integer id = new NewMeetingManager().setNewMeeting(title, date_start, date_end, date_edit, info, tag, duration);
-        // И надо организатору добавить копию встречи - событие в расписание
+        // И надо организатору добавить копию встречи - событие в расписание // 2017-04-15 А, может, и не надо))
+
         DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
         Integer user_id = userService.getCurrentUser().getId();
         Meeting meeting = new Meeting(dataObject);
         meeting.createDuplicate(user_id);
+        loadingService.updateDataObject(meeting.toDataObject());
+
 
         return "redirect:/meetings";
     }

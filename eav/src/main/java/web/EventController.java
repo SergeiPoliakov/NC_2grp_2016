@@ -72,6 +72,7 @@ public class EventController {
         mapAttr.put(103, String.valueOf(DateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
+        mapAttr.put(106, Event.BASE_EVENT);
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
         mapAttr.put(141, host_id); // Ссылка на юзера, создавшего событие
 

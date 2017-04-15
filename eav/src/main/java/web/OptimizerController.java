@@ -17,10 +17,7 @@ import service.converter.DateConverter;
 import service.id_filters.EventFilter;
 import service.id_filters.NotificationFilter;
 import service.notifications.UsersNotifications;
-import service.optimizer.Slot;
-import service.optimizer.SlotManager;
-import service.optimizer.SlotRequest;
-import service.optimizer.SlotSaver;
+import service.optimizer.*;
 import service.statistics.StatRequest;
 import service.statistics.StatResponse;
 import service.statistics.StatisticLogger;
@@ -74,26 +71,26 @@ public class OptimizerController {
         return list;
     }
 
-    // На подгрузку страницы cвободных слотов:
+    // 1) На подгрузку страницы cвободных слотов:
     @RequestMapping(value = "/slots", method = RequestMethod.GET)
     public String slotsPage() throws SQLException {
         return "slots";
     }
 
-    // К запросу на получение данных по свободным слотам
+    // 2) К запросу на получение данных по свободным слотам
     @RequestMapping(value = "/getFreeSlots", method = RequestMethod.POST, headers = {"Content-type=application/json"})
     @ResponseBody
     public ArrayList<Slot> getStat(@RequestBody SlotRequest slotRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         return new SlotManager().getFreeSlots(slotRequest);
     }
 
-    // На подгрузку страницы оптимизации расписания конкретного юзера:
+    // 3) На подгрузку страницы оптимизации расписания конкретного юзера:
     @RequestMapping(value = "/userOptimizer", method = RequestMethod.GET)
     public String userOptimizerPage() throws SQLException {
         return "userOptimizer";
     }
 
-    // 2017-04-13 На подгрузку страницы оптимизации расписания конкретного юзера: (все работает через сайвер, в отличие от методов в других контроллерах) Integer meeting_id
+    // 4) 2017-04-13 На подгрузку страницы оптимизации расписания конкретного юзера: (все работает через сайвер, в отличие от методов в других контроллерах) Integer meeting_id
     @RequestMapping(value = "/userOptimizer/{meeting_id}/{date_start}/{date_end}", method = RequestMethod.GET)
     public String userOptimizerPage(@PathVariable("meeting_id") String meeting_id,
                                     @PathVariable("date_start") String date_start,
@@ -106,7 +103,7 @@ public class OptimizerController {
         // Пытаемся получить финальную точку сохранения эвентов из сейвера по составному ключу
         ArrayList<Event> events = SlotSaver.getEventFinalPoint(currentUser.getId(), meet_id, date_start, date_end);
         // Если они есть, то уже начинали оптимизировать, но не успели сохранить в базу, и дальше работаем с ними, иначе надо выбрать из кэша (и из базы) нужные события и положить их в сейвер, а затем отправить на страницу
-        if (events == null){
+        if (events == null) {
             try {
                 ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER, EventFilter.BETWEEN_TWO_DATES, date_start, date_end));
                 System.out.println("Ищем в кэше список событий данного пользователя ");
@@ -122,7 +119,6 @@ public class OptimizerController {
                     int user_id = userService.getObjID(userService.getCurrentUsername());
                     SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // и заносим точку сохранения в слот-сейвере:
                 }
-
 
 
             } catch (ExecutionException e) {
@@ -156,7 +152,7 @@ public class OptimizerController {
 
 */
 
-    // 2017-04-13 На добавление события через AJAX в сейвер
+    // 5) 2017-04-13 На добавление события через AJAX в сейвер
     @RequestMapping(value = "/userOptimizerAddEventAJAX", method = RequestMethod.POST)
     @ResponseBody
     public Response userOptimizerAddEventAJAX(@ModelAttribute("meeting_id") String meeting_id,
@@ -186,7 +182,7 @@ public class OptimizerController {
     }
 
 
-    // 2017-04-13 На редактирование события через AJAX в сейвер
+    // 6) 2017-04-13 На редактирование события через AJAX в сейвер
     @RequestMapping(value = "/userOptimizerChangeEventAJAX/{eventId}", method = RequestMethod.POST)
     @ResponseBody
     public Response userOptimizerChangeEventAJAX(@PathVariable("eventId") Integer event_id,
@@ -218,7 +214,7 @@ public class OptimizerController {
     }
 
 
-    // 2017-04-14 На удаление события через AJAX из сейвера
+    // 7) 2017-04-14 На удаление события через AJAX из сейвера
     @RequestMapping(value = "/userOptimizerRemoveEventAJAX/{eventId}", method = RequestMethod.POST)
     @ResponseBody
     public Response userOptimizerRemoveEventAJAX(@PathVariable("eventId") Integer event_id,
@@ -239,6 +235,26 @@ public class OptimizerController {
 
         response.setText("OK");
         return response;
+    }
+
+
+    // 8) 2017-04-15 На применение оптимизатора к выбранной встрече:
+    @RequestMapping(value = "/userOptimizerExecutorAJAX/{meeting_id}/{meeting_date_start}/{meeting_date_end}", method = RequestMethod.GET)
+    public String userOptimizerExecutorAJAX(@PathVariable("meeting_id") String meeting_id,
+                                            @PathVariable("meeting_date_start") String meeting_date_start,
+                                            @PathVariable("meeting_date_end") String meeting_date_end
+
+    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException {
+
+
+        Integer root_id = userService.getObjID(userService.getCurrentUsername());
+        Integer meet_id = new Integer(meeting_id.trim());
+
+        // Вызываем метод-оптимизатор с параметрами айди пользователя, айди встречи и период оптимизации:
+        SlotOptimizer.optimizeItForUser(root_id, meet_id, meeting_date_start, meeting_date_end);
+
+        // Перегружаем страничку
+        return "redirect:/userOptimizer/" + meeting_id + "/" + meeting_date_start + "/" + meeting_date_end + "/";
     }
 
 

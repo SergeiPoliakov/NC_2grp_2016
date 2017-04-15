@@ -15,15 +15,15 @@ import java.util.Map;
  */
 public class Converter {
 
-    Integer USER = 1001;
-    Integer EVENT = 1002;
-    Integer MESSAGE = 1003;
-    Integer MEETING = 1004;
-    Integer SETTINGS = 1006;
-    Integer NOTIFICATIONS = 1007;
-    Integer LOG = 1008;
-    Integer FILE = 1009;
-    Integer TAG = 1010;  // c 700-ми атрибутами
+    public static final Integer USER = 1001;
+    public static final Integer EVENT = 1002;
+    public static final Integer MESSAGE = 1003;
+    public static final Integer MEETING = 1004;
+    public static final Integer SETTINGS = 1006;
+    public static final Integer NOTIFICATIONS = 1007;
+    public static final Integer LOG = 1008;
+    public static final Integer FILE = 1009;
+    public static final Integer TAG = 1010;  // c 700-ми атрибутами
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 

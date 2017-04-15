@@ -9,7 +9,6 @@ public class EventFilter extends BaseFilter {
     public static final String FOR_CURRENT_USER = "for_current_user";
     public static final String FOR_USER_WITH_NAME = "for_user_with_name";
     public static final String FOR_USER_WITH_ID = "for_user_with_id";
-
     public static final String BETWEEN_USERS_WITH_NAMES = "between_users_with_names";
     public static final String BETWEEN_USERS_WITH_IDS = "between_users_with_ids";
     public static final String BETWEEN_TWO_DATES = "between_two_dates";
