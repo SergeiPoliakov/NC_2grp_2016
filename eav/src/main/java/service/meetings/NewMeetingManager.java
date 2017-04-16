@@ -56,10 +56,10 @@ public class NewMeetingManager {
 
         Meeting meeting;
         if (duration == null) {
-            meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", null, date_edit);
-        } else {
             long durationTime = DateConverter.duration(date_start, date_end);
             meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", String.valueOf(durationTime));
+        } else {
+            meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", String.valueOf(duration), date_edit);
         }
 
         ArrayList<User> users = new ArrayList<>();

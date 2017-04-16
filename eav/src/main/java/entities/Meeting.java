@@ -167,7 +167,7 @@ public class Meeting extends BaseEntitie {
         duplicate.setInfo(this.info);
         duplicate.setType_event(Event.DUPLICATE_EVENT);
         // И проверяем, что у нас за встреча:
-        if (this.duration == null){
+        if (this.date_edit == null){
             // имеем дело со встречей с фиксированными границами
             duplicate.setEditable(Event.UNEDITABLE);
         }

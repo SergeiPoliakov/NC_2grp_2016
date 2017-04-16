@@ -21,8 +21,6 @@ import java.util.concurrent.ExecutionException;
 // Класс для работы со свободными слотами
 public class SlotManager {
 
-    private SlotSaver slotSaver = new SlotSaver();
-
     private LoadingServiceImp loadingService = new LoadingServiceImp();
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
@@ -32,8 +30,7 @@ public class SlotManager {
     // 0) метод для получения текущей встречи:
     public Meeting getMeeting(Integer meeting_id) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         DataObject dataObject = loadingService.getDataObjectByIdAlternative(meeting_id);
-        Meeting meeting = new Meeting(dataObject);
-        return meeting;
+        return new Meeting(dataObject);
     }
 
     // 1) Метод для получения списка свободных слотов для юзера с айди user_id за период времени с date_start до date_end
@@ -113,7 +110,7 @@ public class SlotManager {
         int user_id = userService.getObjID(userService.getCurrentUsername());
 
         // и оставим точку сохранения в слот-сейвере:
-        slotSaver.add(user_id, meeting_id, events, usageSlots, freeSlotsForMeeting, date_start, date_end);
+        SlotSaver.add(user_id, meeting_id, events, usageSlots, freeSlotsForMeeting, date_start, date_end);
 
         return freeSlotsForMeeting;
     }
@@ -149,7 +146,7 @@ public class SlotManager {
 
     // 3 Плюс) 2017-04-15 Метод проверки перекрытия расписания (наложения задач расписания) на данную копию встречи (то есть передаем список событий и еще одно событие, с которым сравниваем)
     public ArrayList<Event> getOverlapEvents(ArrayList<Event> events, Event targetEvent) throws SQLException, ParseException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        ArrayList<Event> result = null;
+        ArrayList<Event> result = new ArrayList<>();
 
         LocalDateTime date_start = DateConverter.stringToDate(targetEvent.getDate_begin()); // Получаем дату начала копии встречи
         LocalDateTime date_end = DateConverter.stringToDate(targetEvent.getDate_end()); // Получаем дату окончания копии встречи
@@ -184,7 +181,7 @@ public class SlotManager {
         LocalDateTime start = DateConverter.stringToDate(date_start);
         LocalDateTime end = DateConverter.stringToDate(date_end);
 
-        if (start == null | end == null) return usageSlots; // Выходим из метода, если не удалось сконвертировать
+        if (start == null | end == null) return null; // Выходим из метода, если не удалось сконвертировать
 
         usageSlots = new ArrayList<>();
 
@@ -208,7 +205,7 @@ public class SlotManager {
         LocalDateTime end = DateConverter.stringToDate(date_end);
 
         // 2 Выходим из метода, если не удалось сконвертировать:
-        if (start == null | end == null) return freeSlots;
+        if (start == null | end == null) return null;
 
         // 3 Иначе все хорошо, продолжаем. Подготавливаем место под свободные слоты для встечи:
         ArrayList<Slot> freeSlotsForMeeting = new ArrayList<>();  // свободные слоты для встечи
@@ -217,7 +214,7 @@ public class SlotManager {
         ArrayList<Slot> usageSlots = getUsageSlots(events, date_start, date_end);
 
         // 5 Выходим из метода, если не удалось получить занятые слоты
-        if (usageSlots == null) return freeSlots;
+        if (usageSlots == null) return null;
 
         // 6 Иначе продолжаем. Формируем список свободных слотов за данный период:
         freeSlots = getAllFreeSlots(events, date_start, date_end); // Получаем все доступные свободные слоты:
@@ -243,13 +240,13 @@ public class SlotManager {
         LocalDateTime end = DateConverter.stringToDate(date_end);
 
         // 2 Выходим из метода, если не удалось сконвертировать
-        if (start == null | end == null) return freeSlots;
+        if (start == null | end == null) return null;
 
         // 3 Иначе продолжаем. Получаем список занятых слотов за данный период:
         ArrayList<Slot> usageSlots = getUsageSlots(events, date_start, date_end);
 
         // 4 Выходим из метода, если не удалось получить занятые слоты:
-        if (usageSlots == null) return freeSlots;
+        if (usageSlots == null) return null;
 
         // 5 Иначе продолжаем. Формируем список свободных слотов за данный период:
         freeSlots = new ArrayList<>();
