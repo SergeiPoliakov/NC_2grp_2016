@@ -113,13 +113,14 @@ public class OptimizerController {
                 for (DataObject dataObject : list) {
                     Event event = new Event(dataObject);
                     events.add(event);
-                    // и заодно заносим в сейвер наши события, предварительно сформировав для них свободные и занятые слоты
-                    ArrayList<Slot> usageSlots = new SlotManager().getUsageSlots(events, date_start, date_end);
-                    ArrayList<Slot> freeSlots = new SlotManager().getFreeSlots(meet_id, events, date_start, date_end);
-                    int user_id = userService.getObjID(userService.getCurrentUsername());
-                    SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // и заносим точку сохранения в слот-сейвере
-                    SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // а также ее копию для редактирования
+
                 }
+                // и заодно заносим в сейвер наши события, предварительно сформировав для них свободные и занятые слоты
+                ArrayList<Slot> usageSlots = new SlotManager().getUsageSlots(events, date_start, date_end);
+                ArrayList<Slot> freeSlots = new SlotManager().getFreeSlots(meet_id, events, date_start, date_end);
+                int user_id = userService.getObjID(userService.getCurrentUsername());
+                SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // и заносим точку сохранения в слот-сейвере
+                SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // а также ее копию для редактирования
 
 
             } catch (ExecutionException e) {
@@ -193,7 +194,7 @@ public class OptimizerController {
     }
 
 
-    // 6) 2017-04-13 На редактирование события через AJAX в сейвер
+    // 6) 2017-04-13 На редактирование события через AJAX в сейвере
     @RequestMapping(value = "/userOptimizerChangeEventAJAX/{eventId}", method = RequestMethod.POST)
     public @ResponseBody
     Response userOptimizerChangeEventAJAX(@PathVariable ("eventId") Integer event_id,

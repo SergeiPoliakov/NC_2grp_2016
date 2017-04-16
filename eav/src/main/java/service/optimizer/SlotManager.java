@@ -353,7 +353,11 @@ public class SlotManager {
             loadingService.deleteDataObjectById(event.getId());
         }
 
-        // 11 Добавляем новую точку сохранения в сейвер:
+        // 10 Все прочие точки сохранения удаляем из слот-сейвера
+        SlotSaver.remove(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
+
+
+        // 11 И добавляем новую точку сохранения в сейвер:
         // --- (именно в таком порядке! Сначала дописать новую точку, потом вызвать remove удаление всех остальных до нее.
         // --- Если наоборот, в ветке сейвера останутся две точки, а начальная не будет соответствоватт тому, что есть в базе.
         // --- В этом случае при повторных оптимизациях могут возникнуть попытки создать уже существующие события, а они будут перекрываться, хоть их айди будут разными))
@@ -369,10 +373,9 @@ public class SlotManager {
         ArrayList<Slot> freeSlots = this.getFreeSlots(meeting_id, finalEvents, opt_period_date_start, opt_period_date_end);
         // и, наконец, переносим точку сохранения состояния слотов по составному ключу
         SlotSaver.add(user_id, meeting_id, finalEvents, usageSlots, freeSlots, opt_period_date_start, opt_period_date_end);
+        SlotSaver.add(user_id, meeting_id, finalEvents, usageSlots, freeSlots, opt_period_date_start, opt_period_date_end); // и вторую копию
 
 
-        // 10 А все прочие точки сохранения, кроме последней, удаляем из слот-сейвера
-        SlotSaver.remove(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
 
     }
 
