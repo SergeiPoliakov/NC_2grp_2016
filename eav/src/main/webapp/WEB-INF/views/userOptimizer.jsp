@@ -102,7 +102,7 @@
                     <a href="/meeting5">
                         <button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отменить</span></button>
                     </a>
-                    <a href="/meeting5">
+                    <a href="/userOptimizerSaveAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">
                         <button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Сохранить</span></button>
                     </a>
                 </div>

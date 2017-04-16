@@ -1478,7 +1478,6 @@ public class DBHelp {
     // 2017-02-18 Новый метод выгрузки датаобджекта в базу (создание DO): (исправил 2017-03-02)
     public int setDataObjectToDB(DataObject dataObject) throws SQLException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         int id = generationID(dataObject.getObjectTypeId());
-
         try (Connection Con = getConnection();
              PreparedStatement PS = Con
                      .prepareStatement("INSERT INTO OBJECTS (OBJECT_ID, OBJECT_TYPE_ID, OBJECT_NAME) VALUES (?, ?, ?)");

@@ -258,6 +258,26 @@ public class OptimizerController {
     }
 
 
+    // 8) 2017-04-16 На сохранение в базу последней точки сохранения из сейвера через AJAX (сейвер надо очистить от первоначальной копии, переписав ее финальной точкой сохранения)
+    @RequestMapping(value = "/userOptimizerSaveAJAX/{meeting_id}/{meeting_date_start}/{meeting_date_end}", method = RequestMethod.GET)
+    public String userOptimizerSaveAJAX(@PathVariable("meeting_id") String meeting_id,
+                                        @PathVariable("meeting_date_start") String meeting_date_start,
+                                        @PathVariable("meeting_date_end") String meeting_date_end
+
+    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException {
+
+
+        Integer root_id = userService.getObjID(userService.getCurrentUsername());
+        Integer meet_id = new Integer(meeting_id.trim());
+
+        // Вызываем метод сохранения в базу всех изменений из сейвера с параметрами айди пользователя, айди встречи и период оптимизации:
+        new SlotManager().saveAllEvents(root_id, meet_id, meeting_date_start, meeting_date_end);
+
+        // Перегружаем страничку
+        return "redirect:/userOptimizer/" + meeting_id + "/" + meeting_date_start + "/" + meeting_date_end + "/";
+    }
+
+
     // На подгрузку страницы оптимизации встречи для администртора встречи:
     @RequestMapping(value = "/adminOptimizer", method = RequestMethod.GET)
     public String adminOptimizerPage() throws SQLException {

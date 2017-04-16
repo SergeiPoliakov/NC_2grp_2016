@@ -32,7 +32,7 @@ public class Event extends BaseEntitie implements Comparable<Event>  {
     public static final String PRIOR_DUPLICATE = "Style4"; // Дубликат встречи в пользовательском расписании
 
 
-    private int id; // 1
+    private Integer id; // 1
     private int host_id; // 141
     private String name; // 3
     private String date_begin; // 101
@@ -52,10 +52,10 @@ public class Event extends BaseEntitie implements Comparable<Event>  {
     private String floating_date_end; // 109 // Плавающая граница справа
 
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
