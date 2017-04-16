@@ -243,7 +243,6 @@ public class Event extends BaseEntitie implements Comparable<Event>  {
     }
 
     public Duration getDlitelnost() throws ParseException {
-        Duration duration = Duration.between(this.getStart(), this.getEnd()); // Продолжительность
-        return duration;
+        return Duration.between(this.getStart(), this.getEnd());
     }
 }

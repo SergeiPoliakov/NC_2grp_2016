@@ -90,8 +90,7 @@ public class LoadingServiceImp implements LoadingService {
     // Старый метод создания датаобджекта
     @Override
     public DataObject createDataObject(String name, int objType, TreeMap<Integer, Object> mapAttr) throws SQLException {
-        DataObject dataObject = new DataObject(userService.generationID(objType), name, objType, mapAttr);
-        return dataObject;
+        return new DataObject(userService.generationID(objType), name, objType, mapAttr);
     }
 
     // 2017-02-18 Новый метод переноса датаобджекта в базу

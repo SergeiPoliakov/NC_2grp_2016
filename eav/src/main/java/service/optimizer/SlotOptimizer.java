@@ -79,10 +79,8 @@ public class SlotOptimizer {
             System.out.println("Внимание! Перекрытие двух встреч в расписании пользователя! Пользователький оптимизатор прекратил работу! ");
             System.out.println("Пожалуйста, примите меры для разнесения во времени перекрывающихся встреч или оставьте только одну.");
             // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто сам себе шлет):
-            Integer idSender = user_id; //new UserServiceImp().getCurrentUser().getId(); // получаем айди текущего юзера
-            Integer idReceiver = idSender;
             Notification notification = new Notification("Внимание! Обнаружено перекрытие двух встреч в Вашем расписании. " +
-                    "До устранения данной проблемы работа оптимизатора заблокирована. Примите необходимые меры и повторите запрос на оптимизацию", idSender, idReceiver, Notification.MEETING_OVERLAP);
+                    "До устранения данной проблемы работа оптимизатора заблокирована. Примите необходимые меры и повторите запрос на оптимизацию", user_id, user_id, Notification.MEETING_OVERLAP);
             // Тут еще можно вставить ссылку на страницу, куда выведутся все несоответсвия, но пока без нее
             // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
             NotificationService.sendNotification(notification);
@@ -97,9 +95,7 @@ public class SlotOptimizer {
             System.out.println("Проверка завершена! Ваше расписание не нуждается в оптимизации! Можете сохранить свое расписание.");
             System.out.println("Пользовательский оптимизатор успешно завершил свою работу.");
             // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто сам себе шлет):
-            Integer idSender = user_id; // получаем айди текущего юзера
-            Integer idReceiver = idSender;
-            Notification notification = new Notification("Проверка завершена! Ваше расписание не нуждается в оптимизации! Можете сохранить свое расписание.", idSender, idReceiver, Notification.OPTIMIZATION_IS_GOOD);
+            Notification notification = new Notification("Проверка завершена! Ваше расписание не нуждается в оптимизации! Можете сохранить свое расписание.", user_id, user_id, Notification.OPTIMIZATION_IS_GOOD);
             // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
             NotificationService.sendNotification(notification);
             return;
@@ -143,12 +139,11 @@ public class SlotOptimizer {
             Event final_event = new Converter().ToEvent(dataObject); // Конвертируем в событие
             LocalDateTime final_event_end = final_event.getEnd(); // Получаем дату окончания финального события
             // Обходим все оставшиеся события
-            for(int i = 0; i < nonContainEvents.size(); i++){
-                Event event = nonContainEvents.get(i);
+            for (Event event : nonContainEvents) {
                 LocalDateTime event_start = event.getStart();
                 LocalDateTime event_end = event.getEnd();
                 // И смещаем его вправо на столько недель, насколько нужно, чтобы оно ушло за крайнюю правую границу последнего события:
-                while (event_start.isBefore(final_event_end)){
+                while (event_start.isBefore(final_event_end)) {
                     event_start.plusWeeks(1);
                     event_end.plusWeeks(1);
                 }
@@ -175,9 +170,7 @@ public class SlotOptimizer {
         System.out.println("Ваше расписание за указанный период успешно оптимизировано! Можете сохранить свое расписание.");
         System.out.println("Пользовательский оптимизатор успешно завершил свою работу.");
         // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто сам себе шлет):
-        Integer idSender = user_id; // получаем айди текущего юзера
-        Integer idReceiver = idSender;
-        Notification notification = new Notification("Ваше расписание за указанный период успешно оптимизировано! Можете сохранить свое расписание.", idSender, idReceiver, Notification.OPTIMIZATION_IS_GOOD);
+        Notification notification = new Notification("Ваше расписание за указанный период успешно оптимизировано! Можете сохранить свое расписание.", user_id, user_id, Notification.OPTIMIZATION_IS_GOOD);
         // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
         NotificationService.sendNotification(notification);
 

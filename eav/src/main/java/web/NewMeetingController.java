@@ -47,10 +47,9 @@ public class NewMeetingController {
                                 @RequestParam("tag") String tag) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         Integer id = new NewMeetingManager().setNewMeeting(title, date_start, date_end, null, info, tag, null);
         // И надо организатору добавить копию встречи - событие в расписание
-        DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
-        Integer user_id = userService.getCurrentUser().getId();
-        Meeting meeting = new Meeting(dataObject);
-        meeting.createDuplicate(user_id);
+
+        // добавляю в NewMeetingManager при создании, чтобы не обращаться лишний раз к базе
+
 
         return "redirect:/meetings";
     }
@@ -67,11 +66,7 @@ public class NewMeetingController {
         Integer id = new NewMeetingManager().setNewMeeting(title, date_start, date_end, date_edit, info, tag, duration);
         // И надо организатору добавить копию встречи - событие в расписание // 2017-04-15 А, может, и не надо))
 
-        DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
-        Integer user_id = userService.getCurrentUser().getId();
-        Meeting meeting = new Meeting(dataObject);
-        meeting.createDuplicate(user_id);
-        loadingService.updateDataObject(meeting.toDataObject());
+        // добавляю в NewMeetingManager при создании, чтобы не обращаться лишний раз к базе
 
 
         return "redirect:/meetings";

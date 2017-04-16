@@ -50,14 +50,13 @@ public class NewMeetingManager {
             for (String value : tags
                     ) {
                 tagNodeTree.insertForMeeting(value, id);
-                System.out.println("КИНУЛ ID" + id);
                 worlds.append(value).append(" ");
             }
         } else worlds.append("встреча");
 
         Meeting meeting;
-        if (duration != null) {
-            meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", String.valueOf(duration), date_edit);
+        if (duration == null) {
+            meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", null, date_edit);
         } else {
             long durationTime = DateConverter.duration(date_start, date_end);
             meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", String.valueOf(durationTime));
@@ -68,6 +67,10 @@ public class NewMeetingManager {
         user.setId(meeting.getOrganizer().getId());
         users.add(user);
         meeting.setUsers(users);
+
+        //добавляю дубликат
+        Integer user_id = userService.getCurrentUser().getId();
+        meeting.createDuplicate(user_id);
 
         DataObject dataObject = meeting.toDataObject();
         loadingService.setDataObjectToDB(dataObject);

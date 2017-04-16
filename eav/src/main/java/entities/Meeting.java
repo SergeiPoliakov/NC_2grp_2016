@@ -158,6 +158,7 @@ public class Meeting extends BaseEntitie {
     // 2017-04-11 Метод создания дубликата встречи (события) как отображения в пользовательское расписание:
     public void createDuplicate(Integer user_id) throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
         Event duplicate = new Event();
+        duplicate.setId(new DBHelp().generationID(1002));
         duplicate.setHost_id(user_id);
         duplicate.setName(this.title);
         duplicate.setDate_begin(this.date_start);
