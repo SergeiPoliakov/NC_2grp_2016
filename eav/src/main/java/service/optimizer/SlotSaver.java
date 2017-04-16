@@ -23,6 +23,9 @@ public class SlotSaver {
 
     private static volatile SlotSaver instance;
 
+    // 0) Счетчик временного айди для создаваемых событий (для того, чтобы не путать, берем с обратным знаком):
+    private static Integer tmp_id = -1;
+
     // 1) Мапа для хранения списка событий, полученных из бызы, и будет составной ключ
     public static final Map<String, ArrayList<ArrayList<Event>>> eventMap = new ConcurrentHashMap<>();
 
@@ -49,6 +52,10 @@ public class SlotSaver {
     public SlotSaver() {
     }
 
+    // Генератор временного айди события
+    public static Integer genereteTempId(){
+        return (tmp_id - 1);
+    }
 
     // Метод добавления точки сохранения состояния слотов по составному ключу
     synchronized public static void add(Integer root_id, Integer meeting_id, ArrayList<Event> events, ArrayList<Slot> usageSlots, ArrayList<Slot> freeSlots, String date_start, String date_end) {
@@ -77,34 +84,31 @@ public class SlotSaver {
         // Создаем составной ключ для мапы:
         String key = root_id + "~" + meeting_id + "~" + meeting_date_start + "~" + meeting_date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
 
-        ArrayList<Event> events = null;
-        ArrayList<Slot> usageSlots = null;
-        ArrayList<Slot> freeSlots = null;
-
-
-        // Проверяем, есть ли такой составной ключ в сейвере (хотя, по идее, он уже должен быть там!):
-        if (savePointDateMap.get(key) == null) { // если нет, то создаем ячейку для серии точек сохранения
-            eventMap.put(key, new ArrayList<>());
-            usageSlotMap.put(key, new ArrayList<>());
-            freeSlotMap.put(key, new ArrayList<>());
-            savePointDateMap.put(key, new ArrayList<>());
-
-            events = new ArrayList<>();
-        } else { // Иначе, если такой составной ключ есть, копируем последнюю точку сохранения и вносим изменения в нее
-            events = copyEvents(getEventFinalPoint(root_id, meeting_id, meeting_date_start, meeting_date_end));
-            // Надо бы еще сразу проверку на перекрытие реализовать, но это потом тогда отдельным сервисом
-        }
-        // Добавляем к списку событий новое событие
+        // В сейвере две точки: [0] начальная (эталон) и [1] вторая (редактируемая).
+        // Вытаскиваем из сейвера вторую точку сохранения:
+        ArrayList<Event> events = eventMap.get(key).get(1);
+        // Добавляем новое событие:
         events.add(event);
-        // Пересчитываем занятые и свободные слоты:
-        usageSlots = new SlotManager().getUsageSlots(events, meeting_date_start, meeting_date_end);
-        freeSlots = new SlotManager().getFreeSlots(meeting_id, events, meeting_date_start, meeting_date_end);
 
-        // А затем привешиваем ко всем мапам: // привешиваем новую точку сохранения
+        // Пересчитываем занятые и свободные слоты:
+        ArrayList<Slot> usageSlots = new SlotManager().getUsageSlots(events, meeting_date_start, meeting_date_end);
+        ArrayList<Slot> freeSlots = new SlotManager().getFreeSlots(meeting_id, events, meeting_date_start, meeting_date_end);
+
+        // И меняем редактируемую точку сохранения:
+        eventMap.get(key).remove(1);
         eventMap.get(key).add(events);
+        //
+        usageSlotMap.get(key).remove(1);
         usageSlotMap.get(key).add(usageSlots);
+        //
+        freeSlotMap.get(key).remove(1);
         freeSlotMap.get(key).add(freeSlots);
+        //
+        savePointDateMap.get(key).remove(1);
         savePointDateMap.get(key).add(savePointDate);
+
+        System.out.println("Новое событие успешно добавлено в сейвер!");
+
     }
 
 
@@ -117,40 +121,38 @@ public class SlotSaver {
         // Создаем составной ключ для мапы:
         String key = root_id + "~" + meeting_id + "~" + meeting_date_start + "~" + meeting_date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
 
-        ArrayList<Event> events = null;
-        ArrayList<Slot> usageSlots = null;
-        ArrayList<Slot> freeSlots = null;
+        // В сейвере две точки: [0] начальная (эталон) и [1] вторая (редактируемая).
+        // Вытаскиваем из сейвера вторую точку сохранения:
+        ArrayList<Event> events = eventMap.get(key).get(1);
 
-        // Копируем последнюю точку сохранения и вносим изменения в нее
-        events = copyEvents(getEventFinalPoint(root_id, meeting_id, meeting_date_start, meeting_date_end));
-        // Находим в ней данное событие:
-        Event old_event = null;
-        for (Event tmp_event : events) {
-            if (event.getId() == tmp_event.getId()) {
-                // Если айдишки совпадают, заканчиваем поиск
-                old_event = tmp_event;
+        // Находим в ней данное событие: Event event : events
+        for (int i = 0; i < events.size(); i++) {
+            Event old_event = events.get(i);
+            if (event.getId() == old_event.getId()) {
+                // Если айдишки совпадают, заканчиваем поиск и подменяем новым значением:
+                events.remove(old_event);
+                events.add(event);
                 break;
             }
         }
-        if (old_event == null) { // Если не нашли, то добавляем
-            addEvent(root_id, meeting_id, event, meeting_date_start, meeting_date_end); //
-        } // иначе обновляем (заменяем новым):
-        else{
-            events.remove(old_event);
-            old_event = event;
-            events.add(old_event);
-
-        }
-
         // Пересчитываем занятые и свободные слоты:
-        usageSlots = new SlotManager().getUsageSlots(events, meeting_date_start, meeting_date_end);
-        freeSlots = new SlotManager().getFreeSlots(meeting_id, events, meeting_date_start, meeting_date_end);
+        ArrayList<Slot> usageSlots = new SlotManager().getUsageSlots(events, meeting_date_start, meeting_date_end);
+        ArrayList<Slot> freeSlots = new SlotManager().getFreeSlots(meeting_id, events, meeting_date_start, meeting_date_end);
 
-        // А затем привешиваем ко всем мапам: // привешиваем новую точку сохранения
+        // И меняем редактируемую точку сохранения:
+        eventMap.get(key).remove(1);
         eventMap.get(key).add(events);
+        //
+        usageSlotMap.get(key).remove(1);
         usageSlotMap.get(key).add(usageSlots);
+        //
+        freeSlotMap.get(key).remove(1);
         freeSlotMap.get(key).add(freeSlots);
+        //
+        savePointDateMap.get(key).remove(1);
         savePointDateMap.get(key).add(savePointDate);
+
+        System.out.println("Событие успешно изменено в сейвере!");
     }
 
     // Метод удаления из точки сохранения одного события по составному ключу

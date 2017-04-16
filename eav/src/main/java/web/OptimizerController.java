@@ -79,8 +79,8 @@ public class OptimizerController {
 
     // 2) К запросу на получение данных по свободным слотам
     @RequestMapping(value = "/getFreeSlots", method = RequestMethod.POST, headers = {"Content-type=application/json"})
-    @ResponseBody
-    public ArrayList<Slot> getStat(@RequestBody SlotRequest slotRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
+    public @ResponseBody
+    ArrayList<Slot> getStat(@RequestBody SlotRequest slotRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         return new SlotManager().getFreeSlots(slotRequest);
     }
 
@@ -117,7 +117,8 @@ public class OptimizerController {
                     ArrayList<Slot> usageSlots = new SlotManager().getUsageSlots(events, date_start, date_end);
                     ArrayList<Slot> freeSlots = new SlotManager().getFreeSlots(meet_id, events, date_start, date_end);
                     int user_id = userService.getObjID(userService.getCurrentUsername());
-                    SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // и заносим точку сохранения в слот-сейвере:
+                    SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // и заносим точку сохранения в слот-сейвере
+                    SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // а также ее копию для редактирования
                 }
 
 
@@ -154,8 +155,8 @@ public class OptimizerController {
 
     // 5) 2017-04-13 На добавление события через AJAX в сейвер
     @RequestMapping(value = "/userOptimizerAddEventAJAX", method = RequestMethod.POST)
-    @ResponseBody
-    public Response userOptimizerAddEventAJAX(@ModelAttribute("meeting_id") String meeting_id,
+    public @ResponseBody
+    Response userOptimizerAddEventAJAX(@ModelAttribute("meeting_id") String meeting_id,
                                               @ModelAttribute("meeting_date_start") String meeting_date_start,
                                               @ModelAttribute("meeting_date_end") String meeting_date_end,
 
@@ -167,26 +168,35 @@ public class OptimizerController {
     ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException, ExecutionException {
 
         Response response = new Response();
+        Integer root_id = userService.getObjID(userService.getCurrentUsername());
+        Integer meet_id = new Integer(meeting_id.trim());
 
         // Формируем новое событие
         Long duration = DateConverter.duration(date_begin, date_end);
         Event event = new Event(name, date_begin, date_end, duration.toString(), priority, info);
-        Integer root_id = userService.getObjID(userService.getCurrentUsername());
-        Integer meet_id = new Integer(meeting_id.trim());
+        // public Event(String name, String date_begin, String date_end, String duration, String priority, String info) {
+        // 2017-04-16 Выставляем значения других полей:
+        event.setId(SlotSaver.genereteTempId()); // Нужно дать какое-то временное значение айди событию, которое будет использоваться как идентификатор в сейвере до тех пор, пока событие не попало в базу, а там оно уже станет нормальным
+        event.setHost_id(root_id);
+        event.setType_event(Event.BASE_EVENT); // 106 // Тип события - базовое
+        event.setEditable(Event.EDITABLE); // 107 // Свойства события: редактируемое
+        event.setFloating_date_begin(null); // 108 // Плавающая граница слева - Не нужна (не обязательно выставлять, и так она null, но все же)
+        event.setFloating_date_end(null); // 109 // Плавающая граница справа - Не нужна (не обязательно выставлять, и так она null, но все же)
+
+
 
         // и заносим в сейвер наше событие, (а там автоматом сформируются для него свободные и занятые слоты)
         SlotSaver.addEvent(root_id, meet_id, event, meeting_date_start, meeting_date_end);
 
-        response.setText("OK");
+        // response.setText("OK");
         return response;
     }
 
 
     // 6) 2017-04-13 На редактирование события через AJAX в сейвер
     @RequestMapping(value = "/userOptimizerChangeEventAJAX/{eventId}", method = RequestMethod.POST)
-    @ResponseBody
-    public Response userOptimizerChangeEventAJAX(@PathVariable("eventId") Integer event_id,
-
+    public @ResponseBody
+    Response userOptimizerChangeEventAJAX(@PathVariable ("eventId") Integer event_id,
                                                  @ModelAttribute("meeting_id") String meeting_id,
                                                  @ModelAttribute("meeting_date_start") String meeting_date_start,
                                                  @ModelAttribute("meeting_date_end") String meeting_date_end,
@@ -209,15 +219,15 @@ public class OptimizerController {
         // и обновляем в сейвере наше событие, (а там автоматом сформируются для него свободные и занятые слоты)
         SlotSaver.updateEvent(root_id, meet_id, event, meeting_date_start, meeting_date_end);
 
-        response.setText("OK");
+        //response.setText("OK");
         return response;
     }
 
 
     // 7) 2017-04-14 На удаление события через AJAX из сейвера
     @RequestMapping(value = "/userOptimizerRemoveEventAJAX/{eventId}", method = RequestMethod.POST)
-    @ResponseBody
-    public Response userOptimizerRemoveEventAJAX(@PathVariable("eventId") Integer event_id,
+    public @ResponseBody
+    Response userOptimizerRemoveEventAJAX(@PathVariable ("eventId") Integer event_id,
 
                                                  @ModelAttribute("meeting_id") String meeting_id,
                                                  @ModelAttribute("meeting_date_start") String meeting_date_start,
@@ -233,7 +243,7 @@ public class OptimizerController {
         // удаляем из сейвера наше событие, (а там автоматом пересчитаются свободные и занятые слоты)
         SlotSaver.removeEvent(root_id, meet_id, event_id, meeting_date_start, meeting_date_end);
 
-        response.setText("OK");
+        //response.setText("OK");
         return response;
     }
 
