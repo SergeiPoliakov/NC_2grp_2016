@@ -2,6 +2,7 @@ package service.converter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
@@ -43,5 +44,16 @@ public class DateConverter {
         long diff = timeEnd - timeStart;
 
         return TimeUnit.MILLISECONDS.toMinutes(diff);
+    }
+
+    public static Duration dlitelnost(String start, String end) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+        LocalDateTime date_start = stringToDate(start);
+        LocalDateTime date_end = stringToDate(end);
+
+        Duration duration = Duration.between(date_start, date_end);
+
+        return duration;
     }
 }

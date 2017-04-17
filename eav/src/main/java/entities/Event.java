@@ -33,7 +33,7 @@ public class Event extends BaseEntitie implements Comparable<Event>  {
 
 
     private Integer id; // 1
-    private int host_id; // 141
+    private Integer host_id; // 141
     private String name; // 3
     private String date_begin; // 101
     private String date_end; // 102
@@ -59,11 +59,11 @@ public class Event extends BaseEntitie implements Comparable<Event>  {
         this.id = id;
     }
 
-    public int getHost_id() {
+    public Integer getHost_id() {
         return host_id;
     }
 
-    public void setHost_id(int host_id) {
+    public void setHost_id(Integer host_id) {
         this.host_id = host_id;
     }
 
@@ -244,5 +244,44 @@ public class Event extends BaseEntitie implements Comparable<Event>  {
 
     public Duration getDlitelnost() throws ParseException {
         return Duration.between(this.getStart(), this.getEnd());
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Event copyEvent = new Event();
+        try {
+            copyEvent.setId(this.getId()); // 1
+            copyEvent.setHost_id(this.getHost_id()); // 141
+            copyEvent.setName(this.getName()); // 3
+            copyEvent.setDate_begin(this.getDate_begin()); // 101
+            copyEvent.setDate_end(this.getDate_end()); // 102
+            copyEvent.setPriority(this.getPriority()); // 105
+            copyEvent.setDuration(this.getDuration()); // 103
+            copyEvent.setType_event(this.getType_event()); // 106
+            copyEvent.setEditable(this.getEditable()); // 107
+            copyEvent.setFloating_date_begin(this.getFloating_date_begin()); // 108
+            copyEvent.setFloating_date_end(this.getFloating_date_end()); // 109
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return copyEvent;
+    }
+
+    @Override
+    public String toString() {
+        return "Событие " + "{id=" + id
+                + " : host_id=" + host_id
+                + " : name=" + name
+                + " : date_begin=" + date_begin
+                + " : date_end=" + date_end
+                + " : priority=" + priority
+                + " : info=" + info
+                + " : duration=" + duration
+
+                + " : type_event=" + type_event
+                + " : editable=" + editable
+                + " : floating_date_begin=" + floating_date_begin
+                + " : floating_date_end=" + floating_date_end +"}";
     }
 }

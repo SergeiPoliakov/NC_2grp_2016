@@ -977,6 +977,27 @@ public class DBHelp {
             // Работаем с событиями
             if (params.get(EventFilter.ALL) != null) { // если надо получить IDs всех событий в системе,
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT;
+            } else if (params.get(EventFilter.LAST_FOR_CURRENT_USER) != null) { // если надо получить ID последнего сбытия на таймолайне текущего юзера (прямо самого последнего, которое позже всех заканчивается),
+                sql = "SELECT ob.OBJECT_ID ";
+
+                sql += "FROM OBJECTS ob ";
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID AND pa.ATTR_ID = 102 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT + " ";
+                sql += "AND ob2.OBJECT_ID = " + userService.getCurrentUser().getId() + " ";
+                sql += "AND TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi') = ( ";
+
+                sql += "SELECT MAX(TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi')) ";
+
+                sql += "FROM OBJECTS ob ";
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";
+                sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
+                sql += "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID AND pa.ATTR_ID = 102 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + EVENT + " ";
+                sql += "AND ob2.OBJECT_ID = " + userService.getCurrentUser().getId() + " ";
+                sql += "GROUP BY re.OBJECT_ID )";
+
             } else if (params.get(EventFilter.FOR_CURRENT_USER) != null) { // если надо получить ID всех событий текущего пользователей,
 
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 13 ";

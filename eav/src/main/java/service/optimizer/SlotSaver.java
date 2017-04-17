@@ -58,7 +58,7 @@ public class SlotSaver {
     }
 
     // Метод добавления точки сохранения состояния слотов по составному ключу
-    synchronized public static void add(Integer root_id, Integer meeting_id, ArrayList<Event> events, ArrayList<Slot> usageSlots, ArrayList<Slot> freeSlots, String date_start, String date_end) {
+    synchronized public static void add(Integer root_id, Integer meeting_id, ArrayList<Event> events, String date_start, String date_end) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException, CloneNotSupportedException {
         // Фиксируем текущее время загрузки в мапу точки сохранения:
         LocalDateTime savePointDate = LocalDateTime.now();
         // Создаем составной ключ для мапы:
@@ -70,10 +70,25 @@ public class SlotSaver {
             freeSlotMap.put(key, new ArrayList<>());
             savePointDateMap.put(key, new ArrayList<>());
         }
+
+        // и заодно заносим в сейвер наши события, предварительно сформировав для них свободные и занятые слоты
+        ArrayList<Slot> usageSlots = new SlotManager().getUsageSlots(events, date_start, date_end);
+        ArrayList<Slot> freeSlots = new SlotManager().getFreeSlots(meeting_id, events, date_start, date_end);
+
         // А затем привешиваем ко всем мапам: // привешиваем новую точку сохранения
         eventMap.get(key).add(events);
         usageSlotMap.get(key).add(usageSlots);
         freeSlotMap.get(key).add(freeSlots);
+        savePointDateMap.get(key).add(savePointDate);
+
+        // А также вторую (редактируемую) новую точку сохранения
+        ArrayList<Event> edaitableEvents = copyEvents(events);
+        ArrayList<Slot> edaitableUsageSlots = new SlotManager().getUsageSlots(edaitableEvents, date_start, date_end);
+        ArrayList<Slot> edaitableFreeSlots = new SlotManager().getFreeSlots(meeting_id, edaitableEvents, date_start, date_end);
+
+        eventMap.get(key).add(edaitableEvents);
+        usageSlotMap.get(key).add(edaitableUsageSlots);
+        freeSlotMap.get(key).add(edaitableFreeSlots);
         savePointDateMap.get(key).add(savePointDate);
     }
 
@@ -129,6 +144,8 @@ public class SlotSaver {
         for (int i = 0; i < events.size(); i++) {
             Event old_event = events.get(i);
             if (event.getId().equals(old_event.getId())) {
+                System.out.println("Меняем событие " + old_event);
+
                 // Если айдишки совпадают, заканчиваем поиск и подменяем новым значением:
                 old_event.setName(event.getName());
                 old_event.setDate_begin(event.getDate_begin());
@@ -139,6 +156,7 @@ public class SlotSaver {
 
                 events.remove(i);
                 events.add(old_event);
+                System.out.println("на событие " + old_event);
                 break;
             }
         }
@@ -205,9 +223,13 @@ public class SlotSaver {
 
 
     // 2017-04-14 Просто метод копирования событий
-    synchronized public static ArrayList<Event> copyEvents(ArrayList<Event> old_events){
+    synchronized public static ArrayList<Event> copyEvents(ArrayList<Event> old_events) throws CloneNotSupportedException {
         ArrayList<Event> new_events = new ArrayList<>();
-        new_events.addAll(old_events);
+
+        for(int i = 0; i < old_events.size(); i++){
+            Event copyEvent = (Event) old_events.get(i).clone();
+            new_events.add(copyEvent);
+        }
         return new_events;
     }
 
@@ -302,7 +324,7 @@ public class SlotSaver {
         String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null) { // если есть, то отдаем последнюю сохраненную
-            result = eventMap.get(key).get(eventMap.get(key).size() - 1);
+            result = eventMap.get(key).get(1);
             // наче останется нулл, его и отдадим
         }
         return result;
@@ -344,13 +366,21 @@ public class SlotSaver {
         String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null) { // если есть, то
-            //  удаляем все остальные
-            for (int i = 0; i < usageSlotMap.get(key).size(); i++) {
-                eventMap.get(key).remove(i);
-                usageSlotMap.get(key).remove(i);
-                freeSlotMap.get(key).remove(i);
-                savePointDateMap.get(key).remove(i);
+            eventMap.remove(key);
+            usageSlotMap.remove(key);
+            freeSlotMap.remove(key);
+            savePointDateMap.remove(key);
+
+           /*
+            //  удаляем все остальные (по два каждого)
+            while (savePointDateMap.get(key).size() > 0){
+                eventMap.get(key).remove(0);
+                usageSlotMap.get(key).remove(0);
+                freeSlotMap.get(key).remove(0);
+                savePointDateMap.get(key).remove(0);
             }
+            */
+
         }
     }
 

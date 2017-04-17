@@ -48,15 +48,11 @@ public class OptimizerController {
     // Собственный внутренний логгер для контроллера
     private StatisticLogger loggerLog = new StatisticLogger();
 
-    private TagTreeManager tagTreeManager = new TagTreeManager();
-
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     private UserServiceImp userService = new UserServiceImp();
-
-    private Converter converter = new Converter();
 
     public OptimizerController() throws IOException {
     }
@@ -112,18 +108,17 @@ public class OptimizerController {
                 events = new ArrayList<>(list.size());
                 for (DataObject dataObject : list) {
                     Event event = new Event(dataObject);
+                    System.out.println(event);
                     events.add(event);
 
                 }
-                // и заодно заносим в сейвер наши события, предварительно сформировав для них свободные и занятые слоты
-                ArrayList<Slot> usageSlots = new SlotManager().getUsageSlots(events, date_start, date_end);
-                ArrayList<Slot> freeSlots = new SlotManager().getFreeSlots(meet_id, events, date_start, date_end);
                 int user_id = userService.getObjID(userService.getCurrentUsername());
-                SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // и заносим точку сохранения в слот-сейвере
-                SlotSaver.add(user_id, meet_id, events, usageSlots, freeSlots, date_start, date_end); // а также ее копию для редактирования
+                SlotSaver.add(user_id, meet_id, events, date_start, date_end); // и заносим точку сохранения в слот-сейвере, а там автоматом создастся для нее еще и вторая редактируемая копия
 
 
             } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
         }
@@ -255,7 +250,7 @@ public class OptimizerController {
                                             @PathVariable("meeting_date_start") String meeting_date_start,
                                             @PathVariable("meeting_date_end") String meeting_date_end
 
-    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException {
+    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException, CloneNotSupportedException {
 
 
         Integer root_id = userService.getObjID(userService.getCurrentUsername());
@@ -275,7 +270,7 @@ public class OptimizerController {
                                         @PathVariable("meeting_date_start") String meeting_date_start,
                                         @PathVariable("meeting_date_end") String meeting_date_end
 
-    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException {
+    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException, CloneNotSupportedException {
 
 
         Integer root_id = userService.getObjID(userService.getCurrentUsername());
@@ -300,5 +295,5 @@ public class OptimizerController {
     public String userOptimizerPage() throws SQLException {
         return "userOptimizer";
     }
-    */ // Тут еще надо продумать, как отправлять и что, напрямер, в json кидать ил и просто через @RequestParam
+    */ // Тут еще надо продумать, как отправлять и что, например, в json кидать ил и просто через @RequestParam
 }

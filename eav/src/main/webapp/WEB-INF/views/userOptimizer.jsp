@@ -90,10 +90,10 @@
     <!-- Timeline и кнопки -->
     <div class="row top-buffer-5">
         <div class="col-md-12">
-            <h4>Оптимизация расписания для встречи с [${meeting_date_start}] до [${meeting_date_end}]</h4>
+            <h4>Оптимизация расписания для встречи на период с [${meeting_date_start}] до [${meeting_date_end}]</h4>
             <div id ="optimizerButtons">
                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                    <a href="/meeting5">
+                    <a href="/meeting${meeting_id}">
                         <button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"> Встреча</span></button>
                     </a>
                     <a href="/userOptimizerExecutorAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">

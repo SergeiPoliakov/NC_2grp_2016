@@ -38,8 +38,7 @@ public class SlotManager {
         ArrayList<Integer> listIds = new ArrayList<>();
         ArrayList<String> listSting = SearchParser.parse(slotRequest.getUser());
         assert listSting != null;
-        for (String str : listSting
-                ) {
+        for (String str : listSting) {
             listIds.add(Integer.parseInt(str));
         }
         return getFreeSlots(listIds, new Integer(slotRequest.getMeeting().trim()), slotRequest.getStart().trim(), slotRequest.getEnd().trim());
@@ -56,8 +55,7 @@ public class SlotManager {
         if (start == null | end == null) return freeSlots; // Выходим из метода, если не удалось сконвертировать
         // Выбираем все события из расписаеия юзера за заданный период:
         ArrayList<Integer> ids = new ArrayList<>();
-        for (Integer user : users
-                ) {
+        for (Integer user : users) {
             ArrayList<Integer> list = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_USER_WITH_ID, String.valueOf(user), EventFilter.BETWEEN_TWO_DATES, date_start, date_end));
             ids.addAll(list);
         }
@@ -87,8 +85,7 @@ public class SlotManager {
             freeSlots.add(new Slot(start, end));
         }
 
-        for (Slot freeSlot : freeSlots
-                ) {
+        for (Slot freeSlot : freeSlots) {
             System.out.println(DateConverter.duration(freeSlot.getString_start(), freeSlot.getString_end()));
         }
 
@@ -106,12 +103,12 @@ public class SlotManager {
             }
         }
         System.out.println("КОЛИЧЕСТВО СВОБОДНЫХ СЛОТОВ :" + count);
-
+/*
         int user_id = userService.getObjID(userService.getCurrentUsername());
 
         // и оставим точку сохранения в слот-сейвере:
-        SlotSaver.add(user_id, meeting_id, events, usageSlots, freeSlotsForMeeting, date_start, date_end);
-
+        SlotSaver.add(user_id, meeting_id, events, date_start, date_end);
+*/
         return freeSlotsForMeeting;
     }
 
@@ -271,7 +268,7 @@ public class SlotManager {
     // -----------------------------------------------------------------------------------------------------------------
 
     // 7) 2017-04-16 Метод сохранения финальной точки сохранения из сейвера в базу данных
-    public void saveAllEvents(Integer user_id, Integer meeting_id, String opt_period_date_start, String opt_period_date_end) throws ParseException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
+    public void saveAllEvents(Integer user_id, Integer meeting_id, String opt_period_date_start, String opt_period_date_end) throws ParseException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException, CloneNotSupportedException {
 
         // 1 Получаем из сейвера начальную точку сохранения (она соответсвует тому, что сейчас есть в базе) по составному ключу:
         ArrayList<Event> startEvents = SlotSaver.getEventStartPoint(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
@@ -298,23 +295,23 @@ public class SlotManager {
             Integer new_event_id = new_event.getId(); // его айди
             String new_event_begin = new_event.getDate_begin(); // дата начала
             String new_event_end = new_event.getDate_end(); // дата окончания
-            // Проверяем, вдруг это новое событие, тогда у него не будет еще айди
-            if (new_event_id == null){
+            // Проверяем, вдруг это новое событие, (СТАРАЯ ВЕРСИЯ: тогда у него не будет еще айди) НОВОЕ: тогда у него будет отрицательный айди (временный)
+            if (new_event_id < 0){ //if (new_event_id == null){
                 // Тогда просто сохраняем его в точку создания (потом при заносе в базу им присвоятся айдишники)
                 createEvents.add(new_event);
                 // и переходим к следующему шагу по i
                 continue;
             }
-            // Иначе, всли все хорошо и айдишник есть, то продолжаем:
+            // Иначе, всли все хорошо и айдишник нормальный, то продолжаем:
             // Ищем это событие по его айдишнику среди начальной точки - для этого запускаем внутренний цикл по j:
             for (int j = 0; j < startEvents.size(); j++){
-                Event old_event = startEvents.get(i); // вытаскиваем событие из начальной точки сохранения
+                Event old_event = startEvents.get(j); // вытаскиваем событие из начальной точки сохранения
+                String old_event_begin = old_event.getDate_begin();
+                String old_event_end = old_event.getDate_end();
                 Integer old_event_id = old_event.getId(); // его айди
                 if (old_event_id.equals(new_event_id)){
                     // Если айдишники совпали, то нашли что ищем,
                     // Тогда можно сравнить время начала и конца:
-                    String old_event_begin = old_event.getDate_begin();
-                    String old_event_end = old_event.getDate_end();
                     // Если даты начала и конца не изменились, то отправляем событие в точку постоянства
                     if ( old_event_begin.equals(new_event_begin) & old_event_end.equals(new_event_end) ){
                         persistenceEvents.add(new_event);
@@ -339,14 +336,16 @@ public class SlotManager {
         Converter converter = new Converter();
         for (Event event : updateEvents) {
             DataObject dataObject = converter.toDO(event);
-            loadingService.updateDataObject(dataObject);
+            System.out.println("Надо обновить измененное событие:\n\n\n\n\n\n");
+            System.out.println(dataObject);
+            loadingService.updateDataObject(dataObject);//почему-то тут падает // вроде как поправил
         }
         // 9-2 Создаем все, что нужно создать:
         for (int i = 0; i < createEvents.size(); i++){ // не через фор-ич, чтобы работать не с копиями и можно было изменить поле id у данных событий в сейвере
             Event event = createEvents.get(i);
             DataObject dataObject = converter.toDO(event);
             Integer id = loadingService.setDataObjectToDB(dataObject);
-            if (event.getId() == null) event.setId(id); // Устанавливаем айдишник у события, у которого его не было // опять лишние перестраховки, но мало ли, по идее ни у кого в этом списке нет айди
+            event.setId(id); // Устанавливаем айдишник у события, у которого его не было
         }
         // 9-3 Удаляем все, что нужно удалить:
         for (Event event : deleteEvents) {
@@ -358,9 +357,6 @@ public class SlotManager {
 
 
         // 11 И добавляем новую точку сохранения в сейвер:
-        // --- (именно в таком порядке! Сначала дописать новую точку, потом вызвать remove удаление всех остальных до нее.
-        // --- Если наоборот, в ветке сейвера останутся две точки, а начальная не будет соответствоватт тому, что есть в базе.
-        // --- В этом случае при повторных оптимизациях могут возникнуть попытки создать уже существующие события, а они будут перекрываться, хоть их айди будут разными))
         // Для этого собираем сначала все события в кучу
         finalEvents = new ArrayList<>(); // очищаем список
         {
@@ -368,12 +364,8 @@ public class SlotManager {
             finalEvents.addAll(updateEvents); // и обновленные события
             finalEvents.addAll(createEvents); // а также созданные события
         }
-        // а затем подготавливаем данные - рассчитываем занятые и свободные слоты:
-        ArrayList<Slot> usageSlots = this.getUsageSlots(finalEvents, opt_period_date_start, opt_period_date_end);
-        ArrayList<Slot> freeSlots = this.getFreeSlots(meeting_id, finalEvents, opt_period_date_start, opt_period_date_end);
-        // и, наконец, переносим точку сохранения состояния слотов по составному ключу
-        SlotSaver.add(user_id, meeting_id, finalEvents, usageSlots, freeSlots, opt_period_date_start, opt_period_date_end);
-        SlotSaver.add(user_id, meeting_id, finalEvents, usageSlots, freeSlots, opt_period_date_start, opt_period_date_end); // и вторую копию
+        // и, наконец, переносим точку сохранения состояния слотов по составному ключу и автоматом вторую (редактируемую) копию
+        SlotSaver.add(user_id, meeting_id, finalEvents, opt_period_date_start, opt_period_date_end);
 
 
 
