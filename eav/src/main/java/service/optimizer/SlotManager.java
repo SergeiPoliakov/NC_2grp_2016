@@ -372,4 +372,14 @@ public class SlotManager {
     }
 
 
+    // 8) 2017-04-18 Метод удаления изменений точки сохранения из сейвера
+    public void resetAllEvents(Integer user_id, Integer meeting_id, String opt_period_date_start, String opt_period_date_end) throws ParseException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException, CloneNotSupportedException {
+        ArrayList<Event> events = SlotSaver.getEventStartPoint(user_id, meeting_id, opt_period_date_start, opt_period_date_end); // Делаем копию начального сосятояния
+        SlotSaver.remove(user_id, meeting_id, opt_period_date_start, opt_period_date_end); // Удаляем все изменения
+        SlotSaver.add(user_id, meeting_id, events, opt_period_date_start, opt_period_date_end); // Добавляем исходную копию
+        // Добавляем сообщение
+        String message = "Все изменения в расписании за указанный период успешно отменены";
+        SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
+    }
+
 }

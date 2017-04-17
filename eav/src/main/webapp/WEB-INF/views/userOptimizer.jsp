@@ -90,16 +90,17 @@
     <!-- Timeline и кнопки -->
     <div class="row top-buffer-5">
         <div class="col-md-12">
-            <h4>Оптимизация расписания для встречи на период с [${meeting_date_start}] до [${meeting_date_end}]</h4>
+            <p style="background:#3498db; color:#ffffff;" id="elem2" class="text-center"> Оптимизация расписания для встречи на период с [${meeting_date_start}] до [${meeting_date_end}]</p>
+
             <div id ="optimizerButtons">
                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                     <a href="/meeting${meeting_id}">
-                        <button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"> Встреча</span></button>
+                        <button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true" > Встреча</span></button>
                     </a>
                     <a href="/userOptimizerExecutorAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">
                         <button type="button" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-flash" aria-hidden="true"> Оптимизировать</span></button>
                     </a>
-                    <a href="/meeting5">
+                    <a href="/userOptimizerResetAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">
                         <button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отменить</span></button>
                     </a>
                     <a href="/userOptimizerSaveAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">
@@ -124,6 +125,7 @@
                     </div>
                 </div>
                 <div id="visualization"></div>
+                <p style="background:#3498db; color:#ffffff;" id="elem" class="text-center"> ${slot_message}</p>
             </div>
         </div>
     </div>
@@ -222,7 +224,18 @@
 <br>
 <br>
 
+<style type="text/css">
+    #elem {display:none;}
+    #elem2 {display:block;}
+</style>
 
+
+
+<script type="text/javascript">
+    // Для вывода полоски сообщения снизу под таймлайном
+    $("#elem").show('slow');
+    setTimeout(function() { $("#elem").hide('slow'); }, 4000);
+</script>
 
 <script type="text/javascript">
     // Поле дополнительная информация eventID : info

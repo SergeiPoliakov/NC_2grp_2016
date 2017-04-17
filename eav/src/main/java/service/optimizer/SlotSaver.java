@@ -38,6 +38,9 @@ public class SlotSaver {
     // 4) Мапа для хранения времени занесения в сейвер очередного сохранения слотов
     public static final Map<String, ArrayList<LocalDateTime>> savePointDateMap = new ConcurrentHashMap<>();
 
+    // 5) Мапа для хранения очередного сообщения для вывода на страницу
+    public static final Map<String, String> messageMap = new ConcurrentHashMap<>();
+
 
     public static SlotSaver getInstance() {
         if (instance == null)
@@ -56,6 +59,35 @@ public class SlotSaver {
     public static Integer genereteTempId(){
         return (tmp_id - 1);
     }
+
+    // 2017-04-18 Метод сохранеия сообщения по составному ключу
+    synchronized public static void addMessage(Integer root_id, Integer meeting_id, String message, String meeting_date_start, String meeting_date_end) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException {
+        // Создаем составной ключ для мапы:
+        String key = root_id + "~" + meeting_id + "~" + meeting_date_start + "~" + meeting_date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
+
+        if (messageMap.get(key) == null) { // если нет, то создаем ячейку
+            messageMap.put(key, message);
+        }
+        else{
+            messageMap.remove(key);
+            messageMap.put(key, message);
+        }
+
+    }
+
+    // 2017-04-18 Метод получения сообщения по составному ключу
+    synchronized public static String getMessage(Integer root_id, Integer meeting_id, String meeting_date_start, String meeting_date_end) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException {
+        // Фиксируем текущее время загрузки в мапу точки сохранения:
+        LocalDateTime savePointDate = LocalDateTime.now();
+        // Создаем составной ключ для мапы:
+        String key = root_id + "~" + meeting_id + "~" + meeting_date_start + "~" + meeting_date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
+
+        String result = messageMap.get(key);
+
+        return result;
+
+    }
+
 
     // Метод добавления точки сохранения состояния слотов по составному ключу
     synchronized public static void add(Integer root_id, Integer meeting_id, ArrayList<Event> events, String date_start, String date_end) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException, CloneNotSupportedException {
@@ -90,6 +122,7 @@ public class SlotSaver {
         usageSlotMap.get(key).add(edaitableUsageSlots);
         freeSlotMap.get(key).add(edaitableFreeSlots);
         savePointDateMap.get(key).add(savePointDate);
+
     }
 
     // 2017-04-16 Метод добавления к точке сохранения одного события по составному ключу

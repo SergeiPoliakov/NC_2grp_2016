@@ -71,6 +71,11 @@ public class SlotOptimizer {
         if (optimDuplicate == null) {
             System.out.println("Случилось невозможное! Пока мы оптимизировали, куда-то делся дубликат Вашей встречи из Вашего же расписания...");
             System.out.println("Не зная как быть дальше, оптимизатор прекратил свою работу. Проверьте, все ли в порядке с Вашим расписанием?");
+
+            // Сохраняем сообщение
+            String message = "Внимание! Непредвиденная ошибка оптимизации! Пожалуйста, проверьте свое расписание на наличие совпадающих по времени задач";
+            SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
+
             return;
         }
 
@@ -84,6 +89,11 @@ public class SlotOptimizer {
             if (overlapDuplicates.size() != 0) {
                 System.out.println("Внимание! Перекрытие двух встреч в расписании пользователя! Пользователький оптимизатор прекратил работу! ");
                 System.out.println("Пожалуйста, примите меры для разнесения во времени перекрывающихся встреч или оставьте только одну.");
+
+                // Сохраняем сообщение
+                String message = "Внимание! Перекрытие двух встреч в расписании пользователя! Оптимизация невозможна";
+                SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
+
                 // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто сам себе шлет):
                 Notification notification = new Notification("Внимание! Обнаружено перекрытие двух встреч в Вашем расписании. " +
                         "До устранения данной проблемы работа оптимизатора заблокирована. Примите необходимые меры и повторите запрос на оптимизацию", user_id, user_id, Notification.MEETING_OVERLAP);
@@ -102,6 +112,11 @@ public class SlotOptimizer {
         if (overlapEvents == null || overlapEvents.size() == 0) {
             System.out.println("Проверка завершена! Ваше расписание не нуждается в оптимизации! Можете сохранить свое расписание.");
             System.out.println("Пользовательский оптимизатор успешно завершил свою работу.");
+
+            // Сохраняем сообщение
+            String message = "Проверка завершена! Ваше расписание не нуждается в оптимизации! Можете сохранить свое расписание";
+            SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
+
             // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто сам себе шлет):
             Notification notification = new Notification("Проверка завершена! Ваше расписание не нуждается в оптимизации! Можете сохранить свое расписание.", user_id, user_id, Notification.OPTIMIZATION_IS_GOOD);
             // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
@@ -202,6 +217,10 @@ public class SlotOptimizer {
         for (Event event : resultEvents) {
             SlotSaver.updateEvent(user_id, meeting_id, event, opt_period_date_start, opt_period_date_end);
         }
+
+        // Сохраняем сообщение
+        String message = "Ваше расписание за указанный период успешно оптимизировано! Можете сохранить свое расписание";
+        SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
 
         // 12 И отправить уведомление юзеру об успешном окончании оптимизации его расписания:
 
