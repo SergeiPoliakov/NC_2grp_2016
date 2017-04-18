@@ -94,6 +94,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Меню <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li ><a href="/allEvent">Список событий</a></li>
+                        <li ><a href="/userOptimizerProblem">Требующие внимания</a></li>
                         <li ><a href="/allUser">Все пользователи</a></li>
                         <li ><a href="/statistics">Статистика</a></li>
                     </ul>

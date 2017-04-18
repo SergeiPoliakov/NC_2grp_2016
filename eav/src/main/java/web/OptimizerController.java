@@ -3,37 +3,23 @@ package web;
 import com.google.common.cache.LoadingCache;
 import entities.*;
 import exception.CustomException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
-import service.converter.Converter;
 import service.converter.DateConverter;
 import service.id_filters.EventFilter;
-import service.id_filters.NotificationFilter;
-import service.notifications.UsersNotifications;
 import service.optimizer.*;
-import service.statistics.StatRequest;
-import service.statistics.StatResponse;
 import service.statistics.StatisticLogger;
-import service.statistics.StatisticManager;
-import service.tags.NameNodeTree;
-import service.tags.TagTreeManager;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
@@ -320,6 +306,25 @@ public class OptimizerController {
         // Перегружаем страничку
         return "redirect:/userOptimizer/" + meeting_id + "/" + meeting_date_start + "/" + meeting_date_end + "/";
     }
+
+
+    // 10) 2017-04-18 На формирование и загрузку страницы перекрытий встреч и событий расписания юзера
+    @RequestMapping(value = "/userOptimizerProblem", method = RequestMethod.GET)
+    public String userOptimizerProblemPage(ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException, ParseException {
+
+        Integer user_id = userService.getObjID(userService.getCurrentUsername());
+
+        TreeMap<Event, ArrayList<Event>> promlemDuplicates = SlotOptimizer.findUserProblemDuplicate();
+
+        m.addAttribute("allObject", promlemDuplicates);
+
+        System.out.println("Найдено " + promlemDuplicates.size() + " проблем (перекрытий встреч) в расписании пользователя");
+
+        return "userOptimizerProblem";
+    }
+
+
+
 
 
     // На подгрузку страницы оптимизации встречи для администртора встречи:

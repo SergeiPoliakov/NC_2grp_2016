@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -230,13 +231,7 @@ public class SlotOptimizer {
         Notification notification = new Notification("Ваше расписание за указанный период успешно оптимизировано! Можете сохранить свое расписание.", user_id, user_id, Notification.OPTIMIZATION_IS_GOOD);
         // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
         NotificationService.sendNotification(notification);
-
-
-
     }
-
-
-
 
 
 
@@ -311,7 +306,6 @@ public class SlotOptimizer {
 
                         // И надо с учетом перемещенного события пересчитать теперь свободные слоты справа
                         allFreeSlots = new SlotManager().getAllFreeSlots(events, optimDuplicate.getDate_end(), opt_period_date_end); // справа
-
                     }
 
                     // выставить флаг переноса, чтобы повторно не перемещать событие это, и выйти из внутреннего цикла по j
@@ -330,9 +324,62 @@ public class SlotOptimizer {
             i--; // А это потому что мы удалили из списка
 
         }
-
-
     }
+
+
+    // 2017-04-18 3) Метод для поиска всех проблемных (перекрывающихся) дубликатов встреч в расписании пользователя
+    public static TreeMap<Event, ArrayList<Event>> findUserProblemDuplicate() throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
+        // 0 Подготавливаем результирующую мапу:
+        TreeMap<Event, ArrayList<Event>> resultMap = new TreeMap<>();
+
+        // 1 Определяем текущую дату-время, она будет выступать левой границей для выборки из базы всех событий пользователя):
+        LocalDateTime start = LocalDateTime.now();
+        String st_start = DateConverter.dateToString(start);
+
+        // 2 Определяем дату самого последнего события в таймлайне пользовательского расписания,
+        // для этого вытаскиваем самое последнее по дате событие и уже из него - дату его окончания:
+        ArrayList<Integer> idss = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.LAST_FOR_CURRENT_USER));
+        Integer final_event_id = idss.get(0);
+        DataObject dataObject = new DBHelp().getObjectsByIdAlternative(final_event_id); // Получаем датаобджек последнего события
+        Event final_event = new Converter().ToEvent(dataObject); // Конвертируем в событие
+        LocalDateTime end = final_event.getEnd(); // Получаем дату окончания финального события
+        String st_end = DateConverter.dateToString(end);
+
+        // 3 Вытаскиваем из базы все события пользователя за период, огранчиенный этими двумя датами:
+        ArrayList<Integer> idsAllEvents = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER, EventFilter.BETWEEN_TWO_DATES, st_start, st_end));
+        ArrayList<DataObject> aldoAllEvents = loadingService.getListDataObjectByListIdAlternative(idsAllEvents);
+        ArrayList<Event> events = new Converter().ToEvent(aldoAllEvents);
+
+        // 4 Теперь нужно обойти список событий и разделить его на две части - обычные события и дубликаты встреч:
+        ArrayList<Event> baseEvents = new ArrayList<>();
+        ArrayList<Event> duplicates = new ArrayList<>();
+        for(Event event : events){
+            if (event.getType_event().equals(Event.BASE_EVENT)){
+                // имеем дело с обычным событием
+                baseEvents.add(event);
+            }
+            else{
+                // иначе имеем дело с дубликатом встречи
+                duplicates.add(event);
+            }
+        }
+
+        // 5 А теперь обойдем список дубликатов, и для каждого дубликата поищем перекрывающиеся с ним события в списке обычных событий
+        SlotManager slm = new SlotManager();
+        ArrayList<Event> problems = new ArrayList<>();
+        for(Event event : duplicates){
+            ArrayList<Event> problemBaseEvents = slm.getOverlapEvents(baseEvents, event);
+            if (problemBaseEvents == null || problemBaseEvents.size() == 0) continue; // переходим к следующему шагу, если перекрытий не нашли
+            // иначе заносим в мапу проблемную копию встречи и список перекрывающихся событий:
+            resultMap.put(event, problemBaseEvents);
+        }
+
+
+        return resultMap;
+    }
+
+
 
 
     // Админский оптимизатор встречи
