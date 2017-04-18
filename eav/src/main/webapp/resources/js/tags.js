@@ -10,7 +10,7 @@ function markHashTag(text, container){
     span.className = "label label-default";
     var a = document.createElement('a');
     a.appendChild(span);
-    a.href = "/#search=" + text;
+    a.href = "/search/" + text;
 
     container.appendChild(a);
     var space = document.createTextNode(" ");

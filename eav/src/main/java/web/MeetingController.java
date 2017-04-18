@@ -202,7 +202,7 @@ public class MeetingController {
 
     // Просмотр встречи DO
     @RequestMapping(value = "/meeting{meetingID}", method = RequestMethod.GET)
-    public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException, ParseException {
+    public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException, ParseException, CustomException {
         Meeting meeting = new Meeting();
         try {
             meeting = new Meeting(doCache.get(meetingID));
@@ -235,9 +235,10 @@ public class MeetingController {
             return "/meetingAdmin";
         else if (meeting.getUsers().contains(user)) { // Страницу запрашивает участник встречи
             return "/meetingMember";
+        } else {
+            throw new CustomException("Вы не можете просмотреть эту встречу, так как не являетесь ее участником. Попроситесь или напишите организатору");
         }
 
-        return "/main-login";
     }
 
     //Добавление встречи DO

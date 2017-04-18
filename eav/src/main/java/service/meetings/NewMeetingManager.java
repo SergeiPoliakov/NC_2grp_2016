@@ -52,7 +52,10 @@ public class NewMeetingManager {
                 tagNodeTree.insertForMeeting(value, id);
                 worlds.append(value).append(" ");
             }
-        } else worlds.append("встреча");
+        } else {
+            tagNodeTree.insertForMeeting("встреча", id);
+            worlds.append("встреча");
+        }
 
         Meeting meeting;
         if (duration == null) {
