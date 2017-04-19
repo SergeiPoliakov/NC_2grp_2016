@@ -346,7 +346,7 @@ public class SlotOptimizer {
         LocalDateTime end = final_event.getEnd(); // Получаем дату окончания финального события
         String st_end = DateConverter.dateToString(end);
 
-        // 3 Вытаскиваем из базы все события пользователя за период, огранчиенный этими двумя датами:
+        // 3 Вытаскиваем из базы все события пользователя за период, ограниченный этими двумя датами:
         ArrayList<Integer> idsAllEvents = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER, EventFilter.BETWEEN_TWO_DATES, st_start, st_end));
         ArrayList<DataObject> aldoAllEvents = loadingService.getListDataObjectByListIdAlternative(idsAllEvents);
         ArrayList<Event> events = new Converter().ToEvent(aldoAllEvents);

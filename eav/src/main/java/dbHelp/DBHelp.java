@@ -1086,6 +1086,13 @@ public class DBHelp {
             // Работаем со встречами
             if (params.get(MeetingFilter.ALL) != null) { // если надо получить IDs всех встреч в системе,
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING;
+            } else if (params.get(MeetingFilter.FOR_DUPLICATE) != null) { // 2017-04-19 если надо получить ID встречи по айди ее дубликата,
+                ArrayList<String> duplicate_id = params.get(MeetingFilter.FOR_DUPLICATE);
+                //SELECT ob.OBJECT_ID FROM OBJECTS ob
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 313 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID =  " + MEETING + " ";
+                sql += "AND re.REFERENCE =  " + duplicate_id.get(0) + " ";
+
             } else if (params.get(MeetingFilter.FOR_CURRENT_USER) != null) { // поправил 2017-03-02 если надо получить ID всех встреч текущего пользователей,
                 //-- Правильное получение списка айди всех встреч текущего пользователя
                 //SELECT ob.OBJECT_ID FROM OBJECTS ob

@@ -1,6 +1,7 @@
 package web;
 
 import com.google.common.cache.LoadingCache;
+import dbHelp.DBHelp;
 import entities.*;
 import exception.CustomException;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -61,7 +63,8 @@ public class OptimizerController {
 
     // 2) К запросу на получение данных по свободным слотам
     @RequestMapping(value = "/getFreeSlots", method = RequestMethod.POST, headers = {"Content-type=application/json"})
-    public @ResponseBody
+    public
+    @ResponseBody
     ArrayList<Slot> getStat(@RequestBody SlotRequest slotRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         return new SlotManager().getFreeSlots(slotRequest);
     }
@@ -152,16 +155,17 @@ public class OptimizerController {
 
     // 5) 2017-04-13 На добавление события через AJAX в сейвер
     @RequestMapping(value = "/userOptimizerAddEventAJAX", method = RequestMethod.POST)
-    public @ResponseBody
+    public
+    @ResponseBody
     Response userOptimizerAddEventAJAX(@ModelAttribute("meeting_id") String meeting_id,
-                                              @ModelAttribute("meeting_date_start") String meeting_date_start,
-                                              @ModelAttribute("meeting_date_end") String meeting_date_end,
+                                       @ModelAttribute("meeting_date_start") String meeting_date_start,
+                                       @ModelAttribute("meeting_date_end") String meeting_date_end,
 
-                                              @ModelAttribute("name") String name,
-                                              @ModelAttribute("priority") String priority,
-                                              @ModelAttribute("date_begin") String date_begin,
-                                              @ModelAttribute("date_end") String date_end,
-                                              @ModelAttribute("info") String info
+                                       @ModelAttribute("name") String name,
+                                       @ModelAttribute("priority") String priority,
+                                       @ModelAttribute("date_begin") String date_begin,
+                                       @ModelAttribute("date_end") String date_end,
+                                       @ModelAttribute("info") String info
     ) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException, ExecutionException {
 
         Response response = new Response();
@@ -181,7 +185,6 @@ public class OptimizerController {
         event.setFloating_date_end(null); // 109 // Плавающая граница справа - Не нужна (не обязательно выставлять, и так она null, но все же)
 
 
-
         // и заносим в сейвер наше событие, (а там автоматом сформируются для него свободные и занятые слоты)
         SlotSaver.addEvent(root_id, meet_id, event, meeting_date_start, meeting_date_end);
 
@@ -192,17 +195,18 @@ public class OptimizerController {
 
     // 6) 2017-04-13 На редактирование события через AJAX в сейвере
     @RequestMapping(value = "/userOptimizerChangeEventAJAX/{eventId}", method = RequestMethod.POST)
-    public @ResponseBody
-    Response userOptimizerChangeEventAJAX(@PathVariable ("eventId") Integer event_id,
-                                                 @ModelAttribute("meeting_id") String meeting_id,
-                                                 @ModelAttribute("meeting_date_start") String meeting_date_start,
-                                                 @ModelAttribute("meeting_date_end") String meeting_date_end,
+    public
+    @ResponseBody
+    Response userOptimizerChangeEventAJAX(@PathVariable("eventId") Integer event_id,
+                                          @ModelAttribute("meeting_id") String meeting_id,
+                                          @ModelAttribute("meeting_date_start") String meeting_date_start,
+                                          @ModelAttribute("meeting_date_end") String meeting_date_end,
 
-                                                 @ModelAttribute("name") String name,
-                                                 @ModelAttribute("priority") String priority,
-                                                 @ModelAttribute("date_begin") String date_begin,
-                                                 @ModelAttribute("date_end") String date_end,
-                                                 @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException, ExecutionException {
+                                          @ModelAttribute("name") String name,
+                                          @ModelAttribute("priority") String priority,
+                                          @ModelAttribute("date_begin") String date_begin,
+                                          @ModelAttribute("date_end") String date_end,
+                                          @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException, ExecutionException {
 
         Response response = new Response();
 
@@ -223,12 +227,13 @@ public class OptimizerController {
 
     // 7) 2017-04-14 На удаление события через AJAX из сейвера
     @RequestMapping(value = "/userOptimizerRemoveEventAJAX/{eventId}", method = RequestMethod.POST)
-    public @ResponseBody
-    Response userOptimizerRemoveEventAJAX(@PathVariable ("eventId") Integer event_id,
+    public
+    @ResponseBody
+    Response userOptimizerRemoveEventAJAX(@PathVariable("eventId") Integer event_id,
 
-                                                 @ModelAttribute("meeting_id") String meeting_id,
-                                                 @ModelAttribute("meeting_date_start") String meeting_date_start,
-                                                 @ModelAttribute("meeting_date_end") String meeting_date_end
+                                          @ModelAttribute("meeting_id") String meeting_id,
+                                          @ModelAttribute("meeting_date_start") String meeting_date_start,
+                                          @ModelAttribute("meeting_date_end") String meeting_date_end
 
     ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException {
 
@@ -291,8 +296,8 @@ public class OptimizerController {
     // 9) 2017-04-18 На отмену изменений последней точки сохранения в сейвере через AJAX
     @RequestMapping(value = "/userOptimizerResetAJAX/{meeting_id}/{meeting_date_start}/{meeting_date_end}", method = RequestMethod.GET)
     public String userOptimizerResetAJAX(@PathVariable("meeting_id") String meeting_id,
-                                        @PathVariable("meeting_date_start") String meeting_date_start,
-                                        @PathVariable("meeting_date_end") String meeting_date_end
+                                         @PathVariable("meeting_date_start") String meeting_date_start,
+                                         @PathVariable("meeting_date_end") String meeting_date_end
 
     ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException, CloneNotSupportedException {
 
@@ -322,6 +327,93 @@ public class OptimizerController {
 
         return "userOptimizerProblem";
     }
+
+    // 11) 2017-04-19 На формирование страницы оптимизации по переданному айди дубликата встречи (со страницы списка проблем расписания userOptimizerProblem)
+    @RequestMapping(value = "/userOptimizerGetOptimizerPage/{duplicate_id}", method = RequestMethod.GET)
+    public String userOptimizerGetOptimizerPage(@PathVariable("duplicate_id") Integer duplicate_id
+    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException, CloneNotSupportedException {
+
+        // 1 Получаем сначала саму встречу по айди ее дубликата:
+        Meeting meeting = new SlotManager().getMeetingByDuplicate(duplicate_id);
+
+        // 2 Проверяем, нашли ли мы встречу:
+        if (meeting == null) return "redirect:/userOptimizerProblem"; // Если не нашли, просто перенаправляем на страницу проблем расписания (но можно и лучше на страницу ошибки)
+
+        // 3 Иначе все хорошо и мы можем сформировать правильный редирект на страницу оптимизации:
+        // для этого нам потребуется айди встречи:
+        String meeting_id = meeting.getId().toString();
+        // дата начала периода оптимизации и дата конца периода оптимизации
+        // выберем их таким образом, чтобы слева и справа от встречи было по нескольку дней, например, 1 день слева и пять - справа
+        LocalDateTime left_date = DateConverter.stringToDate(meeting.getDate_start());
+        left_date = left_date.minusDays(1);
+        String st_left_date = DateConverter.dateToString(left_date);
+
+        LocalDateTime right_date = DateConverter.stringToDate(meeting.getDate_end());
+        right_date = right_date.plusDays(5);
+        String st_right_date = DateConverter.dateToString(right_date);
+
+        // 4 И делаем редирект на сраничку оптимизации
+        return "redirect:/userOptimizer/" + meeting_id + "/" + st_left_date + "/" + st_right_date + "/";
+    }
+    // 12) 2017-04-19 На перенаправление на (пользовательскую или админскую) страницу встречи по переданному айди дубликата встречи (со страницы списка проблем расписания userOptimizerProblem)
+    @RequestMapping(value = "/getMeetingPage/{duplicate_id}", method = RequestMethod.GET)
+    public String getMeetingPage(@PathVariable("duplicate_id") Integer duplicate_id
+    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException, CloneNotSupportedException {
+
+        // 1 Получаем сначала саму встречу по айди ее дубликата:
+        Meeting meeting = new SlotManager().getMeetingByDuplicate(duplicate_id);
+
+        // 2 Проверяем, нашли ли мы встречу:
+        if (meeting == null) return "redirect:/userOptimizerProblem"; // Если не нашли, просто перенаправляем на страницу проблем расписания (но можно и лучше на страницу ошибки)
+
+        // 3 Иначе все хорошо и мы можем сформировать правильный редирект на страницу встречи:
+        // для этого нам потребуется айди встречи:
+        String meeting_id = meeting.getId().toString(); // А Проверка, является ли юзер организатором встречи, произойдет уже в другои контроллере при редиректе:
+
+        return "redirect:/meeting" + meeting_id;
+    }
+
+    // 13) 2017-04-19 На удаление встречи (пользовательское (копии) или админское (самой встречи)) по переданному айди дубликата встречи (со страницы списка проблем расписания userOptimizerProblem)
+    @RequestMapping(value = "/removeMeetingByDuplicate/{duplicate_id}", method = RequestMethod.GET)
+    public String removeMeetingByDuplicate(@PathVariable("duplicate_id") Integer duplicate_id
+    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException, CloneNotSupportedException {
+
+        // 1 Получаем сначала саму встречу по айди ее дубликата:
+        Meeting meeting = new SlotManager().getMeetingByDuplicate(duplicate_id);
+
+        // 2 Проверяем, нашли ли мы встречу:
+        if (meeting == null) return "redirect:/userOptimizerProblem"; // Если не нашли, просто перенаправляем на страницу проблем расписания (но можно и лучше на страницу ошибки)
+
+        // 3 Иначе все хорошо и мы можем сформировать правильный вызов удаления встречи:
+        // для этого нам потребуется айди встречи:
+        Integer meeting_id = meeting.getId();
+        // и айди создателя
+        Integer root_id = meeting.getOrganizer().getId();
+        // а также айди текущего юзера:
+        Integer user_id = userService.getObjID(userService.getCurrentUsername());
+
+        // 4 Проверяем на совпадение рут айди и юзер айди (является ли юзер организатором встречи):
+        if (root_id.equals(user_id)){ // если да, то как админ удаляем саму встречу:
+            new DBHelp().setDeletedMeeting(user_id, meeting_id);
+        }
+        else{ // иначе удаляем как пользователь (только копию! НАДО РЕАЛИЗОВАТЬ):
+            ///
+            /*
+            Сделать удаления у себя встречи (дубликата встречи). Для этого вытащить встречу из мапы, погдгрузить все
+            дубликаты, найти себя среди них, взять ее айди, удалить из встречи и отдать встречу на обновление в базу,
+            а еще администратору и юзерам-участникам встречи разослать уведомление, что такой-то пользователь покинул встречу.
+             */
+        }
+
+
+        // 4 И делаем редирект на исходную страницу
+        return "redirect:/userOptimizerProblem";
+    }
+
+
+
+
+
 
 
 

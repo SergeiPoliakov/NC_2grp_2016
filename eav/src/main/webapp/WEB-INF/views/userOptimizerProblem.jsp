@@ -44,15 +44,19 @@
                     <div class="panel-body">
                         <ul class="chat">
                             <c:forEach items="${allObject}" var="object">
-                                <li class="right clearfix"><span class="chat-img pull-right">
-                                    <a class="btn btn-danger btn-xs" href="/XdeleteEvent/${object.key.id}"><span
-                                            class="glyphicon glyphicon-remove"></span>Удалить</a>
-                                <a class="btn btn-info btn-xs" href="/XeditEvent/${object.key.id}"><span
-                                        class="glyphicon glyphicon-wrench"></span>Перейти</a>
 
-                                </span>
+                                <li class="right clearfix"><span class="chat-img pull-right">
+                                    <a class="btn btn-danger btn-xs" href="/removeMeetingByDuplicate/${object.key.id}"><span
+                                            class="glyphicon glyphicon-remove"></span>Удалить</a>
+                                    <a class="btn btn-info btn-xs" href="/getMeetingPage/${object.key.id}"><span
+                                            class="glyphicon glyphicon-zoom-in"></span>Встреча</a></span>
+                                    <a class="btn btn-warning btn-xs"
+                                       href="/userOptimizerGetOptimizerPage/${object.key.id}"><span
+                                            class="glyphicon glyphicon-flash"></span>Перейти к оптимизатору</a></span>
+
                                     <div class="chat-body clearfix">
                                         <div class="header">
+                                            <br>
                                             <small class=" text-muted"><span
                                                     class="glyphicon glyphicon-bell"></span> ${object.key.name} </small>
                                             <br>
@@ -61,11 +65,15 @@
                                                 - ${object.key.date_end} </small>
                                             <br>
                                             <br>
+
                                             <small class=" text-muted"><span
-                                                    class="glyphicon glyphicon-exclamation-sign"></span>ПРОБЛЕМА: перекрывается с событиями:
-                                            </small>
+                                                    class="glyphicon glyphicon-exclamation-sign"></span>ПРОБЛЕМА:
+                                                совпадение по
+                                                времени с событиями:
+                                            </small> </span>
                                             <br>
                                             <br>
+
                                             <c:forEach items="${object.value}" var="object2">
 
                                                 <small class=" text-muted"><span
@@ -81,11 +89,12 @@
                                         </div>
                                     </div>
                                 </li>
+
                             </c:forEach>
 
                             <li class="right clearfix"><span class="chat-img pull-right">
                                     <a class="btn btn-primary btn-xs" href="/userOptimizerProblem"><span
-                                            class="glyphicon glyphicon-plus"></span>Обновить список</a>
+                                            class="glyphicon glyphicon-refresh"></span>Обновить список</a>
                             </span>
                             </li>
 

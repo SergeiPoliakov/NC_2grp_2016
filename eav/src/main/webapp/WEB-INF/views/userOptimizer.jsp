@@ -106,8 +106,12 @@
                     <a href="/userOptimizerSaveAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">
                         <button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Сохранить</span></button>
                     </a>
+                    <a href="/userOptimizerProblem">
+                        <button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true" > Список проблем</span></button>
+                    </a>
                 </div>
             </div>
+            <br>
 
             <div id ="timelineContainer">
                 <div class="btn-group btn-group-justified" role="group" aria-label="...">

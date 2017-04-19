@@ -5,7 +5,7 @@ import entities.*;
 import service.*;
 import service.cache.DataObjectCache;
 import service.converter.*;
-import service.id_filters.EventFilter;
+import service.id_filters.*;
 import service.search.SearchParser;
 
 import java.lang.reflect.InvocationTargetException;
@@ -380,6 +380,15 @@ public class SlotManager {
         // Добавляем сообщение
         String message = "Все изменения в расписании за указанный период успешно отменены";
         SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
+    }
+
+    // 9) 2017-04-19 Метод, позволяющий получить встречу по id одного из ее дубликатов-задач
+    public Meeting getMeetingByDuplicate(Integer duplicate_id) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+        ArrayList<Integer> idsMeets = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.FOR_DUPLICATE, duplicate_id.toString()));
+        if (idsMeets == null || idsMeets.size() == 0) return  null; // Если не нашли такой встречи, отдаем null и выходим
+        // иначе
+        DataObject dataObjectMeet = loadingService.getDataObjectByIdAlternative(idsMeets.get(0)); // вытаскиваем датаобджект этой встречи
+        return new Meeting(dataObjectMeet); // конвертируем во встречу и отдаем
     }
 
 }

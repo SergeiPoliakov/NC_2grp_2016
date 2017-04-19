@@ -19,7 +19,7 @@ public class Meeting extends BaseEntitie {
 
     public static final int objTypeID = 1004;
 
-    private int  id;
+    private Integer id;
     private String title; // 301
     private String date_start; // 302
     private String date_end; // 303
@@ -59,11 +59,11 @@ public class Meeting extends BaseEntitie {
         this.users = users;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
