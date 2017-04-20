@@ -161,7 +161,7 @@
         </div>
 
 
-        <div class="container">
+      <!--  <div class="container">
             <div class="row">
                 <div class="col-md-5">
                     <div class="panel panel-primary">
@@ -189,7 +189,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>     -->
 
 
 

@@ -2,6 +2,7 @@ package web;
 
 import com.google.common.cache.LoadingCache;
 import entities.DataObject;
+import entities.Event;
 import entities.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -119,6 +120,7 @@ public class KKUserController {
         mapAttr.put(103, String.valueOf(DateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
         mapAttr.put(105, priority);
+        mapAttr.put(106, Event.BASE_EVENT);   // без этого поля организатор не мог увидеть свои проблемы в расписании
         Integer host_id =  userService.getObjID(userService.getCurrentUsername());
         mapAttr.put(141, host_id); // Ссылка на юзера, создавшего событие
 

@@ -293,6 +293,7 @@ public class SlotManager {
         for (int i = 0; i < finalEvents.size(); i++){
             Event new_event = finalEvents.get(i); // вытаскиваем событие из финальной точки сохранения
             Integer new_event_id = new_event.getId(); // его айди
+
             String new_event_begin = new_event.getDate_begin(); // дата начала
             String new_event_end = new_event.getDate_end(); // дата окончания
             // Проверяем, вдруг это новое событие, (СТАРАЯ ВЕРСИЯ: тогда у него не будет еще айди) НОВОЕ: тогда у него будет отрицательный айди (временный)
@@ -339,6 +340,7 @@ public class SlotManager {
             System.out.println("Надо обновить измененное событие:\n\n\n\n\n\n");
             System.out.println(dataObject);
             loadingService.updateDataObject(dataObject);//почему-то тут падает // вроде как поправил
+            doCache.refresh(dataObject.getId());  // обновляем кэш
         }
         // 9-2 Создаем все, что нужно создать:
         for (int i = 0; i < createEvents.size(); i++){ // не через фор-ич, чтобы работать не с копиями и можно было изменить поле id у данных событий в сейвере

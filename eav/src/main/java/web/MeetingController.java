@@ -334,6 +334,8 @@ public class MeetingController {
 
             if (("onlyFriend".equals(settings.getPrivateMeetingInvite()) && flagMeeting.equals("true")) || ("any".equals(settings.getPrivateMeetingInvite()))) {
                 userList.add(user);  // добавлять нужно, если пользователь примет приглашение на встречу, а не как сейчас. Потом переделаю
+                //добавляю дубликат
+                meeting.createDuplicate(user.getId());
                 // Формируем уведомление
                 Notification notification = new Notification("Приглашение на встречу", idSender, idReceiver, Notification.MEETING_INVITE);
                 // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
@@ -347,6 +349,10 @@ public class MeetingController {
                     // userService.sendSmS("meetingInvite" ,idSender, idReceiver);  //отправка смс
                 }
             }
+
+            DataObject dataObject = meeting.toDataObject();
+            loadingService.updateDataObject(dataObject);
+            doCache.invalidate(meetingID);
 
 
 
@@ -377,14 +383,40 @@ public class MeetingController {
 
         meeting.getUsers().remove(user);
         if (meeting.getOrganizer().equals(user)) { // покидает организатор встречи
-            meeting.setOrganizer(meeting.getUsers().get(0)); // следующий участник становится организатором
+
+            ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
+
+            for (Integer i: ids_duplicates
+                    ) {
+                DataObject dataObjectDuplicate = doCache.get(i);
+                if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {  //если это наш дубликат
+
+                    //удаляем юзера из встречи
+                    meeting.getUsers().remove(user);
+                    meeting.setOrganizer(meeting.getUsers().get(0)); // следующий участник становится организатором
+
+                    //удаляем ссылку на дубликат из встречи
+                    meeting.getDuplicates().remove(dataObjectDuplicate);
+                }
+            }
+
+            loadingService.updateDataObject(meeting.toDataObject());
+            doCache.invalidate(meetingID);
+
+            //удаляем дубликаты
+            for (Integer i: ids_duplicates
+                    ) {
+                DataObject dataObjectDuplicate = doCache.get(i);
+                if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {
+                    System.out.println("Дубликат встречи удален");
+                    loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
+                }
+            }
+
         }
 
-        int id = loadingService.updateDataObject(meeting.toDataObject());
-        doCache.invalidate(meetingID);
-
         // Логирвоание:
-        loggerLog.add(Log.SEND_INVITE_MEETING, id);
+        loggerLog.add(Log.LEAVED_MEETING, meetingID);
         return "redirect:/meetings";
     }
 
@@ -459,6 +491,7 @@ public class MeetingController {
         return response;
     }
 
+    //удалить встречу
     @RequestMapping(value = "/deleteMeeting{meetingID}", method = RequestMethod.GET)
     public String deleteMeeting(@PathVariable("meetingID") Integer meetingID) throws InvocationTargetException,
             SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
@@ -474,7 +507,7 @@ public class MeetingController {
         return "redirect:/meetings";
     }
 
-
+    //закрыть встречу
     @RequestMapping(value = "/closeMeeting{meetingID}", method = RequestMethod.GET)
     public String closeMeeting(@PathVariable("meetingID") Integer meetingID) throws InvocationTargetException,
             SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException {
@@ -482,9 +515,26 @@ public class MeetingController {
         DataObject dataObject = doCache.get(meetingID);
         Meeting meeting = new Meeting(dataObject);
         meeting.setStatus("closed");
-        DataObject newDataObject = meeting.toDataObject();
-        int id = loadingService.updateDataObject(newDataObject);
+
+       //удаляю ссылки на дубликаты из встречи
+        ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
+        for (Integer i: ids_duplicates
+                ) {
+            DataObject dataObjectDuplicate = doCache.get(i);
+            meeting.getDuplicates().remove(dataObjectDuplicate);
+        }
+
+        //обновляю встерче перед непосредственным удалением дубликатов
+        int id = loadingService.updateDataObject(meeting.toDataObject());
         doCache.invalidate(meetingID);
+
+        //удаляем дубликаты
+        for (Integer i: ids_duplicates
+                ) {
+            DataObject dataObjectDuplicate = doCache.get(i);
+            System.out.println("Дубликат встречи удален");
+            loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
+        }
 
         // Логирование:
         int idUser = userService.getObjID(userService.getCurrentUsername());

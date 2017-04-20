@@ -47,7 +47,7 @@
 
                                 <li class="right clearfix"><span class="chat-img pull-right">
                                     <a class="btn btn-danger btn-xs" href="/removeMeetingByDuplicate/${object.key.id}"><span
-                                            class="glyphicon glyphicon-remove"></span>Удалить</a>
+                                            class="glyphicon glyphicon-remove"></span>Покинуть</a>
                                     <a class="btn btn-info btn-xs" href="/getMeetingPage/${object.key.id}"><span
                                             class="glyphicon glyphicon-zoom-in"></span>Встреча</a></span>
                                     <a class="btn btn-warning btn-xs"

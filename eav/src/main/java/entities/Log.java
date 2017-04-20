@@ -40,6 +40,7 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
     public static final int GET_INVITE_MEETING = 655; // Принять приглашение на встречу -- сслылка на объект
     public static final int CLOSED_MEETING = 656; // закрытие встречи
     public static final int DELETED_MEETING = 657; // удаление встречи из истории пользователя
+    public static final int LEAVED_MEETING = 658; // удаление встречи из истории пользователя
 
     public static final int ADD_CALENDAR =  661; // Подключение календаря -- параметр
     public static final int SYNCHRONIZED_CALENDAR = 662; // Синхронизация календаря -- параметр
@@ -247,6 +248,9 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
                 break;
             case (DELETED_MEETING):  // удаление встречи из истории пользователя
                 name = "DELETED_MEETING";
+                break;
+            case (LEAVED_MEETING):  // удаление встречи из истории пользователя
+                name = "LEAVED_MEETING";
                 break;
             case (ADD_CALENDAR): // Подключение календаря
                 name = "ADD_CALENDAR";

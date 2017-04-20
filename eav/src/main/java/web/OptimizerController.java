@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
+import service.converter.Converter;
 import service.converter.DateConverter;
 import service.id_filters.EventFilter;
 import service.optimizer.*;
@@ -37,6 +38,8 @@ public class OptimizerController {
     private StatisticLogger loggerLog = new StatisticLogger();
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
+
+    private Converter converter = new Converter();
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
@@ -390,28 +393,51 @@ public class OptimizerController {
         // и айди создателя
         Integer root_id = meeting.getOrganizer().getId();
         // а также айди текущего юзера:
-        Integer user_id = userService.getObjID(userService.getCurrentUsername());
+        User user = converter.ToUser(doCache.get(userService.getObjID(userService.getCurrentUsername())));
+        Integer user_id = user.getId();
 
+        // это для админа было, убрал за ненадобностью. Надо у него вообще эту кнопку убрать 
         // 4 Проверяем на совпадение рут айди и юзер айди (является ли юзер организатором встречи):
-        if (root_id.equals(user_id)){ // если да, то как админ удаляем саму встречу:
+        /*if (root_id.equals(user_id)){ // если да, то как админ удаляем саму встречу:
             new DBHelp().setDeletedMeeting(user_id, meeting_id);
         }
-        else{ // иначе удаляем как пользователь (только копию! НАДО РЕАЛИЗОВАТЬ):
-            ///
-            /*
-            Сделать удаления у себя встречи (дубликата встречи). Для этого вытащить встречу из мапы, погдгрузить все
-            дубликаты, найти себя среди них, взять ее айди, удалить из встречи и отдать встречу на обновление в базу,
-            а еще администратору и юзерам-участникам встречи разослать уведомление, что такой-то пользователь покинул встречу.
-             */
+        else{ // иначе удаляем как пользователь (реализовал): */
+
+            ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs(); // в этот список получаем из встречи все айдишники дубликатов
+            for (Integer i: ids_duplicates
+                 ) {
+                DataObject dataObjectDuplicate = doCache.get(i);
+                if (dataObjectDuplicate.getReference(141).get(0).equals(user_id)) {  //если это наш дубликат
+
+                    //удаляем юзера из встречи
+                    meeting.getUsers().remove(user);
+
+
+                    //удаляем ссылку на дубликат из встречи
+                    meeting.getDuplicates().remove(dataObjectDuplicate);
+
+                    // Логирвоание:
+                    loggerLog.add(Log.LEAVED_MEETING, meeting_id);
+                }
+            }
+
+        loadingService.updateDataObject(meeting.toDataObject());
+        doCache.invalidate(meeting_id);
+
+        //удаляем дубликаты
+        for (Integer i: ids_duplicates
+                ) {
+            DataObject dataObjectDuplicate = doCache.get(i);
+            if (dataObjectDuplicate.getReference(141).get(0).equals(user_id)) {
+                System.out.println("Дубликат встречи удален");
+                loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
+            }
         }
 
 
         // 4 И делаем редирект на исходную страницу
         return "redirect:/userOptimizerProblem";
     }
-
-
-
 
 
 

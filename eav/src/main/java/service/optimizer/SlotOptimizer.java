@@ -340,39 +340,42 @@ public class SlotOptimizer {
         // 2 Определяем дату самого последнего события в таймлайне пользовательского расписания,
         // для этого вытаскиваем самое последнее по дате событие и уже из него - дату его окончания:
         ArrayList<Integer> idss = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.LAST_FOR_CURRENT_USER));
-        Integer final_event_id = idss.get(0);
-        DataObject dataObject = new DBHelp().getObjectsByIdAlternative(final_event_id); // Получаем датаобджек последнего события
-        Event final_event = new Converter().ToEvent(dataObject); // Конвертируем в событие
-        LocalDateTime end = final_event.getEnd(); // Получаем дату окончания финального события
-        String st_end = DateConverter.dateToString(end);
+        if (!idss.isEmpty()) {
+            Integer final_event_id = idss.get(0);
+            DataObject dataObject = new DBHelp().getObjectsByIdAlternative(final_event_id); // Получаем датаобджек последнего события
+            Event final_event = new Converter().ToEvent(dataObject); // Конвертируем в событие
+            LocalDateTime end = final_event.getEnd(); // Получаем дату окончания финального события
+            String st_end = DateConverter.dateToString(end);
 
-        // 3 Вытаскиваем из базы все события пользователя за период, ограниченный этими двумя датами:
-        ArrayList<Integer> idsAllEvents = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER, EventFilter.BETWEEN_TWO_DATES, st_start, st_end));
-        ArrayList<DataObject> aldoAllEvents = loadingService.getListDataObjectByListIdAlternative(idsAllEvents);
-        ArrayList<Event> events = new Converter().ToEvent(aldoAllEvents);
 
-        // 4 Теперь нужно обойти список событий и разделить его на две части - обычные события и дубликаты встреч:
-        ArrayList<Event> baseEvents = new ArrayList<>();
-        ArrayList<Event> duplicates = new ArrayList<>();
-        for(Event event : events){
-            if (event.getType_event().equals(Event.BASE_EVENT)){
-                // имеем дело с обычным событием
-                baseEvents.add(event);
+            // 3 Вытаскиваем из базы все события пользователя за период, ограниченный этими двумя датами:
+            ArrayList<Integer> idsAllEvents = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER, EventFilter.BETWEEN_TWO_DATES, st_start, st_end));
+            ArrayList<DataObject> aldoAllEvents = loadingService.getListDataObjectByListIdAlternative(idsAllEvents);
+            ArrayList<Event> events = new Converter().ToEvent(aldoAllEvents);
+
+            // 4 Теперь нужно обойти список событий и разделить его на две части - обычные события и дубликаты встреч:
+            ArrayList<Event> baseEvents = new ArrayList<>();
+            ArrayList<Event> duplicates = new ArrayList<>();
+            for (Event event : events) {
+                if (event.getType_event().equals(Event.BASE_EVENT)) {
+                    // имеем дело с обычным событием
+                    baseEvents.add(event);
+                } else {
+                    // иначе имеем дело с дубликатом встречи
+                    duplicates.add(event);
+                }
             }
-            else{
-                // иначе имеем дело с дубликатом встречи
-                duplicates.add(event);
-            }
-        }
 
-        // 5 А теперь обойдем список дубликатов, и для каждого дубликата поищем перекрывающиеся с ним события в списке обычных событий
-        SlotManager slm = new SlotManager();
-        ArrayList<Event> problems = new ArrayList<>();
-        for(Event event : duplicates){
-            ArrayList<Event> problemBaseEvents = slm.getOverlapEvents(baseEvents, event);
-            if (problemBaseEvents == null || problemBaseEvents.size() == 0) continue; // переходим к следующему шагу, если перекрытий не нашли
-            // иначе заносим в мапу проблемную копию встречи и список перекрывающихся событий:
-            resultMap.put(event, problemBaseEvents);
+            // 5 А теперь обойдем список дубликатов, и для каждого дубликата поищем перекрывающиеся с ним события в списке обычных событий
+            SlotManager slm = new SlotManager();
+            ArrayList<Event> problems = new ArrayList<>();
+            for (Event event : duplicates) {
+                ArrayList<Event> problemBaseEvents = slm.getOverlapEvents(baseEvents, event);
+                if (problemBaseEvents == null || problemBaseEvents.size() == 0)
+                    continue; // переходим к следующему шагу, если перекрытий не нашли
+                // иначе заносим в мапу проблемную копию встречи и список перекрывающихся событий:
+                resultMap.put(event, problemBaseEvents);
+            }
         }
 
 
