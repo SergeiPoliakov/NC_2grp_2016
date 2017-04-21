@@ -74,6 +74,14 @@
                 <h3 class="card-title text-center" id="pTitle">${meeting.title}</h3>
                 <div class="profile-userbuttons">
                     <c:if test="${meeting.status eq 'active'}">
+                        <a href="/adminOptimizer/${meeting.id}">
+                        <button type="button" class="btn btn btn-warning btn-sm btn-sm" id="optimizerButton">
+                            <span class='glyphicon glyphicon-flash' aria-hidden='true'> Открыть в оптимизаторе</span>
+                        </button>
+                        </a>
+                        <br>
+                    </c:if>
+                    <c:if test="${meeting.status eq 'active'}">
                         <button type="button" class="btn btn-info btn-sm" id="settingsButton">
                             <span class='glyphicon glyphicon-cog' aria-hidden='true'> Настройки</span>
                         </button>
