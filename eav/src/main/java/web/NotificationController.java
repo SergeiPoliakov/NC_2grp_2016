@@ -127,17 +127,24 @@ public class NotificationController { // Тут вроде логировать 
         return "test";
     }
 
+    // На подгрузку тестовой страницы с веб-сокетами:
+    @RequestMapping(value = "/test2", method = RequestMethod.GET)
+    public String testPag2() throws SQLException {
+
+        return "test2";
+    }
+
 
     // Работа через STOMP
-    @MessageMapping("/notify")
-    @SendTo("/topic/notifications")
+    @MessageMapping("/notify{userID}")
+    @SendTo("/topic/notifications{userID}")
     public SocketMessage getMessage(SocketMessage message) throws Exception {
 
         // 1 Сформировать уведомление
         // 2. Прикрепить уведомление к пользователю (либо записать в базу, если он нективен)
         // NotificationService.sendNotification(new Notification("Уведомление",idUser, objectId, "friendRequest")); - так выглядит добавление
         // 3. Вернуть его. Нужно или сформировать канал для каждого пользователя, либо хз
-        return  message;
+        return message;
     }
 
 }

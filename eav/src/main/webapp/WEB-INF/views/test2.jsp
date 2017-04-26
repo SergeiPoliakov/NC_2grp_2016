@@ -34,12 +34,12 @@
         }
 
         function connect() {
-            var socket = new SockJS('/notify111'); // Подписка на канал (ну нет, но чёт типа того, тут короче свой юзер id)
+            var socket = new SockJS('/notify222');
             stompClient = Stomp.over(socket);
             stompClient.connect('guest', function(frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/notifications111', function(greeting){ // Подписка на канал
+                stompClient.subscribe('/topic/notifications222', function(greeting){
                     getMessage(JSON.parse(greeting.body).type);
                 });
             });
@@ -55,7 +55,7 @@
             var type = document.getElementById('name').value;
             var senderID = 1123;
             var JSONMessage = JSON.stringify({ 'type': type, 'senderID': senderID, 'recieverID': 10124});
-            stompClient.send("/app/notify111", {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+            stompClient.send("/app/notify111", {}, JSONMessage);
         }
 
         function getMessage(message) {
