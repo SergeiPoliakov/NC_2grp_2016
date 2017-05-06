@@ -40,7 +40,7 @@
                 setConnected(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe('/topic/notifications111', function(greeting){ // Подписка на канал
-                    getMessage(JSON.parse(greeting.body).type);
+                    getMessage(JSON.parse(greeting.body));
                 });
             });
         }
@@ -54,7 +54,7 @@
         function sendMessage() {
             var type = document.getElementById('name').value;
             var senderID = 1123;
-            var JSONMessage = JSON.stringify({ 'type': type, 'senderID': senderID, 'recieverID': 10124});
+            var JSONMessage = JSON.stringify({ 'type': type, 'senderID': senderID, 'recieverID': 10124, 'additionalID': 1000, 'date':'22.05.2017 23.45'});
             stompClient.send("/app/notify111", {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
         }
 
@@ -62,7 +62,7 @@
             var response = document.getElementById('response');
             var p = document.createElement('p');
             p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(message));
+            p.appendChild(document.createTextNode(message.type));
             response.appendChild(p);
         }
     </script>

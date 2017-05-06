@@ -143,5 +143,56 @@
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/notifications.js"></script>
 
+<!--WEB SOCKET -->
+<script src="<%=request.getContextPath()%>/resources/js/sockjs-0.3.4.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/resources/js/stomp.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/resources/js/app.js" type="text/javascript"></script>
+
+<button onclick="sendMessage('friendRequest');">УВЕДОМЛЕНИЕ ОТПРАВИТЬ</button>
+<script type="text/javascript">
+    // Преобразовать дату в строку формата DD.MM.YYYY hh:mm
+    function toLocaleDateTimeString(dateString){
+        var eventTime = dateString.toLocaleTimeString();
+        var eventTimeAfter = eventTime.substring(0, eventTime.length-3);
+        if (eventTimeAfter.length < 5)
+            eventTimeAfter = '0' + eventTimeAfter;
+        var startDate = dateString.toLocaleDateString() + ' ' + eventTimeAfter;
+        return startDate;
+    }
+
+    var stompClient = null;
+
+    // Подключение
+    var socket = new SockJS('/notify111'); // Подписка на канал (ну нет, но чёт типа того, тут короче свой юзер id)
+    stompClient = Stomp.over(socket);
+    stompClient.connect('guest', function(frame) {
+        setConnected(true);
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/notifications111', function(greeting){ // Подписка на канал
+            addNotification(JSON.parse(greeting.body));
+        });
+    });
+
+    function disconnect() {
+        stompClient.disconnect();
+        setConnected(false);
+        console.log("Disconnected");
+    }
+
+    function sendMessage(type) {
+        var senderID = 1123;
+        var JSONMessage = JSON.stringify({
+            'type': type,
+            'senderID': senderID,
+            'recieverID': 10124,
+            'senderName': 'Иванов Иван',
+            'meetingName': 'Встреча новая',
+            'senderPic':'http://pngimg.com/uploads/face/face_PNG5653.png',
+            'date': toLocaleDateTimeString(new Date())
+        });
+        stompClient.send("/app/notify111", {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+    }
+</script>
+
 </body>
 </html>
