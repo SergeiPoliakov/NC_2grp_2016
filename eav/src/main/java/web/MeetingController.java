@@ -454,7 +454,7 @@ public class MeetingController {
             @RequestParam("tag") StringBuilder tag,
             @RequestParam("date_start") String date_start,
             @RequestParam("date_end") String date_end,
-            @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
+            @RequestParam("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException, ExecutionException {
 
 
         Response response = new Response();
@@ -480,7 +480,41 @@ public class MeetingController {
         meeting.setDate_end(date_end);
         meeting.setDuration(String.valueOf(DateConverter.duration(date_start, date_end)));
         meeting.setInfo(info);
+
+        ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
+        ArrayList<User> users = meeting.getUsers();
+
+
         DataObject dataObject = meeting.toDataObject();
+        loadingService.updateDataObject(dataObject);
+        doCache.refresh(meetingID);
+
+        for (User user: users
+                ) {
+            for (Integer i: ids_duplicates
+                    ) {
+                DataObject dataObjectDuplicate = doCache.get(i);
+                if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {
+                    loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
+                }
+            }
+        }
+
+        //удаляем ссылки на дубликаты
+        for (Integer i: ids_duplicates
+                ) {
+            DataObject dataObjectDuplicate = doCache.get(i);
+            meeting.getDuplicates().remove(dataObjectDuplicate);
+            doCache.invalidate(i);
+        }
+
+        for (User user: users
+                ) {
+            meeting.createDuplicate(user.getId());
+
+        }
+
+        dataObject = meeting.toDataObject();
         int id = loadingService.updateDataObject(dataObject);
         doCache.refresh(meetingID);
 

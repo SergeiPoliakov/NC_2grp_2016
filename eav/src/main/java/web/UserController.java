@@ -141,12 +141,13 @@ public class UserController {
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
             ArrayList<Event> events = new ArrayList<>(list.size());
-            ArrayList<String> eventword = new ArrayList<>();
+
+           // ArrayList<String> eventword = new ArrayList<>();
             for (DataObject dataObject : list) {
                 Event event = new Event(dataObject);
                 events.add(event);
 
-                // Проба подготовить данные для Tree Word (чтобы потом вывести на jsp дерево событий)
+         /*       // Проба подготовить данные для Tree Word (чтобы потом вывести на jsp дерево событий)
                 String eventstring = "+ ";
                 String begin = event.getDate_begin();
                 SimpleDateFormat df1 = new SimpleDateFormat();
@@ -162,16 +163,16 @@ public class UserController {
                 //eventstring = eventstring.replaceAll(".", " ");
                 eventstring = "[\'" + eventstring + "\'],";
                 System.out.println(eventstring);
-                eventword.add(eventstring);
+                eventword.add(eventstring); */
 
 
             }
             System.out.println("Размер кэша после добавления " + doCache.size());
 
             m.addAttribute("allEvents", events);
-            m.addAttribute("eventword", eventword);
+            //m.addAttribute("eventword", eventword);
 
-        } catch (ExecutionException | ParseException e) {
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
 
