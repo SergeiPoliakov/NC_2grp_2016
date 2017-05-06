@@ -31,7 +31,7 @@ public class SlotOptimizer {
 
     // 2017-04-15 1) Пользовательский оптимизатор расписания
     public static void optimizeItForUser(Integer user_id, Integer meeting_id, String opt_period_date_start, String opt_period_date_end) throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException, ExecutionException, CloneNotSupportedException {
-        // Среди полученных событий возможны сочетания вариантов из обычных событий распсиания юзера, события-копии текущей оптимизируемой встречи, и, что важно, событий-копий других встреч!
+        // Среди полученных событий возможны сочетания вариантов из обычных событий расписания юзера, события-копии текущей оптимизируемой встречи, и, что важно, событий-копий других встреч!
         // Это надо аккуратно обыграть
 
         // 1 Получаем из сейвера финальную точку сохранения по составному ключу:
@@ -41,7 +41,7 @@ public class SlotOptimizer {
         ArrayList<Event> baseEvents = new ArrayList<>();
         ArrayList<Event> anyDuplicateEvents = new ArrayList<>();
 
-        for (Event event : events) { // такой костыль, потому что непонятно почему в базу не сохрняетмя поле у обычных событий
+        for (Event event : events) { // такой костыль, потому что непонятно почему в базу не сохрняется поле у обычных событий
             if (event.getType_event() == null){
                 event.setType_event(Event.BASE_EVENT);
                 baseEvents.add(event);
@@ -125,10 +125,10 @@ public class SlotOptimizer {
             return;
         }
 
-        // 9 Иначе, если перекрытия есть, вот тут уже самое время подгрузить настройки пользоватльского оптимизатора (если они, конечно, у нас будут)
+        // 9 Иначе, если перекрытия есть, вот тут уже самое время подгрузить настройки пользовательского оптимизатора (если они, конечно, у нас будут)
         // и автоматически разнести по свободным слотам перекрывающиеся события в соотвествии с настройками логики оптимизации
         // (пока сделаю тут логику "чем выше приоритет перекрывающегося события, тем короче смещение от начальной позиции")
-        // Разделяем обычные события по приоритетам:
+        // Разделяем обычные перекрывающиеся события по приоритетам:
         ArrayList<Event> highPriorityEvents = new ArrayList<>(); // Список перекрывающихся событий с высоким приоритетом
         ArrayList<Event> middlePriorityEvents = new ArrayList<>(); // Список перекрывающихся событий со средним приоритетом
         ArrayList<Event> lowPriorityEvents = new ArrayList<>(); // Список перекрывающихся событий с низким приоритетом
@@ -156,18 +156,21 @@ public class SlotOptimizer {
 
         // eventsWithoutPriority.removeAll(overlapEvents);
 
+        // Вытаскиваем свободные слоты слева и справа от нашего дубликата встречи
+        ArrayList<Slot> allFreeSlots = new SlotManager().getAllFreeSlots(eventsWithoutPriority, opt_period_date_start, opt_period_date_end); // слева и справа теперь вместе
+
         // Трижды вызываем вспомогательный метод распределения по свободным слотам перекрывающихся событий
         // для списоков перекрывающихся событий трех разных приоритетов:
-        if (highPriorityEvents.size() > 0) repozitionEvents(eventsWithoutPriority, highPriorityEvents, optimDuplicate, opt_period_date_start, opt_period_date_end, nonContainEvents); // для высокоприоритетных
-        if (middlePriorityEvents.size() > 0) repozitionEvents(eventsWithoutPriority, middlePriorityEvents, optimDuplicate, opt_period_date_start, opt_period_date_end, nonContainEvents); // для среднеприоритетных
-        if (lowPriorityEvents.size() > 0) repozitionEvents(eventsWithoutPriority, lowPriorityEvents, optimDuplicate, opt_period_date_start, opt_period_date_end, nonContainEvents); // для низкоприоритетных
+        if (highPriorityEvents.size() > 0) repozitionEvents(eventsWithoutPriority, highPriorityEvents, optimDuplicate, opt_period_date_start, opt_period_date_end, nonContainEvents, allFreeSlots); // для высокоприоритетных
+        if (middlePriorityEvents.size() > 0) repozitionEvents(eventsWithoutPriority, middlePriorityEvents, optimDuplicate, opt_period_date_start, opt_period_date_end, nonContainEvents, allFreeSlots); // для среднеприоритетных
+        if (lowPriorityEvents.size() > 0) repozitionEvents(eventsWithoutPriority, lowPriorityEvents, optimDuplicate, opt_period_date_start, opt_period_date_end, nonContainEvents, allFreeSlots); // для низкоприоритетных
 
 
         // 10 Проверяем, все ли события нормально перераспределились по свободным слотам: // (т.е. если список с теми, кто не поместился, пуст, то все хорошо)
         // Иначе если не все события поместились, перенесем-ка их правее указанного периода
         // для этого вытащим крайнее правое событие из базы (т.е. событие с максимальным айди), определим, когда оно заканчивается,
         // и последовательно рядком друг за другом запишем оставшиеся события (кстати, тут можно даже сохранить их расположение друг относительно друга,
-        // просто сместив на один и тот же период, например, перенести на несколько недель вперед. Так и сделаю
+        // просто сместив на один и тот же период, например, перенести на несколько недель вперед. Но это потом
         if (nonContainEvents.size() != 0) {
             ArrayList<Integer> idss = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.LAST_FOR_CURRENT_USER));
             Integer final_event_id = idss.get(0); // солянка, так вот пришлось определять последний айди события в базе // Integer final_event_id = new DBHelp().generationID(Converter.EVENT) - 1;
@@ -242,15 +245,16 @@ public class SlotOptimizer {
     // --- 4 opt_period_date_start - левая временнАя граница оптимизируемого периода
     // --- 5 opt_period_date_end - правая временнАя граница оптимизируемого периода
     // --- 6 nonContainEvents - список, куда будем сохранять те события, которые не удалось разместить в свободные слоты
-    private static void repozitionEvents(ArrayList<Event> events, ArrayList<Event> priorityEvents, Event optimDuplicate, String opt_period_date_start, String opt_period_date_end, ArrayList<Event> nonContainEvents) throws IllegalAccessException, ParseException, ExecutionException, SQLException, NoSuchMethodException, InvocationTargetException {
+    // --- 7 ArrayList<Slot> allFreeSlots - список свободных слотов
+    private static void repozitionEvents(ArrayList<Event> events, ArrayList<Event> priorityEvents, Event optimDuplicate, String opt_period_date_start, String opt_period_date_end, ArrayList<Event> nonContainEvents, ArrayList<Slot> allFreeSlots) throws IllegalAccessException, ParseException, ExecutionException, SQLException, NoSuchMethodException, InvocationTargetException {
         // Теперь отсортируем в порядке от большей продолжительности к меньшей, чтобы обходя события сначала пытаться распределить наиболее протяженные,
         // а потом поменьше, тем самым исключить случаи, когда маленькие события займут большие свободные слоты
         Collections.sort(priorityEvents, Collections.reverseOrder());
 
         // Вытаскиваем свободные слоты слева и справа от нашего дубликата встречи
-        ArrayList<Slot> allFreeSlots = new SlotManager().getAllFreeSlots(events, opt_period_date_start, opt_period_date_end); // слева и справа теперь вместе
+        //ArrayList<Slot> allFreeSlots = new SlotManager().getAllFreeSlots(events, opt_period_date_start, opt_period_date_end); // слева и справа теперь вместе
 
-        // И пробуем вписать сначала наши перекрывающиеся события наивысшего приоритета:
+        // И пробуем вписать сначала наши перекрывающиеся события текущего приоритета:
         for (int i = 0; i < priorityEvents.size(); i++) {
             Event event = priorityEvents.get(i);
             Boolean flag_perenosa = false; // Флаг переноса, показывает, сумели ли мы найти текущему событию новое место среди свободных слотов или нет
@@ -270,12 +274,12 @@ public class SlotOptimizer {
                 Duration sl_duration = DateConverter.dlitelnost(slot.getString_start(), slot.getString_end());
 
                 // Проверяем условие возможности вписать в свободный слот наше текущее событие, которое взяли на i-ом шаге обхода списка: // Вот тут надо по длительности СДЕЛАТЬ!!!
-                // Если лоительность свободного слота такая же или превосходит длительность события (вычев из длительности слота дительность события не получили отрицательное число), то
+                // Если длительность свободного слота такая же или превосходит длительность события (вычев из длительности слота дительность события не получили отрицательное число), то
                 if (!sl_duration.minus(ev_duration).isNegative()) { // if (sl_start.isBefore(ev_start) & sl_end.isAfter(ev_end)) { // если событие "вмещается", то переписываем ему границы (даты начала и конца):
 
                     // Определяемся с логикой левой и правой вставки:
                     if (sl_start.isBefore(optimDuplicate.getStart())){
-                        // то свободный слот находится слева от дкбликата встречи, используем "левую" локику вставки:
+                        // то свободный слот находится слева от дубликата встречи, используем "левую" локику вставки:
 
                         // Чтобы наименьшим образом сместиться влево от нашей встречи, нужно чтобы окончание перемещаемого события совпало с окончанием свободного слота,
                         // а начало нужно переместить на расстояние продолжительности события внутрь свободного слота:
@@ -288,8 +292,10 @@ public class SlotOptimizer {
                         event.setDate_begin(DateConverter.dateToString(left));
                         event.setDate_end(DateConverter.dateToString(right));
 
-                        // И надо с учетом перемещенного события пересчитать теперь свободные слоты слева
-                        allFreeSlots = new SlotManager().getAllFreeSlots(events, opt_period_date_start, optimDuplicate.getDate_begin()); // слева
+                        // И укоротить этот слот
+                        slot.setEnd(event.getStart());
+                        sl_duration = DateConverter.dlitelnost(slot.getString_start(), slot.getString_end());
+
                     }
                     else{
                         // Иначе свободный слот справа от дубликата встречи, задействуем "правую" логику:
@@ -304,8 +310,10 @@ public class SlotOptimizer {
                         event.setDate_begin(DateConverter.dateToString(left));
                         event.setDate_end(DateConverter.dateToString(right));
 
-                        // И надо с учетом перемещенного события пересчитать теперь свободные слоты справа
-                        allFreeSlots = new SlotManager().getAllFreeSlots(events, optimDuplicate.getDate_end(), opt_period_date_end); // справа
+                        // И укоротить этот слот
+                        slot.setStart(event.getEnd());
+                        sl_duration = DateConverter.dlitelnost(slot.getString_start(), slot.getString_end());
+
                     }
 
                     // выставить флаг переноса, чтобы повторно не перемещать событие это, и выйти из внутреннего цикла по j

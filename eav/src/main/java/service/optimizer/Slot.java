@@ -50,32 +50,36 @@ public class Slot implements Comparable<Slot> {
         return start;
     }
 
-    public void setStart(LocalDateTime start) {
+    public void setStart(LocalDateTime start) throws ParseException {
         this.start = start;
+        this.string_start = DateConverter.dateToString(start);
     }
 
     public LocalDateTime getEnd() {
         return end;
     }
 
-    public void setEnd(LocalDateTime end) {
+    public void setEnd(LocalDateTime end) throws ParseException {
         this.end = end;
+        this.string_end = DateConverter.dateToString(end);
     }
 
     public String getString_start() {
         return string_start;
     }
 
-    public void setString_start(String string_start) {
+    public void setString_start(String string_start) throws ParseException {
         this.string_start = string_start;
+        this.start = DateConverter.stringToDate(string_start);
     }
 
     public String getString_end() {
         return string_end;
     }
 
-    public void setString_end(String string_end) {
+    public void setString_end(String string_end) throws ParseException {
         this.string_end = string_end;
+        this.end = DateConverter.stringToDate(string_end);
     }
 
     @Override // Метод сравнения
