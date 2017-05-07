@@ -396,7 +396,7 @@ public class OptimizerController {
         User user = converter.ToUser(doCache.get(userService.getObjID(userService.getCurrentUsername())));
         Integer user_id = user.getId();
 
-        // это для админа было, убрал за ненадобностью. Надо у него вообще эту кнопку убрать 
+        // это для админа было, убрал за ненадобностью. Надо у него вообще эту кнопку убрать
         // 4 Проверяем на совпадение рут айди и юзер айди (является ли юзер организатором встречи):
         /*if (root_id.equals(user_id)){ // если да, то как админ удаляем саму встречу:
             new DBHelp().setDeletedMeeting(user_id, meeting_id);
@@ -455,28 +455,56 @@ public class OptimizerController {
 
 
 
-    // 14) 2017-04-21 На подгрузку страницы оптимизации встречи для администратора встречи: (все работает через сайвер, в отличие от методов в других контроллерах) Integer meeting_id
+    // 14) 2017-05-07 На подгрузку страницы оптимизации встречи для администратора встречи: (все работает через сайвер, в отличие от методов в других контроллерах) Integer meeting_id
     @RequestMapping(value = "/adminOptimizer/{meeting_id}", method = RequestMethod.GET)
     public String adminOptimizerPage(@PathVariable("meeting_id") Integer meeting_id,
                                     ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException, ParseException {
 
         DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
+        int user_id = userService.getObjID(userService.getCurrentUsername());
+        // 0) Подготавливаем сообщение о том, что данные успешно подгружены
+        String info_message = null;
 
-        Meeting meeting = new SlotManager().getMeeting(meeting_id);
+        // 1) Пытаемся получить финальную точку сохранения эвентов из сейвера по составному ключу
+        Meeting meeting = SlotSaverAdmin.getDuplicateFinalPoint(currentUser.getId(), meeting_id);
 
+        // Если она есть, то уже начинали оптимизировать, но не успели сохранить в базу, и дальше работаем с этой копией из сейвера,
+        // иначе надо выбрать из кэша (или из базы) нужную встречу и положить ее в сейвер, а затем отправить на страницу:
+        if (meeting == null) {
+            try {
+                System.out.println("Подгружаем нужную встречу");
+                meeting = new SlotManager().getMeeting(meeting_id);
+
+                SlotSaverAdmin.add(user_id, meeting); // и заносим точку сохранения в админский слот-сейвере, а там автоматом создастся для нее еще и вторая редактируемая копия
+
+                // Добавляем сообщение о том, что данные успешно подгружены
+                info_message = "Встреча и данные участников за выбранный период успешно загружены. Вы можете приступить к редактированию и оптимизации встречи";
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Если не сформировали сообщение, то уже редактировали раньше встречу через сейвер:
+
+        if (info_message == null) info_message = SlotSaverAdmin.getMessage(user_id, meeting_id);
+        // Сохраняем сообщение
+        String message = "Загружена финальная точка сохранения встречи. Вы можете продолжить редактирование и выполнить оптимизацию";
+        SlotSaverAdmin.addMessage(user_id, meeting_id, message);
 
         m.addAttribute("meeting", meeting);
 
         m.addAttribute("meeting_id", meeting_id);
-        String slot_message = "Загружена финальная точка сохранения встречи. Вы можете продолжить редактирование и выполнить оптимизацию";
 
-        m.addAttribute("slot_message", slot_message); // сообщение
+        m.addAttribute("info_message", info_message); // сообщение
 
         return "adminOptimizer";
     }
 
 
-    // 15) 2017-04-21 На применение админского оптимизатора к выбранной встрече:
+    // 15) 2017-05-07 На применение админского оптимизатора к выбранной встрече:
     @RequestMapping(value = "/adminOptimizerExecutor/{meeting_id}", method = RequestMethod.GET)
     public String adminOptimizerExecutor(@PathVariable("meeting_id") String meeting_id,
                                             @PathVariable("meeting_date_start") String meeting_date_start,

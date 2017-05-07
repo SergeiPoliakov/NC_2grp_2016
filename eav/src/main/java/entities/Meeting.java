@@ -355,4 +355,55 @@ public class Meeting extends BaseEntitie {
         return ids;
     }
 
+    // 2017-05-07 Переопределяем метод клонирования
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Meeting copyMeeting = new Meeting();
+        copyMeeting.setId(this.getId()); // 1
+        copyMeeting.setTitle(this.getTitle()); // 301
+        copyMeeting.setDate_start(this.getDate_start()); // 302
+        copyMeeting.setDate_end(this.getDate_end()); // 303
+        copyMeeting.setInfo(this.getInfo()); // 304
+        copyMeeting.setOrganizer(this.getOrganizer()); // 305
+        copyMeeting.setTag(this.getTag()); // 306
+        copyMeeting.setMembers(this.getMembers()); // 307
+        copyMeeting.setUsers(this.getUsers()); // 307
+        copyMeeting.setEvents(this.getEvents()); // 308
+
+        // А вот дуплмкаты встреч лучше клонировать, так как их мы будем редактировать потом (по крайней мере одно точно)
+        ArrayList<Event> dupls = new ArrayList<>();
+        if (this.getDuplicates() != null && this.getDuplicates().size() > 0){
+            for(Event ev : this.getDuplicates()){
+                dupls.add((Event) ev.clone());
+            }
+        }
+        copyMeeting.setDuplicates(dupls); // 313
+
+        copyMeeting.setStatus(this.getStatus()); // 309
+        copyMeeting.setDuration(this.getDuration()); // 310
+        copyMeeting.setDate_edit(this.getDate_edit()); // 312
+
+        return copyMeeting;
+    }
+
+    // 2017-05-07 Переопределяем метод приведения к строке
+    @Override
+    public String toString() {
+        return "Встреча " + "{id=" + id
+                + " : title=" + title
+                + " : date_start=" + date_start
+                + " : date_end=" + date_end
+                + " : info=" + info
+                + " : organizer=" + organizer.getId()
+                + " : tag=" + tag
+                + " : members=" + members
+
+                + " : users=" + users
+                + " : events=" + events
+                + " : duplicates=" + duplicates
+                + " : status=" + status
+                + " : duration=" + duration
+                + " : date_edit=" + date_edit +"}";
+    }
+
 }

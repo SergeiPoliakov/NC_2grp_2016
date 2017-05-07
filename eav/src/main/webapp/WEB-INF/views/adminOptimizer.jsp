@@ -289,7 +289,7 @@
                     </div>
                 </div>
                 <div id="visualization"></div>
-                <p style="background:#3498db; color:#ffffff;" id="elem" class="text-center"> ${slot_message}</p>
+                <p style="background:#3498db; color:#ffffff;" id="elem" class="text-center"> ${info_message}</p>
             </div>
         </div>
     </div>
@@ -519,11 +519,13 @@
     ]);
 
 
-    // Create a DataSet (allows two way data-binding)
+    // Create a DataSet (allows two way data-binding) // 2017-05-07 Подправил, чтобы не выводилось расписание пользователей, а только сама встреча и ее дубликаты
     var items = new vis.DataSet([
 
-        <c:forEach items="${meeting.users}" var="user">
-        <c:forEach items="${user.eventsUser}" var="event">
+        <c:forEach items="${meeting.users}" var="user"> // обходим всех прикрепленных пользователей
+        <c:forEach items="${user.eventsUser}" var="event"> // и в каждого пользователя - все события (ищем дубликат, который есть в дуюликатах встречи)
+        <c:forEach items="${meeting.duplicates}" var="duplicate"> // обходим дубликаты
+        <c:if test="${event.id eq duplicate.id}"> // ищем совпадение, и если оно есть, то это дубликат, его выводим на таймлайн
         {
             id: ${event.id},
             group: ${user.id},
@@ -533,6 +535,9 @@
             end: new Date(getDateFromString('${event.date_end}')),
             className: '${event.priority}'
         },
+        </c:if>
+
+        </c:forEach>
         </c:forEach>
         </c:forEach>
         {id: 'A', group: 0, type: 'background', start: new Date(getDateFromString('${meeting.date_start}')), end: new Date(getDateFromString('${meeting.date_end}')), className: 'negative'} // Подсветка времени встречи

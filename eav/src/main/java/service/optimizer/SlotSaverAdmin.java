@@ -1,6 +1,7 @@
 package service.optimizer;
 
 import entities.Event;
+import entities.Meeting;
 import service.statistics.StatRequest;
 import service.statistics.StatResponse;
 import service.statistics.StatisticSaver;
@@ -15,13 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Hroniko on 09.04.2017.
+ * Created by Hroniko on 07.05.2017.
  */
-// Класс для хранения состояния слотов до внесения правок через оптимизатор
-// Тут еще будет хранится история работы со слотами с момента загрузки из базы до иоиента нажатия кнопки сохранить у юзера на странице
-public class SlotSaver {
+public class SlotSaverAdmin {
 
-    private static volatile SlotSaver instance;
+    private static volatile SlotSaverAdmin instance;
 
     // 0) Счетчик временного айди для создаваемых событий (для того, чтобы не путать, берем с обратным знаком):
     private static Integer tmp_id = -1;
@@ -42,20 +41,20 @@ public class SlotSaver {
     public static final Map<String, String> messageMap = new ConcurrentHashMap<>();
 
     // 6) 2017-05-07 Мапа для хранения состояния дубликатов встречи (для администраторского оптимизатора)
-    public static final Map<String, ArrayList<ArrayList<Event>>> duplicateMap = new ConcurrentHashMap<>();
+    public static final Map<String, ArrayList<Meeting>> duplicateMap = new ConcurrentHashMap<>();
 
 
-    public static SlotSaver getInstance() {
+    public static SlotSaverAdmin getInstance() {
         if (instance == null)
-            synchronized (SlotSaver.class) {
+            synchronized (SlotSaverAdmin.class) {
                 if (instance == null)
-                    instance = new SlotSaver();
+                    instance = new SlotSaverAdmin();
             }
         return instance;
     }
 
     // Конструктор:
-    public SlotSaver() {
+    public SlotSaverAdmin() {
     }
 
     // Генератор временного айди события
@@ -63,10 +62,10 @@ public class SlotSaver {
         return (tmp_id - 1);
     }
 
-    // 2017-04-18 Метод сохранения сообщения по составному ключу
-    synchronized public static void addMessage(Integer root_id, Integer meeting_id, String message, String meeting_date_start, String meeting_date_end) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException {
+    // 2017-05-07 Метод сохранения сообщения по составному ключу
+    synchronized public static void addMessage(Integer root_id, Integer meeting_id, String message) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException {
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + meeting_id + "~" + meeting_date_start + "~" + meeting_date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id; // то-то типа "10003~2"
 
         if (messageMap.get(key) == null) { // если нет, то создаем ячейку
             messageMap.put(key, message);
@@ -78,12 +77,12 @@ public class SlotSaver {
 
     }
 
-    // 2017-04-18 Метод получения сообщения по составному ключу
-    synchronized public static String getMessage(Integer root_id, Integer meeting_id, String meeting_date_start, String meeting_date_end) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException {
+    // 2017-05-07 Метод получения сообщения по составному ключу
+    synchronized public static String getMessage(Integer root_id, Integer meeting_id) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException {
         // Фиксируем текущее время загрузки в мапу точки сохранения:
         LocalDateTime savePointDate = LocalDateTime.now();
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + meeting_id + "~" + meeting_date_start + "~" + meeting_date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id; // то-то типа "10003~2"
 
         String result = messageMap.get(key);
 
@@ -92,38 +91,30 @@ public class SlotSaver {
     }
 
 
-    // Метод добавления точки сохранения состояния слотов по составному ключу
-    synchronized public static void add(Integer root_id, Integer meeting_id, ArrayList<Event> events, String date_start, String date_end) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException, CloneNotSupportedException {
+    // 2017-05-07 Метод добавления точки сохранения состояния встречи по составному ключу
+    synchronized public static void add(Integer root_id, Meeting meeting) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException, CloneNotSupportedException {
         // Фиксируем текущее время загрузки в мапу точки сохранения:
         LocalDateTime savePointDate = LocalDateTime.now();
+
+        Integer meeting_id = meeting.getId();
+
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id; // то-то типа "10003~2"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) == null) { // если нет, то создаем ячейку для серии точек сохранения
-            eventMap.put(key, new ArrayList<>());
-            usageSlotMap.put(key, new ArrayList<>());
-            freeSlotMap.put(key, new ArrayList<>());
+            duplicateMap.put(key, new ArrayList<>());
             savePointDateMap.put(key, new ArrayList<>());
         }
 
-        // и заодно заносим в сейвер наши события, предварительно сформировав для них свободные и занятые слоты
-        ArrayList<Slot> usageSlots = new SlotManager().getUsageSlots(events, date_start, date_end);
-        ArrayList<Slot> freeSlots = new SlotManager().getFreeSlots(meeting_id, events, date_start, date_end);
+        // и заодно заносим в сейвер встречу
 
         // А затем привешиваем ко всем мапам: // привешиваем новую точку сохранения
-        eventMap.get(key).add(events);
-        usageSlotMap.get(key).add(usageSlots);
-        freeSlotMap.get(key).add(freeSlots);
+        duplicateMap.get(key).add(meeting);
         savePointDateMap.get(key).add(savePointDate);
 
         // А также вторую (редактируемую) новую точку сохранения
-        ArrayList<Event> edaitableEvents = copyEvents(events);
-        ArrayList<Slot> edaitableUsageSlots = new SlotManager().getUsageSlots(edaitableEvents, date_start, date_end);
-        ArrayList<Slot> edaitableFreeSlots = new SlotManager().getFreeSlots(meeting_id, edaitableEvents, date_start, date_end);
-
-        eventMap.get(key).add(edaitableEvents);
-        usageSlotMap.get(key).add(edaitableUsageSlots);
-        freeSlotMap.get(key).add(edaitableFreeSlots);
+        Meeting copyMeeting = (Meeting) meeting.clone();
+        duplicateMap.get(key).add(copyMeeting);
         savePointDateMap.get(key).add(savePointDate);
 
     }
@@ -353,27 +344,27 @@ public class SlotSaver {
 
     //------------------------------------------------------------------------------------------------
 
-    // GF3) Метод получения финальной точки сохранения эвентов по составному ключу
-    synchronized public static ArrayList<Event> getEventFinalPoint(Integer root_id, Integer meeting_id, String date_start, String date_end) {
-        ArrayList<Event> result = null;
+    // GetEnd3) 2017-05-07 Метод получения финальной точки сохранения дубликатов по составному ключу
+    synchronized public static Meeting getDuplicateFinalPoint(Integer root_id, Integer meeting_id) {
+        Meeting result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id; // то-то типа "10003~2"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null) { // если есть, то отдаем последнюю сохраненную
-            result = eventMap.get(key).get(1);
+            result = duplicateMap.get(key).get(1);
             // наче останется нулл, его и отдадим
         }
         return result;
     }
 
-    // GS3) Метод получения стартовой точки сохранения эвентов по составному ключу
-    synchronized public static ArrayList<Event> getEventStartPoint(Integer root_id, Integer meeting_id, String date_start, String date_end) {
-        ArrayList<Event> result = null;
+    // GetStart3) Метод получения стартовой точки сохранения дубликатов по составному ключу
+    synchronized public static Meeting getDuplicateStartPoint(Integer root_id, Integer meeting_id) {
+        Meeting result = null;
         // Создаем составной ключ для мапы:
-        String key = root_id + "~" + meeting_id + "~" + date_start + "~" + date_end; // то-то типа "10003~2~02.04.2017 00:00~09.04.2017 00:00"
+        String key = root_id + "~" + meeting_id; // то-то типа "10003~2"
         // Проверяем, есть ли такой ключ
         if (savePointDateMap.get(key) != null) { // если есть, то отдаем последнюю сохраненную
-            result = eventMap.get(key).get(0);
+            result = duplicateMap.get(key).get(0);
             // наче останется нулл, его и отдадим
         }
         return result;

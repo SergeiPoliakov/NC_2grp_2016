@@ -391,10 +391,12 @@ public class SlotOptimizer {
     }
 
 
-
+    // 2017-05-07 ------------------------------ К ОПТИМИЗАТОРУ АДМИНА ------------------------------
 
     // Админский оптимизатор встречи
     public static void optimizeItForAdmin(Integer user_id, Integer meeting_id, String opt_period_date_start, String opt_period_date_end){
-        /////
+
+        // 1 Получаем встречу по переданному айди
+
     }
 }
