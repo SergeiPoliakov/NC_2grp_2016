@@ -16,6 +16,70 @@
 <html>
 <head>
 
+    <!--WEB SOCKET -->
+    <%
+        User user = new User();
+        try {
+            user = new Converter().ToUser(new LoadingServiceImp().getDataObjectByIdAlternative(new UserServiceImp().getObjID(new UserServiceImp().getCurrentUsername())));
+
+        } catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    %>
+    <script src="<%=request.getContextPath()%>/resources/js/sockjs-0.3.4.js" type="text/javascript"></script>
+    <script src="<%=request.getContextPath()%>/resources/js/stomp.js" type="text/javascript"></script>
+    <script src="<%=request.getContextPath()%>/resources/js/app.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var gSenderID = '<%=user.getId()%>';
+        var gSenderName = '<%=user.getName()%>' + " " + '<%=user.getSurname()%>';
+        var gSenderPic = '<%=user.getPicture()%>';
+        // Преобразовать дату в строку формата DD.MM.YYYY hh:mm
+        function toLocaleDateTimeString(dateString){
+            var eventTime = dateString.toLocaleTimeString();
+            var eventTimeAfter = eventTime.substring(0, eventTime.length-3);
+            if (eventTimeAfter.length < 5)
+                eventTimeAfter = '0' + eventTimeAfter;
+            var startDate = dateString.toLocaleDateString() + ' ' + eventTimeAfter;
+            return startDate;
+        }
+
+        var stompClient = null;
+
+        // Подключение
+        var socket = new SockJS('/notify'+gSenderID); // Подписка на канал (ну нет, но чёт типа того, тут короче свой юзер id)
+        stompClient = Stomp.over(socket);
+        stompClient.connect('guest', function(frame) {
+            setConnected(true);
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/notifications'+gSenderID, function(greeting){ // Подписка на канал
+                addNotification(JSON.parse(greeting.body));
+            });
+        });
+
+        function disconnect() {
+            stompClient.disconnect();
+            setConnected(false);
+            console.log("Disconnected");
+        }
+
+        <!--type = friendrequest | meetingInvite -->
+        function sendMessage(type, recieverID, meetingID, meetingName) {
+
+
+            var JSONMessage = JSON.stringify({
+                'type': type,
+                'senderID': gSenderID,
+                'recieverID': recieverID,
+                'senderName': gSenderName,
+                'additionalID': meetingID,
+                'meetingName': meetingName,
+                'senderPic': gSenderPic,
+                'date': toLocaleDateTimeString(new Date())
+            });
+            stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+        }
+    </script>
+
     <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/skywalk-docs.min.css">
     <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
@@ -55,18 +119,6 @@
 </head>
 
 <body>
-
-<%
-    User user = new User();
-    try {
-        user = new Converter().ToUser(new LoadingServiceImp().getDataObjectByIdAlternative(new UserServiceImp().getObjID(new UserServiceImp().getCurrentUsername())));
-
-    } catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-        e.printStackTrace();
-    }
-%>
-
-
 <nav class="navbar navbar-default" role="navigation" style="border-radius: 0px 0px 0px 0px;">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -157,60 +209,6 @@
 </script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/notifications.js"></script>
-
-<!--WEB SOCKET -->
-<script src="<%=request.getContextPath()%>/resources/js/sockjs-0.3.4.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath()%>/resources/js/stomp.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath()%>/resources/js/app.js" type="text/javascript"></script>
-
-<!--friendrequest | meetingInvite -->
-<button onclick="sendMessage('meetingRequest', 111, 200012, 'Встреча еча');">УВЕДОМЛЕНИЕ ОТПРАВИТЬ</button>
-<script type="text/javascript">
-    // Преобразовать дату в строку формата DD.MM.YYYY hh:mm
-    function toLocaleDateTimeString(dateString){
-        var eventTime = dateString.toLocaleTimeString();
-        var eventTimeAfter = eventTime.substring(0, eventTime.length-3);
-        if (eventTimeAfter.length < 5)
-            eventTimeAfter = '0' + eventTimeAfter;
-        var startDate = dateString.toLocaleDateString() + ' ' + eventTimeAfter;
-        return startDate;
-    }
-
-    var stompClient = null;
-
-    // Подключение
-    var socket = new SockJS('/notify111'); // Подписка на канал (ну нет, но чёт типа того, тут короче свой юзер id)
-    stompClient = Stomp.over(socket);
-    stompClient.connect('guest', function(frame) {
-        setConnected(true);
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/notifications111', function(greeting){ // Подписка на канал
-            addNotification(JSON.parse(greeting.body));
-        });
-    });
-
-    function disconnect() {
-        stompClient.disconnect();
-        setConnected(false);
-        console.log("Disconnected");
-    }
-
-    function sendMessage(type, recieverID, meetingID, meetingName) {
-
-
-        var JSONMessage = JSON.stringify({
-            'type': type,
-            'senderID': '<%=user.getId()%>',
-            'recieverID': recieverID,
-            'senderName': '<%=user.getName()%>' + " " + '<%=user.getSurname()%>',
-            'additionalID': meetingID,
-            'meetingName': meetingName,
-            'senderPic': '<%=user.getPicture()%>',
-            'date': toLocaleDateTimeString(new Date())
-        });
-        stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
-    }
-</script>
 
 </body>
 
