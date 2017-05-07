@@ -190,6 +190,8 @@
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="/profile">Профиль</a></li>
                         <li class="divider"></li>
+                        <li><a href="#myModal" data-toggle="modal">Написать нам</a></li>
+                        <li class="divider"></li>
                         <li><a href="/logout">Выход</a></li>
                     </ul>
                 </li>
@@ -197,6 +199,60 @@
         </div>
     </div>
 </nav>
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <!--  <div class="modal-content"> -->
+        <div class=".col-xs-6 .col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="text-center">
+                        <h3><i class="fa fa-user-circle fa-4x"></i></h3>
+                        <h2 class="text-center">Проблемы?</h2>
+                        <p>Вы можете написать нам.</p>
+                        <div class="panel-body">
+
+                            <form class="form" method="post" action="/">
+                                <fieldset>
+
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-user color-blue"></i></span>
+                                            <input name="nameUser" id="nameUser" placeholder="Ваше имя" class="form-control" type="text" >
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope color-blue"></i></span>
+                                            <input id="emailInput" name="email" placeholder="email адрес" class="form-control" type="email" oninvalid="setCustomValidity('Пожалуйста введите корректный email!')" onchange="try{setCustomValidity('')}catch(e){}" required="">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label for="TextArea">Ваше сообщение</label>
+                                            <textarea  rows="3" class="form-control noresize" name="info" id="TextArea"></textarea>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <input class="btn btn-lg btn-primary btn-block" id="sendMessage" value="Написать" type="submit">
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  </div> -->
+    </div>
+</div>
 
 
 <script type="text/javascript">
