@@ -1,7 +1,6 @@
 package web;
 
 import com.google.common.cache.LoadingCache;
-import dbHelp.DBHelp;
 import entities.*;
 import exception.CustomException;
 import org.springframework.stereotype.Controller;
@@ -92,7 +91,7 @@ public class OptimizerController {
 
         Integer meet_id = new Integer(meeting_id.trim());
         // Пытаемся получить финальную точку сохранения эвентов из сейвера по составному ключу
-        ArrayList<Event> events = SlotSaver.getEventFinalPoint(currentUser.getId(), meet_id, date_start, date_end);
+        ArrayList<Event> events = SlotSaverUser.getEventFinalPoint(currentUser.getId(), meet_id, date_start, date_end);
         int user_id = userService.getObjID(userService.getCurrentUsername());
         // Если они есть, то уже начинали оптимизировать, но не успели сохранить в базу, и дальше работаем с ними, иначе надо выбрать из кэша (и из базы) нужные события и положить их в сейвер, а затем отправить на страницу
         if (events == null) {
@@ -109,7 +108,7 @@ public class OptimizerController {
 
                 }
 
-                SlotSaver.add(user_id, meet_id, events, date_start, date_end); // и заносим точку сохранения в слот-сейвере, а там автоматом создастся для нее еще и вторая редактируемая копия
+                SlotSaverUser.add(user_id, meet_id, events, date_start, date_end); // и заносим точку сохранения в слот-сейвере, а там автоматом создастся для нее еще и вторая редактируемая копия
 
                 // 2017-04-17 Добавляем сообщение о том, что слоты успешно подгружены
                 slot_message = "События за выбранный период успешно загружены. Вы можете приступить к редактированию и оптимизации расписания";
@@ -123,10 +122,10 @@ public class OptimizerController {
 
         // Если не сформировали сообщение, то уже редактировали раньше слоты:
 
-        if (slot_message == null) slot_message = SlotSaver.getMessage(user_id, meet_id, date_start, date_end);
+        if (slot_message == null) slot_message = SlotSaverUser.getMessage(user_id, meet_id, date_start, date_end);
         // Сохраняем сообщение
         String message = "Загружена финальная точка сохранения расписания. Вы можете продолжить редактирование и выполнить оптимизацию";
-        SlotSaver.addMessage(user_id, meet_id, message, date_start, date_end);
+        SlotSaverUser.addMessage(user_id, meet_id, message, date_start, date_end);
 
         User user = userService.getCurrentUser();
         m.addAttribute(user);
@@ -180,7 +179,7 @@ public class OptimizerController {
         Event event = new Event(name, date_begin, date_end, duration.toString(), priority, info);
         // public Event(String name, String date_begin, String date_end, String duration, String priority, String info) {
         // 2017-04-16 Выставляем значения других полей:
-        event.setId(SlotSaver.genereteTempId()); // Нужно дать какое-то временное значение айди событию, которое будет использоваться как идентификатор в сейвере до тех пор, пока событие не попало в базу, а там оно уже станет нормальным
+        event.setId(SlotSaverUser.genereteTempId()); // Нужно дать какое-то временное значение айди событию, которое будет использоваться как идентификатор в сейвере до тех пор, пока событие не попало в базу, а там оно уже станет нормальным
         event.setHost_id(root_id);
         event.setType_event(Event.BASE_EVENT); // 106 // Тип события - базовое
         event.setEditable(Event.EDITABLE); // 107 // Свойства события: редактируемое
@@ -189,7 +188,7 @@ public class OptimizerController {
 
 
         // и заносим в сейвер наше событие, (а там автоматом сформируются для него свободные и занятые слоты)
-        SlotSaver.addEvent(root_id, meet_id, event, meeting_date_start, meeting_date_end);
+        SlotSaverUser.addEvent(root_id, meet_id, event, meeting_date_start, meeting_date_end);
 
         // response.setText("OK");
         return response;
@@ -221,7 +220,7 @@ public class OptimizerController {
         Integer meet_id = new Integer(meeting_id.trim());
 
         // и обновляем в сейвере наше событие, (а там автоматом сформируются для него свободные и занятые слоты)
-        SlotSaver.updateEvent(root_id, meet_id, event, meeting_date_start, meeting_date_end);
+        SlotSaverUser.updateEvent(root_id, meet_id, event, meeting_date_start, meeting_date_end);
 
         //response.setText("OK");
         return response;
@@ -246,7 +245,7 @@ public class OptimizerController {
         Integer meet_id = new Integer(meeting_id.trim());
 
         // удаляем из сейвера наше событие, (а там автоматом пересчитаются свободные и занятые слоты)
-        SlotSaver.removeEvent(root_id, meet_id, event_id, meeting_date_start, meeting_date_end);
+        SlotSaverUser.removeEvent(root_id, meet_id, event_id, meeting_date_start, meeting_date_end);
 
         //response.setText("OK");
         return response;
@@ -290,7 +289,7 @@ public class OptimizerController {
 
         // Добавляем сообщение
         String message = "Ваше расписание за отмеченный период успешно сохранено!";
-        SlotSaver.addMessage(root_id, meet_id, message, meeting_date_start, meeting_date_end);
+        SlotSaverUser.addMessage(root_id, meet_id, message, meeting_date_start, meeting_date_end);
 
         // Перегружаем страничку
         return "redirect:/userOptimizer/" + meeting_id + "/" + meeting_date_start + "/" + meeting_date_end + "/";
@@ -480,7 +479,9 @@ public class OptimizerController {
                 // Добавляем сообщение о том, что данные успешно подгружены
                 info_message = "Встреча и данные участников за выбранный период успешно загружены. Вы можете приступить к редактированию и оптимизации встречи";
 
-            } catch (ExecutionException | CloneNotSupportedException e) {
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
         }
@@ -513,6 +514,44 @@ public class OptimizerController {
 
         // Вызываем метод-оптимизатор с параметрами айди пользователя и айди встречи:
         SlotOptimizer.optimizeItForAdmin(root_id, meeting_id);
+
+        // Перегружаем страничку
+        return "redirect:/adminOptimizer/" + meeting_id;
+    }
+
+
+
+    // 16) 2017-05-07 На отмену изменений последней точки сохранения в сейвере через AJAX
+    @RequestMapping(value = "/adminOptimizerReset/{meeting_id}", method = RequestMethod.GET)
+    public String adminOptimizerReset(@PathVariable("meeting_id") Integer meeting_id
+
+    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException, CloneNotSupportedException {
+
+
+        Integer root_id = userService.getObjID(userService.getCurrentUsername());
+
+        // Вызываем метод сохранения в базу всех изменений из сейвера с параметрами айди пользователя, айди встречи и период оптимизации:
+        SlotOptimizer.resetMeeting(root_id, meeting_id);
+
+        // Перегружаем страничку
+        return "redirect:/adminOptimizer/" + meeting_id;
+    }
+
+
+    // 17) 2017-05-07 На сохранение в базу последней точки сохранения (встречи) из сейвера админа (сейвер надо очистить от первоначальной копии, переписав ее финальной точкой сохранения)
+    @RequestMapping(value = "/adminOptimizerSave/{meeting_id}", method = RequestMethod.GET)
+    public String adminOptimizerSave(@PathVariable("meeting_id") Integer meeting_id
+    ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException, CloneNotSupportedException {
+
+
+        Integer root_id = userService.getObjID(userService.getCurrentUsername());
+
+        // Вызываем метод сохранения в базу всех изменений из сейвера с параметрами айди пользователя, айди встречи и период оптимизации:
+        new SlotOptimizer().saveMeeting(root_id, meeting_id);
+
+        // Добавляем сообщение
+        String message = "Все изменения в данных встречи успешно сохранены!";
+        SlotSaverAdmin.addMessage(root_id, meeting_id, message);
 
         // Перегружаем страничку
         return "redirect:/adminOptimizer/" + meeting_id;

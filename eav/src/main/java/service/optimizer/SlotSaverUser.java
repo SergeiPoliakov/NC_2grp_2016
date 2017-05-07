@@ -1,9 +1,6 @@
 package service.optimizer;
 
 import entities.Event;
-import service.statistics.StatRequest;
-import service.statistics.StatResponse;
-import service.statistics.StatisticSaver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -19,9 +16,9 @@ import java.util.concurrent.ExecutionException;
  */
 // Класс для хранения состояния слотов до внесения правок через оптимизатор
 // Тут еще будет хранится история работы со слотами с момента загрузки из базы до иоиента нажатия кнопки сохранить у юзера на странице
-public class SlotSaver {
+public class SlotSaverUser {
 
-    private static volatile SlotSaver instance;
+    private static volatile SlotSaverUser instance;
 
     // 0) Счетчик временного айди для создаваемых событий (для того, чтобы не путать, берем с обратным знаком):
     private static Integer tmp_id = -1;
@@ -45,17 +42,17 @@ public class SlotSaver {
     public static final Map<String, ArrayList<ArrayList<Event>>> duplicateMap = new ConcurrentHashMap<>();
 
 
-    public static SlotSaver getInstance() {
+    public static SlotSaverUser getInstance() {
         if (instance == null)
-            synchronized (SlotSaver.class) {
+            synchronized (SlotSaverUser.class) {
                 if (instance == null)
-                    instance = new SlotSaver();
+                    instance = new SlotSaverUser();
             }
         return instance;
     }
 
     // Конструктор:
-    public SlotSaver() {
+    public SlotSaverUser() {
     }
 
     // Генератор временного айди события

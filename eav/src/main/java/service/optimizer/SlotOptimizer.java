@@ -1,8 +1,10 @@
 package service.optimizer;
 
+import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
 import entities.*;
 import service.LoadingServiceImp;
+import service.cache.DataObjectCache;
 import service.converter.Converter;
 import service.converter.DateConverter;
 import service.id_filters.EventFilter;
@@ -25,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 public class SlotOptimizer {
 
     private static LoadingServiceImp loadingService = new LoadingServiceImp();
+    private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
 
     // 2017-04-15 1) Пользовательский оптимизатор расписания
     public static void optimizeItForUser(Integer user_id, Integer meeting_id, String opt_period_date_start, String opt_period_date_end) throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException, ExecutionException, CloneNotSupportedException {
@@ -32,7 +35,7 @@ public class SlotOptimizer {
         // Это надо аккуратно обыграть
 
         // 1 Получаем из сейвера финальную точку сохранения по составному ключу:
-        ArrayList<Event> events = SlotSaver.getEventFinalPoint(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
+        ArrayList<Event> events = SlotSaverUser.getEventFinalPoint(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
 
         // 2 Разделяем полученные события на два типа: обычные события расписания и события-отображения встреч
         ArrayList<Event> baseEvents = new ArrayList<>();
@@ -72,7 +75,7 @@ public class SlotOptimizer {
 
             // Сохраняем сообщение
             String message = "Внимание! Непредвиденная ошибка оптимизации! Пожалуйста, проверьте свое расписание на наличие совпадающих по времени задач";
-            SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
+            SlotSaverUser.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
 
             return;
         }
@@ -90,7 +93,7 @@ public class SlotOptimizer {
 
                 // Сохраняем сообщение
                 String message = "Внимание! Перекрытие двух встреч в расписании пользователя! Оптимизация невозможна";
-                SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
+                SlotSaverUser.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
 
                 // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто сам себе шлет):
                 Notification notification = new Notification("Внимание! Обнаружено перекрытие двух встреч в Вашем расписании. " +
@@ -113,7 +116,7 @@ public class SlotOptimizer {
 
             // Сохраняем сообщение
             String message = "Проверка завершена! Ваше расписание не нуждается в оптимизации! Можете сохранить свое расписание";
-            SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
+            SlotSaverUser.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
 
             // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто сам себе шлет):
             Notification notification = new Notification("Проверка завершена! Ваше расписание не нуждается в оптимизации! Можете сохранить свое расписание.", user_id, user_id, Notification.OPTIMIZATION_IS_GOOD);
@@ -216,12 +219,12 @@ public class SlotOptimizer {
         resultEvents.addAll(nonContainEvents);
         // Заносим в слот-сейвер
         for (Event event : resultEvents) {
-            SlotSaver.updateEvent(user_id, meeting_id, event, opt_period_date_start, opt_period_date_end);
+            SlotSaverUser.updateEvent(user_id, meeting_id, event, opt_period_date_start, opt_period_date_end);
         }
 
         // Сохраняем сообщение
         String message = "Ваше расписание за указанный период успешно оптимизировано! Можете сохранить свое расписание";
-        SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
+        SlotSaverUser.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
 
         // 12 И отправить уведомление юзеру об успешном окончании оптимизации его расписания:
 
@@ -417,7 +420,6 @@ public class SlotOptimizer {
         ArrayList<Event> duplicates = meeting.getDuplicates();
 
 
-
         // 4 Составляем список смещений начала дубликатов встречи относительно начала самой встречи и заодно подготавливаем данные для рассчета среднего смещения
         ArrayList<Duration> displacements = new ArrayList<>();
         LocalDateTime me_start = DateConverter.stringToDate(meeting.getDate_start()); // Дата начала встречи
@@ -485,6 +487,47 @@ public class SlotOptimizer {
     }
 
 
+    // 2017-05-07 Метод удаления изменений точки сохранения из админского сейвера
+    public static void resetMeeting(Integer user_id, Integer meeting_id) throws ParseException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException, CloneNotSupportedException {
+        Meeting meeting = SlotSaverAdmin.getDuplicateStartPoint(user_id, meeting_id); // Делаем копию начального состояния
+        SlotSaverAdmin.remove(user_id, meeting_id); // Удаляем все изменения
+        SlotSaverAdmin.add(user_id, meeting); // Добавляем исходную копию
+        // Добавляем сообщение
+        String message = "Все изменения в данных встречи успешно отменены";
+        SlotSaverAdmin.addMessage(user_id, meeting_id, message);
+    }
+
+
+
+    // 2017-05-07 Метод сохранения финальной точки сохранения из сейвера в базу данных
+    public void saveMeeting(Integer user_id, Integer meeting_id) throws ParseException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException, CloneNotSupportedException {
+
+        // 1 Получаем из сейвера финальную точку сохранения (она соответсвует тому, что сейчас есть в базе) по составному ключу:
+        Meeting meeting = SlotSaverAdmin.getDuplicateFinalPoint(user_id, meeting_id); // Делаем копию конечного состояния
+
+        /*
+        // 2 Обновляем встречу (хотя это возможно и не надо):
+        DataObject dataOb = meeting.toDataObject();
+        loadingService.updateDataObject(dataOb); //
+        doCache.refresh(dataOb.getId());  // обновляем кэш
+        */
+
+        // 3 Обновляем все дубликаты событий:
+        Converter converter = new Converter();
+        for (Event event : meeting.getDuplicates()) {
+            DataObject dataObject = converter.toDO(event);
+            loadingService.updateDataObject(dataObject);
+            doCache.refresh(dataObject.getId());  // обновляем кэш
+        }
+
+        // 4 Все прочие точки сохранения удаляем из слот-сейвера
+        SlotSaverAdmin.remove(user_id, meeting_id);
+
+        // 5 И добавляем новую точку сохранения в сейвер:
+        // переносим точку сохранения состояния слотов по составному ключу и автоматом вторую (редактируемую) копию
+        SlotSaverAdmin.add(user_id, meeting);
+
+    }
 
 
 

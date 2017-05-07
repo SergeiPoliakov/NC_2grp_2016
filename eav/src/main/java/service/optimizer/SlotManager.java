@@ -107,7 +107,7 @@ public class SlotManager {
         int user_id = userService.getObjID(userService.getCurrentUsername());
 
         // и оставим точку сохранения в слот-сейвере:
-        SlotSaver.add(user_id, meeting_id, events, date_start, date_end);
+        SlotSaverUser.add(user_id, meeting_id, events, date_start, date_end);
 */
         return freeSlotsForMeeting;
     }
@@ -271,10 +271,10 @@ public class SlotManager {
     public void saveAllEvents(Integer user_id, Integer meeting_id, String opt_period_date_start, String opt_period_date_end) throws ParseException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException, CloneNotSupportedException {
 
         // 1 Получаем из сейвера начальную точку сохранения (она соответсвует тому, что сейчас есть в базе) по составному ключу:
-        ArrayList<Event> startEvents = SlotSaver.getEventStartPoint(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
+        ArrayList<Event> startEvents = SlotSaverUser.getEventStartPoint(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
 
         // 2 Получаем из сейвера финальную точку сохранения (соответсвует тому, что должно записаться в базу) по составному ключу:
-        ArrayList<Event> finalEvents = SlotSaver.getEventFinalPoint(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
+        ArrayList<Event> finalEvents = SlotSaverUser.getEventFinalPoint(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
 
         // 3 Подготавливаем точку соединения (обновления) начальной и конечной точек сохранения: -- то, что следует обновить в базе
         ArrayList<Event> updateEvents = new ArrayList<>();
@@ -355,7 +355,7 @@ public class SlotManager {
         }
 
         // 10 Все прочие точки сохранения удаляем из слот-сейвера
-        SlotSaver.remove(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
+        SlotSaverUser.remove(user_id, meeting_id, opt_period_date_start, opt_period_date_end);
 
 
         // 11 И добавляем новую точку сохранения в сейвер:
@@ -367,7 +367,7 @@ public class SlotManager {
             finalEvents.addAll(createEvents); // а также созданные события
         }
         // и, наконец, переносим точку сохранения состояния слотов по составному ключу и автоматом вторую (редактируемую) копию
-        SlotSaver.add(user_id, meeting_id, finalEvents, opt_period_date_start, opt_period_date_end);
+        SlotSaverUser.add(user_id, meeting_id, finalEvents, opt_period_date_start, opt_period_date_end);
 
 
 
@@ -376,12 +376,12 @@ public class SlotManager {
 
     // 8) 2017-04-18 Метод удаления изменений точки сохранения из сейвера
     public void resetAllEvents(Integer user_id, Integer meeting_id, String opt_period_date_start, String opt_period_date_end) throws ParseException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException, CloneNotSupportedException {
-        ArrayList<Event> events = SlotSaver.getEventStartPoint(user_id, meeting_id, opt_period_date_start, opt_period_date_end); // Делаем копию начального сосятояния
-        SlotSaver.remove(user_id, meeting_id, opt_period_date_start, opt_period_date_end); // Удаляем все изменения
-        SlotSaver.add(user_id, meeting_id, events, opt_period_date_start, opt_period_date_end); // Добавляем исходную копию
+        ArrayList<Event> events = SlotSaverUser.getEventStartPoint(user_id, meeting_id, opt_period_date_start, opt_period_date_end); // Делаем копию начального состояния
+        SlotSaverUser.remove(user_id, meeting_id, opt_period_date_start, opt_period_date_end); // Удаляем все изменения
+        SlotSaverUser.add(user_id, meeting_id, events, opt_period_date_start, opt_period_date_end); // Добавляем исходную копию
         // Добавляем сообщение
         String message = "Все изменения в расписании за указанный период успешно отменены";
-        SlotSaver.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
+        SlotSaverUser.addMessage(user_id, meeting_id, message, opt_period_date_start, opt_period_date_end);
     }
 
     // 9) 2017-04-19 Метод, позволяющий получить встречу по id одного из ее дубликатов-задач

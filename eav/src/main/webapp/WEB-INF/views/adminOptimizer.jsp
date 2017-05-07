@@ -254,10 +254,10 @@
                     <a href="/adminOptimizerExecutor/${meeting_id}">
                         <button type="button" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-flash" aria-hidden="true"> Оптимизировать</span></button>
                     </a>
-                    <a href="/userOptimizerResetAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">
+                    <a href="/adminOptimizerReset/${meeting_id}">
                         <button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отменить</span></button>
                     </a>
-                    <a href="/userOptimizerSaveAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">
+                    <a href="/adminOptimizerSave/${meeting_id}">
                         <button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Сохранить</span></button>
                     </a>
                     <a href="/userOptimizerProblem">
