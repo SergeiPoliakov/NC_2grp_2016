@@ -17,9 +17,18 @@
 <html>
 <head>
     <title>Ваше расписание</title>
-    <%@include file='header.jsp'%>
+
 
     <meta charset="UTF-8">
+
+    <script>
+        var id = '${user.id}';
+        var name = '${user.name}';
+        var surname = '${user.surname}';
+        var picture = '${user.picture}';
+    </script>
+
+    <%@include file='header.jsp'%>
 
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-select.min.css">
@@ -39,6 +48,8 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap-select.min.js"> </script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
+
+
 
 </head>
 <body>

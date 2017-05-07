@@ -183,11 +183,11 @@
         var senderID = 1123;
         var JSONMessage = JSON.stringify({
             'type': type,
-            'senderID': senderID,
+            'senderID': id,
             'recieverID': 10124,
-            'senderName': 'Иванов Иван',
+            'senderName': name + " " + surname,
             'meetingName': 'Встреча новая',
-            'senderPic':'http://pngimg.com/uploads/face/face_PNG5653.png',
+            'senderPic': picture,
             'date': toLocaleDateTimeString(new Date())
         });
         stompClient.send("/app/notify111", {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
