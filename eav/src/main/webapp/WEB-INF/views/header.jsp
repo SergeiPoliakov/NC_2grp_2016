@@ -72,7 +72,7 @@
                     <a class="dropdown-toggle" id="notificationDropa">
                         <i data-count="0" class="glyphicon glyphicon-bell notification-icon" id ="notificationCount"></i>
                     </a>
-                    <div class="dropdown-container">
+                    <div class="dropdown-container" style="top: 5.8rem !important;">
                         <div class="dropdown-toolbar">
                             <div class="dropdown-toolbar-actions">
                                 <a href="#">Пометить всё как просмотренное</a>
@@ -148,7 +148,8 @@
 <script src="<%=request.getContextPath()%>/resources/js/stomp.js" type="text/javascript"></script>
 <script src="<%=request.getContextPath()%>/resources/js/app.js" type="text/javascript"></script>
 
-<button onclick="sendMessage('friendRequest');">УВЕДОМЛЕНИЕ ОТПРАВИТЬ</button>
+<!--friendrequest | meetingInvite -->
+<button onclick="sendMessage('meetingRequest', 111, 200012, 'Встреча еча');">УВЕДОМЛЕНИЕ ОТПРАВИТЬ</button>
 <script type="text/javascript">
     // Преобразовать дату в строку формата DD.MM.YYYY hh:mm
     function toLocaleDateTimeString(dateString){
@@ -179,18 +180,18 @@
         console.log("Disconnected");
     }
 
-    function sendMessage(type) {
-        var senderID = 1123;
+    function sendMessage(type, recieverID, meetingID, meetingName) {
         var JSONMessage = JSON.stringify({
             'type': type,
             'senderID': id,
-            'recieverID': 10124,
+            'recieverID': recieverID,
             'senderName': name + " " + surname,
-            'meetingName': 'Встреча новая',
+            'additionalID': meetingID,
+            'meetingName': meetingName,
             'senderPic': picture,
             'date': toLocaleDateTimeString(new Date())
         });
-        stompClient.send("/app/notify111", {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+        stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
     }
 </script>
 
