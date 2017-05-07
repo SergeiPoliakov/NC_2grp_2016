@@ -21,13 +21,6 @@
 
     <meta charset="UTF-8">
 
-    <script>
-        var id = '${user.id}';
-        var name = '${user.name}';
-        var surname = '${user.surname}';
-        var picture = '${user.picture}';
-    </script>
-
     <%@include file='header.jsp'%>
 
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css">

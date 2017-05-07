@@ -1,4 +1,9 @@
-<%--
+<%@ page import="entities.User" %>
+<%@ page import="service.converter.Converter" %>
+<%@ page import="service.LoadingServiceImp" %>
+<%@ page import="service.UserServiceImp" %>
+<%@ page import="java.sql.SQLException" %>
+<%@ page import="java.lang.reflect.InvocationTargetException" %><%--
   Created by IntelliJ IDEA.
   User: Lawrence
   Date: 05.02.2017
@@ -50,6 +55,16 @@
 </head>
 
 <body>
+
+<%
+    User user = new User();
+    try {
+        user = new Converter().ToUser(new LoadingServiceImp().getDataObjectByIdAlternative(new UserServiceImp().getObjID(new UserServiceImp().getCurrentUsername())));
+
+    } catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        e.printStackTrace();
+    }
+%>
 
 
 <nav class="navbar navbar-default" role="navigation" style="border-radius: 0px 0px 0px 0px;">
@@ -181,14 +196,16 @@
     }
 
     function sendMessage(type, recieverID, meetingID, meetingName) {
+
+
         var JSONMessage = JSON.stringify({
             'type': type,
-            'senderID': id,
+            'senderID': '<%=user.getId()%>',
             'recieverID': recieverID,
-            'senderName': name + " " + surname,
+            'senderName': '<%=user.getName()%>' + " " + '<%=user.getSurname()%>',
             'additionalID': meetingID,
             'meetingName': meetingName,
-            'senderPic': picture,
+            'senderPic': '<%=user.getPicture()%>',
             'date': toLocaleDateTimeString(new Date())
         });
         stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
@@ -196,4 +213,5 @@
 </script>
 
 </body>
+
 </html>

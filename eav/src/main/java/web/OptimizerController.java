@@ -480,9 +480,7 @@ public class OptimizerController {
                 // Добавляем сообщение о том, что данные успешно подгружены
                 info_message = "Встреча и данные участников за выбранный период успешно загружены. Вы можете приступить к редактированию и оптимизации встречи";
 
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (CloneNotSupportedException e) {
+            } catch (ExecutionException | CloneNotSupportedException e) {
                 e.printStackTrace();
             }
         }
