@@ -251,7 +251,7 @@
                     <a href="/meeting${meeting_id}">
                         <button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true" > Встреча</span></button>
                     </a>
-                    <a href="/userOptimizerExecutorAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">
+                    <a href="/adminOptimizerExecutor/${meeting_id}">
                         <button type="button" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-flash" aria-hidden="true"> Оптимизировать</span></button>
                     </a>
                     <a href="/userOptimizerResetAJAX/${meeting_id}/${meeting_date_start}/${meeting_date_end}/">

@@ -506,18 +506,15 @@ public class OptimizerController {
 
     // 15) 2017-05-07 На применение админского оптимизатора к выбранной встрече:
     @RequestMapping(value = "/adminOptimizerExecutor/{meeting_id}", method = RequestMethod.GET)
-    public String adminOptimizerExecutor(@PathVariable("meeting_id") String meeting_id,
-                                            @PathVariable("meeting_date_start") String meeting_date_start,
-                                            @PathVariable("meeting_date_end") String meeting_date_end
+    public String adminOptimizerExecutor(@PathVariable("meeting_id") Integer meeting_id
 
     ) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ParseException, ExecutionException, CloneNotSupportedException {
 
 
         Integer root_id = userService.getObjID(userService.getCurrentUsername());
-        Integer meet_id = new Integer(meeting_id.trim());
 
-        // Вызываем метод-оптимизатор с параметрами айди пользователя, айди встречи и период оптимизации:
-        SlotOptimizer.optimizeItForAdmin(root_id, meet_id, meeting_date_start, meeting_date_end);
+        // Вызываем метод-оптимизатор с параметрами айди пользователя и айди встречи:
+        SlotOptimizer.optimizeItForAdmin(root_id, meeting_id);
 
         // Перегружаем страничку
         return "redirect:/adminOptimizer/" + meeting_id;

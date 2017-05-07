@@ -1,10 +1,7 @@
 package service.optimizer;
 
 import dbHelp.DBHelp;
-import entities.DataObject;
-import entities.Event;
-import entities.Meeting;
-import entities.Notification;
+import entities.*;
 import service.LoadingServiceImp;
 import service.converter.Converter;
 import service.converter.DateConverter;
@@ -394,9 +391,101 @@ public class SlotOptimizer {
     // 2017-05-07 ------------------------------ К ОПТИМИЗАТОРУ АДМИНА ------------------------------
 
     // Админский оптимизатор встречи
-    public static void optimizeItForAdmin(Integer user_id, Integer meeting_id, String opt_period_date_start, String opt_period_date_end){
+    public static void optimizeItForAdmin(Integer user_id, Integer meeting_id) throws NoSuchMethodException, ParseException, ExecutionException, SQLException, IllegalAccessException, InvocationTargetException {
 
-        // 1 Получаем встречу по переданному айди
+        // 1 Получаем из сейвера финальную точку сохранения (встречу) по составному ключу:
+        Meeting meeting = SlotSaverAdmin.getDuplicateFinalPoint(user_id, meeting_id);
+
+        // 2 Проверяем, является ли данная встреча встречей с плавающими границами
+        // (в этом случае ее фактическая продолжительность меньше продолжительности, рассчитанной по датам начала и окончания)
+        // но мы поступаем проще, проверяя на нулл поле времени редактирования - у обычной встречи он null:
+        if (meeting.getDate_edit() == null) {// если обычная встреча, ее нельзя оптимизировать, только если превратить ее сначала во встречу с плавающими границами
+            // (тут надо отдельный сервис прикрутить на это, чтобы можно было конвертировать встречу из одного типа в другой, но, мождет, потом когда время будет)
+
+            System.out.println("Произведена попытка оптимизировать встречу с обычными (не плавающими) границами!");
+            System.out.println("Работа оптимизатора прекращена");
+
+            // Сохраняем сообщение
+            String message = "Внимание! Данная встреча имеет фиксированные границы и не может быть оптимизирована!";
+            SlotSaverAdmin.addMessage(user_id, meeting_id, message);
+
+            return;
+        }
+
+        // 3 Если все нормально, то есть это встреча с плавающими границами, вытаскиваем все ее дубликаты
+
+        ArrayList<Event> duplicates = meeting.getDuplicates();
+
+
+
+        // 4 Составляем список смещений начала дубликатов встречи относительно начала самой встречи и заодно подготавливаем данные для рассчета среднего смещения
+        ArrayList<Duration> displacements = new ArrayList<>();
+        LocalDateTime me_start = DateConverter.stringToDate(meeting.getDate_start()); // Дата начала встречи
+        Duration sr_Duration = Duration.between(me_start, me_start); // сначала обнуляем среднее смещение
+        // LocalDateTime me_end = DateConverter.stringToDate(meeting.getDate_end()); // дата окончания встречи
+        for (Event duplicate : duplicates){
+            // Рассчитываем смещение:
+            Duration me_du = Duration.between(me_start, duplicate.getStart());
+            // и записываем в список смещений:
+            displacements.add(me_du);
+            // и увеличиваем продолжительность среднего смещения:
+            sr_Duration.plus(me_du);
+        }
+
+        // 5 Рассчитываем среднее смещение:
+        sr_Duration = sr_Duration.dividedBy(displacements.size()); // делим на количество дубликатов
+
+
+        // 6 Проверяем, не плучилось ли, что дубликаты разошлись по разные стороны друг от друга настолько, что между ними коридор больше длительности встречи
+        // в этом случае оптимизация будет неверной // тут логика должна быть сложнее! Поэтому пока не делаю, если что, админ сам увидит на страницу, что вышло из оптимизации
+        // А лучше всего плавающие границы задавать таким образои при открытии встречи, чтобы коридор изменеия границ был больше длительности встречи менее чем в два раза,
+        // тогда у юзеров не будет возможности "накосячить", разнеся очень сильно в стороны свои дубликаты и сорвав тем самым оптимизацию. Надо это проверку сразу делать при создании встречи!
+
+
+        // 7 На полученное среднее смещение сдвигаем дубликаты
+        // me_start = me_start.plus(sr_Duration); // определаем новую дату начала
+        // не нужно // Duration du_end = Duration.ofMinutes(new Long(meeting.getDuration())); // А точно ди у нас длительность в базе хранится в минутах? Может, в часах? Тогда исправить
+        // не нужно // LocalDateTime me_end = me_start.plus(du_end); // и определяем новую дату окончания
+
+        me_start = me_start.plus(sr_Duration); // определаем новую дату начала
+        // обходим все дубликаты:
+        for(int i = 0; i < duplicates.size(); i++){
+            Duration du = duplicates.get(i).getDlitelnost(); // вытаскиваем длительность
+            duplicates.get(i).setDate_begin(DateConverter.dateToString(me_start)); // выставляем новое начало
+            LocalDateTime me_end = me_start.plus(du); // и определяем новую дату окончания
+            duplicates.get(i).setDate_end(DateConverter.dateToString(me_end)); // и выставляем новое окончание
+        }
+
+        // и заменяем их во встрече:
+        meeting.setDuplicates(duplicates);
+
+
+        // 8 Заносим все изменения в слот-сейвер:
+        SlotSaverAdmin.updateDuplicate(user_id, meeting);
+
+
+        // 9 Сохраняем сообщение
+        String message = "Время текущей встречи успешно оптимизировано! Можете сохранить встречу.";
+        SlotSaverAdmin.addMessage(user_id, meeting_id, message);
+
+        // 10 Выводим инфу в консоль:
+        System.out.println("Время текущей встречи успешно оптимизировано! Можете сохранить встречу.");
+        System.out.println("Админский оптимизатор успешно завершил свою работу.");
+
+        /*
+        // 11 И отправляем уведомление каждому юзеру об успешном окончании оптимизации встречи, на которую он подписан: НЕ ТУТ! А ПРИ СОХРАНЕНИИ!
+        for( User user : meeting.getUsers() ){
+            // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто админ всем шлет уведомления):
+            Notification notification = new Notification("Внимание! Владелец изменил время встречи! Проверьте свое расписание", user_id, user.getId(), Notification.MEETING_OVERLAP);
+            // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
+            NotificationService.sendNotification(notification);
+        }
+        */
 
     }
+
+
+
+
+
 }
