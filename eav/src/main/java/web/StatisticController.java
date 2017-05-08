@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Hroniko on 31.03.2017.
@@ -41,7 +42,7 @@ public class StatisticController {
     // 2017-03-31 К запросу на получение данных для отрисовки диаграмм и графиков (например, интенсивности работы (по дням, часам, минутам))
     @RequestMapping(value = "/getStat", method = RequestMethod.POST, headers = {"Content-type=application/json"})
     @ResponseBody
-    public ArrayList<StatResponse> getStat(@RequestBody StatRequest statRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException {
+    public ArrayList<StatResponse> getStat(@RequestBody StatRequest statRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
 
         return new StatisticManager().getStatistic(statRequest);
     }
@@ -62,6 +63,8 @@ public class StatisticController {
             results.add(new StatSetting("plot", "on", "activity", "day", "location_2","Интенсивность работы за сутки", "Время, часы", "Интенсивность работы"));
 
             results.add(new StatSetting("round", "on", "meeting", "day", "location_1", "Процентаж встреч за текущий месяц"));
+
+            results.add(new StatSetting("round", "on", "procentazh", "month", "location_4", "Ваша активность за текущий месяц"));
 
         }
 

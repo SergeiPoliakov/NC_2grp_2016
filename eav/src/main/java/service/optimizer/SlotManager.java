@@ -23,8 +23,6 @@ public class SlotManager {
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
-
-
     private UserServiceImp userService = new UserServiceImp();
 
     // 0) метод для получения текущей встречи:

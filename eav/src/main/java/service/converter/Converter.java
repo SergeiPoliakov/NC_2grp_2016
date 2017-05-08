@@ -27,6 +27,16 @@ public class Converter {
 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
+    public ArrayList<DataObject> getMapToListDataObject(Map<Integer, DataObject> map) {
+        ArrayList<DataObject> list = new ArrayList<>();
+
+        for (Map.Entry<Integer, DataObject> e : map.entrySet()) {
+            list.add(e.getValue());
+        }
+
+        return list;
+    }
+
     public Message ToMessage(DataObject dataObject) {
         Message message = new Message();
         try {
