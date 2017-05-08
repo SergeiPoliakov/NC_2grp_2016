@@ -1,6 +1,8 @@
 package web;
 
+import com.google.gson.Gson;
 import entities.*;
+import org.springframework.web.bind.annotation.*;
 import service.application_settings.SettingsLoader;
 import service.id_filters.NotificationFilter;
 import service.notifications.NotificationService;
@@ -19,10 +21,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import service.*;
 import service.cache.DataObjectCache;
@@ -38,6 +36,7 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.Console;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -123,9 +122,7 @@ public class UserController {
                 new SecurityContextLogoutHandler().logout(request, response, auth);
             }
             throw new CustomException("Вы еще не подтвердили свой email!");
-
         }
-
         System.out.println("Размер кэша до обновления страницы " + doCache.size());
         try {
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
@@ -141,31 +138,10 @@ public class UserController {
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
             ArrayList<Event> events = new ArrayList<>(list.size());
-
            // ArrayList<String> eventword = new ArrayList<>();
             for (DataObject dataObject : list) {
                 Event event = new Event(dataObject);
                 events.add(event);
-
-         /*       // Проба подготовить данные для Tree Word (чтобы потом вывести на jsp дерево событий)
-                String eventstring = "+ ";
-                String begin = event.getDate_begin();
-                SimpleDateFormat df1 = new SimpleDateFormat();
-                df1.applyPattern("dd.MM.yyyy HH:mm");
-                Date Date_begin = df1.parse(begin);
-                SimpleDateFormat df2 = new SimpleDateFormat("yyyy MM.dd HH:mm");
-                begin = df2.format(Date_begin);
-                String end = event.getDate_end();
-                Date Date_end = df1.parse(end);
-                end = df2.format(Date_end);
-                //eventstring += begin + " " + end + " " + event.getName().replaceAll(" ", "_");
-                eventstring += begin + " " + end + " " + "[ccылка]"; // Потом можно и ссылки прикрутить
-                //eventstring = eventstring.replaceAll(".", " ");
-                eventstring = "[\'" + eventstring + "\'],";
-                System.out.println(eventstring);
-                eventword.add(eventstring); */
-
-
             }
             System.out.println("Размер кэша после добавления " + doCache.size());
 
@@ -186,43 +162,10 @@ public class UserController {
 
         NameNodeTree nnt = new NameNodeTree();
 
-        /*
-        // 2017-04-04 Тест записи и чтени я из бд уведомления
-        Notification notification = new Notification("Уведомление",10001, 10003, "friendRequest", "03.04.2017 00:00");
-        DataObject dataObject = new Converter().toDO(notification);
-        new DBHelp().setDataObjectToDB(dataObject);
-        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
-        // Для каждого айдишника вытаскиваем уведомление, сразу конвертируем к сущности и засовываем в список сущностей
-        ArrayList<Notification> notifications = new ArrayList<>();
-        for(Integer id : al){
-            // Notification notification2 = converter.ToNotification(loadingService.getDataObjectByIdAlternative(id));
-            DataObject notification2 = loadingService.getDataObjectByIdAlternative(id);
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!! " + notification2);
-        }
-        */
-
-        // Получение уведомлений из БД
-        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
-        ArrayList<Notification> notifications = new ArrayList<>();
-        for(Integer id : al){
-            DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
-            Notification notification = new Converter().ToNotification(dataObject);
-            notification.setSender( new Converter().ToUser(
-                                    loadingService.getDataObjectByIdAlternative(
-                                    notification.getSenderID())));
-            notifications.add(notification);
-        }
-        // Добавление уведомлений в глобальный список
-        UsersNotifications usersNotifications = UsersNotifications.getInstance();
-        usersNotifications.setNotifications(currentUser.getId(), notifications);
-
         return "main-login";
     }
-
-
-
     @RequestMapping(value = { "/login" }, method = RequestMethod.GET)
-    public ModelAndView login(@RequestParam(value = "error", required = false) String error) throws SQLException, CustomException {
+    public ModelAndView login(@RequestParam(value = "error", required = false) String error) throws SQLException, CustomException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         ModelAndView model = new ModelAndView();
         if (error != null) {
@@ -232,10 +175,29 @@ public class UserController {
 
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.LOGIN, "login", idUser); // Авторизация
+
+        // Сохранение авторизованного пользователя в память
+        DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
+        ArrayList<Notification> notifications = new ArrayList<>();
+
+        /* Тут черпает уведомления из БД, только не работает
+        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
+        for(Integer id : al){
+            DataObject dataObject = loadingService.getDataObjectByIdAlternative(id);
+            Notification notification = new Converter().ToNotification(dataObject);
+            notification.setSender( new Converter().ToUser(
+                    loadingService.getDataObjectByIdAlternative(
+                            notification.getSenderID())));
+            notifications.add(notification);
+        }
+        */
+        // Добавление уведомлений в глобальный список
+        UsersNotifications usersNotifications = UsersNotifications.getInstance();
+        usersNotifications.setNotifications(currentUser.getId(), notifications);
+
         return model;
 
     }
-
 
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String logoutPage (HttpServletRequest request, HttpServletResponse response) throws SQLException {
@@ -531,9 +493,6 @@ public class UserController {
         loggerLog.add(Log.PAGE, "profile", idUser); // Посещение страницы
         return "/profile";
     }
-
-
-
 
     @RequestMapping(value = "/generatePhoneCode", method = RequestMethod.GET)
     public String generatePhoneCode() throws SQLException {
@@ -856,5 +815,4 @@ public class UserController {
 
         return "redirect:/profile";
     }
-
 }

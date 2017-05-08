@@ -5,6 +5,7 @@ package web;
  */
 import WebSocket.SocketMessage;
 import com.google.gson.Gson;
+import entities.DataObject;
 import entities.Notification;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -33,6 +34,7 @@ public class NotificationController { // Тут вроде логировать 
     private LoadingServiceImp loadingService = new LoadingServiceImp();
     private UserServiceImp userService = new UserServiceImp();
     private Converter converter = new Converter();
+    private UsersNotifications usersNotifications = UsersNotifications.getInstance();
 
     // 2017-02-24 Уведомления о новых сообщениях (вывод в хедер) // Старый метод, используйте универсальный getNewNotification
     @RequestMapping(value = "/getNewMessage", method = RequestMethod.GET)
@@ -144,6 +146,8 @@ public class NotificationController { // Тут вроде логировать 
         // 2. Прикрепить уведомление к пользователю (либо записать в базу, если он нективен)
         // NotificationService.sendNotification(new Notification("Уведомление",idUser, objectId, "friendRequest")); - так выглядит добавление
         // 3. Вернуть его. Нужно или сформировать канал для каждого пользователя, либо хз
+        int currentUserID = userService.getObjID("bloodymir");
+        usersNotifications.getNotifications(currentUserID);
         return message;
     }
 

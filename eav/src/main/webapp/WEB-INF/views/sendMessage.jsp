@@ -111,7 +111,7 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-5 col-md-offset-3">
             <div class="panel panel-primary">
                 <div class="panel-heading" id="accordion">
                     <span class="glyphicon glyphicon-comment"></span> История сообщений

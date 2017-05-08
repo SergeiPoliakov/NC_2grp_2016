@@ -16,6 +16,10 @@
 <html>
 <head>
 
+    <button onclick="sendMessage('friendRequest', 10003, null, null)">
+        ОТПРАВИТЬ УВЕДОМЛЕНИЕ
+    </button>
+
     <!--WEB SOCKET -->
     <%
         User user = new User();
@@ -64,8 +68,6 @@
 
         <!--type = friendrequest | meetingInvite -->
         function sendMessage(type, recieverID, meetingID, meetingName) {
-
-
             var JSONMessage = JSON.stringify({
                 'type': type,
                 'senderID': gSenderID,
