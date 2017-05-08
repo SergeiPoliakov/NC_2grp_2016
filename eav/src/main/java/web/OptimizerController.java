@@ -137,6 +137,41 @@ public class OptimizerController {
         m.addAttribute("meeting_date_end", date_end);
         m.addAttribute("slot_message", slot_message); // сообщение
 
+        // 2017-05-08 Добавляем данные о времени окончания редактирования и времени начала встречи для таймеров обратного отсчета на странице:
+        m.addAttribute("timer_001", getDateEditCountdown(meet_id));
+        m.addAttribute("timer_002", getDateStartCountdown(meet_id));
+
+
+        /*
+        // 1 Получаем сначала саму встречу по ее айди:
+        Meeting meeting = new Meeting(doCache.get(meet_id));
+        String date_edit_countdown = meeting.getDate_edit();
+        if (date_edit_countdown == null) { // если это обычная встреча, у нее нет времени редактирования, поэтому просто подставляем текущее всремя
+            date_edit_countdown = DateConverter.dateToCountdown(LocalDateTime.now());
+        }
+        else { // иначе переконвертируем к нужному формату
+            date_edit_countdown = DateConverter.stringToCountdown(date_edit_countdown);
+        }
+        m.addAttribute("timer_001", date_edit_countdown);
+
+
+        // 2 Получаем дубликат встречи из встречи для текущего юзера:
+        Event duplicate = null;
+        for (Event dupl : meeting.getDuplicates()){
+            if (dupl.getHost_id().equals(user_id)){
+                duplicate = dupl;
+                break;
+            }
+        }
+        String date_start_countdown = null;
+        if (duplicate == null){ // если не нашли дубликата (что маловероятно), просто подставляем текущее время
+            date_start_countdown = DateConverter.dateToCountdown(LocalDateTime.now());
+        }
+        else { // иначе все хорошо, конвертируем и подставляем время начала дубликата встречи
+            date_start_countdown = DateConverter.stringToCountdown(duplicate.getDate_begin());
+        }
+        */
+
 
         // Логирование
         int idUser = userService.getObjID(userService.getCurrentUsername());
@@ -144,6 +179,47 @@ public class OptimizerController {
 
         System.out.println("СПИСОК СОБЫТИЙ ССОСТОИТ ИЗ " + events.size());
         return "userOptimizer";
+    }
+
+
+    // 2017-05-08 Метод получения данных о времени окончания редактирования таймера №1 обратного отсчета на странице:
+    private String getDateEditCountdown(Integer meeting_id) throws ExecutionException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
+        // 2017-05-08 Добавляем данные о времени окончания редактирования и времени начала встречи для таймеров обратного отсчета на странице:
+        // 1 Получаем сначала саму встречу по ее айди:
+        Meeting meeting = new Meeting(doCache.get(meeting_id));
+        String date_edit_countdown = meeting.getDate_edit();
+        if (date_edit_countdown == null) { // если это обычная встреча, у нее нет времени редактирования, поэтому просто подставляем текущее время
+            date_edit_countdown = DateConverter.dateToCountdown(LocalDateTime.now());
+        }
+        else { // иначе переконвертируем к нужному формату
+            date_edit_countdown = DateConverter.stringToCountdown(date_edit_countdown);
+        }
+        return date_edit_countdown;
+    }
+
+    // 2017-05-08 Метод получения данных о времени начала встречи таймера №2 обратного отсчета на странице:
+    private String getDateStartCountdown(Integer meeting_id) throws ExecutionException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
+        // 2017-05-08 Добавляем данные о времени окончания редактирования и времени начала встречи для таймеров обратного отсчета на странице:
+        // 1 Получаем сначала саму встречу по ее айди:
+        Meeting meeting = new Meeting(doCache.get(meeting_id));
+        int user_id = userService.getCurrentUser().getId();
+        Event duplicate = null;
+        for (Event dupl : meeting.getDuplicates()){
+            if (dupl.getHost_id() != null && dupl.getHost_id() == user_id){
+                duplicate = dupl;
+                break;
+            }
+        }
+        String date_start_countdown = null;
+        if (duplicate == null){ // если не нашли дубликата (что маловероятно), просто подставляем время начала встречи
+            // date_start_countdown = DateConverter.dateToCountdown(LocalDateTime.now());
+            date_start_countdown = DateConverter.stringToCountdown(meeting.getDate_start());
+        }
+        else { // иначе все хорошо, конвертируем и подставляем время начала дубликата встречи
+            date_start_countdown = DateConverter.stringToCountdown(duplicate.getDate_begin());
+        }
+
+        return date_start_countdown;
     }
 
 
@@ -498,6 +574,10 @@ public class OptimizerController {
         m.addAttribute("meeting_id", meeting_id);
 
         m.addAttribute("info_message", info_message); // сообщение
+
+        // 2017-05-08 Добавляем данные о времени окончания редактирования и времени начала встречи для таймеров обратного отсчета на странице:
+        m.addAttribute("timer_001", getDateEditCountdown(meeting_id));
+        m.addAttribute("timer_002", getDateStartCountdown(meeting_id));
 
         return "adminOptimizer";
     }

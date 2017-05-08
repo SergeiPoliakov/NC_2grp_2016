@@ -19,7 +19,7 @@ public class StatSetting {
     private String location_id; // Расположение на странице
 
 
-    // Доп параметры
+    // Доп. параметры
 
     private String xlabel; // Подпись осей по ОХ
 

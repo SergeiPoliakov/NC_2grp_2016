@@ -56,4 +56,26 @@ public class DateConverter {
 
         return duration;
     }
+
+    // Для работы с таймером обратного отсчета
+
+    // 2017-05-08 Конвертер даты из Java-8 в строку типа countdown для таймера обратного отсчета на страницах встречи и событий
+    public static String dateToCountdown(LocalDateTime ldt) throws ParseException {
+        String res = null;
+        try{
+            res = ldt.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
+        }
+        catch (Exception e){
+            System.out.println("Ошибка конвертации даты: " + e.getMessage());
+        }
+        return res;
+    }
+
+    // 2017-05-08 Конвертер даты из строки "dd.MM.yyyy HH:mm" в строку типа countdown "MM/dd/yyyy HH:mm" для таймера обратного отсчета на страницах встречи и событий
+    public static String stringToCountdown(String str) throws ParseException {
+        LocalDateTime ldt = stringToDate(str);
+        String res = dateToCountdown(ldt);
+        return res;
+    }
+
 }

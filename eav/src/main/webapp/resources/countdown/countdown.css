@@ -1,0 +1,109 @@
+/*второй*/
+.second-my {
+	width: 260px;
+	padding: 0px;
+	text-align: center;
+}
+
+.second-my .result span.items {
+	padding: 10px 7px;
+	display: inline-block;
+	margin: 0 4px 0 -5px;
+	font-size: 20px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0px 1px 1px 0px rgb(178, 176, 176);
+	-moz-box-shadow: 0px 1px 1px 0px rgb(178, 176, 176);
+	box-shadow: 0px 1px 1px 0px rgb(178, 176, 176);
+	background: rgb(44, 62, 80); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(44, 62, 80, 0.8) 0%, rgba(44, 62, 80, 1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(44, 62, 80, 0.8)), color-stop(100%, rgba(44, 62, 80, 1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(44, 62, 80, 0.8) 0%, rgba(44, 62, 80, 1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(44, 62, 80, 0.8) 0%, rgba(44, 62, 80, 1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, rgba(44, 62, 80, 0.8) 0%, rgba(44, 62, 80, 1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom, rgba(44, 62, 80, 0.8) 0%, rgba(44, 62, 80, 1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#7d7e7d", endColorstr="#0e0e0e", GradientType=0); /* IE6-9 */
+	color: white;
+	font-family: "Russo One", sans-serif;
+	min-width: 30px;
+	letter-spacing: 2px;
+}
+
+.second-my .result span.dot {
+	margin: 0 -1px;
+	position: relative;
+	left: -4px;
+	font-family: "Russo One", sans-serif;
+	font-size: 17px;
+}
+
+.second-my .result {
+	float: right;
+}
+
+.second-my .titles {
+	position: relative;
+	height: 0;
+	right: -23px;
+	width: 300px;
+}
+
+.second-my .titles span {
+	font-size: 10px;
+	position: relative;
+	top: 12px;
+}
+
+.second-my .titles span.mm {
+	right: 18px;
+}
+
+.second-my .titles span.hh {
+	right: 40px;
+}
+
+.second-my .titles span.dd {
+	right: 62px;
+}
+
+.second-my p.titloftimer {
+	font-size: 18px;
+	margin: 0 auto;
+	left: 10px;
+	position: relative;
+	font-family: "Russo One", sans-serif;
+}
+
+/*ресет*/
+.timerhello span {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+.timerhello p {
+	font-size: 100%;
+	font: inherit;
+	color: #191919;
+	font-family: Verdana, sans-serif;
+	font-size: 13px;
+	margin: 0 0 10px 0;
+	line-height: 17px;
+}
+
+.clearf {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
+}
+
+p.hellotimercopy {
+	display: none !important;
+}

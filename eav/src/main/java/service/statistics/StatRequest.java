@@ -3,7 +3,7 @@ package service.statistics;
 /**
  * Created by Hroniko on 30.03.2017.
  */
-// Класс, соотвествующий AJAX-запросу на поиск тега
+// Класс, соотвествующий AJAX-запросу на получение статистики
 public class StatRequest {
 
     private String plotview; // Вид диаграммы: plot - график  | round - круговая диаграмма | settings - настройки

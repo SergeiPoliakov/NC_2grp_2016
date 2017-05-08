@@ -67,6 +67,33 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/slots.js"></script>
 
 
+    <script type="text/javascript">
+        // 2017-05-08 Для вывода первого таймера (обратный отсчет до окончания времени редактирования)
+        function getfrominputs_001() {
+            string_001 = "${timer_001}"; // string_001 = "05/11/2017 10:44"; //
+            get_timer_001(string_001);
+            setInterval(function () {
+                get_timer_001(string_001);
+            }, 1000);
+        }
+        $(document).ready(function () {
+            getfrominputs_001();
+        });
+    </script>
+    <script type="text/javascript">
+        // 2017-05-08 Для вывода второго таймера  (обратный отсчет до начала встречи)
+        function getfrominputs_002() {
+            string_002 = "${timer_002}"; // string_002 = "05/12/2017 23:44"; //
+            get_timer_002(string_002);
+            setInterval(function () {
+                get_timer_002(string_002);
+            }, 1000);
+        }
+        $(document).ready(function () {
+            getfrominputs_002();
+        });
+    </script>
+
 </head>
 <body>
 <div class="container top-buffer-20">
@@ -74,6 +101,9 @@
     <!-- Информация о встрече -->
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
+            <!-- Место первого таймера (обратный отсчет до окончания времени редактирования) -->
+            <%@include file='countdown_001.jsp'%>
+            <!-- Окончание первого таймера -->
             <div class="card">
                 <h3 class="card-title text-center" id="pTitle">${meeting.title}</h3>
                 <div class="profile-userbuttons">
@@ -200,6 +230,9 @@
 
         <!-- ЧАТ -->
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-lg-offset-6">
+            <!-- Место второго таймера (обратный отсчет до начала встречи) -->
+            <%@include file='countdown_002.jsp'%>
+            <!-- Окончание второго таймера -->
             <div class="card">
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Чат</h3>
