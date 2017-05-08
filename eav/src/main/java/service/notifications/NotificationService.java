@@ -1,5 +1,6 @@
 package service.notifications;
 
+import WebSocket.SocketMessage;
 import dbHelp.DBHelp;
 import entities.DataObject;
 import entities.Notification;
@@ -22,7 +23,7 @@ public class NotificationService {
 
     // Отправка уведомления в память, либо в БД, если получатель неактивен.
     // Активен - если запись о нём есть в UsersNotifications
-    public static void sendNotification(Notification notification) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
+    /*public static void sendNotification(Notification notification) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
         notification.setSender( new Converter().ToUser(loadingService.getDataObjectByIdAlternative(notification.getSenderID())));
 
@@ -34,6 +35,19 @@ public class NotificationService {
         else{
             DataObject dataObject = new Converter().toDO(notification);
             new DBHelp().setDataObjectToDB(dataObject);
+        }
+    }*/
+
+    public static void sendNotification(SocketMessage notification) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
+
+        UsersNotifications usersNotifications = UsersNotifications.getInstance();
+        ArrayList<SocketMessage> userNotifications =  usersNotifications.getNotifications(Integer.parseInt(notification.getRecieverID()));
+
+        if (userNotifications != null)
+            userNotifications.add(notification);
+        else{
+            // DataObject dataObject = new Converter().toDO(notification);
+            // new DBHelp().setDataObjectToDB(dataObject);
         }
     }
 }

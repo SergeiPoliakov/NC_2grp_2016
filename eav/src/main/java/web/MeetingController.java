@@ -74,48 +74,6 @@ public class MeetingController {
         return list;
     }
 
-
-    // TEST
-    @RequestMapping(value = "/notificationSendTo{recieverID}", method = RequestMethod.GET)
-    public String notificationTestGet(@PathVariable("recieverID") String recieverID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException, ParseException {
-
-        /*
-        Integer host_id =  userService.getObjID(userService.getCurrentUsername());
-        String currentDate =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-
-
-        // 2017-04-04 Тест записи и чтени я из бд уведомления
-        Notification notification = new Notification("Уведомление",10003, 10003, "friendRequest", currentDate);
-        DataObject dataObject = new Converter().toDO(notification);
-        new DBHelp().setDataObjectToDB(dataObject);
-        */
-
-        String currentDate =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-        Notification notification = new Notification("Уведомление",10003, 10003, "friendRequest", currentDate);
-        notification.setSender( new Converter().ToUser(
-                loadingService.getDataObjectByIdAlternative(
-                        notification.getSenderID())));
-
-        UsersNotifications usersNotifications = UsersNotifications.getInstance();
-        usersNotifications.getNotifications(notification.getRecieverID()).add(notification);
-
-        // Получение
-        /*
-        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER));
-        // Для каждого айдишника вытаскиваем уведомление, сразу конвертируем к сущности и засовываем в список сущностей
-        ArrayList<Notification> notifications = new ArrayList<>();
-        for(Integer id : al){
-            // Notification notification2 = converter.ToNotification(loadingService.getDataObjectByIdAlternative(id));
-            DataObject notification2 = loadingService.getDataObjectByIdAlternative(id);
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!! " + notification2);
-        }
-        */
-
-        return "";
-    }
-    //END TEST
-
-
     // Список встреч пользователя
     @RequestMapping(value = "/meetings", method = RequestMethod.GET)
     public String getUserPage(HttpServletRequest request, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException {
@@ -339,7 +297,7 @@ public class MeetingController {
                 // Формируем уведомление
                 Notification notification = new Notification("Приглашение на встречу", idSender, idReceiver, Notification.MEETING_INVITE);
                 // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
-                NotificationService.sendNotification(notification);
+                //NotificationService.sendNotification(notification);
 
 
                 if ("true".equals(settings.getEmailMeetingInvite())) {

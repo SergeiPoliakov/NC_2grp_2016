@@ -23,6 +23,7 @@ import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.id_filters.NotificationFilter;
 import service.id_filters.UserFilter;
+import service.notifications.NotificationService;
 import service.notifications.UsersNotifications;
 
 
@@ -94,7 +95,7 @@ public class NotificationController { // Тут вроде логировать 
     }
 
     // Обработка запроса из центра уведомлений
-    @RequestMapping(value = "/getNotification", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/getNotification", method = RequestMethod.GET)
     public @ResponseBody
     Response getNotification() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
@@ -120,7 +121,7 @@ public class NotificationController { // Тут вроде логировать 
         response.setText(json);
         response.setCount(newNotifications.size());
         return response;
-    }
+    }*/
 
     // На подгрузку тестовой страницы с веб-сокетами:
     @RequestMapping(value = "/test", method = RequestMethod.GET)
@@ -146,8 +147,9 @@ public class NotificationController { // Тут вроде логировать 
         // 2. Прикрепить уведомление к пользователю (либо записать в базу, если он нективен)
         // NotificationService.sendNotification(new Notification("Уведомление",idUser, objectId, "friendRequest")); - так выглядит добавление
         // 3. Вернуть его. Нужно или сформировать канал для каждого пользователя, либо хз
-        int currentUserID = userService.getObjID("bloodymir");
-        usersNotifications.getNotifications(currentUserID);
+        int currentUserID = Integer.parseInt(message.getRecieverID());
+        ArrayList<SocketMessage> notifications =  usersNotifications.getNotifications(currentUserID);
+        NotificationService.sendNotification(message);
         return message;
     }
 

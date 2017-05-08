@@ -3,7 +3,12 @@
 <%@ page import="service.LoadingServiceImp" %>
 <%@ page import="service.UserServiceImp" %>
 <%@ page import="java.sql.SQLException" %>
-<%@ page import="java.lang.reflect.InvocationTargetException" %><%--
+<%@ page import="java.lang.reflect.InvocationTargetException" %>
+<%@ page import="service.notifications.NotificationService" %>
+<%@ page import="service.notifications.UsersNotifications" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="WebSocket.SocketMessage" %>
+<%@ page import="com.google.gson.Gson" %><%--
   Created by IntelliJ IDEA.
   User: Lawrence
   Date: 05.02.2017
@@ -25,11 +30,14 @@
         User user = new User();
         try {
             user = new Converter().ToUser(new LoadingServiceImp().getDataObjectByIdAlternative(new UserServiceImp().getObjID(new UserServiceImp().getCurrentUsername())));
-
         } catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
+            System.out.println("Ошибка: " + e.toString());
         }
     %>
+
+
+
     <script src="<%=request.getContextPath()%>/resources/js/sockjs-0.3.4.js" type="text/javascript"></script>
     <script src="<%=request.getContextPath()%>/resources/js/stomp.js" type="text/javascript"></script>
     <script src="<%=request.getContextPath()%>/resources/js/app.js" type="text/javascript"></script>
@@ -267,7 +275,24 @@
 </script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/notifications.js"></script>
+<%
+    try {
+        int currentUserID = user.getId();
+        UsersNotifications usersNotifications = UsersNotifications.getInstance();
+        ArrayList<SocketMessage> notifications =  usersNotifications.getNotifications(currentUserID);
 
+        if (notifications != null) {
+            out.println("<script type=\"text/javascript\">");
+            for (SocketMessage notification : notifications) {
+                out.println("addNotification(JSON.parse('" + new Gson().toJson(notification) + "'));");
+            }
+            out.println("</script>");
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+%>
 </body>
 
 </html>

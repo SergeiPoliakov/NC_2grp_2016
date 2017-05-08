@@ -38,7 +38,7 @@
           <!-- access denied page -->
         <form-login
                 login-page="/main"
-                default-target-url="/main-login"
+                default-target-url="/username"
                 always-use-default-target="false"
                 authentication-failure-url="/login?error"
                 username-parameter="username"

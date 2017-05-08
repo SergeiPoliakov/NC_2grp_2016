@@ -100,7 +100,7 @@ public class SlotOptimizer {
                         "До устранения данной проблемы работа оптимизатора заблокирована. Примите необходимые меры и повторите запрос на оптимизацию", user_id, user_id, Notification.MEETING_OVERLAP);
                 // Тут еще можно вставить ссылку на страницу, куда выведутся все несоответсвия, но пока без нее
                 // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
-                NotificationService.sendNotification(notification);
+                //NotificationService.sendNotification(notification);
                 return;
             }
         }
@@ -121,7 +121,7 @@ public class SlotOptimizer {
             // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто сам себе шлет):
             Notification notification = new Notification("Проверка завершена! Ваше расписание не нуждается в оптимизации! Можете сохранить свое расписание.", user_id, user_id, Notification.OPTIMIZATION_IS_GOOD);
             // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
-            NotificationService.sendNotification(notification);
+            //NotificationService.sendNotification(notification);
             return;
         }
 
@@ -233,7 +233,7 @@ public class SlotOptimizer {
         // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто сам себе шлет):
         Notification notification = new Notification("Ваше расписание за указанный период успешно оптимизировано! Можете сохранить свое расписание.", user_id, user_id, Notification.OPTIMIZATION_IS_GOOD);
         // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
-        NotificationService.sendNotification(notification);
+        //NotificationService.sendNotification(notification);
     }
 
 
@@ -524,7 +524,7 @@ public class SlotOptimizer {
             // Формируем уведомление пользователю (может быть, отправителем сделать сервис-юзера (систем-юзера)? Но пока как будто админ всем шлет уведомления):
             Notification notification = new Notification("Внимание! Владелец изменил время встречи! Проверьте свое расписание", user_id, user.getId(), Notification.MEETING_OVERLAP);
             // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
-            NotificationService.sendNotification(notification);
+            //NotificationService.sendNotification(notification);
         }
 
 

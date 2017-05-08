@@ -96,7 +96,7 @@ public class NewMeetingController {
                 // Формируем уведомление
                 Notification notification = new Notification("Пользователь " + userName + " присоединился к встрече " + meeting.getTitle(), idSender, idReceiver, Notification.MEETING_ACCEPT);
                 // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
-                NotificationService.sendNotification(notification);
+                //NotificationService.sendNotification(notification);
             }
         }
 
@@ -111,7 +111,7 @@ public class NewMeetingController {
             // Формируем уведомление // Тут бы в качетсве отправителя выставить систе юзера, а его еще надо создать!!
             Notification notification = new Notification("Встреча " + meeting.getTitle() + " совпадает по времени с задачами в Вашем расписании. Нажмите \"Продолжить\" для оптимизации", idSender, idSender, Notification.MEETING_OVERLAP);
             // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
-            NotificationService.sendNotification(notification);
+            //NotificationService.sendNotification(notification);
         }
 
         return "redirect:/meetings";

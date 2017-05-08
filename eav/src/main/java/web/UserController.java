@@ -1,5 +1,6 @@
 package web;
 
+import WebSocket.SocketMessage;
 import com.google.gson.Gson;
 import entities.*;
 import org.springframework.web.bind.annotation.*;
@@ -164,21 +165,14 @@ public class UserController {
 
         return "main-login";
     }
-    @RequestMapping(value = { "/login" }, method = RequestMethod.GET)
-    public ModelAndView login(@RequestParam(value = "error", required = false) String error) throws SQLException, CustomException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
-        ModelAndView model = new ModelAndView();
-        if (error != null) {
-            throw new CustomException("Неправильно введен логин или пароль!");  //Временное решение
-        }
-        model.setViewName("main");
-
-        int idUser = userService.getObjID(userService.getCurrentUsername());
-        loggerLog.add(Log.LOGIN, "login", idUser); // Авторизация
-
+    // Spring sec редиректит сюда при авторизации
+    @RequestMapping(value = "/username", method = RequestMethod.GET)
+    public String currentUserName(Authentication authentication) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         // Сохранение авторизованного пользователя в память
-        DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
-        ArrayList<Notification> notifications = new ArrayList<>();
+        String userName = authentication.getName();
+        DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userName));
+        ArrayList<SocketMessage> notifications = new ArrayList<>();
 
         /* Тут черпает уведомления из БД, только не работает
         ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new NotificationFilter(NotificationFilter.FOR_CURRENT_USER, NotificationFilter.UNSEEN));
@@ -194,6 +188,20 @@ public class UserController {
         // Добавление уведомлений в глобальный список
         UsersNotifications usersNotifications = UsersNotifications.getInstance();
         usersNotifications.setNotifications(currentUser.getId(), notifications);
+        return "redirect:/main-login";
+    }
+
+    @RequestMapping(value = { "/login" }, method = RequestMethod.GET)
+    public ModelAndView login(@RequestParam(value = "error", required = false) String error) throws SQLException, CustomException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+
+        ModelAndView model = new ModelAndView();
+        if (error != null) {
+            throw new CustomException("Неправильно введен логин или пароль!");  //Временное решение
+        }
+        model.setViewName("main");
+
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        loggerLog.add(Log.LOGIN, "login", idUser); // Авторизация
 
         return model;
 
@@ -612,8 +620,6 @@ public class UserController {
             }
         }
         int idUser = userService.getObjID(userService.getCurrentUsername());
-
-        NotificationService.sendNotification(new Notification("Уведомление",idUser, objectId, "friendRequest"));
         
         loggerLog.add(Log.ADD_FRIEND, objectId, idUser); // Добавление пользователя в друзья
         return "/addFriend";
