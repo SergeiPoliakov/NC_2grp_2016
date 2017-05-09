@@ -84,6 +84,7 @@
                 'additionalID': meetingID,
                 'meetingName': meetingName,
                 'senderPic': gSenderPic,
+                'isSeen' : "active",
                 'date': toLocaleDateTimeString(new Date())
             });
             stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление

@@ -279,6 +279,11 @@
         editable: true,
         selectable: true,
         stack: false,
+        margin:{
+          item:{
+              horizontal: 0
+          }
+        },
         multiselect: true,
         dataAttributes: 'all',
         itemsAlwaysDraggable: true,

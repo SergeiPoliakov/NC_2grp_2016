@@ -6,17 +6,22 @@ package web;
 import WebSocket.SocketMessage;
 import com.google.gson.Gson;
 import entities.DataObject;
+import entities.Event;
+import entities.Log;
 import entities.Notification;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import service.converter.Converter;
+import service.converter.DateConverter;
 import service.id_filters.MessageFilter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 
 import service.LoadingServiceImp;
@@ -36,6 +41,7 @@ public class NotificationController { // Тут вроде логировать 
     private UserServiceImp userService = new UserServiceImp();
     private Converter converter = new Converter();
     private UsersNotifications usersNotifications = UsersNotifications.getInstance();
+    private int idPool = 1;
 
     // 2017-02-24 Уведомления о новых сообщениях (вывод в хедер) // Старый метод, используйте универсальный getNewNotification
     @RequestMapping(value = "/getNewMessage", method = RequestMethod.GET)
@@ -94,63 +100,25 @@ public class NotificationController { // Тут вроде логировать 
         return result;
     }
 
-    // Обработка запроса из центра уведомлений
-    /*@RequestMapping(value = "/getNotification", method = RequestMethod.GET)
-    public @ResponseBody
-    Response getNotification() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
-
-        UsersNotifications usersNotifications = UsersNotifications.getInstance();
-        Integer userID =  userService.getObjID(userService.getCurrentUsername());
-        ArrayList<Notification> notifications = usersNotifications.getNotifications(userID);
-        ArrayList<Notification> oldNotifications = (ArrayList<Notification>) usersNotifications.getNotifications(userID).clone();
-        Integer oldSize = notifications.size();
-
-        // Ожидание новых уведомлений
-        while ( oldSize == notifications.size()){
-            Thread.currentThread().yield();
-        }
-
-        // Получение НОВЫХ уведомлений
-
-        ArrayList<Notification> newNotifications = (ArrayList<Notification>) notifications.clone();
-        newNotifications.removeAll(oldNotifications);
-
-        String json = new Gson().toJson(newNotifications);
-
-        Response response = new Response();
-        response.setText(json);
-        response.setCount(newNotifications.size());
-        return response;
-    }*/
-
-    // На подгрузку тестовой страницы с веб-сокетами:
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public String testPage() throws SQLException {
-
-        return "test";
-    }
-
-    // На подгрузку тестовой страницы с веб-сокетами:
-    @RequestMapping(value = "/test2", method = RequestMethod.GET)
-    public String testPag2() throws SQLException {
-
-        return "test2";
-    }
-
-
     // Работа через STOMP
     @MessageMapping("/notify{userID}")
     @SendTo("/topic/notifications{userID}")
-    public SocketMessage getMessage(SocketMessage message) throws Exception {
-
-        // 1 Сформировать уведомление
-        // 2. Прикрепить уведомление к пользователю (либо записать в базу, если он нективен)
-        // NotificationService.sendNotification(new Notification("Уведомление",idUser, objectId, "friendRequest")); - так выглядит добавление
-        // 3. Вернуть его. Нужно или сформировать канал для каждого пользователя, либо хз
-        int currentUserID = Integer.parseInt(message.getRecieverID());
+    public SocketMessage getMessage(SocketMessage notification) throws Exception {
+        int currentUserID = Integer.parseInt(notification.getRecieverID());
         ArrayList<SocketMessage> notifications =  usersNotifications.getNotifications(currentUserID);
-        NotificationService.sendNotification(message);
-        return message;
+        notification.setMessageID(idPool++);
+        NotificationService.sendNotification(notification);
+        return notification;
+    }
+
+    // Изменение состояния на просмотренное через STOMP
+    @MessageMapping("/updateNotificationState")
+    public void updateNotificationState(SocketMessage notification) throws Exception {
+        int currentUserID = Integer.parseInt(notification.getRecieverID());
+        ArrayList<SocketMessage> notifications =  usersNotifications.getNotifications(currentUserID);
+        SocketMessage notificationInList = notifications.get(notifications.indexOf(notification)); // Получить уведомление, которое хранится в листе
+        notificationInList.setIsSeen(""); // Отметить как прочитанное
+        return;
     }
 
 }

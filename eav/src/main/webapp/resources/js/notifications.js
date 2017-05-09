@@ -18,8 +18,13 @@
 		if ( $( this ).hasClass( "active" ) ){				
 			$( this ).removeClass( "active" );
 			var notificationCount = $( "#notificationCount" ).attr( "data-count") - 1;
-			$( "#notificationCount" ).attr( "data-count", notificationCount); 
-			//$( "#notificationSecondCounter" ).html("Уведомления (" + notificationCount + ")");
+			$( "#notificationCount" ).attr( "data-count", notificationCount);
+
+            var JSONMessage = JSON.stringify({
+                'messageID': $( this ).attr('id'),
+				'recieverID': $( this ).attr('recieverID')
+            });
+            stompClient.send("/app/updateNotificationState", {}, JSONMessage);
 		}
 	});
 	
@@ -35,19 +40,20 @@
 	function addNotification(data){
 		switch(data.type) {
 			case 'friendRequest':  
-				$("#notificationHolder").prepend('<li class="notification active"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+data.senderPic+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><p class="notification-title"><a href="user'+data.senderID+'">'+data.senderName+ '</a> отправил Вам заявку в друзья</p><div class="notification-meta"><small class="timestamp">'+data.date+'</small></div><div class="notification-userbuttons"><a href="/addFriend/'+data.senderID+'/acceptFriend"><button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Добавить</span> </button></a><a href="#declineFriend"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отклонить</span></button></a></div></div></div></li>');
+				$("#notificationHolder").prepend('<li class="notification '+data.isSeen+'" id ="'+data.messageID+'" recieverID="'+data.recieverID+'"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+data.senderPic+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><p class="notification-title"><a href="user'+data.senderID+'">'+data.senderName+ '</a> отправил Вам заявку в друзья</p><div class="notification-meta"><small class="timestamp">'+data.date+'</small></div><div class="notification-userbuttons"><a href="/addFriend/'+data.senderID+'/acceptFriend"><button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Добавить</span> </button></a><a href="#declineFriend"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отклонить</span></button></a></div></div></div></li>');
 				break;
 			case 'meetingInvite':  
-				$("#notificationHolder").prepend('<li class="notification active"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+data.senderPic+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><p class="notification-title"><a href="user'+data.senderID+'">'+data.senderName+ '</a> пригласил Вас на встречу <a href="meeting'+data.additionalID+'">'+data.meetingName+'</a></p><div class="notification-meta"><small class="timestamp">'+data.date+'</small></div><div class="notification-userbuttons"><a href="#acceptInvite"><button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Принять</span> </button></a><a href="#declineInvite"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отказаться</span></button></a></div></div></div></li>');
+				$("#notificationHolder").prepend('<li class="notification '+data.isSeen+'" id ="'+data.messageID+'" recieverID="'+data.recieverID+'"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+data.senderPic+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><p class="notification-title"><a href="user'+data.senderID+'">'+data.senderName+ '</a> пригласил Вас на встречу <a href="meeting'+data.additionalID+'">'+data.meetingName+'</a></p><div class="notification-meta"><small class="timestamp">'+data.date+'</small></div><div class="notification-userbuttons"><a href="#acceptInvite"><button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Принять</span> </button></a><a href="#declineInvite"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отказаться</span></button></a></div></div></div></li>');
 				break;				
 			case 'meetingRequest':  
-				$("#notificationHolder").prepend('<li class="notification active"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+data.senderPic+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><p class="notification-title"><a href="user'+data.senderID+'">'+data.senderName+ '</a> хочет принять участие в встрече <a href="meeting'+data.additionalID+'">'+data.meetingName+'</a></p><div class="notification-meta"><small class="timestamp">'+data.date+'</small></div><div class="notification-userbuttons"><a href="#inviteAtMeeting"><button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Пригласить</span> </button></a><a href="#declineRequest"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отклонить</span></button></a></div></div></div></li>');
+				$("#notificationHolder").prepend('<li class="notification '+data.isSeen+'" id ="'+data.messageID+'" recieverID="'+data.recieverID+'"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+data.senderPic+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><p class="notification-title"><a href="user'+data.senderID+'">'+data.senderName+ '</a> хочет принять участие в встрече <a href="meeting'+data.additionalID+'">'+data.meetingName+'</a></p><div class="notification-meta"><small class="timestamp">'+data.date+'</small></div><div class="notification-userbuttons"><a href="#inviteAtMeeting"><button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Пригласить</span> </button></a><a href="#declineRequest"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отклонить</span></button></a></div></div></div></li>');
 				break;			
 			case 'infoFriendAccept':  
-				$("#notificationHolder").prepend('<li class="notification active"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+data.senderPic+'" class="img-circle" alt="img"/></div></div><div class="media-body"><p class="notification-title"><a href="/user'+data.senderID+'">'+data.senderName+ '</a> принял вашу заявку в друзья</p><div class="notification-meta"><small class="timestamp">'+data.date+'</small></div></div></div></li>');
+				$("#notificationHolder").prepend('<li class="notification '+data.isSeen+'" id ="'+data.messageID+'" recieverID="'+data.recieverID+'"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+data.senderPic+'" class="img-circle" alt="img"/></div></div><div class="media-body"><p class="notification-title"><a href="/user'+data.senderID+'">'+data.senderName+ '</a> принял вашу заявку в друзья</p><div class="notification-meta"><small class="timestamp">'+data.date+'</small></div></div></div></li>');
 				break;
 			default:
 				return;
 		}
-		notificationCountIncrease();
+		if (data.isSeen != "")
+			notificationCountIncrease();
 	}

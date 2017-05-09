@@ -1,15 +1,19 @@
 package WebSocket;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 /**
  * Created by Костя on 09.04.2017.
  */
 public class SocketMessage {
 
+    private int messageID;
     private String type;
     private String senderID;
     private String recieverID;
     private String additionalID;
     private String date;
+    private String isSeen; // active или пустая строка
     // Тут пошла жесть
     private String senderName; // Имя отправителя
     private String senderPic; // Ссылка на аватар отправителя
@@ -76,6 +80,21 @@ public class SocketMessage {
         this.senderPic = senderPic;
     }
 
+    public String getIsSeen() {
+        return isSeen;
+    }
+
+    public void setIsSeen(String isSeen) {
+        this.isSeen = isSeen;
+    }
+
+    public int getMessageID() {
+        return messageID;
+    }
+
+    public void setMessageID(int messageID) {
+        this.messageID = messageID;
+    }
 
     public String getType() {
         return type;
@@ -123,5 +142,19 @@ public class SocketMessage {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null)
+            return false;
+        if (object == this)
+            return true;
+        if (object instanceof  SocketMessage){
+            SocketMessage objectSocketMessage = (SocketMessage) object;
+            if (objectSocketMessage.getMessageID() == this.messageID)
+                return true;
+        }
+        return false;
     }
 }
