@@ -13,6 +13,7 @@ import service.converter.DateConverter;
 import service.id_filters.EventFilter;
 import service.id_filters.LogFilter;
 import service.id_filters.MeetingFilter;
+import service.id_filters.MessageFilter;
 import service.optimizer.SlotManager;
 
 import java.lang.reflect.InvocationTargetException;
@@ -67,6 +68,7 @@ public class StatisticManager {
         private static final String ACTIVITY =  "activity"; // активность юзера за период
         private static final String MEETING =   "meeting"; // соотношение встреч
         private static final String PROCENTAZH = "procentazh"; // процентаж встреч / событий / свободного времени в виде круговой диаграммы
+        private static final String MESSAGE = "message"; // процентаж сообщений: отправленные / принятые прочитанные / принятые непрочитанные в виде круговой диаграммы
     }
 
     // Период выборки: hour - за последний час | day - за последний день | week - за последнюю неделю | month - за последний месяц | year - за последний год
@@ -97,6 +99,9 @@ public class StatisticManager {
             }
             else if (statRequest.getDatatype().equals(DataType.PROCENTAZH)) {
                 results = getUsageAndFreeTime(statRequest);
+            }
+            else if (statRequest.getDatatype().equals(DataType.MESSAGE)) {
+                results = getMessageStat(statRequest);
             }
             // И конечно надо сохранить в сейвере результат - обсчитанную статистику:
             StatisticSaver.add(root_id, statRequest, results);
@@ -379,6 +384,57 @@ public class StatisticManager {
         return results;
     }
 
+
+    // 2017-05-09 Статистика № 4 Соотношение сообщений отправленных / принятых прочитанных / принятых нерочитанных (круговая диаграмма)
+    private ArrayList<StatResponse> getMessageStat(StatRequest statRequest) throws ParseException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
+
+        // 1 Определяем, за какое время считать статистику:
+        LocalDateTime end_date = LocalDateTime.now();
+        LocalDateTime start_date = getStartDate(statRequest, end_date); // используем вспомогательный метод (см. ниже)
+
+
+        // 2 Конвертируем даты начала и конца выборки в строку:
+        String date_1 = DateConverter.dateToString(start_date);
+        String date_2 = DateConverter.dateToString(end_date);
+
+
+        // 3 Выбираем из базы все отправленные сообщения данного юзера за интересующий интервал:
+        int user_id = userService.getObjID(userService.getCurrentUsername());
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new MessageFilter(MessageFilter.FOR_CURRENT_USER, MessageFilter.BETWEEN_TWO_DATES, date_1, date_2));
+        Integer count_send_messages = il.size(); // Количество отправленных
+
+        // 4 Выбираем из базы все полученные ПРОЧИТАННЫЕ сообщения данного юзера за интересующий интервал:
+        il = loadingService.getListIdFilteredAlternative(new MessageFilter(MessageFilter.TO_CURRENT_USER, MessageFilter.BETWEEN_TWO_DATES, date_1, date_2, MessageFilter.READ));
+        Integer count_read_messages = il.size(); // Количество принятых прочитанных
+
+        // 5 Выбираем из базы все полученные НЕ прочитанные сообщения данного юзера за интересующий интервал:
+        il = loadingService.getListIdFilteredAlternative(new MessageFilter(MessageFilter.TO_CURRENT_USER, MessageFilter.BETWEEN_TWO_DATES, date_1, date_2, MessageFilter.UNREAD));
+        Integer count_unread_messages = il.size(); // Количество принятых непрочитанных
+
+
+        // 6 Рассчитываем процентаж:
+        Integer sum = count_send_messages + count_read_messages + count_unread_messages;
+        if (sum.equals(0)) sum = 1; // Чтобы исключить деление на ноль
+
+        Double pr_send = 1.0 * count_send_messages / sum;
+        Double pr_read = 1.0 * count_read_messages  / sum;
+        Double pr_unread = 1.0 * count_unread_messages / sum;
+
+
+        // 7 И переносим в responce:
+        ArrayList<StatResponse> results = new ArrayList<>();
+
+
+        results.add(new StatResponse("Отправленные", pr_send));
+        results.add(new StatResponse("Прочитанные", pr_read));
+        results.add(new StatResponse("Непрочитанные", pr_unread));
+
+        return results;
+    }
+
+
+
+
     // 2017-05-09 Вспомогательный метод для определения времени начала анализируемого периода
     private LocalDateTime getStartDate(StatRequest statRequest, LocalDateTime end_date){
         // 1 Определяем, за какое время считать статистику:
@@ -405,7 +461,6 @@ public class StatisticManager {
         }
         return start_date;
     }
-
 
 
 }

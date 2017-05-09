@@ -24,10 +24,10 @@ function getStatSettings() {
         success: function (dataSetting) {
             // Сначала создаем необходимое количество карточек на странице:
             console.log(dataSetting.length);
-            var count_div = (dataSetting.length / 2  | 0); // Необходимое количество полноценных сдвоенных каррточек
+            var count_div = (dataSetting.length / 2  | 0); // Необходимое количество полноценных сдвоенных карточек
             var count_mod = dataSetting.length - count_div*2;  // Необходимое количество одиночных карточек
             var count_loc = 1;
-            for (var c = 0; c < count_div+1; c++){ // for (var c = 0; c < count_div; c++) // Создаем обычные карточки
+            for (var c = 0; c < count_div; c++){ // for (var c = 0; c < count_div; c++) // Создаем обычные карточки
 
                 var block_col_lg_6 = '<div class="row">';
 
@@ -183,6 +183,7 @@ function getStatSettings() {
                         }
                     }
 
+                    /*
                     // Искусственное ухищрение, потом сделаю как надо
                     plotview = "gauge";
                     if (plotview == "gauge") { // То работаем с индикаторами
@@ -225,6 +226,8 @@ function getStatSettings() {
 
                         }
                     }
+
+                    */
                 }
 
             }

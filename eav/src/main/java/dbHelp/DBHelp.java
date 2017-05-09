@@ -1192,10 +1192,18 @@ public class DBHelp {
             if (params.get(MessageFilter.ALL) != null) { // если надо получить IDs всех сообщений в системе,
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE;
             } else if (params.get(MessageFilter.FOR_CURRENT_USER) != null) { // если надо получить ID всех отправленных сообщений текущего пользователей,
+                // 2017-05-09 Правильный запрос
+                // sql = "SELECT DISTINCT ob.OBJECT_ID FROM OBJECTS ob ";
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 30 ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
+                sql += "AND re.OBJECT_ID = " + userService.getCurrentUser().getId() + " ";
+
+                /* // Неправильный запрос
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 30 ";
                 sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MESSAGE + " ";
                 sql += "AND ob2.OBJECT_NAME = " + "'" + userService.getCurrentUsername() + "'" + " ";
+                */
             } else if (params.get(MessageFilter.TO_CURRENT_USER) != null) { // если надо получить ID всех полученных сообщений текущего пользователей,
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.REFERENCE AND re.ATTR_ID = 30 ";
                 sql += "JOIN OBJECTS ob2 ON re.OBJECT_ID = ob2.OBJECT_ID ";
@@ -1273,10 +1281,26 @@ public class DBHelp {
                         "AND pa.ATTR_ID = 203 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + after_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
             } else if (params.get(MessageFilter.BETWEEN_TWO_DATES) != null) { // если надо получить ID всех сообщений, отправленных МЕЖДУ двумя датами,
                 ArrayList<String> date = params.get(MessageFilter.BETWEEN_TWO_DATES);
+                // 2017-05-09 Правильный запрос
+                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob ";
+                sql += "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID ";
+                sql += "AND pa.ATTR_ID = 203 ";
+                sql += "AND TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE('" + date.get(0) + "', 'dd.mm.yyyy hh24:mi:ss') ";
+                sql += "AND TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE('" + date.get(1) + "', 'dd.mm.yyyy hh24:mi:ss') ";
+
+
+                /* // Неправильный запрос
                 sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob " +
                         "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
                         "AND pa.ATTR_ID = 203 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss')) " +
                         "AND (TO_DATE(pa1.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + date.get(1) + ", 'dd.mm.yyyy hh24:mi:ss'))"; // Можно сделать и between'ом, в принципе
+
+                */
+            }
+            // Прикручиваем еще один вспомогательный фильтр:
+            if (params.get(MessageFilter.READ) != null) { // если надо получить ID всех прочитанных сообщений, отправленных текущему пользователю,
+                sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
+                        "AND pa.ATTR_ID = 204 AND pa.VALUE = 1";
             } else if (params.get(MessageFilter.UNREAD) != null) { // если надо получить ID всех непрочитанных сообщений, отправленных текущему пользователю,
                 sql = "SELECT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
                         "AND pa.ATTR_ID = 204 AND pa.VALUE = 0";
