@@ -187,7 +187,8 @@ public class UserController {
         */
         // Добавление уведомлений в глобальный список
         UsersNotifications usersNotifications = UsersNotifications.getInstance();
-        usersNotifications.setNotifications(currentUser.getId(), notifications);
+        if (usersNotifications.getNotifications(currentUser.getId()) == null)
+            usersNotifications.setNotifications(currentUser.getId(), notifications);
         return "redirect:/main-login";
     }
 

@@ -415,9 +415,14 @@
 
     // Нажатие кнопки "Пригласить"
     $("#inviteButton").click(function () {
+        $("#userIDs").val($('#inviteAtMeetingSelectPicker').val());
         if ($('#inviteAtMeetingSelectPicker').val() == null) {
             // Какой нибудь алерт
             return false;
+        }
+        var selectedUsers = $('#inviteAtMeetingSelectPicker').val();
+        for (var i = 0; i < selectedUsers.length; i++) {
+            sendMessage('meetingInvite',selectedUsers[i], '${meeting.id}', '${meeting.title}');
         }
         $("#userIDs").val($('#inviteAtMeetingSelectPicker').val());
         $('#inviteAtMeetingSelectPicker').selectpicker('deselectAll');

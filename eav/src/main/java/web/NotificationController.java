@@ -121,4 +121,14 @@ public class NotificationController { // Тут вроде логировать 
         return;
     }
 
+    // Удаление уведомления через STOMP
+    @MessageMapping("/removeNotification")
+    public void removeNotification(SocketMessage notification) throws Exception {
+        int currentUserID = Integer.parseInt(notification.getRecieverID());
+        ArrayList<SocketMessage> notifications =  usersNotifications.getNotifications(currentUserID);
+        SocketMessage notificationInList = notifications.get(notifications.indexOf(notification)); // Получить уведомление, которое хранится в листе
+        notifications.remove(notification);
+        return;
+    }
+
 }

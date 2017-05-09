@@ -181,9 +181,9 @@
             <form action="/searchUser" class="navbar-form navbar-left" role="search" method="post">
                 <div class="form-group">
                     <select multiple type="text" class="form-control searchBox" name="name" style="width: 30rem;">
-                        <option value="AL">Alabama2</option>
-                        <option value="AL2">Alabama23</option>
-                        <option value="AL3">Alabama234</option>
+                        <option value="AL">Убрать</option>
+                        <option value="AL2">Или</option>
+                        <option value="AL3">Что</option>
                     </select>
                     <!--  <input type="text" class="form-control searchBox" name="name" style="width: 30rem;"> -->
                 </div>

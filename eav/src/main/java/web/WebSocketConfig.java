@@ -23,6 +23,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/notify{userID}").withSockJS();
         registry.addEndpoint("/updateNotificationState").withSockJS();
+        registry.addEndpoint("/removeNotification").withSockJS();
     }
 
 }
