@@ -4,9 +4,7 @@ package service.statistics;
 import com.google.api.client.util.DateTime;
 import com.google.common.cache.LoadingCache;
 import dbHelp.DBHelp;
-import entities.DataObject;
-import entities.Event;
-import entities.Log;
+import entities.*;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
@@ -14,6 +12,8 @@ import service.converter.Converter;
 import service.converter.DateConverter;
 import service.id_filters.EventFilter;
 import service.id_filters.LogFilter;
+import service.id_filters.MeetingFilter;
+import service.optimizer.SlotManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -184,14 +184,126 @@ public class StatisticManager {
         return results;
     }
 
-    // 2 Статистика: соотношение встреч юзера
-    private ArrayList<StatResponse> getMeeting(StatRequest statRequest){
-        ArrayList<StatResponse> results = new ArrayList<>(); // Пока просто заглушка
+    // 2017-05-09 Статистика № 2 Соотношение встреч юзера (общие - т.е. он сам владелец, принятые, отказы)
+    private ArrayList<StatResponse> getMeeting(StatRequest statRequest) throws ParseException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
+
+        // 1 Определяем, за какое время считать статистику:
+        LocalDateTime end_date = LocalDateTime.now();
+        LocalDateTime start_date = getStartDate(statRequest, end_date); // используем вспомогательный метод (см. ниже)
+
+        // 2 Конвертируем даты начала и конца выборки в строку:
+        String date_1 = DateConverter.dateToString(start_date);
+        String date_2 = DateConverter.dateToString(end_date);
 
 
-            results.add(new StatResponse("Общие встречи", 0.68));
-            results.add(new StatResponse("Принятые встречи", 0.21));
-            results.add(new StatResponse("Отказы", 0.11));
+        // 3 Выбираем из базы все события за интересующий интервал в ArrayList<Event> events:
+        Integer user_id = userService.getObjID(userService.getCurrentUsername());
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new EventFilter(EventFilter.FOR_CURRENT_USER, EventFilter.BETWEEN_TWO_DATES, date_1, date_2));
+        Map<Integer, DataObject> map = doCache.getAll(il);
+        ArrayList<DataObject> list = new Converter().getMapToListDataObject(map);
+        ArrayList<Event> events = new ArrayList<>(list.size());
+        for (DataObject dataObject : list) {
+            Event event = new Event(dataObject);
+            events.add(event);
+        }
+
+        // 4 Обходим все события и вытаскиваем только те, которые являются дубликатами встреч:
+        ArrayList<Event> duplicates = new ArrayList<>();
+        for (Event event : events) {
+            // проверяем, с каким типом события имеем дело:
+            if (event.getPriority().equals(Event.PRIOR_DUPLICATE)) {
+                // имеем дело с дубликатом встречи
+                duplicates.add(event);
+            }
+        }
+
+
+        // 5 Выбираем из базы все встречи юзера
+        ArrayList<Integer> mil = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.FOR_CURRENT_USER, MeetingFilter.BETWEEN_TWO_DATES, date_1, date_2));
+        Map<Integer, DataObject> mmap = doCache.getAll(mil);
+        ArrayList<DataObject> mList = new Converter().getMapToListDataObject(mmap);
+        ArrayList<Meeting> meetings = new ArrayList<>(list.size());
+        for (DataObject dataObject : mList) {
+            Meeting meeting = new Meeting(dataObject);
+            meetings.add(meeting);
+        }
+
+        // 5 Классифицируем на две группы - те, в которых юзер является владельцем (админом), и те, в которых просто участником
+        ArrayList<Event> admin_duplicates = new ArrayList<>();
+        ArrayList<Event> user_duplicates = new ArrayList<>();
+
+        // Для этого обходим все полученные встречи
+        for (Meeting meeting : meetings){
+            ArrayList<Event> m_duplicates = meeting.getDuplicates();
+            for (Event m_dupl : m_duplicates){ // и в каждой встрече - все дубликаты
+
+                for (Event dupl : duplicates) {
+
+                    if (dupl.getId().equals(m_dupl.getId())){ // Если их айди совпадают, то юзер является админом этой встречи (и этого дубликата)
+                        admin_duplicates.add(dupl); // копируем в дубликаты админа
+                        duplicates.remove(dupl); // и удаляем из списка дубликатов, чтобы повторно не сравнивать
+                        break;
+                    }
+                }
+
+            }
+        }
+        user_duplicates = duplicates;
+
+        // 6 Надо как-то идентифицировать откызы от встреч. Это будут те встречи, в которых юзер есть среди users, но дубликата среди duplicates для него нет
+        // 6-1 Выбираем из базы все встречи за данный период, в которых фигурирует данный юзер
+        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.ALL, MeetingFilter.BETWEEN_TWO_DATES, date_1, date_2));
+        Map<Integer, DataObject> amap = doCache.getAll(al);
+        ArrayList<DataObject> aList = new Converter().getMapToListDataObject(amap);
+        ArrayList<Meeting> ameetings = new ArrayList<>();
+        for (DataObject dataObject : aList) {
+            Meeting meeting = new Meeting(dataObject);
+            for (User user : meeting.getUsers()){
+                if (user.getId() == user_id){
+                    ameetings.add(meeting);
+                    break;
+                }
+            }
+        }
+
+        Integer delete_duplicates = 0;
+        // 6-2 И обходим все оставшиеся встречи в поисках такой, у которой для данного пользователя нет будликата
+        for (Meeting meeting : ameetings){
+            ArrayList<Event> m_duplicates = meeting.getDuplicates();
+            Boolean flag = true;
+            for (Event m_dupl : m_duplicates){ // и в каждой встрече - все дубликаты
+                if (m_dupl.getId().equals(user_id)){ // Сравниваем с айди юзера айдишник host_id копии встречи, если совпадают, выходим из цикла for, сбросив флаг
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                // Если флаг остался, то это как раз та встреча, от которой пользователь отказался,
+                // и можно увеличить счетчик отказов:
+                delete_duplicates ++;
+            }
+        }
+
+        // 7 Осталось только подсчитать процентаж:
+        Integer summ = admin_duplicates.size() + user_duplicates.size() + delete_duplicates; // общее количество
+        if (summ == 0) summ = 1; // На всякий пожарный, чтобы избежать деления на ноль
+        Double admin_meet = 1.0 * admin_duplicates.size() / summ;
+        Double user_meet = 1.0 * user_duplicates.size() / summ;
+        Double delete_meet = 1.0 * delete_duplicates / summ;
+
+
+        ArrayList<StatResponse> results = new ArrayList<>(); // Лист для результатов
+
+
+        results.add(new StatResponse("Общие встречи", admin_meet));
+        results.add(new StatResponse("Принятые встречи", user_meet));
+        results.add(new StatResponse("Отказы", delete_meet));
+
+        /*
+        results.add(new StatResponse("Общие встречи", 0.68));
+        results.add(new StatResponse("Принятые встречи", 0.21));
+        results.add(new StatResponse("Отказы", 0.11));
+        */
 
 
         return results;
@@ -201,28 +313,9 @@ public class StatisticManager {
     private ArrayList<StatResponse> getUsageAndFreeTime(StatRequest statRequest) throws ParseException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
 
         // 1 Определяем, за какое время считать статистику:
-        LocalDateTime start_date;
         LocalDateTime end_date = LocalDateTime.now();
-        switch (statRequest.getPeriod()) {
-            case Period.HOUR:
-                start_date = end_date.minusHours(1);
-                break;
-            case Period.DAY:
-                start_date = end_date.minusDays(1);
-                break;
-            case Period.WEEK:
-                start_date = end_date.minusWeeks(1);
-                break;
-            case Period.MONTH:
-                start_date = end_date.minusMonths(1);
-                break;
-            case Period.YEAR:
-                start_date = end_date.minusYears(1);
-                break;
-            default:
-                start_date = end_date.minusMonths(1);
-                break;
-        }
+        LocalDateTime start_date = getStartDate(statRequest, end_date); // используем вспомогательный метод (см. ниже)
+
 
         // 2 Конвертируем даты начала и конца выборки в строку:
         String date_1 = DateConverter.dateToString(start_date);
@@ -244,7 +337,6 @@ public class StatisticManager {
         Duration du_dublicates = Duration.between(end_date, end_date); // Подготавливаем нулевую длительность, к ней будем потом суммировать длительности дубликатов
         Duration du_events = Duration.between(end_date, end_date); // Подготавливаем нулевую длительность, к ней будем потом суммировать длительности обычных событий
         // и начинаем обходить:
-        // Ищем место слева и справа:
         for (int j = 0; j < events.size(); j++) {
             Event event = events.get(j);
             // и вычисляем продолжительность
@@ -284,13 +376,35 @@ public class StatisticManager {
         results.add(new StatResponse("Прочие события", pr_base_events));
         results.add(new StatResponse("Свободное время", pr_free));
 
-
-
-
-
         return results;
     }
 
+    // 2017-05-09 Вспомогательный метод для определения времени начала анализируемого периода
+    private LocalDateTime getStartDate(StatRequest statRequest, LocalDateTime end_date){
+        // 1 Определяем, за какое время считать статистику:
+        LocalDateTime start_date;
+        switch (statRequest.getPeriod()) {
+            case Period.HOUR:
+                start_date = end_date.minusHours(1);
+                break;
+            case Period.DAY:
+                start_date = end_date.minusDays(1);
+                break;
+            case Period.WEEK:
+                start_date = end_date.minusWeeks(1);
+                break;
+            case Period.MONTH:
+                start_date = end_date.minusMonths(1);
+                break;
+            case Period.YEAR:
+                start_date = end_date.minusYears(1);
+                break;
+            default:
+                start_date = end_date.minusMonths(1);
+                break;
+        }
+        return start_date;
+    }
 
 
 
