@@ -109,7 +109,7 @@ public class StatisticManager {
 
     //// ------------------------------------------------------------------------------------
 
-    // 1 Статистика: автивность юзера на сайте (можно, конечно, ввести весовую функцию, но пока просто считает общее время, проведенное на сайте, по отношению к периоду измерения)
+    // Статистика № 1 Активность юзера на сайте (можно, конечно, ввести весовую функцию, но пока просто считает общее время, проведенное на сайте, по отношению к периоду измерения)
     private ArrayList<StatResponse> getActivity(StatRequest statRequest) throws ParseException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         ArrayList<StatResponse> results = new ArrayList<>();
 

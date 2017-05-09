@@ -1093,13 +1093,21 @@ public class DBHelp {
                 sql += "WHERE ob.OBJECT_TYPE_ID =  " + MEETING + " ";
                 sql += "AND re.REFERENCE =  " + duplicate_id.get(0) + " ";
 
-            } else if (params.get(MeetingFilter.FOR_CURRENT_USER) != null) { // поправил 2017-03-02 если надо получить ID всех встреч текущего пользователей,
+            } else if (params.get(MeetingFilter.FOR_CURRENT_USER) != null) { // поправил 2017-05-09 // 2017-03-02 если надо получить ID всех встреч текущего пользователей,
                 //-- Правильное получение списка айди всех встреч текущего пользователя
                 //SELECT ob.OBJECT_ID FROM OBJECTS ob
+
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
+                sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
+                sql += "AND ob2.OBJECT_ID = " + userService.getCurrentUser().getId() + " ";
+
+                /*
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
                 sql += "JOIN PARAMS pa ON re.REFERENCE = pa.OBJECT_ID AND pa.ATTR_ID = 4 ";
                 sql += "WHERE ob.OBJECT_TYPE_ID =  " + MEETING + " ";
                 sql += "AND pa.VALUE = " + "'" + userService.getCurrentUsername() + "'" + " ";
+                */
             } else if (params.get(MeetingFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех встреч пользователя по его имени,
                 ArrayList<String> user_name = params.get(MeetingFilter.FOR_USER_WITH_NAME);
                 sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
@@ -1163,11 +1171,19 @@ public class DBHelp {
                         "AND pa.ATTR_ID = 302 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + after_date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))";
             } else if (params.get(MeetingFilter.BETWEEN_TWO_DATES) != null) { // если надо получить ID всех встреч МЕЖДУ двумя датами,
                 ArrayList<String> date = params.get(MeetingFilter.BETWEEN_TWO_DATES);
+
+                sql = "SELECT DISTINCT ob.OBJECT_ID FROM (" + sql + ") ob JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID ";
+                sql += "AND ( pa.ATTR_ID = 302 OR pa.ATTR_ID = 303 ) ";
+                sql += "AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi') > TO_DATE('" + date.get(0) + "', 'dd.mm.yyyy hh24:mi')) ";
+                sql += "AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi') < TO_DATE('" + date.get(1) + "', 'dd.mm.yyyy hh24:mi')) ";
+
+                /* // Старый запрос, неправильно работает (301 это не то), да еще и += в самом начале не нужно, это склеивает два запроса одинаковых
                 sql += "SELECT ob.OBJECT_ID FROM (" + sql + ") ob " +
                         "JOIN PARAMS pa ON ob.OBJECT_ID = pa.OBJECT_ID " +
                         "AND pa.ATTR_ID = 301 AND (TO_DATE(pa.VALUE, 'dd.mm.yyyy hh24:mi:ss') > TO_DATE(" + date.get(0) + ", 'dd.mm.yyyy hh24:mi:ss'))" +
                         "JOIN PARAMS pa1 ON ob.OBJECT_ID = pa1.OBJECT_ID " +
                         "AND pa1.ATTR_ID = 302 AND (TO_DATE(pa1.VALUE, 'dd.mm.yyyy hh24:mi:ss') < TO_DATE(" + date.get(1) + ", 'dd.mm.yyyy hh24:mi:ss'))";
+                */
             }
 
             //sql += "ORDER BY ob.OBJECT_ID"; // И группируем. Возможно придется сабрать в каждую else, если не сработает с INTERSECT

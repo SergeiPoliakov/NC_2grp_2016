@@ -6,7 +6,7 @@ package service.id_filters;
 public class EventFilter extends BaseFilter {
 
     public static final String ALL = "all";
-    public static final String LAST_FOR_CURRENT_USER = "last_for_currebt_user"; // Последняя задача на таймлайне ющера
+    public static final String LAST_FOR_CURRENT_USER = "last_for_current_user"; // Последняя задача на таймлайне юpера
     public static final String FOR_CURRENT_USER = "for_current_user";
     public static final String FOR_USER_WITH_NAME = "for_user_with_name";
     public static final String FOR_USER_WITH_ID = "for_user_with_id";
