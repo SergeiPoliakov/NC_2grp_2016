@@ -173,7 +173,7 @@
                     <div class="well bs-component"
                          style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
 
-                        <form id="eventForm" name="creation" action="/addNewMeeting" method="post">
+                        <form id="eventForm" name="creation" action="/addNewMeeting" method="post" data-toggle="validator">
                             <div class="modal-content">
                                 <!-- Заголовок модального окна -->
                                 <div class="modal-header">
@@ -204,7 +204,7 @@
                                         <div class='col-md-6'>
                                             <label for="taskStartTime" class="control-label">Начало:</label>
                                             <div class='input-group date' id='datetimepicker1'>
-                                                <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
+                                                <input required data-toggle="tooltip" type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
                                                        name="date_start" class="form-control" id="taskStartTime"/>
                                                 <span class="input-group-addon">
                                                         <span class="glyphicon glyphicon-calendar"></span>
@@ -214,7 +214,7 @@
                                         <div class='col-md-6'>
                                             <label for="taskEndTime" class="control-label">Окончание:</label>
                                             <div class='input-group date' id='datetimepicker2'>
-                                                <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
+                                                <input required data-toggle="tooltip" type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
                                                        name="date_end" class="form-control" id="taskEndTime"/>
                                                 <span class="input-group-addon">
                                                         <span class="glyphicon glyphicon-calendar"></span>
@@ -251,7 +251,7 @@
                     <div class="well bs-component"
                          style="box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);border-top-left-radius: 0px;border-top-right-radius: 0px;">
 
-                        <form id="formFloatingMeeting" name="creation" action="/addNewFloatingMeeting" method="post">
+                        <form id="formFloatingMeeting" name="creation" action="/addNewFloatingMeeting" method="post" data-toggle="validator">
                             <div class="modal-content">
                                 <!-- Заголовок модального окна -->
                                 <div class="modal-header">
@@ -282,7 +282,7 @@
                                         <div class='col-md-6'>
                                             <label for="taskStartTime" class="control-label">Начало:</label>
                                             <div class='input-group date' id='datetimepicker3'>
-                                                <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
+                                                <input required data-toggle="tooltip" type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
                                                        name="date_start" class="form-control" id="taskStartTime2"/>
                                                 <span class="input-group-addon">
                                                             <span class="glyphicon glyphicon-calendar"></span>
@@ -292,7 +292,7 @@
                                         <div class='col-md-6'>
                                             <label for="taskEndTime" class="control-label">Окончание:</label>
                                             <div class='input-group date' id='datetimepicker4'>
-                                                <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
+                                                <input required data-toggle="tooltip" type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
                                                        name="date_end" class="form-control" id="taskEndTime2"/>
                                                 <span class="input-group-addon">
                                                             <span class="glyphicon glyphicon-calendar"></span>
@@ -304,12 +304,12 @@
                                         <div class='col-md-6'>
                                             <label for="taskDuration" class="control-label">Продолжительность в
                                                 минутах:</label>
-                                            <input type='text' name="duration" class="form-control" id="taskDuration"/>
+                                            <input required data-toggle="tooltip" type='text' name="duration" class="form-control" id="taskDuration"/>
                                         </div>
                                         <div class='col-md-6'>
                                             <label for="taskDecisionTime" class="control-label">Согласовать до:</label>
                                             <div class='input-group date' id='datetimepicker5'>
-                                                <input type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
+                                                <input required data-toggle="tooltip" type='text' pattern="\d{2}.\d{2}.\d{4} \d{2}:\d{2}"
                                                        name="date_edit" class="form-control" id="taskDecisionTime"/>
                                                 <span class="input-group-addon">
                                                             <span class="glyphicon glyphicon-calendar"></span>
@@ -406,6 +406,25 @@
 
         });
     };
+
+    document.getElementById('taskDuration').onkeyup = function () {
+        $.ajax({
+            url : '/checkMeetingAJAX',
+            type: 'POST',
+            dataType: 'json',
+            data : {
+                date_start: $("#taskStartTime2").val(),
+                date_end: $("#taskEndTime2").val(),
+                duration: $("#taskDuration").val()
+            },
+            success: function (data) {
+                var check = JSON.parse(data.text);
+                if (check === false) {
+                    $("#modalAddButton2").attr("disabled", true);
+                } else $("#modalAddButton2").attr("disabled", false);
+            }
+        });
+    }
 
 </script>
 

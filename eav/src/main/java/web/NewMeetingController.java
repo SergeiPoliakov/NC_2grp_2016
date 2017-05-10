@@ -1,13 +1,16 @@
 package web;
 
 import com.google.common.cache.LoadingCache;
+import com.google.gson.Gson;
 import entities.*;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.converter.Converter;
+import service.converter.DateConverter;
 import service.meetings.NewMeetingManager;
 import service.meetings.NewMeetingRequest;
 import service.meetings.NewMeetingResponce;
@@ -125,6 +128,27 @@ public class NewMeetingController {
         // затем создать уведомление для администратора о том, что данный пользователь отказался принять участие в встрече,
 
         return "redirect:/meetings";
+    }
+
+    @RequestMapping(value = "/checkMeetingAJAX", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Response checkMeetingAJAX(
+            @RequestParam("date_start") String date_start,
+            @RequestParam("date_end") String date_end,
+            @RequestParam("duration") String duration) throws ParseException {
+
+        System.out.println(date_start);
+        System.out.println(date_end);
+        System.out.println(duration);
+
+        Response response = new Response();
+        boolean check = true;
+        long durationTime = DateConverter.duration(date_start, date_end);
+        if (durationTime / Long.parseLong(duration) >= 2) {
+            System.out.println("Слишком большие границы!");
+            check = false;
+        }
+        response.setText(new Gson().toJson(check));
+        return response;
     }
 
 }
