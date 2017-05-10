@@ -223,7 +223,7 @@
                         <p>Вы можете написать нам.</p>
                         <div class="panel-body">
 
-                            <form class="form" method="post" action="/">
+                            <form class="form" method="post" action="/sendUsMessage">
                                 <fieldset>
 
 
@@ -243,10 +243,10 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <div class="input-group">
-                                            <label for="TextArea">Ваше сообщение</label>
-                                            <textarea  rows="3" class="form-control noresize" name="info" id="TextArea"></textarea>
-                                        </div>
+
+                                            <label for="TextArea" class="control-label">Ваше сообщение</label>
+                                            <textarea  rows="3" class="form-control" name="text" id="TextArea"></textarea>
+                                        
                                     </div>
 
 

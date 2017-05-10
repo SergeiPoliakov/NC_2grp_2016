@@ -822,4 +822,34 @@ public class UserController {
 
         return "redirect:/profile";
     }
+
+    @RequestMapping(value="/sendUsMessage", method=RequestMethod.POST)
+    public String sendUsMessage(@RequestParam("nameUser") String nameUser,
+                                 @RequestParam("email") String email,
+                                 @RequestParam("text") String text) throws SQLException, ExecutionException,
+            NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException, MessagingException, UnsupportedEncodingException {
+
+        try (GenericXmlApplicationContext context = new GenericXmlApplicationContext()) {
+            context.load("classpath:applicationContext.xml");
+            context.refresh();
+            JavaMailSender mailSender = context.getBean("mailSender", JavaMailSender.class);
+
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper  =  new  MimeMessageHelper(message,  true);
+
+            message.setSubject("Для NC. 2 группа", "UTF-8");
+
+            //TODO: Сюда напишите e-mail получателя.
+            helper.setTo("netcracker.thesecondgroup@gmail.com");
+            helper.setFrom(new InternetAddress(email, nameUser, "UTF-8"));
+
+            helper.setText(text + ". С уважением " + "<html><body><a href=\"mailto:" + email +"?subject=Спасибо за ваше письмо\">\n" +
+                    "  Ответить пользователю</a></body></html>", true) ;
+
+            userService.sendEmail(message);
+
+        }
+        return "redirect:/main-login";
+    }
 }
