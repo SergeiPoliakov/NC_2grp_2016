@@ -7,13 +7,13 @@ package entities;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-public class Message extends BaseEntitie{
+public class Message extends BaseEntitie implements Comparable<Message> {
 
-    private int id; // 1
-    private int from_id; // 201
-    private int to_id; // 202
+    private Integer id; // 1
+    private Integer from_id; // 201
+    private Integer to_id; // 202
     private String date_send; // 203
-    private int read_status; // 204
+    private Integer read_status; // 204
     private String text; // 205
     private String from_name; // 206
     private String to_name; // 207
@@ -32,27 +32,27 @@ public class Message extends BaseEntitie{
         this.to_name = to_name;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getFrom_id() {
+    public Integer getFrom_id() {
         return from_id;
     }
 
-    public void setFrom_id(int from_id) {
+    public void setFrom_id(Integer from_id) {
         this.from_id = from_id;
     }
 
-    public int getTo_id() {
+    public Integer getTo_id() {
         return to_id;
     }
 
-    public void setTo_id(int to_id) {
+    public void setTo_id(Integer to_id) {
         this.to_id = to_id;
     }
 
@@ -64,11 +64,11 @@ public class Message extends BaseEntitie{
         this.date_send = date_send;
     }
 
-    public int getRead_status() {
+    public Integer getRead_status() {
         return read_status;
     }
 
-    public void setRead_status(int read_status) {
+    public void setRead_status(Integer read_status) {
         this.read_status = read_status;
     }
 
@@ -94,5 +94,11 @@ public class Message extends BaseEntitie{
 
     public void setTo_name(String to_name) {
         this.to_name = to_name;
+    }
+
+    // Сравнение по айди
+    @Override
+    public int compareTo(Message otherMessage) {
+        return (this.getId() - otherMessage.getId());
     }
 }

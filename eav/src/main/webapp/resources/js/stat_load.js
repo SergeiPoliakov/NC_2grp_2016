@@ -153,7 +153,7 @@ function getStatSettings() {
                                     var myArray = [data.length];
                                     for (var i = 0; i < data.length; i++) {
                                         myArray[i] = [2];
-                                        myArray[i][0] = parseInt((data[i]).nkey, 10);
+                                        myArray[i][0] = parseInt((data[i]).nkey - data.length, 10);
                                         myArray[i][1] = parseInt((data[i]).nvalue, 10);
 
                                     }

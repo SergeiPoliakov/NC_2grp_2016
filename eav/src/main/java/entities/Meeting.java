@@ -406,4 +406,19 @@ public class Meeting extends BaseEntitie {
                 + " : date_edit=" + date_edit +"}";
     }
 
+    // 2017-05-10 Метод получения сущности юзера-участника по переданному id
+    public User getMemberByMemberId(Integer user_id){
+        // 1 Проверяем, может быть этим пользователем является организатор:
+        if (this.organizer != null && this.organizer.getId() != null && this.organizer.getId().equals(user_id)) return this.organizer;
+        // 2 если нет, начинаем искать среди Users списка:
+        User find_user = null;
+        for (User user : this.getUsers()){
+            if (user.getId() != null && user.getId().equals(user_id)){
+                find_user = user;
+                break;
+            }
+        }
+        return find_user;
+    }
+
 }
