@@ -152,15 +152,18 @@
                     </a>
                     <div class="dropdown-container" style="top: 5.8rem !important;">
                         <div class="dropdown-toolbar">
-                            <div class="dropdown-toolbar-actions">
-                                <a href="#">Пометить всё как просмотренное</a>
+                            <div class="dropdown-toolbar-actions" id ="markAllAsRead">
+                                <a style="cursor: pointer;">Пометить всё как просмотренное</a>
                             </div>
                             <h3 class="dropdown-toolbar-title" id ="notificationSecondCounter">Уведомления (0)</h3>
                         </div><!-- /dropdown-toolbar -->
                         <ul class="dropdown-menu" id="notificationHolder">
+                            <li id ="notificationEmpty" class="notification" id="14" recieverid="10003">
+                                <p class="notification-title" style="text-align: center">Нет уведомлений</p>
+                            </li>
                         </ul>
                         <div class="dropdown-footer text-center">
-                            <a href="#">Просмотреть все</a>
+                            <a style="cursor: pointer;">  </a>
                         </div><!-- /dropdown-footer -->
                     </div><!-- /dropdown-container -->
                 </li><!-- /dropdown -->

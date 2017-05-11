@@ -101,6 +101,7 @@ public class NotificationController { // Тут вроде логировать 
     }
 
     // Работа через STOMP
+    // Отправка и получение уведомления
     @MessageMapping("/notify{userID}")
     @SendTo("/topic/notifications{userID}")
     public SocketMessage getMessage(SocketMessage notification) throws Exception {
@@ -111,17 +112,24 @@ public class NotificationController { // Тут вроде логировать 
         return notification;
     }
 
-    // Изменение состояния на просмотренное через STOMP
+    // Изменение состояния на просмотренное
     @MessageMapping("/updateNotificationState")
     public void updateNotificationState(SocketMessage notification) throws Exception {
         int currentUserID = Integer.parseInt(notification.getRecieverID());
         ArrayList<SocketMessage> notifications =  usersNotifications.getNotifications(currentUserID);
-        SocketMessage notificationInList = notifications.get(notifications.indexOf(notification)); // Получить уведомление, которое хранится в листе
-        notificationInList.setIsSeen(""); // Отметить как прочитанное
+
+        // Если нужно пометить одно
+        if (notification.getType() == null) {
+            SocketMessage notificationInList = notifications.get(notifications.indexOf(notification)); // Получить уведомление, которое хранится в листе
+            notificationInList.setIsSeen(""); // Отметить как прочитанное
+        }else if ("ALL".equals(notification.getType().toUpperCase())){ // Если нужно пометить все уведомления
+            for (SocketMessage userNotification : notifications)
+                userNotification.setIsSeen("");
+        }
         return;
     }
 
-    // Удаление уведомления через STOMP
+    // Удаление уведомления
     @MessageMapping("/removeNotification")
     public void removeNotification(SocketMessage notification) throws Exception {
         int currentUserID = Integer.parseInt(notification.getRecieverID());

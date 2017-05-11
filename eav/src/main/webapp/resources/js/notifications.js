@@ -27,6 +27,22 @@
             stompClient.send("/app/updateNotificationState", {}, JSONMessage);
 		}
 	});
+
+	// Отметка всех уведомлений как прочитанных
+	$( "#markAllAsRead" ).click(function() {
+        var matches = [];
+        var searchEles = document.getElementById("notificationHolder").children;
+        var recieverID =  $( searchEles[0] ).attr('recieverID');
+
+        for (var i = 0; i < searchEles.length; i++)
+            $( searchEles[i] ).removeClass( "active" );
+        $( "#notificationCount" ).attr( "data-count", 0);
+        var JSONMessage = JSON.stringify({
+            'type': 'all',
+            'recieverID': recieverID
+        });
+        stompClient.send("/app/updateNotificationState", {}, JSONMessage);
+	});
 	
 	// Увеличение счётчика уведомлений
 	function notificationCountIncrease(){
@@ -47,6 +63,8 @@
 	}
 	
 	function addNotification(data){
+		if (!$("#notificationEmpty").hasClass("hidden" ))
+            $("#notificationEmpty").addClass("hidden" );
 		switch(data.type) {
 			case 'friendRequest':  
 				$("#notificationHolder").prepend('<li class="notification '+data.isSeen+'" id ="'+data.messageID+'" recieverID="'+data.recieverID+'"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+data.senderPic+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><p class="notification-title"><a href="user'+data.senderID+'">'+data.senderName+ '</a> отправил Вам заявку в друзья</p><div class="notification-meta"><small class="timestamp">'+data.date+'</small></div><div class="notification-userbuttons"><a href="/addFriend/'+data.senderID+'/acceptFriend"><button type="button" class="btn btn-success btn-sm" id ="'+data.messageID+'" recieverID="'+data.recieverID+'" onclick="removeNotification(this)"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Добавить</span> </button></a><a href="#declineFriend"><button type="button" class="btn btn-danger btn-sm" id ="'+data.messageID+'" recieverID="'+data.recieverID+'" onclick="removeNotification(this)"><span class="glyphicon glyphicon-remove" aria-hidden="true"> Отклонить</span></button></a></div></div></div></li>');

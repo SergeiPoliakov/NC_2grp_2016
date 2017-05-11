@@ -275,15 +275,14 @@ body, html {
 }
 /*Любой элемент*/
 .vis-item {
-  border-radius: 5px;
+  text-align: justify ;
   color: white;
   background-color: lawngreen;
-  border-color: darkred;
 }
 /*Выделенный элемент*/
 .vis-item.vis-selected{
-  color: black;
-  background-color: white;
+  color: white;
+  background-color: purple;
 }
 /*Стиль 1 (красный элемент)*/
 .vis-item.Style1 {
@@ -327,6 +326,20 @@ body, html {
 .vis-item.vis-selected.Style3{
   color: white;
   background-color: #217dbb;
+}
+/*Стиль 4 (зелёный элемент)*/
+.vis-item.Style4 {
+  text-align: justify ;
+  border-radius: 5px;
+  color: white;
+  background-color: #18bc9c;
+  border-color: #ecf0f1;
+  opacity: 0.93;
+}
+/*Выделенный зелёный элемент*/
+.vis-item.vis-selected.Style4{
+  color: white;
+  background-color: #129178;
 }
 /*Card image and buttons*/
 .profile-userpic img {
