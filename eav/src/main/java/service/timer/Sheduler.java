@@ -3,6 +3,7 @@ package service.timer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import service.chat.ChatSaver;
 import service.statistics.StatisticLogger;
 import service.statistics.StatisticSaver;
 import service.tags.TagNodeTree;
@@ -35,6 +36,12 @@ public class Sheduler {
     @Scheduled(fixedDelay = 1000*60) // 1 раз в 1 минуту
     public static void statTimer() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
         StatisticSaver.tictack();
+    }
+
+    // 2017-05-11 Автосброс в базу новых сообщений из чатов встреч по таймеру
+    @Scheduled(fixedDelay = 1000*60) // 1 раз в 1 минуту
+    public static void chatTimer() throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
+        ChatSaver.tictack();
     }
 
 }

@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -76,6 +78,18 @@ public class DateConverter {
         LocalDateTime ldt = stringToDate(str);
         String res = dateToCountdown(ldt);
         return res;
+    }
+
+    // 2017-05-11 Получение текущей даты в виде строки "dd.MM.yyyy HH:mm"
+    public static String getNow(){
+        LocalDateTime ldt = LocalDateTime.now();
+        return ldt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+    }
+
+    // 2017-05-11 Получение текущей даты в виде строки "dd.MM.yyyy HH:mm:ss"
+    public static String getNowSS(){
+        LocalDateTime ldt = LocalDateTime.now();
+        return ldt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
     }
 
 }

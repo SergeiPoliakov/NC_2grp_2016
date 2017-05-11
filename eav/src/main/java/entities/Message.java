@@ -4,9 +4,6 @@ package entities;
  * Created by Hroniko on 03.02.2017.
  */
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 public class Message extends BaseEntitie implements Comparable<Message> {
 
     private Integer id; // 1
@@ -21,7 +18,7 @@ public class Message extends BaseEntitie implements Comparable<Message> {
     public Message() {
     }
 
-    public Message(int id, int from_id, int to_id, String date_send, int read_status, String text, String from_name, String to_name) {
+    public Message(Integer id, Integer from_id, Integer to_id, String date_send, Integer read_status, String text, String from_name, String to_name) {
         this.id = id;
         this.from_id = from_id;
         this.to_id = to_id;

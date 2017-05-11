@@ -7,11 +7,13 @@ import entities.Message;
 import entities.User;
 import service.LoadingServiceImp;
 import service.UserServiceImp;
+import service.application_settings.SettingsLoader;
 import service.cache.DataObjectCache;
 import service.converter.Converter;
 import service.id_filters.EventFilter;
 import service.id_filters.MessageFilter;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -34,7 +36,7 @@ public class ChatSaver {
     private UserServiceImp userService = new UserServiceImp();
 
     // 0) Счетчик временного айди для создаваемых сообщений (для того, чтобы не путать, берем с обратным знаком):
-    private static Integer tmp_id = -1;
+    private static Integer tmp_id = 0;
 
     // 1) 2017-05-09 Мапа для хранения истории сообщений чата (для конкретной встречи)
     public static final Map<Integer, ArrayList<Message>> messageMap = new ConcurrentHashMap<>();
@@ -44,6 +46,12 @@ public class ChatSaver {
 
     // 3) 2017-05-09 Мапа для хранения встреч
     public static final Map<Integer, Meeting> meetingMap = new ConcurrentHashMap<>();
+
+    // 4) 2017-05-11 Мапа со счетчиками айди (дла каждой встречи свой счетчик) для тех сообщений, которые уже скинули в базу:
+    public static final Map<Integer, Integer> saveIdMap = new ConcurrentHashMap<>();
+
+    // 5) 2017-05-11 Флаг работы шедуллера (сброса новых сообщений в базу - по умолчанию ничего не сохраняется после рестарта приложения)
+    private static boolean on_off_sheduler = false;
 
     public static ChatSaver getInstance() {
         if (instance == null)
@@ -56,19 +64,37 @@ public class ChatSaver {
 
     // Конструктор:
     public ChatSaver() {
+        try {
+            loadSetting();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // Генератор временного айди сообщения (до сброса в базу)
-    public static Integer genereteTempId(){
-        return (tmp_id - 1);
+    private static Integer genereteTempId(){
+        tmp_id --;
+        return tmp_id;
     }
 
-    // 2017-05-10 Метод добавления в сейвер нового сообщения по айдишнику встречи
+    // 2017-05-10 Метод добавления в сейвер нового сообщения по айдишнику встречи (не из базы, а нового в смысле не существующего в базе)
     synchronized public static void addMessage(Integer meeting_id, Message message) throws ParseException, NoSuchMethodException, ExecutionException, IllegalAccessException, SQLException, InvocationTargetException {
-        // ключ для мапы:
+
+        // Вначале генерируем новый айдишник и выставляем его сообщению:
+        message.setId(genereteTempId());
+
+        // А заодно и меняем получателя на id встречи
+        message.setTo_id(meeting_id); // Хотя, может, это и не надо уже, потом закомментировать
+
+        // Получаем ключ для мапы:
         Integer key = meeting_id; // то-то типа "2"
 
-        // 1 Проверяем мапу встреч на наличие этой встречи, если ее нет, то подгружаем из базы (но это вряд ли, уже все должно быть)
+        // 0 Надо бы еще вначале проверить, есть ли у нас подготовленная мапа со счетчиком, и если нет, то подготовить этот счетчик
+        if (saveIdMap.get(key) == null) { // если нет, то подвешиваем счетчик:
+            saveIdMap.put(key, 0);
+        }
+
+        // 1 Проверяем мапу встреч на наличие этой встречи, если ее нет, то подгружаем из базы
         if (meetingMap.get(key) == null) { // если нет, то подвешиваем встречу
             loadHistoryForMeeting(meeting_id);
 
@@ -131,16 +157,19 @@ public class ChatSaver {
         // 5 Теперь у нас есть и список сообщений, и список пользователей-отправителей к ним, вешаем все на соответствующие мапы:
         messageMap.put(key, messages);
         userMap.put(key, users);
+
     }
 
 
 
-    // 2017-05-10 Получение встречи по ее айди
+    // 2017-05-10 Получение встречи из базы по ее айди
     public static Meeting getMeetingById(Integer meeting_id) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         DataObject dataObject =  new LoadingServiceImp().getDataObjectByIdAlternative(meeting_id);
         return new Meeting(dataObject);
     }
 
+
+    // ----------------------------------------------------------------------------------------------------------------
 
     // getAllMessages -- получить вообще все сообщения чата данной встречи
 
@@ -233,6 +262,8 @@ public class ChatSaver {
     // еще нужно организовать сброс в базу (тех, у которых отрицательные айдишники
     // (с последующим выставлением правильных айдишников) - так и будут отличаться сообщения, которые сохранили в базу, от тех, которые еще в базу не сохранили
 
+    // Лучше не использовать! А то будет косяк с теми сообщениями, которым помяняли айди, а у пользователя на странице они еще с айди отрцательными
+    // Просто запоминать в переменной, до какого номера уже скинули в базу, и следующий сброс производить начиная со следующего
     // 2017-05-11 Метод обновления айди у сообщений, (например, нужен при сбросе сообщений в базу, когда у них временные айди отрицательные меняются на постоянные положительные)
     public static void updateMessageId(Integer meeting_id, Integer old_message_id, Integer new_message_id){
         // Обходим все сообщения данной встречи в поисках нужного (с нужным айдишником)
@@ -260,8 +291,41 @@ public class ChatSaver {
         return newMessages;
     }
 
+    // 2017-05-11 Метод для сброса в базу всех накопившихся новых сообщений
+    synchronized public static void updateDB() throws SQLException, NoSuchMethodException, IllegalAccessException, ParseException, InvocationTargetException {
+        // обходим все встречи в сейвере
+        for(int i = 0; i < meetingMap.size(); i++){
+            Meeting meeting = meetingMap.get(i);
+            Integer meeting_id = meeting.getId();
+            // В каждой встрече обходим все сообщения и ищем с отрицательным айди (и не просто отрицательным, а таким, что он меньше соотвествующего счетчика)
+            for (Message message : messageMap.get(i)){
+                if (message.getId() < saveIdMap.get(meeting_id)){
+                    // сбрасываем сообщение в базу:
+                    DataObject dataObject = new Converter().toDO(message); // там еще останется отрицательный айдишник
+                    Integer new_id = new LoadingServiceImp().setDataObjectToDB(dataObject); // А тут он уже новый сгенерируется при записи в базу
+                    // И меняем счетчик сброшенных сообщений на айди последнего сброшенного:
+                    saveIdMap.remove(meeting_id); // удаляем по ключу = айди встречи
+                    saveIdMap.put(meeting_id, message.getId()); // и вставляем по ключу
+                }
+            }
+        }
+
+    }
 
 
+    // 2017-05-11 Метод для шедуллера, автоматичекий сброс новых (созданных) сообщений в базу
+    public static void tictack() throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        if (! on_off_sheduler) return;
+        updateDB();
+    }
+
+    // 2017-05-11 Метод загрузки настройки шедуллера автосохранения из настроечного файла приложения:
+    private static void loadSetting() throws IOException {
+        String on_off_shedu = SettingsLoader.getSetting("chat_sheduler");
+        if (on_off_shedu.equals("on")){
+            on_off_sheduler = true;
+        }
+    }
 
 
 
