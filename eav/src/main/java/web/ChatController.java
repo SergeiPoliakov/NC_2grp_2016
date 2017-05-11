@@ -18,7 +18,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-// Класс-контроллер для работы со чатом встречи
+// Класс-контроллер для работы с чатом встречи
 @Controller
 public class ChatController {
 
@@ -27,7 +27,21 @@ public class ChatController {
     @ResponseBody
     public ArrayList<ChatResponse> getAllMessagesChat(@RequestBody ChatRequest chatRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
 
-        return new ChatManager().getAll(chatRequest);
+        // return new ChatManager().getAll(chatRequest);
+
+        // Пока тестовое:
+        return getAllMessagesChat1(chatRequest);
+    }
+
+
+    // Тестовое
+    public ArrayList<ChatResponse> getAllMessagesChat1(ChatRequest chatRequest) throws NoSuchMethodException, ExecutionException, ParseException, SQLException, IllegalAccessException, InvocationTargetException {
+
+        ArrayList<ChatResponse> res = new ArrayList<>();
+
+        res.add(new ChatResponse(-1, "00", "Проверка", 11, "Vasya", "pic"));
+
+        return res;
     }
 
 

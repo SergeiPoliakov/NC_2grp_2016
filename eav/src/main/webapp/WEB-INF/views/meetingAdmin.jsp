@@ -35,6 +35,42 @@
     <script type="text/javascript" src="/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 
 
+    <script type="text/javascript">
+        // 1 Функция для загрузки всех сообщений чата из сейвера (однократно при загрузке страницы)
+        function getAllMessages() {
+
+            var v_meeting_id = '${meeting.id}';
+
+            $.ajax({
+                url: '/getAllMessagesChat',
+                type: 'POST',
+                dataType: 'json',
+                contentType: "application/json",
+                mimeType: 'application/json',
+                async: true,
+                data: JSON.stringify({
+                    meeting_id: v_meeting_id,
+                    message_id: null,
+                    text: null
+                }),
+
+
+                success: function (data) {
+
+                    for (var i = 0; i < data.length; i++) {
+                        console.log(data[i]);
+
+                        var result = '<li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">' + 'ХОПППП' + '</li>'; // (data[i]).text
+                        $("#insert_place_messages").append(result); // в элемент с id="insert_place_messages"
+                    }
+
+                }
+            });
+        }
+        setInterval(getAllMessages, 1000); // Однократный вызов функции загрузки всех имеющихся в системе (сейвере) сообщений setTimeout
+    </script>
+
+
 
     <style type="text/css">
         p{
@@ -210,7 +246,10 @@
                 </div>
                 <ul class="list-group list-group-my list-group-flush text-center chat mCustomScrollbar"
                     data-mcs-theme="minimal-dark" id="cardsholderItems" style="background-color: rgb(238, 238, 238);">
-                    <li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">РАЗ</li>
+
+                    <div id = "insert_place_messages">
+
+                    <li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">РАЗ!</li>
                     <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ДВА</li>
                     <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ТРИ</li>
                     <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ЧЕТЫРЕ</li>
@@ -222,6 +261,10 @@
                     <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ
                         ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ
                     </li>
+
+
+                    </div>
+
                 </ul>
                 <form id="messageSend" name="creation" action="/messageSend" method="post" style="margin-bottom: 0px;">
                     <div class="input-group">
