@@ -36,10 +36,12 @@
 
 
     <script type="text/javascript">
-        // 1 Функция для загрузки всех сообщений чата из сейвера (однократно при загрузке страницы)
-        function getAllMessages() {
+        var v_message_id = 0;
+        var v_meeting_id = '${meeting.id}';
 
-            var v_meeting_id = '${meeting.id}';
+        // 1 Функция для загрузки всех сообщений чата из сейвера (однократно при загрузке страницы)
+        function getAllMessagesChat() {
+            document.getElementById("messageInput").value = '';
 
             $.ajax({
                 url: '/getAllMessagesChat',
@@ -60,14 +62,95 @@
                     for (var i = 0; i < data.length; i++) {
                         console.log(data[i]);
 
-                        var result = '<li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">' + 'ХОПППП' + '</li>'; // (data[i]).text
+                        var result = '<li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">' + (data[i]).text + '</li>'; //
                         $("#insert_place_messages").append(result); // в элемент с id="insert_place_messages"
+                    }
+
+                    if (data.length > 0){
+                        v_message_id = (data[data.length - 1]).id; // И помещаем айди последнего (в списке) сообщения в переменную, чтобы потом знать, с какого номера запрашивать
                     }
 
                 }
             });
         }
-        setInterval(getAllMessages, 1000); // Однократный вызов функции загрузки всех имеющихся в системе (сейвере) сообщений setTimeout
+        setTimeout(getAllMessagesChat, 500); // Однократный вызов функции загрузки всех имеющихся в системе (сейвере) сообщений
+
+
+        // 2 Функция для загрузки некоторых (начиная с определенного айди) сообщений данной встречи (периодически с интервалом 1 сек)
+        function getMessagesChatAfterId() {
+
+            $.ajax({
+                url: '/getMessagesChatAfterId',
+                type: 'POST',
+                dataType: 'json',
+                contentType: "application/json",
+                mimeType: 'application/json',
+                async: true,
+                data: JSON.stringify({
+                    meeting_id: v_meeting_id,
+                    message_id: v_message_id,
+                    text: null
+                }),
+
+
+                success: function (data) {
+
+                    for (var i = 0; i < data.length; i++) {
+                        console.log(data[i]);
+
+                        var result = '<li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">' + (data[i]).text + '</li>'; //
+                        $("#insert_place_messages").append(result); // в элемент с id="insert_place_messages"
+                    }
+                    if (data.length > 0){
+                        v_message_id = (data[data.length - 1]).id; // И помещаем айди последнего (в списке) сообщения в переменную, чтобы потом знать, с какого номера запрашивать
+                    }
+
+                }
+            });
+        }
+        setInterval(getMessagesChatAfterId, 1000); //Многократный вызов функции загрузки некоторых (начиная с определенного айди) сообщений данной встречи
+
+        // 3 Функция для отправки сообщения в сейвер и последующей загрузки некоторых (начиная с определенного айди) сообщений данной встречи (по нажатию кнопки)
+        function sendMessageChat() {
+            var messageInput = $("#messageInput").val();
+            document.getElementById("messageInput").value = '';
+
+            $.ajax({
+                url: '/sendMessageChat',
+                type: 'POST',
+                dataType: 'json',
+                contentType: "application/json",
+                mimeType: 'application/json',
+                async: true,
+                data: JSON.stringify({
+                    meeting_id: v_meeting_id,
+                    message_id: v_message_id,
+                    text: messageInput
+                }),
+
+
+                success: function (data) {
+
+                    for (var i = 0; i < data.length; i++) {
+                        console.log(data[i]);
+
+                        var result = '<li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">' + (data[i]).text + '</li>'; //
+                        $("#insert_place_messages").append(result); // в элемент с id="insert_place_messages"
+                    }
+                    if (data.length > 0){
+                        v_message_id = (data[data.length - 1]).id; // И помещаем айди последнего (в списке) сообщения в переменную, чтобы потом знать, с какого номера запрашивать
+                    }
+
+                    var result = '';
+                    $("#messageInput").text(result);
+                    var text_max = 70;
+                    $('#textarea_feedback').html('Осталось символов: ' + text_max);
+
+                }
+            });
+
+        }
+
     </script>
 
 
@@ -90,7 +173,7 @@
         var str = "";
 
         <c:forEach items="${ids}" var="users_id">
-                str = str + ${users_id} + ", ";
+        str = str + ${users_id} + ", ";
         </c:forEach>
 
     </script>
@@ -111,9 +194,9 @@
                 <div class="profile-userbuttons">
                     <c:if test="${meeting.status eq 'active'}">
                         <a href="/adminOptimizer/${meeting.id}">
-                        <button type="button" class="btn btn btn-warning btn-sm btn-sm" id="optimizerButton">
-                            <span class='glyphicon glyphicon-flash' aria-hidden='true'> Открыть в оптимизаторе</span>
-                        </button>
+                            <button type="button" class="btn btn btn-warning btn-sm btn-sm" id="optimizerButton">
+                                <span class='glyphicon glyphicon-flash' aria-hidden='true'> Открыть в оптимизаторе</span>
+                            </button>
                         </a>
                         <br>
                     </c:if>
@@ -205,35 +288,35 @@
         </div>
 
 
-      <!--  <div class="container">
-            <div class="row">
-                <div class="col-md-5">
-                    <div class="panel panel-primary">
+        <!--  <div class="container">
+              <div class="row">
+                  <div class="col-md-5">
+                      <div class="panel panel-primary">
 
-                        <div class="panel-heading" id="accordion">
-                            <span class="glyphicon glyphicon-comment"></span> Список свободных слотов для встречи за текущую неделю
-                            <div class="btn-group pull-right">
-                                <a type="button" class="btn btn-default btn-xs" data-toggle="collapse" data-parent="#accordion"
-                                   href="#collapseOne">
-                                    <span class="glyphicon glyphicon-chevron-down"></span>
-                                </a>
-                            </div>
-                        </div>
+                          <div class="panel-heading" id="accordion">
+                              <span class="glyphicon glyphicon-comment"></span> Список свободных слотов для встречи за текущую неделю
+                              <div class="btn-group pull-right">
+                                  <a type="button" class="btn btn-default btn-xs" data-toggle="collapse" data-parent="#accordion"
+                                     href="#collapseOne">
+                                      <span class="glyphicon glyphicon-chevron-down"></span>
+                                  </a>
+                              </div>
+                          </div>
 
-                        <div class="panel-collapse in" id="collapseOne">
-                            <div class="panel-body">
-                                <ul class="chat">
+                          <div class="panel-collapse in" id="collapseOne">
+                              <div class="panel-body">
+                                  <ul class="chat">
 
-                                    <p id="result_array"></p>
+                                      <p id="result_array"></p>
 
-                                </ul>
-                            </div>
+                                  </ul>
+                              </div>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>     -->
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>     -->
 
 
 
@@ -244,38 +327,28 @@
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Чат</h3>
                 </div>
-                <ul class="list-group list-group-my list-group-flush text-center chat mCustomScrollbar"
+                <ul class="list-group list-group-my list-group-flush text-left chat mCustomScrollbar"
                     data-mcs-theme="minimal-dark" id="cardsholderItems" style="background-color: rgb(238, 238, 238);">
 
-                    <div id = "insert_place_messages">
-
-                    <li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">РАЗ!</li>
-                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ДВА</li>
-                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ТРИ</li>
-                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ЧЕТЫРЕ</li>
-                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ПЯТЬ</li>
-                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ШЕСТЬ</li>
-                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">СЕМЬ</li>
-                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ВОСЕМЬ</li>
-                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ДЕВЯТЬ</li>
-                    <li class="list-group-item " style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);">ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ
-                        ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ
-                    </li>
-
-
-                    </div>
+                    <div id = "insert_place_messages"></div>  <!-- 2017-05-12 Место вставки сообщений -->
 
                 </ul>
-                <form id="messageSend" name="creation" action="/messageSend" method="post" style="margin-bottom: 0px;">
+
+                <form id="messageSend" name="creation" onclick="sendMessageChat()" method="post" style="margin-bottom: 0px;">
                     <div class="input-group">
                         <textarea class="form-control custom-control" rows="2" style="resize:none"
-                                  placeholder="Введите сообщение" maxlength="70" id="messageInput"></textarea>
+                                  placeholder="Введите сообщение" maxlength="70" id="messageInput">
+                        </textarea>
+
                         <span class="input-group-addon btn btn-primary" id="messageSendButton" title="Отправить"
                               type="submit">
 							<span class="glyphicon glyphicon-send"></span>
 						</span>
                     </div>
                 </form>
+
+
+
                 <div class="input-group">
 					<span class="input-group-addon ">
 						<div class="text-right" id="textarea_feedback">

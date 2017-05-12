@@ -71,6 +71,9 @@ public class ChatManager {
 
     // 2017-05-11 Метод отправки нового сообщения в сейвер
     public void sendMessage(ChatRequest chatRequest) throws SQLException, InvocationTargetException, NoSuchMethodException, ExecutionException, ParseException, IllegalAccessException {
+
+        if (chatRequest.getText().length() < 1) return; // Проверка и защита от записи пустого сообщения
+
         // 0 Выставляем айди сообщения - пока что временно ноль:
         Integer id = 0;
         // 1 Определяем айди отправителя как айди текущего юзера
