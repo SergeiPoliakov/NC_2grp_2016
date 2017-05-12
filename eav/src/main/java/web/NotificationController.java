@@ -43,28 +43,6 @@ public class NotificationController { // Тут вроде логировать 
     private UsersNotifications usersNotifications = UsersNotifications.getInstance();
     private int idPool = 1;
 
-    // 2017-02-24 Уведомления о новых сообщениях (вывод в хедер) // Старый метод, используйте универсальный getNewNotification
-    @RequestMapping(value = "/getNewMessage", method = RequestMethod.GET)
-    public @ResponseBody
-    Response getCharNum(@RequestParam String text) throws SQLException { // text для проверки тут, какую именно инфу вернуть. Потом сделаю ифы и ветвление по запросам ajax
-        int count = 0;
-        // Сначала получим все новые сообщения для пользователя:
-        try {
-            // Вытаскиваем все непрочитанные сообщения для данного пользователя:
-            ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new MessageFilter(MessageFilter.TO_CURRENT_USER, MessageFilter.UNREAD));
-            // Нам даже обходить их не надо, достаточно знать количество новых:
-            count = al.size();
-
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
-        Response result = new Response();
-        result.setText("Сообщения");
-        result.setCount(count);
-        return result;
-    }
-
     // 2017-03-04 Уведомления о новых событиях (новых сообщениях, новых заявках в друзья и пр) (вывод в хедер)
     @RequestMapping(value = "/getNewNotification", method = RequestMethod.GET)
     public @ResponseBody

@@ -185,15 +185,6 @@
                                 </div>
                             </div>
                         </div>
-                        <ul class="list-group list-group-my">
-                            <li class="list-group-item">
-                                Сохранить шаблон
-                                <div class="material-switch pull-right">
-                                    <input id="SaveTemplateCheckBox" type="checkbox"/>
-                                    <label for="SaveTemplateCheckBox" class="label-primary"></label>
-                                </div>
-                            </li>
-                        </ul>
                     </div>
                     <!-- Футер модального окна -->
                     <div class="modal-footer">
