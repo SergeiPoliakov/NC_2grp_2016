@@ -241,7 +241,7 @@
             <!-- Место второго таймера (обратный отсчет до начала встречи) -->
             <%@include file='countdown_002.jsp'%>
             <!-- Окончание второго таймера -->
-            
+
             <div class="card">
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Чат</h3>
