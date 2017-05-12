@@ -34,6 +34,42 @@
     <script type="text/javascript" src="/resources/js/bootstrap-select.min.js"> </script>
     <script type="text/javascript" src="/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 
+    <!-- 2017-05-12 Для работы чата (остальное в файле chat.js) -->
+    <script type="text/javascript" src="/resources/js/chat.js"> </script>
+    <script type="text/javascript">
+        // Для работы чата (остальное в файле chat.js)
+        var v_message_id = 0;
+        var v_meeting_id = '${meeting.id}';
+    </script>
+
+
+
+    <style type="text/css">
+        p{
+            margin: 0px;
+        }
+        .hideinput{
+            margin-bottom: 0.5rem;
+        }
+        .input-group-addon-my{
+            min-width: 9rem;
+        }
+    </style>
+
+
+    <script>
+        var m_id = ${meeting.id};
+        var str = "";
+
+        <c:forEach items="${ids}" var="users_id">
+        str = str + ${users_id} + ", ";
+        </c:forEach>
+
+    </script>
+
+
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/slots.js"></script>
+
 
 </head>
 <body>
@@ -71,31 +107,27 @@
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Чат</h3>
                 </div>
-                <ul class="list-group list-group-my list-group-flush text-center chat mCustomScrollbar"
+                <ul class="list-group list-group-my list-group-flush text-left chat mCustomScrollbar"
                     data-mcs-theme="minimal-dark" id="cardsholderItems" style="background-color: rgb(238, 238, 238);">
-                    <li class="list-group-item" style="background-color: rgb(238, 238, 238);">РАЗ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ДВА</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ТРИ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ЧЕТЫРЕ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ПЯТЬ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ШЕСТЬ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">СЕМЬ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ВОСЕМЬ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ДЕВЯТЬ</li>
-                    <li class="list-group-item " style="background-color: rgb(238, 238, 238);">ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ
-                        ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ ДЕСЯТЬ
-                    </li>
+
+                    <div id = "insert_place_messages"></div> <!-- 2017-05-12 Место вставки сообщений, см. chat.js -->
+
                 </ul>
-                <form id="messageSend" name="creation" action="/messageSend" method="post"  style="margin-bottom: 0px;">
+
+                <form id="messageSend" name="creation" onclick="sendMessageChat()" method="post" style="margin-bottom: 0px;"> <!-- 2017-05-12 Кнопка отправки сообщений, см. chat.js -->
                     <div class="input-group">
                         <textarea class="form-control custom-control" rows="2" style="resize:none"
-                                  placeholder="Введите сообщение" maxlength="70" id="messageInput"></textarea>
+                                  placeholder="Введите сообщение" maxlength="70" id="messageInput">
+                        </textarea>
+
                         <span class="input-group-addon btn btn-primary" id="messageSendButton" title="Отправить"
                               type="submit">
 							<span class="glyphicon glyphicon-send"></span>
 						</span>
                     </div>
                 </form>
+
+
                 <div class="input-group">
 					<span class="input-group-addon ">
 						<div class="text-right" id="textarea_feedback">
