@@ -67,6 +67,8 @@ public class UserController {
 
     private Converter converter = new Converter();
 
+    private NameNodeTree nameNodeTree = new NameNodeTree();
+
     private String code = "";
 
     private static String host_name = "";
@@ -158,10 +160,10 @@ public class UserController {
         loggerLog.add(Log.PAGE, "main-login", idUser); // Посещение страницы
 
         // 2017-03-23 Просто тест дерева тегов:
-        TagTreeManager ttm = new TagTreeManager();
-        ttm.test();
+        //TagTreeManager ttm = new TagTreeManager();
+        //ttm.test();
 
-        NameNodeTree nnt = new NameNodeTree();
+       // NameNodeTree nnt = new NameNodeTree();
 
         return "main-login";
     }
@@ -422,12 +424,17 @@ public class UserController {
         // mapAttr.put(12, null);
         // mapAttr.put(13, null); не нужно, иначе потом пустая ссылка на событие висит, и при добавлении новой задачи она так и остается висеть. Иначе надо будет при добавлении эту обновлять
 
+        int idUser = userService.generationID(1001);
 
-        DataObject dataObject = loadingService.createDataObject(full_name, 1001, mapAttr);
+        DataObject dataObject = new DataObject(idUser, full_name, 1001, mapAttr);
 
         Settings settingsUser = new Settings(userService.generationID(1006), dataObject.getId());
 
         dataObject.setValue(19, String.valueOf(settingsUser.getId()));
+
+        nameNodeTree.insertForUser(name, idUser);
+        nameNodeTree.insertForUser(surname, idUser);
+        nameNodeTree.insertForUser(middle_name, idUser);
 
         if (userService.getEmail(dataObject.getParams().get(6)).isEmpty()) {
             loadingService.setDataObjectToDB(dataObject);

@@ -79,6 +79,7 @@ public class FinderLogic {
                     }
                     // Иначе если у нас стоит логика обединения результатов нескольких тегов-запросов как AND, то все фигово, проверяем на совпадение привешенных юзеров (или встреч) и несовпадающие узлы из первого результата удаляем
                     else if (finder.getOperation().equals("and")) {
+                        System.out.println("Размер листа " + finderTagResponseList.size());
                         for (int k = 0; k < finderTagResponseList.size(); k++) { // Пробегаем по всем существующим в ответе тегам
                             // получаем для текущего тега список подписанных юзеров (или встреч)
                             ArrayList<Integer> ids = new ArrayList<>();
