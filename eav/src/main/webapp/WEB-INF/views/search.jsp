@@ -39,14 +39,22 @@
     <div class="form-group">
         <label for="object">Что ищем?</label>
         <div id="object" class="funkyradio">
+
             <div class="funkyradio-success">
-                <input type="radio" name="checkObject" id="checkUser" value="user" checked="checked"  >
-                <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">User</label>
+                <input type="radio" name="checkObject" id="checkName" value="name" checked="checked"  >
+                <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">Пользователя по имени</label>
             </div>
+
+            <div class="funkyradio-success">
+                <input type="radio" name="checkObject" id="checkUser" value="user"  >
+                <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">Пользователя по интересам (тегам)</label>
+            </div>
+
             <div class="funkyradio-success">
                 <input type="radio" name="checkObject" id="checkMeeting" value="meeting"  />
-                <label class="radio-inline" for="checkMeeting" style="margin-top: 0.5rem;">Meeting</label>
+                <label class="radio-inline" for="checkMeeting" style="margin-top: 0.5rem;">Встречу по тегам</label>
             </div>
+
         </div>
     </div>
 

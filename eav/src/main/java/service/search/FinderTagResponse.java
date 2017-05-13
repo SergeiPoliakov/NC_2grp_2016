@@ -12,6 +12,11 @@ public class FinderTagResponse {
     public FinderTagResponse() {
     }
 
+    public FinderTagResponse(int id, String text) {
+        this.id = id;
+        this.text = text;
+    }
+
     public int getId() {
         return id;
     }

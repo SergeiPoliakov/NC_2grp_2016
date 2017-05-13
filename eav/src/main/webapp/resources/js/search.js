@@ -35,7 +35,7 @@ $(window).load(function () {
                         contentType: "application/json",
                         mimeType: 'application/json',
                         data: JSON.stringify({
-                            type: $('input[name="checkObject"]:checked').val(),       // user | meeting
+                            type: $('input[name="checkObject"]:checked').val(),       // name | user | meeting
                             operation: $('input[name="checkLogic"]:checked').val(),   // and | or
                             text: input_initial_value
                         }),

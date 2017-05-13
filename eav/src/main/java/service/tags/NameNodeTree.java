@@ -12,6 +12,8 @@ import service.id_filters.UserFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Hroniko on 30.03.2017.
@@ -26,6 +28,9 @@ public class NameNodeTree {
     private LoadingServiceImp loadingService = new LoadingServiceImp();
 
     private TagNode root = TagNode.getInstance(); // Ссылка на корневой узел
+
+    // 1) 2017-05-13 Мапа для хранения всех пользователей (чтобы не вытаскивать из базы)
+    public static final Map<Integer, User> userMap = new ConcurrentHashMap<>();
 
 
     public static NameNodeTree getInstance()  {
@@ -48,7 +53,7 @@ public class NameNodeTree {
         }
     }
 
-    // Переопределяем метод загрузки из базы
+    // Метод загрузки из базы
     void loadAndCreateNameNodeTree() throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         ArrayList<Integer> user_ids = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL));
         System.out.println("Список загружаемых из базы юзеров :" + user_ids);
@@ -63,6 +68,11 @@ public class NameNodeTree {
         // Конвертируем датаобджекты в юзеров
         ArrayList<User> users = new Converter().ToUser(user_list);
 
+        // И подвешиваем юзеров к мапе:
+        for(User user : users){
+            userMap.put(user.getId(), user);
+        }
+
 
         //this.root = TagNode.getInstance(); // Создаем базовый узел
 
@@ -71,10 +81,15 @@ public class NameNodeTree {
             User user = users.get(i);
             insertForUser(user.getName(), user.getId()); // Вешаем на дерево имя
             insertForUser(user.getSurname(), user.getId()); // Вешаем на дерево фамилию
-            if (user.getMiddleName().length() > 0) insertForUser(user.getMiddleName(), user.getId()); // Если еще и отчество есть, то и его вешаем
+            if (user.getMiddleName() != null && user.getMiddleName().length() > 0) insertForUser(user.getMiddleName(), user.getId()); // Если еще и отчество есть, то и его вешаем
         }
 
 
+    }
+
+    // 2017-05-13 Метод получения пользователя (сущности) по его id
+    public User getUserById(Integer user_id){
+        return userMap.get(user_id);
     }
 
 

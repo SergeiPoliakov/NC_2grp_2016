@@ -1,5 +1,7 @@
 package service.search;
 
+import entities.User;
+import service.tags.NameTreeManager;
 import service.tags.TagTreeManager;
 
 import java.util.ArrayList;
@@ -12,6 +14,9 @@ public class FinderLogic {
 
 
     public static ArrayList<FinderTagResponse> getWithLogic(FinderTagRequest finder) {
+
+        if (finder.getType().equals("name")) return preFindUser(finder); // работаем с юзерами, загружаем список юзеров из дерева имен
+
         // Пропускаем через парсер строку с тегами:
 
         ArrayList<String> part_tags = SearchParser.parse(finder.getText());
@@ -29,6 +34,7 @@ public class FinderLogic {
                 ArrayList<String> anyTagFromTree = new ArrayList<>();
 
                 switch (finder.getType()) {
+
                     case "user":
                         // работаем с юзерами, загружаем подходящие теги с подвешенными юзерами
                         anyTagFromTree = ttm.getTagWordListForUser(part_tags.get(i));
@@ -131,5 +137,39 @@ public class FinderLogic {
 
         return finderTagResponseList;
     }
+
+
+    // 2017-05-13 Метод динамического (предварительного) поиска юзера (по ФИО, а не по тегам в данном случае) по OR или AND
+    private static ArrayList<FinderTagResponse> preFindUser(FinderTagRequest finder){
+        // 1 Пропускаем через парсер строку запроса и разбираем на массив слов:
+        ArrayList<String> words = SearchParser.parse(finder.getText());
+        // 2 Подготавливаем список подсказок для ответа (в поле динамического поиска):
+        ArrayList<FinderTagResponse> finderResponseList = new ArrayList<>();
+        // 3 Делаем запрос и получаем список пользователей через методы NameTreeManager'а:
+        ArrayList<User> users;
+        if (finder.getOperation().equals("and")){
+            users = new NameTreeManager().findAllUsersWithNames(words, "and");
+        }
+        else{
+            users = new NameTreeManager().findAllUsersWithNames(words, "or");
+        }
+
+        // 4 Обходим всех пользователей и формируем список ответов:
+        for (User user : users){
+            Integer user_id = user.getId();
+            String user_name = user.getSurname() + " " + user.getName() + " " + user.getMiddleName();
+            finderResponseList.add(new FinderTagResponse(user_id, user_name));
+        }
+
+        System.out.println(users);
+
+
+        return finderResponseList;
+    }
+
+
+
+
+
 }
 
