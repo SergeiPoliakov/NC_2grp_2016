@@ -30,7 +30,7 @@ function getAllMessagesChat() {
 			for (var i = 0; i < data.length; i++) {
 				console.log(data[i]);
 
-				var result = '<li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+(data[i]).avatar+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><div class="notification-meta"><small class="timestamp">'+(data[i]).date_send+'</small></div><p class="notification-title"><a href="user'+(data[i]).from_id+'">'+(data[i]).from_name+ '</a>: '+(data[i]).text+'</p></div></div></li>'
+                var result = '<li class="list-group-item" style=";background-color: rgb(244, 244, 244);"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+(data[i]).avatar+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><div class="notification-meta" style="text-align: right;"><small class="timestamp">'+(data[i]).date_send+'</small></div><p class="notification-title"><a href="user'+(data[i]).from_id+'">'+(data[i]).from_name+ '</a>: '+(data[i]).text+'</p></div></div></li>';
 
 				$("#insert_place_messages").append(result); // в элемент с id="insert_place_messages"
 			}
@@ -67,11 +67,12 @@ function getMessagesChatAfterId() {
 			for (var i = 0; i < data.length; i++) {
 				console.log(data[i]);
 
-                var result = '<li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+(data[i]).avatar+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><div class="notification-meta"><small class="timestamp">'+(data[i]).date_send+'</small></div><p class="notification-title"><a href="user'+(data[i]).from_id+'">'+(data[i]).from_name+ '</a>: '+(data[i]).text+'</p></div></div></li>'
+                var result = '<li class="list-group-item" style=";background-color: rgb(244, 244, 244);"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+(data[i]).avatar+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><div class="notification-meta" style="text-align: right;"><small class="timestamp">'+(data[i]).date_send+'</small></div><p class="notification-title"><a href="user'+(data[i]).from_id+'">'+(data[i]).from_name+ '</a>: '+(data[i]).text+'</p></div></div></li>';
 
                 $("#insert_place_messages").append(result); // в элемент с id="insert_place_messages"
 			}
 			if (data.length > 0){
+                $("#cardsholderItems").mCustomScrollbar("scrollTo", "bottom");
 				v_message_id = (data[data.length - 1]).id; // И помещаем айди последнего (в списке) сообщения в переменную, чтобы потом знать, с какого номера запрашивать
 			}
 
@@ -104,11 +105,12 @@ function sendMessageChat() {
 			for (var i = 0; i < data.length; i++) {
 				console.log(data[i]);
 
-                var result = '<li class="list-group-item" style="border-bottom: 1px solid black;background-color: rgb(244, 244, 244);"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+(data[i]).avatar+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><div class="notification-meta" style="text-align: right;"><small class="timestamp">'+(data[i]).date_send+'</small></div><p class="notification-title"><a href="user'+(data[i]).from_id+'">'+(data[i]).from_name+ '</a>: '+(data[i]).text+'</p></div></div></li>'
+                var result = '<li class="list-group-item" style=";background-color: rgb(244, 244, 244);"><div class="media"><div class="media-left"><div class="media-object"><img id="notificationImage" src="'+(data[i]).avatar+'" class="img-circle" alt="Name"/></div></div><div class="media-body"><div class="notification-meta" style="text-align: right;"><small class="timestamp">'+(data[i]).date_send+'</small></div><p class="notification-title"><a href="user'+(data[i]).from_id+'">'+(data[i]).from_name+ '</a>: '+(data[i]).text+'</p></div></div></li>'
 
                 $("#insert_place_messages").append(result); // в элемент с id="insert_place_messages"
 			}
 			if (data.length > 0){
+                $("#cardsholderItems").mCustomScrollbar("scrollTo", "bottom");
 				v_message_id = (data[data.length - 1]).id; // И помещаем айди последнего (в списке) сообщения в переменную, чтобы потом знать, с какого номера запрашивать
 			}
 

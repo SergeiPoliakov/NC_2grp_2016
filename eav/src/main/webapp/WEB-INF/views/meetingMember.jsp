@@ -120,8 +120,7 @@
                                   placeholder="Введите сообщение" maxlength="70" id="messageInput">
                         </textarea>
 
-                        <span class="input-group-addon btn btn-primary" id="messageSendButton" title="Отправить"
-                              type="submit">
+                        <span class="input-group-addon btn btn-primary" id="messageSendButton" title="Отправить">
 							<span class="glyphicon glyphicon-send"></span>
 						</span>
                     </div>
@@ -252,13 +251,16 @@
 
 <script type="text/javascript">
 
-    // Управление кнопками
-    /*$( "#inviteButton").hide(); // Кнопка пригласить
-     $( "#inviteAtMeetingForm").hide(); // Список для приглашения
-     $( "#acceptDeclineForm").hide(); // Кнопки принять участие/откахаться
-     $( "#askToInviteButton").hide(); // Кнопка "попроситься"
-     $( "#leaveButton").hide(); // Кнопка "покинуть"
-     */
+    // Нажатие Enter в поле ввода чата
+    $('#messageInput').keyup(function(e){
+        if(e.keyCode == 13) {
+            sendMessageChat();
+        }
+    });
+
+    $('#messageSendButton').click(function(e){
+        sendMessageChat();
+    });
 
     $("#cardsholderItems").mCustomScrollbar({
         scrollInertia: 275

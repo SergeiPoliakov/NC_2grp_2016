@@ -47,8 +47,8 @@
       <file leaf-file-name="notifications.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/webapp/resources/js/notifications.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1361">
-              <caret line="85" column="5" lean-forward="true" selection-start-line="85" selection-start-column="5" selection-end-line="85" selection-end-column="5" />
+            <state relative-caret-position="1445">
+              <caret line="85" column="5" lean-forward="false" selection-start-line="85" selection-start-column="5" selection-end-line="85" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -64,21 +64,48 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NotificationController.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="NotificationController.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/web/NotificationController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-69">
+            <state relative-caret-position="17">
               <caret line="43" column="27" lean-forward="false" selection-start-line="43" selection-start-column="27" selection-end-line="43" selection-end-column="27" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main-login.jsp" pinned="false" current-in-tab="false">
+      <file leaf-file-name="chat.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/webapp/resources/js/chat.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-731">
+              <caret line="32" column="0" lean-forward="false" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+              <folding>
+                <marker date="1494644327582" expanded="true" signature="848:886" ph="..." />
+                <marker date="1494644327582" expanded="true" signature="1117:1135" ph="..." />
+                <marker date="1494644327582" expanded="true" signature="2352:2390" ph="..." />
+                <marker date="1494644327582" expanded="true" signature="2621:2639" ph="..." />
+                <marker date="1494644327582" expanded="true" signature="4093:4131" ph="..." />
+                <marker date="1494644327582" expanded="true" signature="4362:4380" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="meetingAdmin.jsp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetingAdmin.jsp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="236">
+              <caret line="467" column="9" lean-forward="true" selection-start-line="467" selection-start-column="9" selection-end-line="467" selection-end-column="9" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main-login.jsp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main-login.jsp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="186" column="30" lean-forward="false" selection-start-line="186" selection-start-column="30" selection-end-line="186" selection-end-column="30" />
+            <state relative-caret-position="329">
+              <caret line="279" column="254" lean-forward="false" selection-start-line="279" selection-start-column="254" selection-end-line="279" selection-end-column="254" />
               <folding />
             </state>
           </provider>
@@ -127,11 +154,11 @@
       <find>cardsholderItems</find>
       <find>&lt;li cla</find>
       <find>notification-meta</find>
-      <find>ЧАТ</find>
       <find>mCustomScrollbar</find>
       <find>scrollba</find>
       <find>insert_place_messages</find>
       <find>Новых сообщений нет</find>
+      <find>ЧАТ</find>
     </findStrings>
   </component>
   <component name="GradleLocalSettings">
@@ -142,7 +169,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/slots.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/resources/js/slots.js" />
         <option value="$PROJECT_DIR$/src/main/java/service/meetings/newMeetingRequest.java" />
         <option value="$PROJECT_DIR$/src/main/java/service/meetings/newMeetingResponce.java" />
@@ -188,10 +214,11 @@
         <option value="$PROJECT_DIR$/src/main/java/web/ChatController.java" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/userOptimizer.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/adminOptimizer.jsp" />
-        <option value="$PROJECT_DIR$/src/main/webapp/resources/js/chat.js" />
-        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetingAdmin.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/resources/js/header.js" />
         <option value="$PROJECT_DIR$/src/main/java/web/NotificationController.java" />
+        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetingMember.jsp" />
+        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetingAdmin.jsp" />
+        <option value="$PROJECT_DIR$/src/main/webapp/resources/js/chat.js" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main-login.jsp" />
       </list>
     </option>
@@ -690,8 +717,8 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1694,11 +1721,12 @@
       <workItem from="1494597756106" duration="1460000" />
       <workItem from="1494619487640" duration="5207000" />
       <workItem from="1494627851097" duration="4318000" />
+      <workItem from="1494641292882" duration="4968000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1817513000" />
+    <option name="totallyTimeSpent" value="1822481000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1710,8 +1738,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1936" height="1096" extended-state="7" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1726,19 +1754,19 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33817428" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33817428" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32987553" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31988743" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33771107" sideWeight="0.49583334" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32981783" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Persistence" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21215352" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21428572" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
@@ -1772,7 +1800,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="218" />
+      <option name="time" value="219" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -2078,7 +2106,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3842">
           <caret line="226" column="4" lean-forward="false" selection-start-line="226" selection-start-column="4" selection-end-line="226" selection-end-column="4" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2093,7 +2120,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-291">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2121,35 +2147,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetingMember.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-71">
-          <caret line="73" column="7" lean-forward="true" selection-start-line="73" selection-start-column="7" selection-end-line="73" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/resources/js/chat.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="426">
-          <caret line="117" column="75" lean-forward="false" selection-start-line="117" selection-start-column="75" selection-end-line="117" selection-end-column="75" />
-          <folding>
-            <marker date="1494631299341" expanded="true" signature="836:904" ph="..." />
-            <marker date="1494631299341" expanded="true" signature="2342:2410" ph="..." />
-            <marker date="1494631299341" expanded="true" signature="4006:4074" ph="..." />
-            <marker date="1494631299341" expanded="true" signature="4305:4323" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetingAdmin.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="49">
-          <caret line="382" column="26" lean-forward="false" selection-start-line="382" selection-start-column="26" selection-end-line="382" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/sendMessage.jsp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="185">
@@ -2168,8 +2165,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/resources/js/notifications.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1361">
-          <caret line="85" column="5" lean-forward="true" selection-start-line="85" selection-start-column="5" selection-end-line="85" selection-end-column="5" />
+        <state relative-caret-position="1445">
+          <caret line="85" column="5" lean-forward="false" selection-start-line="85" selection-start-column="5" selection-end-line="85" selection-end-column="5" />
           <folding />
         </state>
       </provider>
@@ -2178,14 +2175,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
           <caret line="53" column="83" lean-forward="false" selection-start-line="53" selection-start-column="83" selection-end-line="53" selection-end-column="83" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main-login.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="186" column="30" lean-forward="false" selection-start-line="186" selection-start-column="30" selection-end-line="186" selection-end-column="30" />
           <folding />
         </state>
       </provider>
@@ -2200,8 +2189,47 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/web/NotificationController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-69">
+        <state relative-caret-position="17">
           <caret line="43" column="27" lean-forward="false" selection-start-line="43" selection-start-column="27" selection-end-line="43" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetingMember.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-126">
+          <caret line="125" column="26" lean-forward="false" selection-start-line="125" selection-start-column="26" selection-end-line="125" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/resources/js/chat.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-731">
+          <caret line="32" column="0" lean-forward="false" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <folding>
+            <marker date="1494644327582" expanded="true" signature="848:886" ph="..." />
+            <marker date="1494644327582" expanded="true" signature="1117:1135" ph="..." />
+            <marker date="1494644327582" expanded="true" signature="2352:2390" ph="..." />
+            <marker date="1494644327582" expanded="true" signature="2621:2639" ph="..." />
+            <marker date="1494644327582" expanded="true" signature="4093:4131" ph="..." />
+            <marker date="1494644327582" expanded="true" signature="4362:4380" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetingAdmin.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="236">
+          <caret line="467" column="9" lean-forward="true" selection-start-line="467" selection-start-column="9" selection-end-line="467" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main-login.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="279" column="254" lean-forward="false" selection-start-line="279" selection-start-column="254" selection-end-line="279" selection-end-column="254" />
           <folding />
         </state>
       </provider>

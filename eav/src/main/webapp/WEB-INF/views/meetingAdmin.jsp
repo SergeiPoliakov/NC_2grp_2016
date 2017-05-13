@@ -189,14 +189,13 @@
 
                 </ul>
 
-                <form id="messageSend" name="creation" onclick="sendMessageChat()" method="post" style="margin-bottom: 0px;"> <!-- 2017-05-12 Кнопка отправки сообщений, см. chat.js -->
+                <form id="messageSend" name="creation" method="post" style="margin-bottom: 0px;"> <!-- 2017-05-12 Кнопка отправки сообщений, см. chat.js -->
                     <div class="input-group">
                         <textarea class="form-control custom-control" rows="2" style="resize:none"
                                   placeholder="Введите сообщение" maxlength="70" id="messageInput">
                         </textarea>
 
-                        <span class="input-group-addon btn btn-primary" id="messageSendButton" title="Отправить"
-                              type="submit">
+                        <span class="input-group-addon btn btn-primary" id="messageSendButton" title="Отправить">
 							<span class="glyphicon glyphicon-send"></span>
 						</span>
                     </div>
@@ -328,6 +327,17 @@
 </div>
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/tags.js"></script>
 <script type="text/javascript">
+    // Нажатие Enter в поле ввода чата
+    $('#messageInput').keyup(function(e){
+        if(e.keyCode == 13) {
+            sendMessageChat();
+        }
+    });
+
+    $('#messageSendButton').click(function(e){
+        sendMessageChat();
+    });
+
     // Переключение между просмотром и редактированием
     $(".hideinput").hide();
     $("#settingsButton").click(function(){

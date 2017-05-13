@@ -257,10 +257,32 @@
     // TIMELINE FILL, SETUP AND CREATE
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     var container = document.getElementById('visualization');
+
+    var groups = new vis.DataSet();
+    groups.add([
+        {
+            id: 1,
+            content: "<b>Ваши встречи</b>",
+            order: 1
+        },
+        {
+            id: 0,
+            content: "<b>Ваше расписание</b>",
+            order: 2
+        }
+    ]);
+
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
         <c:forEach items="${allEvents}" var="event">
-        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}'},
+            <c:choose>
+                <c:when test="${event.priority.equals('Style4')}">
+                    {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}', group: 1, editable: false, selectable: false},
+                </c:when>
+                <c:otherwise>
+                    {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}', group: 0},
+                </c:otherwise>
+            </c:choose>
         </c:forEach>
     ]);
 
@@ -399,7 +421,7 @@
         }
     };
     // Create a Timeline
-    var timeline = new vis.Timeline(container, items, options);
+    var timeline = new vis.Timeline(container, items, groups, options);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Вывод информации, при наведении на элемент
     function createTooltip(){
