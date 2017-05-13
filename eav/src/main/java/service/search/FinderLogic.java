@@ -161,9 +161,6 @@ public class FinderLogic {
             finderResponseList.add(new FinderTagResponse(user_id, user_name));
         }
 
-        System.out.println(users);
-
-
         return finderResponseList;
     }
 
