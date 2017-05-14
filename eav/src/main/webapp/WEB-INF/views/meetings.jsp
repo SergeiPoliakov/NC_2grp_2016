@@ -77,19 +77,35 @@
 
                                         <h3 class="card-title text-center">${meeting.title}</h3>
                                         <div class="profile-userbuttons">
+
+                                            <c:if test="${status eq 'user' or meeting.organizer eq user}">
                                             <a href="/meeting${meeting.id}">
                                                 <button type="button" class="btn btn-info btn-sm"><span
                                                         class="glyphicon glyphicon-user"
                                                         aria-hidden="true"> Просмотр</span></button>
                                             </a>
+                                             </c:if>
+
                                             <a href="/leaveMeeting${meeting.id}" <c:if
                                                     test="${meeting.users.size() eq 1}"> class="disabled" </c:if> >
+                                            <c:if test="${status eq 'user'}">
                                                 <button type="button" class="btn btn-danger btn-xs" <c:if
                                                         test="${meeting.users.size() eq 1}"> disabled </c:if>  >
                                                     <span class="glyphicon glyphicon-trash"
                                                           aria-hidden="true"> Покинуть</span>
                                                 </button>
+                                            </c:if>
                                             </a>
+
+                                            <a href="">
+                                            <c:if test="${status eq 'guest'}">
+                                                <button type="button" class="btn btn-danger btn-xs">
+                                                    <span class="glyphicon glyphicon-trash"
+                                                          aria-hidden="true"> Попроситься</span>
+                                                </button>
+                                            </c:if>
+                                            </a>
+
                                             <!--       <c:if test="${meeting.organizer eq user}">   <a href="/deleteMeeting${meeting.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>  </c:if>  -->
                                             <c:if test="${meeting.organizer eq user}"> <a
                                                     href="/closeMeeting${meeting.id}">

@@ -74,9 +74,32 @@ public class MeetingController {
         return list;
     }
 
+    @RequestMapping(value = "/viewMeeting/{meetingID}", method = RequestMethod.GET)
+    public String getMeetingPage(@PathVariable("meetingID") Integer meetingID,
+                              ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+        ArrayList<Meeting> meetingArrayList = new ArrayList<>();
+        DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
+        User user = converter.ToUser(currentUser);
+        Meeting meeting = new Meeting();
+        try {
+            meeting = new Meeting(doCache.get(meetingID));
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        meetingArrayList.add(meeting);
+        String status = "guest";
+        if (meeting.getUsers().contains(user)) {
+            status = "user";
+        }
+        m.addAttribute("status", status);
+        m.addAttribute("meetings", meetingArrayList);
+
+        return "/meetings";
+    }
+
     // Список встреч пользователя
     @RequestMapping(value = "/meetings", method = RequestMethod.GET)
-    public String getUserPage(HttpServletRequest request, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException {
+    public String getMeetingsPage(HttpServletRequest request, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException {
         HttpSession session = request.getSession();
         if (session.getAttribute("finder") != null) {
             FinderTagRequest finder = (FinderTagRequest) session.getAttribute("finder");
