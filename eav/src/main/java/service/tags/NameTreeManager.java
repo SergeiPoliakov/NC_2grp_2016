@@ -90,7 +90,7 @@ public class NameTreeManager {
             }
         }
 
-        // 2 А теперь для полученного списка йдишек получаем пользователей
+        // 2 А теперь для полученного списка айдишек получаем пользователей
         for(Integer user_id : users){
             User user = nameNode.getUserById(user_id);
             if (user != null) userList.add(user);
@@ -122,7 +122,7 @@ public class NameTreeManager {
     private void nameListForUser(ArrayList<String> tag_list, TagNode node, String word){
         // Проверяем, есть ли путь дальше вниз по узлам:
         if (node.getParents().size() < 1){
-            // Если нет пути дальше, выходим из рекурсии, сохряняя предварительно слово в лист (НО только если к нему приписаны юзеры, а если удалили, то такого тега как бы нет):
+            // Если нет пути дальше, выходим из рекурсии, сохраняя предварительно слово в лист (НО только если к нему приписаны юзеры, а если удалили, то такого тега как бы нет):
             if (node.getUsers().size() > 0){
                 tag_list.add(word);
             }
@@ -142,9 +142,6 @@ public class NameTreeManager {
             nameListForUser(tag_list, parent, word + w); // и заходим по рекурсии в этого наследника
         }
     }
-
-
-
 
 
 }

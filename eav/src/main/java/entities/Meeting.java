@@ -3,10 +3,13 @@ package entities;
 import dbHelp.DBHelp;
 import service.LoadingServiceImp;
 import service.converter.Converter;
+import service.converter.DateConverter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -26,14 +29,26 @@ public class Meeting extends BaseEntitie {
     private String info; // 304
     private User organizer; // 305
     private StringBuilder tag; // 306
-    private String members; // 307
-    private ArrayList<User> users = new ArrayList<>(); // 307
+    private String allUsers; // 307 // Вобще все пользователи
+    private ArrayList<User> users = new ArrayList<>(); // 307 // 2017-05-14 Все пользователи, так или иначе связанные со встречей (участники, приглашенные, удаленные и пр. - объединяющий список)
     private ArrayList<Event> events = new ArrayList<>(); // 308
     private ArrayList<Event> duplicates = new ArrayList<>(); // 313 // Копии задач-отображений встречи на расписание подписанных пользователей (участников встречи) // надо бы повесить загрузчик из базы // вроде бы есть уже
     private String status; // 309
     private String duration; //310
     // 311 - ссылка на удаленного (-ых) из встречи юзеров, в базе есть
     private String date_edit; // 312
+
+    // 2017-05-14 Новые группы пользователей встречи:
+    private ArrayList<User> beggingUsers = new ArrayList<>(); // 314 Желающие принять участие (самостоятельно подавшие запрос на участие (кнопка Участвовать на странице встречи))
+    private ArrayList<User> invitedUsers = new ArrayList<>(); // 315 Приглашенные создателем встречи (все когда-либо приглашенные на встречу)
+    private ArrayList<User> acceptedUsers = new ArrayList<>(); // 316 Принявшие приглашение от создателя встречи (все, кто когда-либо принял приглашение (и они же автоматом становятся участниками))
+    private ArrayList<User> refusedUsers = new ArrayList<>(); // 317 Отказавшиеся (отклонившие приглашение от создателя встречи)
+    private ArrayList<User> memberUsers = new ArrayList<>(); // 318 Действительные участники
+    private ArrayList<User> exitedUsers = new ArrayList<>(); // 319 Покинувшие встречу (уже после принятия - они могут еще передумать и вернуться, поэтому хорошо бы для них хранить их дубликаты встречи)
+    private ArrayList<User> blockedUsers = new ArrayList<>(); // 320 Заблокированные администратором - они не могут участвовать в встрече и подавать запрос на участие
+    private ArrayList<User> deletedUsers = new ArrayList<>(); // 321 Удаленные администратором - они могут повторно подать зарос на участие и участвовать в встрече
+
+
 
     public ArrayList<Event> getEvents() {
         return events;
@@ -107,12 +122,12 @@ public class Meeting extends BaseEntitie {
         this.tag = tag;
     }
 
-    public String getMembers() {
-        return members;
+    public String getAllUsers() {
+        return allUsers;
     }
 
-    public void setMembers(String members) {
-        this.members = members;
+    public void setAllUsers(String allUsers) {
+        this.allUsers = allUsers;
     }
 
     public String getStatus() {
@@ -161,8 +176,8 @@ public class Meeting extends BaseEntitie {
         duplicate.setId(new DBHelp().generationID(1002));
         duplicate.setHost_id(user_id);
         duplicate.setName(this.title);
-        duplicate.setDate_begin(this.date_start);
-        duplicate.setDate_end(this.date_end);
+        // duplicate.setDate_begin(this.date_start);
+        // duplicate.setDate_end(this.date_end);
         duplicate.setPriority("Style4"); // 4-ый приоритет, соотвествующий дубликату встречи, надо сделать для него другой цвет (и полупрозрачность) на страничке
         duplicate.setInfo(this.info);
         duplicate.setType_event(Event.DUPLICATE_EVENT);
@@ -170,14 +185,24 @@ public class Meeting extends BaseEntitie {
         if (this.date_edit == null){
             // имеем дело со встречей с фиксированными границами
             duplicate.setEditable(Event.UNEDITABLE);
+            duplicate.setDate_begin(this.date_start);
+            duplicate.setDate_end(this.date_end);
         }
         else{
             // иначе имеем дело со встречей с плавающими границами
             duplicate.setDuration(this.duration);
             duplicate.setType_event(Event.DUPLICATE_EVENT);
             duplicate.setEditable(Event.EDITABLE);
+            // Копируем плавающие границы
             duplicate.setFloating_date_begin(this.date_start);
             duplicate.setFloating_date_end(this.date_end);
+
+            // Рассчитываем и переносим действительные границы в зависимости от продолжительности встречи:
+            duplicate.setDate_begin(this.date_start);
+            LocalDateTime end = DateConverter.stringToDate(this.date_start);
+            end = end.plus(Duration.ofMinutes(new Long(this.getDuration())));
+            String s_end = DateConverter.dateToString(end);
+            duplicate.setDate_end(s_end);
         }
 
         // Привешиваем дубликат к нашей встрече
@@ -187,10 +212,20 @@ public class Meeting extends BaseEntitie {
         new LoadingServiceImp().setDataObjectToDB(dataObject);
     }
 
+    // 2017-05-14 Метод elfktybz дубликата встречи (события), отвечающего пользователю с переданным айди:
+    public void deleteDuplicate(Integer user_id){
+        for(int i = 0; i < this.duplicates.size(); i++){
+            if (duplicates.get(i).getHost_id().equals(user_id)){
+                duplicates.remove(i);
+                return;
+            }
+        }
+    }
+
 
     public Meeting(){}
 
-    public Meeting(int id, String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String members, String duration) {
+    public Meeting(int id, String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String allUsers, String duration) {
         this.id = id;
         this.title = title;
         this.date_start = date_start;
@@ -198,32 +233,32 @@ public class Meeting extends BaseEntitie {
         this.info = info;
         this.organizer = organizer;
         this.tag = tag;
-        this.members = members;
+        this.allUsers = allUsers;
         this.status = "active";
         this.duration = duration;
     }
 
-    public Meeting(String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String members, String duration) {
+    public Meeting(String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String allUsers, String duration) {
         this.title = title;
         this.date_start = date_start;
         this.date_end = date_end;
         this.info = info;
         this.organizer = organizer;
         this.tag = tag;
-        this.members = members;
+        this.allUsers = allUsers;
         this.status = "active";
         this.duration = duration;
     }
 
     // 2017-04-09 21-52 Самое то для новых встреч
-    public Meeting(String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String members, String duration, String date_edit) {
+    public Meeting(String title, String date_start, String date_end, String info, User organizer, StringBuilder tag, String allUsers, String duration, String date_edit) {
         this.title = title;
         this.date_start = date_start;
         this.date_end = date_end;
         this.info = info;
         this.organizer = organizer;
         this.tag = tag;
-        this.members = members;
+        this.allUsers = allUsers;
         this.status = "active";
         this.duration = duration;
         this.date_edit = date_edit;
@@ -294,6 +329,81 @@ public class Meeting extends BaseEntitie {
                         }
                     }
                     break;
+
+
+                // beggingUsers // 314 Желающие принять участие
+                case (314):
+                    if (reference != null) {
+                        for (Integer refValue : reference.getValue()) {
+                            this.beggingUsers.add(new User(new DBHelp().getObjectsByIdAlternative(refValue)));
+                        }
+                    }
+                    break;
+
+
+                // invitedUsers // 315 Приглашенные создателем встречи
+                case (315):
+                    if (reference != null) {
+                        for (Integer refValue : reference.getValue()) {
+                            this.invitedUsers.add(new User(new DBHelp().getObjectsByIdAlternative(refValue)));
+                        }
+                    }
+                    break;
+
+
+                // acceptedUsers // 316 Принявшие приглашение от создателя встречи
+                case (316):
+                    if (reference != null) {
+                        for (Integer refValue : reference.getValue()) {
+                            this.acceptedUsers.add(new User(new DBHelp().getObjectsByIdAlternative(refValue)));
+                        }
+                    }
+                    break;
+
+                // refusedUsers // 317 Отказавшиеся (отклонившие приглашение от создателя встречи)
+                case (317):
+                    if (reference != null) {
+                        for (Integer refValue : reference.getValue()) {
+                            this.refusedUsers.add(new User(new DBHelp().getObjectsByIdAlternative(refValue)));
+                        }
+                    }
+                    break;
+
+                // memberUsers // 318 Действительные участники
+                case (318):
+                    if (reference != null) {
+                        for (Integer refValue : reference.getValue()) {
+                            this.memberUsers.add(new User(new DBHelp().getObjectsByIdAlternative(refValue)));
+                        }
+                    }
+                    break;
+
+                // exitedUsers // 319 Покинувшие встречу
+                case (319):
+                    if (reference != null) {
+                        for (Integer refValue : reference.getValue()) {
+                            this.exitedUsers.add(new User(new DBHelp().getObjectsByIdAlternative(refValue)));
+                        }
+                    }
+                    break;
+
+                // blockedUsers // 320 Заблокированные администратором
+                case (320):
+                    if (reference != null) {
+                        for (Integer refValue : reference.getValue()) {
+                            this.blockedUsers.add(new User(new DBHelp().getObjectsByIdAlternative(refValue)));
+                        }
+                    }
+                    break;
+
+                // deletedUsers // 321 Удаленные администратором
+                case (321):
+                    if (reference != null) {
+                        for (Integer refValue : reference.getValue()) {
+                            this.deletedUsers.add(new User(new DBHelp().getObjectsByIdAlternative(refValue)));
+                        }
+                    }
+                    break;
             }
         }
     }
@@ -328,6 +438,58 @@ public class Meeting extends BaseEntitie {
                 dataObject.setRefParams(313, duplicate.getId());
             }
         }
+
+        /// 2017-05-14 Перенос групп пользователей:
+
+        if (this.beggingUsers != null) {
+            for (User user : this.beggingUsers) {
+                dataObject.setRefParams(314, user.getId());
+            }
+        }
+
+        if (this.invitedUsers != null) {
+            for (User user : this.invitedUsers) {
+                dataObject.setRefParams(315, user.getId());
+            }
+        }
+
+        if (this.acceptedUsers != null) {
+            for (User user : this.acceptedUsers) {
+                dataObject.setRefParams(316, user.getId());
+            }
+        }
+
+        if (this.refusedUsers != null) {
+            for (User user : this.refusedUsers) {
+                dataObject.setRefParams(317, user.getId());
+            }
+        }
+
+        if (this.memberUsers != null) {
+            for (User user : this.memberUsers) {
+                dataObject.setRefParams(318, user.getId());
+            }
+        }
+
+        if (this.exitedUsers != null) {
+            for (User user : this.exitedUsers) {
+                dataObject.setRefParams(319, user.getId());
+            }
+        }
+
+        if (this.blockedUsers != null) {
+            for (User user : this.blockedUsers) {
+                dataObject.setRefParams(320, user.getId());
+            }
+        }
+
+        if (this.deletedUsers != null) {
+            for (User user : this.deletedUsers) {
+                dataObject.setRefParams(321, user.getId());
+            }
+        }
+        ///
+
         return dataObject;
     }
 
@@ -339,7 +501,7 @@ public class Meeting extends BaseEntitie {
         map.put(304, info);
         map.put(305, organizer.getId());
         map.put(306, tag);
-        map.put(307, members);
+        map.put(307, allUsers);
         map.put(309, status);
         map.put(310, duration);
         map.put(312, date_edit);
@@ -366,11 +528,11 @@ public class Meeting extends BaseEntitie {
         copyMeeting.setInfo(this.getInfo()); // 304
         copyMeeting.setOrganizer(this.getOrganizer()); // 305
         copyMeeting.setTag(this.getTag()); // 306
-        copyMeeting.setMembers(this.getMembers()); // 307
+        copyMeeting.setAllUsers(this.getAllUsers()); // 307
         copyMeeting.setUsers(this.getUsers()); // 307
         copyMeeting.setEvents(this.getEvents()); // 308
 
-        // А вот дуплмкаты встреч лучше клонировать, так как их мы будем редактировать потом (по крайней мере одно точно)
+        // А вот дупликаты встреч лучше клонировать, так как их мы будем редактировать потом (по крайней мере одно точно)
         ArrayList<Event> dupls = new ArrayList<>();
         if (this.getDuplicates() != null && this.getDuplicates().size() > 0){
             for(Event ev : this.getDuplicates()){
@@ -382,6 +544,16 @@ public class Meeting extends BaseEntitie {
         copyMeeting.setStatus(this.getStatus()); // 309
         copyMeeting.setDuration(this.getDuration()); // 310
         copyMeeting.setDate_edit(this.getDate_edit()); // 312
+
+        // 2017-05-14 Копирование групп юзеров
+        copyMeeting.setBeggingUsers(this.getBeggingUsers()); // 314
+        copyMeeting.setInvitedUsers(this.getInvitedUsers()); // 315
+        copyMeeting.setAcceptedUsers(this.getAcceptedUsers()); // 316
+        copyMeeting.setRefusedUsers(this.getRefusedUsers()); // 317
+        copyMeeting.setMemberUsers(this.getMemberUsers()); // 318
+        copyMeeting.setExitedUsers(this.getExitedUsers()); // 319
+        copyMeeting.setBlockedUsers(this.getBlockedUsers()); // 320
+        copyMeeting.setDeletedUsers(this.getDeletedUsers()); // 321
 
         return copyMeeting;
     }
@@ -396,7 +568,7 @@ public class Meeting extends BaseEntitie {
                 + " : info=" + info
                 + " : organizer=" + organizer.getId()
                 + " : tag=" + tag
-                + " : members=" + members
+                + " : allUsers=" + allUsers
 
                 + " : users=" + users
                 + " : events=" + events
@@ -421,4 +593,320 @@ public class Meeting extends BaseEntitie {
         return find_user;
     }
 
+    // 2017-05-14 Методы получения и редактирования групп пользователей встречи:
+
+    // 1-1 Метод получения группы пользователей, отправивших запрос на участие
+    public ArrayList<User> getBeggingUsers() {
+        return beggingUsers;
+    }
+    // 1-2 Метод задания группы пользователей, отправивших запрос на участие
+    public void setBeggingUsers(ArrayList<User> beggingUsers) {
+        this.beggingUsers = beggingUsers;
+    }
+
+    // 1-3 Метод добавления нового пользователя, запросившего участия во встрече (со всеми проверками)
+    public void addBeggingUsers(User beggingUser) throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        if (this.blockedUsers.contains(beggingUser)) return; // Если создатель встречи заблочил юзера, выходим
+        if (this.beggingUsers.contains(beggingUser)) return; // Если он уже висит в отправивших запрос, выходим
+        if (this.memberUsers.contains(beggingUser)) return; // Если он уже висит в участниках, выходим
+        if (this.invitedUsers.contains(beggingUser)){  // Если он висит в приглашенных, то
+            this.beggingUsers.add(beggingUser); // Добавляем его в список запросивших
+            this.acceptedUsers.add(beggingUser); // Поскольку намерения создателя встречи и желание прользователя совпали, автоматически причисляем пользователя к заочно принявшим приглашение
+            this.memberUsers.add(beggingUser); // И автоматически превращаем его в участника встречи
+            // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
+            this.createDuplicate(beggingUser.getId());
+
+            // и на всякий случай удалем противоречивую информацию, а именно возможность состоять в группах, которые взаимоисключают текущее состояние:
+            this.refusedUsers.remove(beggingUser); // Удаляем из отказавшихся
+            this.exitedUsers.remove(beggingUser); // Удаляем из покинувших встречу
+            this.deletedUsers.remove(beggingUser); // Удаляем из удаленных
+            return;
+        }
+        if (this.acceptedUsers.contains(beggingUser)) return; // Если он уже висит в принявших приглашение, выходим
+        if (this.refusedUsers.contains(beggingUser)){ // Если он уже висит в отказавшихся от приглашения,
+            this.beggingUsers.add(beggingUser); // Причисляем его к запросившим участие во встрече
+            this.refusedUsers.remove(beggingUser); // И удаляем из отказавшихся
+            return;
+        }
+        if (this.exitedUsers.contains(beggingUser)) { // Если он уже висит в покинувших встречу,
+            this.memberUsers.add(beggingUser); // Возвращаем его во встречу
+            // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
+            this.createDuplicate(beggingUser.getId());
+            this.exitedUsers.remove(beggingUser); // И удаляем его из покинувших встречу
+            return;
+        }
+        if (this.deletedUsers.contains(beggingUser)){ // Если он находится среди удаленных администратором, он может подать еще одну завку
+            this.beggingUsers.add(beggingUser); // Добавляем его в список запросивших
+            this.deletedUsers.remove(beggingUser); // И удаляем из списка удаленных
+            return;
+        }
+
+        // Если после всех этих проверок добрались сюда, то имеем дело с совершенно новым юзером, просто вещаем его в список запросивших:
+        this.beggingUsers.add(beggingUser);
+        // А заодно и в общий список всех заинтересованных пользователей
+        this.users.add(beggingUser);
+    }
+
+    // 2-1 Метод получения группы пользователей, которых создатель встречи пригласил участвовать во встрече
+    public ArrayList<User> getInvitedUsers() {
+        return invitedUsers;
+    }
+
+    // 2-2 Метод задания группы пользователей, которых создатель встречи пригласил участвовать во встрече
+    public void setInvitedUsers(ArrayList<User> invitedUsers) {
+        this.invitedUsers = invitedUsers;
+    }
+
+    // 2-3 Метод добавления нового пользователя, которого создатель встречи пригласил участвовать во встрече
+    public void addInvitedUsers(User user) throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        if (this.blockedUsers.contains(user)){ // Если создатель встречи до этого заблочил юзера,
+            this.blockedUsers.remove(user); // разблокируем его
+            this.invitedUsers.add(user); // И добавляем к списку приглашенных
+            return;
+        }
+        if (this.beggingUsers.contains(user)){ // Если он уже висит в отправивших запрос,
+            this.invitedUsers.add(user); // добавляем к списку приглашенных
+            this.acceptedUsers.add(user); // Поскольку намерения создателя встречи и желание прользователя совпали, автоматически причисляем пользователя к заочно принявшим приглашение
+            this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
+            // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
+            this.createDuplicate(user.getId());
+
+            // и на всякий случай удалем противоречивую информацию, а именно возможность состоять в группах, которые взаимоисключают текущее состояние:
+            this.refusedUsers.remove(user); // Удаляем из отказавшихся
+            this.exitedUsers.remove(user); // Удаляем из покинувших встречу
+            this.deletedUsers.remove(user); // Удаляем из удаленных
+            return;
+        }
+
+        if (this.memberUsers.contains(user)) return; // Если он уже висит в участниках, выходим
+        if (this.invitedUsers.contains(user)) return;  // Если он висит в приглашенных, то выходим
+        if (this.acceptedUsers.contains(user)) return; // Если он уже висит в принявших приглашение, выходим
+
+        if (this.refusedUsers.contains(user)){ // Если он уже висит в отказавшихся от приглашения, пробуем еще раз его пригласить
+            this.invitedUsers.add(user); // Причисляем его к приглашенным
+            this.refusedUsers.remove(user); // И удаляем из отказавшихся
+            return;
+        }
+
+        if (this.exitedUsers.contains(user)) { // Если он уже висит в покинувших встречу, пробуем еще раз его пригласить
+            this.memberUsers.add(user); // Возвращаем его во встречу
+            this.invitedUsers.add(user); // Причисляем его к приглашенным
+            this.exitedUsers.remove(user); // И удаляем его из покинувших встречу
+            return;
+        }
+
+        if (this.deletedUsers.contains(user)){ // Если он находится среди удаленных администратором, пробуем еще раз его пригласить
+            this.invitedUsers.add(user); // Причисляем его к приглашенным
+            this.deletedUsers.remove(user); // И удаляем из списка удаленных
+            return;
+        }
+
+        // Если после всех этих проверок добрались сюда, то имеем дело с совершенно новым юзером, просто вещаем его в список приглашенных:
+        this.invitedUsers.add(user); // Причисляем его к приглашенным
+        // А заодно и в общий список всех заинтересованных пользователей
+        this.users.add(user);
+
+    }
+
+
+    // 3-1 Метод получения группы пользователей, принявших приглашение на встречу
+    public ArrayList<User> getAcceptedUsers() {
+        return acceptedUsers;
+    }
+
+    // 3-2 Метод задания группы пользователей, принявших приглашение на встречу
+    public void setAcceptedUsers(ArrayList<User> acceptedUsers) {
+        this.acceptedUsers = acceptedUsers;
+    }
+
+    // 3-3 Метод добавления нового пользователя в группу пользователей, принявших приглашение на встречу
+    public void addAcceptedUsers(User user) throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
+        if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, то, что он согласился на встречу, уже не играет роли
+        if (this.memberUsers.contains(user)) return; // Если он уже висит среди участников, выходим
+
+        if (this.acceptedUsers.contains(user)){ // Если он уже висит среди принявших приглашение, делаем его участником
+            this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
+            // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
+            this.createDuplicate(user.getId());
+            return;
+        }
+
+        if (this.invitedUsers.contains(user)){ // Если он уже висит в приглашенных,
+            this.acceptedUsers.add(user); // Причисляем к группе принявших приглашение
+            this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
+            // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
+            this.createDuplicate(user.getId());
+
+            // и на всякий случай удалем противоречивую информацию, а именно возможность состоять в группах, которые взаимоисключают текущее состояние:
+            this.refusedUsers.remove(user); // Удаляем из отказавшихся
+            this.exitedUsers.remove(user); // Удаляем из покинувших встречу
+            this.deletedUsers.remove(user); // Удаляем из удаленных
+            return;
+        }
+
+        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+
+    }
+
+    // 4-1 Метод получения группы пользователей, отказавшихся от приглашения на встречу
+    public ArrayList<User> getRefusedUsers() {
+        return refusedUsers;
+    }
+
+    // 4-2 Метод задания группы пользователей, отказавшихся от приглашения на встречу
+    public void setRefusedUsers(ArrayList<User> refusedUsers) {
+        this.refusedUsers = refusedUsers;
+    }
+
+    // 4-3 Метод добавления нового пользователя в группу пользователей, отказавшихся от приглашения на встречу
+    public void addRefusedUsers(User user){
+        if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
+        if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, то, что он отказался от встречи, уже не играет роли (он опоздал с отказом)
+        if (this.refusedUsers.contains(user)) return; // Если он уже висит в отказавшихся от приглашения, выходим
+
+        if (this.memberUsers.contains(user)){ // Если он уже висит в участниках,
+            this.memberUsers.remove(user); // Удаляем его из участников
+            this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
+            this.refusedUsers.add(user); // и добавляем пользователя к отказавшимся
+            return;
+        }
+
+        this.refusedUsers.add(user);
+        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+
+    }
+
+
+
+
+    // 5-1 Метод получения группы пользователей, являющихся действующими участниками встречи
+    public ArrayList<User> getMemberUsers() {
+        return memberUsers;
+    }
+
+    // 5-2 Метод задания группы пользователей, являющихся действующими участниками встречи
+    public void setMemberUsers(ArrayList<User> memberUsers) {
+        this.memberUsers = memberUsers;
+    }
+
+    // 5-3 Метод добавления нового пользователя в группу пользователей, являющихся действующими участниками встречи
+    public void addMemberUsers(User user) throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
+        if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
+        if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, выходим
+        if (this.memberUsers.contains(user)) return; // Если он находится среди участников, выходим
+
+        if (this.refusedUsers.contains(user)) return; // Если он уже висит в отказавшихся от приглашения, выходим
+
+        if (this.acceptedUsers.contains(user)){ // Если он уже висит среди принявших приглашение, делаем его участником
+            this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
+            // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
+            this.createDuplicate(user.getId());
+            return;
+        }
+
+        if (this.beggingUsers.contains(user)){ // Если он уже висит в отправивших запрос,
+            this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
+            // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
+            this.createDuplicate(user.getId());
+
+            // и на всякий случай удалем противоречивую информацию, а именно возможность состоять в группах, которые взаимоисключают текущее состояние:
+            this.refusedUsers.remove(user); // Удаляем из отказавшихся
+            this.exitedUsers.remove(user); // Удаляем из покинувших встречу
+            this.deletedUsers.remove(user); // Удаляем из удаленных
+            return;
+        }
+
+        this.memberUsers.add(user);
+        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+
+    }
+
+
+    // 6-1 Метод получения группы пользователей, покинувших встречу уже после согласия принять участие
+    public ArrayList<User> getExitedUsers() {
+        return exitedUsers;
+    }
+
+    // 6-2 Метод задания группы пользователей, покинувших встречу уже после согласия принять участие
+    public void setExitedUsers(ArrayList<User> exitedUsers) {
+        this.exitedUsers = exitedUsers;
+    }
+
+    // 6-3 Метод добавления нового пользователя в группу пользователей, покинувших встречу уже после согласия принять участие
+    public void addExitedUsers(User user){
+        if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
+        if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, выходим
+        if (this.exitedUsers.contains(user)) return; // Если он уже висит в покинувших встречу, выходим
+
+        if (this.memberUsers.contains(user)) { // Если он находится среди участников, выходим
+            this.memberUsers.remove(user); // Удаляем его из участников
+            this.acceptedUsers.remove(user); // Удаляем его из принявших приглашение
+            this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
+            this.refusedUsers.add(user); // и добавляем пользователя к отказавшимся
+            return;
+        }
+
+        this.refusedUsers.add(user); // и добавляем пользователя к отказавшимся
+        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+    }
+
+
+
+    // 7-1 Метод получения группы пользователей, заблокированных создателем встречи
+    public ArrayList<User> getBlockedUsers() {
+        return blockedUsers;
+    }
+
+    // 7-2 Метод задания группы пользователей, заблокированных создателем встречи
+    public void setBlockedUsers(ArrayList<User> blockedUsers) {
+        this.blockedUsers = blockedUsers;
+    }
+
+    // 7-3 Метод добавления нового пользователя в группу пользователей, заблокированных создателем встречи
+    public void addBlockedUsers(User user){
+        if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
+
+        // Во всех остальных случаях убираем пользователя из всех групп, кроме блокированных и общей группы
+        this.beggingUsers.remove(user);
+        this.invitedUsers.remove(user);
+        this.acceptedUsers.remove(user);
+        this.refusedUsers.remove(user);
+        this.memberUsers.remove(user);
+        this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
+        this.exitedUsers.remove(user);
+        this.deletedUsers.remove(user);
+        // И добавляем в заблокированные
+        this.blockedUsers.add(user);
+        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+    }
+
+    // 8-1 Метод получения группы пользователей, удаленных создателем встречи
+    public ArrayList<User> getDeletedUsers() {
+        return deletedUsers;
+    }
+
+    // 8-2 Метод задания группы пользователей, удаленных создателем встречи
+    public void setDeletedUsers(ArrayList<User> deletedUsers) {
+        this.deletedUsers = deletedUsers;
+    }
+
+    // 8-3 Метод добавления нового пользователя в группу пользователей, удаленных создателем встречи
+    public void addDeletedUsers(User user) {
+        if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
+        if (this.deletedUsers.contains(user)) return; // Если создатель встречи удалил юзера, выходим
+
+        // Во всех остальных случаях убираем пользователя из всех групп, кроме блокированных, удаленных и общей группы
+        this.beggingUsers.remove(user);
+        this.invitedUsers.remove(user);
+        this.acceptedUsers.remove(user);
+        this.refusedUsers.remove(user);
+        this.memberUsers.remove(user);
+        this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
+        this.exitedUsers.remove(user);
+        // И добавляем в удаленные
+        this.deletedUsers.add(user);
+        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+
+    }
 }

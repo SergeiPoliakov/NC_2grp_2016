@@ -346,7 +346,8 @@ public class MeetingController {
             }
 
 
-        // Логирование:
+
+        // Логирвоание:
         loggerLog.add(Log.LEAVED_MEETING, meetingID);
         return "redirect:/meetings";
     }
