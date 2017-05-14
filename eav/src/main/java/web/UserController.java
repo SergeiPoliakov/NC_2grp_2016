@@ -1,7 +1,9 @@
 package web;
 
 import WebSocket.SocketMessage;
+import com.google.gson.Gson;
 import entities.*;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import service.application_settings.SettingsLoader;
 import service.search.FinderLogic;
@@ -594,6 +596,33 @@ public class UserController {
         loggerLog.add(Log.PAGE, "allFriends", idUser); // Посещение страницы
         return "allFriends";
     }
+
+
+    @RequestMapping(value = "/checkPrivacyFriendForNotification", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Response checkMeetingAJAX(
+            @RequestParam("senderID") Integer senderID,
+            @RequestParam("recieverID") Integer recieverID
+            ) throws ParseException, ExecutionException, CustomException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+
+        System.out.println("Отправитель " + senderID);
+        System.out.println("Получатель" + recieverID);
+
+        boolean check = true;
+
+        Response response = new Response();
+
+        DataObject dataObjectTo = doCache.get(recieverID);
+        User user = converter.ToUser(dataObjectTo);
+        Settings settings = converter.ToSettings(doCache.get(user.getSettingsID()));
+
+        if ("nobody".equals((settings.getPrivateAddFriend()))) {
+            check = false;
+        }
+
+        response.setText(new Gson().toJson(check));
+        return response;
+    }
+
 
     // Добавление пользователя в друзья (по его ID)
     @RequestMapping("/addFriend/{objectId}/{type}")

@@ -87,7 +87,24 @@
                 'isSeen' : "active",
                 'date': toLocaleDateTimeString(new Date())
             });
-            stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+            if (type === 'friendRequest') {
+                $.ajax({
+                    url: '/checkPrivacyFriendForNotification',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        senderID: gSenderID,
+                        recieverID: recieverID,
+                    },
+                    success: function (data) {
+                        var check = JSON.parse(data.text);
+                        if (check === true) {
+                            stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+                        }
+                    }
+                });
+            }
+
         }
     </script>
 
