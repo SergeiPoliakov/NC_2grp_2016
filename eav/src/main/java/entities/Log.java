@@ -18,6 +18,7 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
     public static final int DEL_FRIEND  =   612; // Удаление друга (с айди) -- сслылка на объект
     public static final int SEARCH_USER =   613; // Поиск пользователя -- параметр
     public static final int VIEW_PROFILE =  614; // Просмотр профиля юзера -- сслылка на объект
+    public static final int DECLINE_FRIEND =  615; // не добавлять в друзья (с айди) -- ссылка на объект
 
     public static final int SEND_MESSAGE =  621; // Отправка сообщения (ссылка на сообщение) -- сслылка на объект
     public static final int GET_MESSAGE =   622; // Получение сообщения (ссылка на сообщение) -- сслылка на объект
@@ -193,6 +194,9 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
                 name = "SEARCH_USER";
                 break;
             case (VIEW_PROFILE): // Просмотр профиля(с айди)
+                name = "VIEW_PROFILE";
+                break;
+            case (DECLINE_FRIEND): // не добавлять в друзья(с айди)
                 name = "VIEW_PROFILE";
                 break;
             case (SEND_MESSAGE): // Отправка сообщения (ссылка на сообщение)

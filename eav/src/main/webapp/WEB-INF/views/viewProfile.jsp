@@ -60,11 +60,13 @@
                             <span class="glyphicon glyphicon-envelope" aria-hidden="true"> Чат</span>
                         </button>
                     </form>
+                    <c:if test="${flagFriend eq false}">
                     <form action="/addFriend/${user.id}/addFriend">
                         <button type="submit" class="btn btn-success btn-sm" >
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"> Добавить в друзья</span>
                         </button>
                     </form>
+                    </c:if>
                 </div>
 
                 <ul class="list-group list-group-my list-group-flush">

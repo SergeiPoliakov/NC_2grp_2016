@@ -32,13 +32,13 @@
     </beans:bean>
 
     <beans:bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <beans:property name="exceptionMappings">
-            <beans:map>
-                <beans:entry key="exception.CustomException" value="errors/customException" />
-            </beans:map>
-        </beans:property>
-        <!--    <beans:property name="defaultErrorView" value="errors/defaultException" />  -->
-        </beans:bean>
+    <beans:property name="exceptionMappings">
+        <beans:map>
+            <beans:entry key="exception.CustomException" value="errors/customException" />
+        </beans:map>
+    </beans:property>
+    <!--    <beans:property name="defaultErrorView" value="errors/defaultException" />  -->
+</beans:bean>
 
         <context:component-scan base-package="web" />
 

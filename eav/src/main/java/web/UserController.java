@@ -1,12 +1,9 @@
 package web;
 
 import WebSocket.SocketMessage;
-import com.google.gson.Gson;
 import entities.*;
 import org.springframework.web.bind.annotation.*;
 import service.application_settings.SettingsLoader;
-import service.id_filters.NotificationFilter;
-import service.notifications.NotificationService;
 import service.search.FinderLogic;
 import service.search.FinderTagRequest;
 import service.search.FinderTagResponse;
@@ -37,14 +34,12 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.Console;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import service.notifications.UsersNotifications;
@@ -628,18 +623,33 @@ public class UserController {
             }
         }
         int idUser = userService.getObjID(userService.getCurrentUsername());
+        String message = "Пользователь успешно добавлен в список друзей";
+        m.addAttribute("info", message);
         
         loggerLog.add(Log.ADD_FRIEND, objectId, idUser); // Добавление пользователя в друзья
-        return "/addFriend";
+        return "info";
     }
 
     // Удаление пользователя из друзей (по его ID)
     @RequestMapping("/deleteFriend/{objectId}")
-    public String deleteFriend(@PathVariable("objectId") Integer objectId) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+    public String deleteFriend(@PathVariable("objectId") Integer objectId,
+                               ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         userService.deleteFriend(objectId);
         int idUser = userService.getObjID(userService.getCurrentUsername());
+        String message = "Пользователь успешно удален из списока друзей";
+        m.addAttribute("info", message);
         loggerLog.add(Log.DEL_FRIEND, objectId, idUser); // Удаления пользователя из друзей
-        return "/deleteFriend";
+        return "/info";
+    }
+
+    @RequestMapping("/declineFriend/{objectId}")
+    public String declineFriend(@PathVariable("objectId") Integer objectId,
+                                ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        String message = "Заявка в друзья успешно отклонена";
+        m.addAttribute("info", message);
+        loggerLog.add(Log.DECLINE_FRIEND, objectId, idUser); // Удаления пользователя из друзей
+        return "info";
     }
 
 
@@ -652,9 +662,26 @@ public class UserController {
 
         String flagProfile = "false";
         String flagMessage = "false";
+        String flagFriend = "false";
+
+        int current_user_id = userService.getObjID(userService.getCurrentUsername());
+        ArrayList<Integer> ilCurrentUserFriends = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(current_user_id)));
+        try {
+            Map<Integer, DataObject> mapFriends = doCache.getAll(ilCurrentUserFriends);
+            ArrayList<DataObject> listFriends = getListDataObject(mapFriends);
+            for (DataObject dataObjectFriend : listFriends) {
+                User userFriend = converter.ToUser(dataObjectFriend);
+                if (userId == userFriend.getId()) {
+                    flagFriend = "true";
+                }
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        m.addAttribute("flagFriend", flagFriend);
+
 
         // проверяем, есть ли текущий пользователь в друзьях, чтобы дать ему доступ
-        int current_user_id = userService.getObjID(userService.getCurrentUsername());
         ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(userId)));
         try {
             Map<Integer, DataObject> map = doCache.getAll(ilFriend);
