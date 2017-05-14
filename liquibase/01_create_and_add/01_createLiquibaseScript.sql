@@ -336,6 +336,18 @@ INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('310', 'durationMeeting');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('311', 'deletedUser');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('312', 'meet_date_edit');
 INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('313', 'meet_duplicates'); -- link дубликаты встречи как отображение на события в расписании юзера
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('314', 'meet_beggingUsers'); -- link Желающие принять участие (самостоятельно подавшие запрос на участие)
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('315', 'meet_invitedUsers'); -- link Приглашенные создателем встречи
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('316', 'meet_acceptedUsers'); -- link Принявшие приглашение от создателя встречи
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('317', 'meet_refusedUsers'); -- link Отказавшиеся (отклонившие приглашение от создателя встречи)
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('318', 'meet_memberUsers'); -- link Действительные участники
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('319', 'meet_exitedUsers'); -- link Покинувшие встречу (уже после принятия - они могут еще передумать и вернуться, поэтому хорошо бы для них хранить их дубликаты встречи)
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('320', 'meet_blockedUsers'); -- link Заблокированные администратором - они не могут участвовать в встрече и подавать запрос на участие
+INSERT INTO ATTRIBUTES (ATTR_ID, ATTR_NAME) VALUES ('321', 'meet_deletedUsers'); -- link Удаленные администратором - они могут повторно подать зарос на участие и участвовать в встрече
+
+
+
+
 
 --Meeting Object_Attributes
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '301');
@@ -351,6 +363,14 @@ INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '310');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '311');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '312');
 INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '313');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '314');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '315');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '316');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '317');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '318');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '319');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '320');
+INSERT INTO Obj_Attributes (OBJECT_TYPE_ID, ATTR_ID) VALUES ('1004', '321');
 
 -- BLOB Files
 --File Id: 50001

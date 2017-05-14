@@ -40,11 +40,11 @@ public class Meeting extends BaseEntitie {
 
     // 2017-05-14 Новые группы пользователей встречи:
     private ArrayList<User> beggingUsers = new ArrayList<>(); // 314 Желающие принять участие (самостоятельно подавшие запрос на участие (кнопка Участвовать на странице встречи))
-    private ArrayList<User> invitedUsers = new ArrayList<>(); // 315 Приглашенные создателем встречи (все когда-либо приглашенные на встречу)
-    private ArrayList<User> acceptedUsers = new ArrayList<>(); // 316 Принявшие приглашение от создателя встречи (все, кто когда-либо принял приглашение (и они же автоматом становятся участниками))
+    private ArrayList<User> invitedUsers = new ArrayList<>(); // 315 Приглашенные создателем встречи
+    private ArrayList<User> acceptedUsers = new ArrayList<>(); // 316 Принявшие приглашение от создателя встречи (и они же автоматом становятся участниками)
     private ArrayList<User> refusedUsers = new ArrayList<>(); // 317 Отказавшиеся (отклонившие приглашение от создателя встречи)
     private ArrayList<User> memberUsers = new ArrayList<>(); // 318 Действительные участники
-    private ArrayList<User> exitedUsers = new ArrayList<>(); // 319 Покинувшие встречу (уже после принятия - они могут еще передумать и вернуться, поэтому хорошо бы для них хранить их дубликаты встречи)
+    private ArrayList<User> exitedUsers = new ArrayList<>(); // 319 Покинувшие встречу (уже после принятия - они могут еще передумать и вернуться)
     private ArrayList<User> blockedUsers = new ArrayList<>(); // 320 Заблокированные администратором - они не могут участвовать в встрече и подавать запрос на участие
     private ArrayList<User> deletedUsers = new ArrayList<>(); // 321 Удаленные администратором - они могут повторно подать зарос на участие и участвовать в встрече
 
