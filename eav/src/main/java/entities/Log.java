@@ -42,6 +42,8 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
     public static final int CLOSED_MEETING = 656; // закрытие встречи
     public static final int DELETED_MEETING = 657; // удаление встречи из истории пользователя
     public static final int LEAVED_MEETING = 658; // удаление встречи из истории пользователя
+    public static final int DECLINE_MEETING = 659; // Отказ от приглашения на встречу
+    public static final int INVITE_MEETING = 660; // принять приглашение на встречу
 
     public static final int ADD_CALENDAR =  661; // Подключение календаря -- параметр
     public static final int SYNCHRONIZED_CALENDAR = 662; // Синхронизация календаря -- параметр
@@ -197,7 +199,7 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
                 name = "VIEW_PROFILE";
                 break;
             case (DECLINE_FRIEND): // не добавлять в друзья(с айди)
-                name = "VIEW_PROFILE";
+                name = "DECLINE_FRIEND";
                 break;
             case (SEND_MESSAGE): // Отправка сообщения (ссылка на сообщение)
                 name = "SEND_MESSAGE";
@@ -250,11 +252,17 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
             case (CLOSED_MEETING):  //закрытие встерчи
                 name = "CLOSED_MEETING";
                 break;
-            case (DELETED_MEETING):  // удаление встречи из истории пользователя
+            case (DELETED_MEETING):  // Отказ от приглашения на встречу
                 name = "DELETED_MEETING";
                 break;
             case (LEAVED_MEETING):  // удаление встречи из истории пользователя
                 name = "LEAVED_MEETING";
+                break;
+            case (DECLINE_MEETING):  // удаление встречи из истории пользователя
+                name = "DECLINE_MEETING";
+                break;
+            case (INVITE_MEETING):  // принять приглашение на встречу
+                name = "INVITE_MEETING";
                 break;
             case (ADD_CALENDAR): // Подключение календаря
                 name = "ADD_CALENDAR";

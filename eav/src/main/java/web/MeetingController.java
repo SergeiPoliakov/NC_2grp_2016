@@ -247,82 +247,54 @@ public class MeetingController {
         return "redirect:/meetings";
     }  */
 
+    @RequestMapping("/declineInviteMeeting/{objectId}")
+    public String declineFriend(@PathVariable("objectId") Integer objectId,
+                                ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        String message = "Приглашение на встречу успешно отклонено";
+        m.addAttribute("info", message);
+        loggerLog.add(Log.DECLINE_MEETING, objectId, idUser); // Отказ от приглашения на встречу
+        return "info";
+    }
+
     // Добавить пользователя на встречу DO, 2017-04-11 добавил создание уведомления о добавлении ко стрече для юзеров
-    @RequestMapping(value = "/inviteUserAtMeeting{meetingID}", method = RequestMethod.POST)
-    public String inviteUserAtMeeting(@RequestParam("userIDs") String userIDs,
+    @RequestMapping(value = "/inviteUserAtMeeting/{meetingID}/{userID}")
+    public String inviteUserAtMeeting(@PathVariable("userID") Integer userID,
                                       @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException,
             IllegalAccessException, InvocationTargetException, ExecutionException, ParseException, IOException, MessagingException {
 
-        String[] users = userIDs.split(",");
+
         Meeting meeting = new Meeting();
         try {
             meeting = new Meeting(doCache.get(meetingID));
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        int idSender = userService.getCurrentUser().getId(); // получаем айди текущего юзера (он создатель встречи и отправитель приглашения на встречу)
+       // int idSender = userService.getCurrentUser().getId(); // получаем айди текущего юзера (он создатель встречи и отправитель приглашения на встречу)
         ArrayList<User> userList = meeting.getUsers();   //исправлено
 
 
+            // Приглашаемый юзер (и он же получатель уведомления)
+            User user = new User(doCache.get(userID));
 
-
-        for (String userID: users) {
-            Integer idReceiver = Integer.parseInt(userID); // Приглашаемый юзер (и он же получатель уведомления)
-            User user = new User(doCache.get(idReceiver));
-
-            String flagMeeting = "false";
-            // проверяем, есть ли текущий пользователь в друзьях, чтобы послать приглашение
-            ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(idReceiver)));
-            try {
-                Map<Integer, DataObject> map = doCache.getAll(ilFriend);
-                ArrayList<DataObject> list = getListDataObject(map);
-                for (DataObject dataObjectFriend : list) {
-                    User userFriend = converter.ToUser(dataObjectFriend);
-                    if (idSender == userFriend.getId()) {
-                        flagMeeting = "true";
-                    }
-                }
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-
-            // если приватность позволяет, то пользователю придет приглашение на встречу
-            DataObject dataObjectSettings = doCache.get(user.getSettingsID());
-            Settings settings = converter.ToSettings(dataObjectSettings);
-
-            if (("onlyFriend".equals(settings.getPrivateMeetingInvite()) && flagMeeting.equals("true")) || ("any".equals(settings.getPrivateMeetingInvite()))) {
                 userList.add(user);  // добавлять нужно, если пользователь примет приглашение на встречу, а не как сейчас. Потом переделаю
                 //добавляю дубликат
                 meeting.createDuplicate(user.getId());
                 // Формируем уведомление
-                Notification notification = new Notification("Приглашение на встречу", idSender, idReceiver, Notification.MEETING_INVITE);
-                // и прикрепляем его к пользователю (или, если он оффлайн, просто автоматом переносится в базу)
-                //NotificationService.sendNotification(notification);
 
 
-                if ("true".equals(settings.getEmailMeetingInvite())) {
-                    userService.fittingEmail("meetingInvite", idSender, idReceiver);
-                }
-                if ("true".equals(settings.getPhoneMeetingInvite())) {
-                    // userService.sendSmS("meetingInvite" ,idSender, idReceiver);  //отправка смс
-                }
-            }
 
             DataObject dataObject = meeting.toDataObject();
             loadingService.updateDataObject(dataObject);
             doCache.invalidate(meetingID);
 
 
-
-        }
         meeting.setUsers(userList);
         int id = loadingService.updateDataObject(meeting.toDataObject());
         doCache.invalidate(meetingID);
 
-        //
+        loggerLog.add(Log.INVITE_MEETING, meetingID, userID); // Принять приглашения на встречу
 
-        // Логирвоание:
-        loggerLog.add(Log.SEND_INVITE_MEETING, id);
         return "redirect:/meeting{meetingID}";
     }
 
@@ -340,7 +312,10 @@ public class MeetingController {
         User user = converter.ToUser(dataObject);
 
         meeting.getUsers().remove(user);
-        if (meeting.getOrganizer().equals(user)) { // покидает организатор встречи
+        if (meeting.getOrganizer().equals(user)) {
+            meeting.getUsers().remove(user);
+            meeting.setOrganizer(meeting.getUsers().get(0)); // следующий участник становится организатором
+        } else meeting.getUsers().remove(user);
 
             ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
 
@@ -350,8 +325,7 @@ public class MeetingController {
                 if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {  //если это наш дубликат
 
                     //удаляем юзера из встречи
-                    meeting.getUsers().remove(user);
-                    meeting.setOrganizer(meeting.getUsers().get(0)); // следующий участник становится организатором
+
 
                     //удаляем ссылку на дубликат из встречи
                     meeting.getDuplicates().remove(dataObjectDuplicate);
@@ -371,7 +345,7 @@ public class MeetingController {
                 }
             }
 
-        }
+
 
         // Логирвоание:
         loggerLog.add(Log.LEAVED_MEETING, meetingID);

@@ -104,6 +104,24 @@
                     }
                 });
             }
+            if (type === "meetingInvite") {
+                $.ajax({
+                    url: '/checkPrivacyMeetingForNotification',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        senderID: gSenderID,
+                        recieverID: recieverID,
+                        additionalID: meetingID,
+                    },
+                    success: function (data) {
+                        var check = JSON.parse(data.text);
+                        if (check === true) {
+                            stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+                        }
+                    }
+                });
+            }
 
         }
     </script>

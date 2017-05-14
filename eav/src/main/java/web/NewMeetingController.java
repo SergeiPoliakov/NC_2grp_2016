@@ -3,6 +3,7 @@ package web;
 import com.google.common.cache.LoadingCache;
 import com.google.gson.Gson;
 import entities.*;
+import exception.CustomException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -11,17 +12,23 @@ import service.UserServiceImp;
 import service.cache.DataObjectCache;
 import service.converter.Converter;
 import service.converter.DateConverter;
+import service.id_filters.UserFilter;
 import service.meetings.NewMeetingManager;
 import service.meetings.NewMeetingRequest;
 import service.meetings.NewMeetingResponce;
 import service.notifications.NotificationService;
 import service.optimizer.SlotManager;
 import service.optimizer.SlotRequest;
+import service.statistics.StatisticLogger;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -33,7 +40,20 @@ public class NewMeetingController {
 
     private LoadingCache<Integer, DataObject> doCache = DataObjectCache.getLoadingCache();
     private UserServiceImp userService = new UserServiceImp();
+    private Converter converter = new Converter();
     private LoadingServiceImp loadingService = new LoadingServiceImp();
+    private StatisticLogger loggerLog = new StatisticLogger();
+
+    public NewMeetingController() throws IOException {
+    }
+
+    private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
+        ArrayList<DataObject> list = new ArrayList<>();
+        for(Map.Entry<Integer, DataObject> e : map.entrySet()) {
+            list.add(e.getValue());
+        }
+        return list;
+    }
 
     // 1) На подгрузку страницы добавления новой встречи:
     @RequestMapping(value = "/newMeeting", method = RequestMethod.GET)
@@ -148,6 +168,60 @@ public class NewMeetingController {
             check = false;
         }
         response.setText(new Gson().toJson(check));
+        return response;
+    }
+
+    @RequestMapping(value = "/checkPrivacyMeetingForNotification", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Response checkMeetingAJAX(
+            @RequestParam("senderID") Integer senderID,
+            @RequestParam("recieverID") Integer recieverID,
+            @RequestParam("additionalID") Integer additionalID
+    ) throws ParseException, ExecutionException, CustomException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, IOException, MessagingException {
+
+        System.out.println("Отправитель " + senderID);
+        System.out.println("Получатель" + recieverID);
+
+        boolean check = true;
+
+        String flagMeeting = "false";
+        // проверяем, есть ли текущий пользователь в друзьях, чтобы послать приглашение
+        ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(recieverID)));
+        try {
+            Map<Integer, DataObject> map = doCache.getAll(ilFriend);
+            ArrayList<DataObject> list = getListDataObject(map);
+            for (DataObject dataObjectFriend : list) {
+                User userFriend = converter.ToUser(dataObjectFriend);
+                if (Objects.equals(senderID, userFriend.getId())) {
+                    flagMeeting = "true";
+                }
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        Response response = new Response();
+
+        DataObject dataObjectTo = doCache.get(recieverID);
+        User user = converter.ToUser(dataObjectTo);
+        Settings settings = converter.ToSettings(doCache.get(user.getSettingsID()));
+
+        if (("onlyFriend".equals(settings.getPrivateMeetingInvite()) && flagMeeting.equals("true")) || ("any".equals(settings.getPrivateMeetingInvite()))) {
+
+
+
+            if ("true".equals(settings.getEmailMeetingInvite())) {
+                userService.fittingEmail("meetingInvite", senderID, recieverID);
+            }
+            if ("true".equals(settings.getPhoneMeetingInvite())) {
+                // userService.sendSmS("meetingInvite" ,senderID, recieverID);  //отправка смс
+            }
+        } else {
+            check = false;
+        }
+
+        response.setText(new Gson().toJson(check));
+        // Логирвоание:
+        loggerLog.add(Log.SEND_INVITE_MEETING, additionalID, senderID);
         return response;
     }
 

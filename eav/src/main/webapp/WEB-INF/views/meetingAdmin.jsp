@@ -150,7 +150,7 @@
                 </form>
                 <!-- СВЕРХУ НОВОЕ -->
                 <c:if test="${meeting.status eq 'active'}">
-                    <form id="meetingForm" name="addUser" action="/inviteUserAtMeeting${meeting.id}" method="post" style="margin-bottom: 0px;">
+                    <form id="meetingForm" name="addUser"  style="margin-bottom: 0px;">
                         <input type="text" class="hidden" name="userIDs" id="userIDs" value = "userIDs"></input>
                         <div class="form-inline" id="inviteAtMeetingForm">
                             <select class="selectpicker form-control" id="inviteAtMeetingSelectPicker"

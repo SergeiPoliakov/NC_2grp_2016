@@ -602,7 +602,7 @@ public class UserController {
     public @ResponseBody Response checkMeetingAJAX(
             @RequestParam("senderID") Integer senderID,
             @RequestParam("recieverID") Integer recieverID
-            ) throws ParseException, ExecutionException, CustomException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+    ) throws ParseException, ExecutionException, CustomException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
         System.out.println("Отправитель " + senderID);
         System.out.println("Получатель" + recieverID);
@@ -671,13 +671,14 @@ public class UserController {
         return "/info";
     }
 
+    //Удаление уведомления
     @RequestMapping("/declineFriend/{objectId}")
     public String declineFriend(@PathVariable("objectId") Integer objectId,
                                 ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         int idUser = userService.getObjID(userService.getCurrentUsername());
         String message = "Заявка в друзья успешно отклонена";
         m.addAttribute("info", message);
-        loggerLog.add(Log.DECLINE_FRIEND, objectId, idUser); // Удаления пользователя из друзей
+        loggerLog.add(Log.DECLINE_FRIEND, objectId, idUser); // Отказ от добавления в друзья
         return "info";
     }
 
