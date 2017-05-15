@@ -155,9 +155,13 @@
 
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tlmain.css">
 
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/search.css">
+
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/docs.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/header.js"></script>
+
+
 
 
     <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
@@ -180,6 +184,8 @@
     <!--  Для статистик и бокового меню со статистиками: -->
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery.touchSwipe.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/search.js"></script>
 
 
 </head>
@@ -236,21 +242,73 @@
                     </ul>
                 </li>
             </ul>
-            <form action="/searchUser" class="navbar-form navbar-left" role="search" method="post">
+
+
+
+            <div class="form-group navbar-form navbar-left">
                 <div class="form-group">
-                    <select multiple type="text" class="form-control searchBox" name="name" style="width: 30rem;">
-                        <option value="AL">Убрать</option>
-                        <option value="AL2">Или</option>
-                        <option value="AL3">Что</option>
-                    </select>
-                    <!--  <input type="text" class="form-control searchBox" name="name" style="width: 30rem;"> -->
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-success btn-sm">
+                    <input type="text" class="form-control searchBox"  name="query" id="search_box" onkeyup="check()" value="" autocomplete="off" style="width: 30rem;">
+                    <button class="btn btn-success btn-sm" onclick="getFind()">
                         <span class="glyphicon glyphicon-search"></span> Поиск
                     </button>
+                    <div id="search_advice_wrapper"></div>
                 </div>
-            </form>
+
+
+
+                <div class="form-group" style="width: 32rem;">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Настройки поиска</b> <span class="caret"></span></a>
+                    <ul id="search-dp" class="dropdown-menu">
+                        <li>
+                            <div class="form-group">
+                                <label for="object">Что ищем?</label>
+                                <div id="object" class="funkyradio">
+
+                                    <div class="funkyradio-success">
+                                        <input type="radio" name="checkObject" id="checkName" value="name" checked="checked"  >
+                                        <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">Пользователя по имени</label>
+                                    </div>
+
+                                    <div class="funkyradio-success">
+                                        <input type="radio" name="checkObject" id="checkUser" value="user"  >
+                                        <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">Пользователя по интересам (тегам)</label>
+                                    </div>
+
+                                    <div class="funkyradio-success">
+                                        <input type="radio" name="checkObject" id="checkMeeting" value="meeting"  />
+                                        <label class="radio-inline" for="checkMeeting" style="margin-top: 0.5rem;">Встречу по тегам</label>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="logic">Критерий поиска</label>
+                                <div id="logic" class="funkyradio">
+                                    <div class="funkyradio-success">
+                                        <div class="form-group">
+                                        <input type="radio" name="checkLogic" id="checkOR" value="or" checked="checked"  >
+                                        <label class="radio-inline" for="checkOR" style="margin-top: 0.5rem;">OR</label>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <input type="radio" name="checkLogic" id="checkAND" value="and"  />
+                                        <label class="radio-inline" for="checkAND" style="margin-top: 0.5rem;">AND</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                </div>
+            </div>
+
+
+
+
+
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/allUnconfirmedFriends" id="result_text_friend"></a></li> <!-- AJAX "Друзья: 5" -->
                 <li><a href="/allUnreadMessages" id="result_text_message"></a></li> <!-- AJAX "Сообщения: 10" -->
@@ -323,7 +381,7 @@
     </div>
 </div>
 
-
+<!--
 <script type="text/javascript">
     $(".searchBox").select2({
         language: "ru",
@@ -332,6 +390,7 @@
         placeholder: ' Поиск...'
     });
 </script>
+-->
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/notifications.js"></script>
 <%
