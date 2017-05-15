@@ -192,7 +192,11 @@ public class MeetingController {
         }
 
         // Выпиливаются приглашённые друзья
-        ArrayList<User> meetingUsers = meeting.getUsers();
+        // ArrayList<User> meetingUsers = meeting.getUsers();
+        // 2017-05-14 Поправка на логику смены групп пользователем встречи
+        ArrayList<User> meetingUsers = meeting.getInvitedUsers();
+        meetingUsers.addAll(meeting.getMemberUsers());
+        //
         ArrayList<User> organizerFriends = meeting.getOrganizer().getFriends();
         organizerFriends.removeAll(meetingUsers);
         m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
@@ -214,7 +218,8 @@ public class MeetingController {
 
         if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
             return "/meetingAdmin";
-        else if (meeting.getUsers().contains(user)) { // Страницу запрашивает участник встречи
+        // else if (meeting.getUsers().contains(user)) { // Страницу запрашивает участник встречи
+        else if (meeting.getMemberUsers().contains(user)) { // 2017-05-14 Поправка на логику смены групп // Страницу запрашивает участник встречи
             return "/meetingMember";
         } else {
             throw new CustomException("Вы не можете просмотреть эту встречу, так как не являетесь ее участником. Попроситесь или напишите организатору");
@@ -280,7 +285,20 @@ public class MeetingController {
         m.addAttribute("info1", message1);
         m.addAttribute("info2", message2);
         loggerLog.add(Log.DECLINE_INVITE_MEETING, objectId, idUser); // Отказ от приглашения на встречу
-        return "info";
+        
+		// 2017-05-14 Поправка на смену групп пользователя встречи
+        // Получаем встречу:
+        Meeting meeting = new Meeting();
+        try {
+            meeting = new Meeting(doCache.get(objectId));
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        // и переводим текущего юзера в разряд отказавшихся от приглашения
+        User user = userService.getCurrentUser();
+        meeting.addRefusedUsers(user);
+
+		return "info";
     }
 
     @RequestMapping("/declineRequestMeeting/{objectId}")
@@ -292,10 +310,23 @@ public class MeetingController {
         m.addAttribute("info1", message1);
         m.addAttribute("info2", message2);
         loggerLog.add(Log.DECLINE_REQUEST_MEETING, objectId, idUser); // Отказ принять пользователя на встречу
-        return "info";
+        
+		// 2017-05-15 Поправка на смену групп пользователя встречи
+        // Получаем встречу:
+        Meeting meeting = new Meeting();
+        try {
+            meeting = new Meeting(doCache.get(objectId));
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        // и переводим текущего юзера в разряд тех, кому администратор отказал во встрече
+        User user = userService.getCurrentUser();
+        meeting.addDeletedUsers(user);
+
+		return "info";
     }
 
-    // Добавить пользователя на встречу DO, 2017-04-11 добавил создание уведомления о добавлении ко стрече для юзеров
+    // Добавить пользователя на встречу DO, 2017-05-14 поправка на логику смены групп пользователя, 2017-04-11 добавил создание уведомления о добавлении ко встрече для юзеров
     @RequestMapping(value = "/inviteUserAtMeeting/{meetingID}/{userID}")
     public String inviteUserAtMeeting(@PathVariable("userID") Integer userID,
                                       @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException,
@@ -309,25 +340,34 @@ public class MeetingController {
             e.printStackTrace();
         }
        // int idSender = userService.getCurrentUser().getId(); // получаем айди текущего юзера (он создатель встречи и отправитель приглашения на встречу)
-        ArrayList<User> userList = meeting.getUsers();   //исправлено
+        // 2017-05-14 исправлено на логику смены групп
+
+        /* // Старая логика
+         ArrayList<User> userList = meeting.getUsers();   //исправлено
+
 
 
             // Приглашаемый юзер (и он же получатель уведомления)
             User user = new User(doCache.get(userID));
 
-                userList.add(user);  // добавлять нужно, если пользователь примет приглашение на встречу, а не как сейчас. Потом переделаю
+                userList.add(user);  // добавлять нужно, если пользователь примет приглашение на встречу, а не как сейчас. Потом переделаю - ??????
                 //добавляю дубликат
                 meeting.createDuplicate(user.getId());
                 // Формируем уведомление
+        */
+
+        // 2017-05-14 исправлено на логику смены групп
+        // Приглашаемый юзер (и он же получатель уведомления)
+        User user = new User(doCache.get(userID));
+        meeting.addMemberUsers(user);
 
 
+        DataObject dataObject = meeting.toDataObject();
+        loadingService.updateDataObject(dataObject);
+        doCache.invalidate(meetingID);
 
-            DataObject dataObject = meeting.toDataObject();
-            loadingService.updateDataObject(dataObject);
-            doCache.invalidate(meetingID);
 
-
-        meeting.setUsers(userList);
+        // meeting.setUsers(userList);
         int id = loadingService.updateDataObject(meeting.toDataObject());
         doCache.invalidate(meetingID);
 
@@ -336,7 +376,7 @@ public class MeetingController {
         return "redirect:/meeting{meetingID}";
     }
 
-    // Покинуть встречу
+    // Покинуть встречу 2017-05-15 Поправка на логику смены групп пользователя встречи
     @RequestMapping(value = "/leaveMeeting{meetingID}", method = RequestMethod.GET)
     public String leaveMeeting( @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
 
@@ -348,7 +388,7 @@ public class MeetingController {
         }
         DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
         User user = converter.ToUser(dataObject);
-
+/*
         meeting.getUsers().remove(user);
         if (meeting.getOrganizer().equals(user)) {
             meeting.getUsers().remove(user);
@@ -382,7 +422,27 @@ public class MeetingController {
                     loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
                 }
             }
+*/
+        meeting.addExitedUsers(user);
+        if (meeting.getOrganizer().equals(user)) {
+            meeting.setOrganizer(meeting.getMemberUsers().get(0)); // следующий участник становится организатором
+        }
 
+        ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
+
+
+        loadingService.updateDataObject(meeting.toDataObject());
+        doCache.invalidate(meetingID);
+
+        //удаляем дубликаты
+        for (Integer i: ids_duplicates
+                ) {
+            DataObject dataObjectDuplicate = doCache.get(i);
+            if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {
+                System.out.println("Дубликат встречи удален");
+                loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
+            }
+        }
 
         // Логирование:
         loggerLog.add(Log.LEAVED_MEETING, meetingID);
@@ -415,7 +475,7 @@ public class MeetingController {
         return "redirect:/meeting{meetingID}";
     }
 
-    // Редактирование встречи Ajax
+    // Редактирование встречи Ajax // 2017-05-15 Поправка на логику смены групп пользователем встречи
     @RequestMapping(value = "/updateMeetingAJAX{meetingID}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Response inviteUserAtMeetingWithAJAX(
             @PathVariable("meetingID") Integer meetingID,
@@ -451,7 +511,7 @@ public class MeetingController {
         meeting.setInfo(info);
 
         ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
-        ArrayList<User> users = meeting.getUsers();
+        ArrayList<User> users = meeting.getMemberUsers(); // ArrayList<User> users = meeting.getUsers();
 
 
         DataObject dataObject = meeting.toDataObject();

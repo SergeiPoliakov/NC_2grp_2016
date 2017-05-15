@@ -87,7 +87,7 @@ public class NewMeetingController {
                                         @RequestParam("tag") String tag,
                                         @RequestParam("duration") String duration) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         Integer id = new NewMeetingManager().setNewMeeting(title, date_start, date_end, date_edit, info, tag, duration);
-        // И надо организатору добавить копию встречи - событие в расписание // 2017-04-15 А, может, и не надо))
+        // И надо организатору добавить копию встречи - событие в расписание // 2017-04-15 А, может, и не надо)) // 2017-05-14 Но лучше добавить
 
         // добавляю в NewMeetingManager при создании, чтобы не обращаться лишний раз к базе
 
