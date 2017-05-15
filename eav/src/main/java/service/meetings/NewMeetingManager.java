@@ -65,27 +65,15 @@ public class NewMeetingManager {
             meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", String.valueOf(duration), date_edit);
         }
 
-        // 2017-05-14 Теперь ко встрече нужно подвесить организатора и поместить его во все необходимые группы, создав дубликат встречи
-        // 1 Получаем текущего пользователя
-        User user = userService.getCurrentUser();
-        // 2 Подвешиваем юзера к списку участников встречи (там автоматически он добавится и в общий список, и для него создастся дубликат):
-        meeting.addMemberUsers(user);
-
-
-        /* // Старая логика больше не нужна
-
         ArrayList<User> users = new ArrayList<>();
         User user = new User();
         user.setId(meeting.getOrganizer().getId());
         users.add(user);
         meeting.setUsers(users);
 
-
         //добавляю дубликат
         Integer user_id = userService.getCurrentUser().getId();
         meeting.createDuplicate(user_id);
-
-        */
 
         DataObject dataObject = meeting.toDataObject();
         loadingService.setDataObjectToDB(dataObject);

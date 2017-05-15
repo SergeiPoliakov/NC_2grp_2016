@@ -87,7 +87,7 @@ public class NewMeetingController {
                                         @RequestParam("tag") String tag,
                                         @RequestParam("duration") String duration) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         Integer id = new NewMeetingManager().setNewMeeting(title, date_start, date_end, date_edit, info, tag, duration);
-        // И надо организатору добавить копию встречи - событие в расписание // 2017-04-15 А, может, и не надо)) // 2017-05-14 Но лучше добавить
+        // И надо организатору добавить копию встречи - событие в расписание // 2017-04-15 А, может, и не надо))
 
         // добавляю в NewMeetingManager при создании, чтобы не обращаться лишний раз к базе
 
@@ -207,8 +207,6 @@ public class NewMeetingController {
 
         if (("onlyFriend".equals(settings.getPrivateMeetingInvite()) && flagMeeting.equals("true")) || ("any".equals(settings.getPrivateMeetingInvite()))) {
 
-
-
             if ("true".equals(settings.getEmailMeetingInvite())) {
                 userService.fittingEmail("meetingInvite", senderID, recieverID);
             }
@@ -219,9 +217,49 @@ public class NewMeetingController {
             check = false;
         }
 
+        if (check) {
+            Meeting meeting = null;
+            try {
+                meeting = new Meeting(doCache.get(additionalID));
+                meeting.addInvitedUsers(user);
+                loadingService.updateDataObject(meeting.toDataObject());
+                doCache.refresh(meeting.getId());
+                System.out.println("Размер листа пользователей, приглашенных создателем встречи " + meeting.getInvitedUsers().size());
+            } catch (ExecutionException e) {
+                check = false;
+                e.printStackTrace();
+            }
+        }
+
         response.setText(new Gson().toJson(check));
         // Логирвоание:
         loggerLog.add(Log.SEND_INVITE_MEETING, additionalID, senderID);
+        return response;
+    }
+
+    @RequestMapping(value = "/addBeggingUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Response addBeggingUser(
+            @RequestParam("senderID") Integer senderID,
+            @RequestParam("additionalID") Integer additionalID
+    ) throws ParseException, ExecutionException, CustomException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, IOException, MessagingException {
+
+        Response response = new Response();
+        boolean check;
+        DataObject currentUser = loadingService.getDataObjectByIdAlternative(senderID);
+        User user = converter.ToUser(currentUser);
+        Meeting meeting = null;
+        try {
+            meeting = new Meeting(doCache.get(additionalID));
+            meeting.addBeggingUsers(user);
+            loadingService.updateDataObject(meeting.toDataObject());
+            doCache.refresh(meeting.getId());
+            check = true;
+        } catch (ExecutionException e) {
+            check = false;
+            e.printStackTrace();
+        }
+        System.out.println("Размер листа с пользователями желающие принять участие " + meeting.getBeggingUsers().size());
+        response.setText(new Gson().toJson(check));
         return response;
     }
 

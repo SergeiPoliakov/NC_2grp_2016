@@ -614,7 +614,7 @@ public class Meeting extends BaseEntitie {
             this.acceptedUsers.add(beggingUser); // Поскольку намерения создателя встречи и желание прользователя совпали, автоматически причисляем пользователя к заочно принявшим приглашение
             this.memberUsers.add(beggingUser); // И автоматически превращаем его в участника встречи
             // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
-            this.createDuplicate(beggingUser.getId());
+          //  this.createDuplicate(beggingUser.getId());
 
             // и на всякий случай удалем противоречивую информацию, а именно возможность состоять в группах, которые взаимоисключают текущее состояние:
             this.refusedUsers.remove(beggingUser); // Удаляем из отказавшихся
@@ -631,7 +631,7 @@ public class Meeting extends BaseEntitie {
         if (this.exitedUsers.contains(beggingUser)) { // Если он уже висит в покинувших встречу,
             this.memberUsers.add(beggingUser); // Возвращаем его во встречу
             // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
-            this.createDuplicate(beggingUser.getId());
+          //  this.createDuplicate(beggingUser.getId());
             this.exitedUsers.remove(beggingUser); // И удаляем его из покинувших встречу
             return;
         }
@@ -644,7 +644,7 @@ public class Meeting extends BaseEntitie {
         // Если после всех этих проверок добрались сюда, то имеем дело с совершенно новым юзером, просто вещаем его в список запросивших:
         this.beggingUsers.add(beggingUser);
         // А заодно и в общий список всех заинтересованных пользователей
-        this.users.add(beggingUser);
+      //  this.users.add(beggingUser);  если так делать, то как только он появится в этой группе, то он автоматически станет участником, а это неверно
     }
 
     // 2-1 Метод получения группы пользователей, которых создатель встречи пригласил участвовать во встрече
@@ -669,9 +669,10 @@ public class Meeting extends BaseEntitie {
             this.acceptedUsers.add(user); // Поскольку намерения создателя встречи и желание прользователя совпали, автоматически причисляем пользователя к заочно принявшим приглашение
             this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
             // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
-            this.createDuplicate(user.getId());
+          //  this.createDuplicate(user.getId());
 
             // и на всякий случай удалем противоречивую информацию, а именно возможность состоять в группах, которые взаимоисключают текущее состояние:
+            this.beggingUsers.remove(user); // удаляем из отправивших запрос, так как он уже вступил на встречу
             this.refusedUsers.remove(user); // Удаляем из отказавшихся
             this.exitedUsers.remove(user); // Удаляем из покинувших встречу
             this.deletedUsers.remove(user); // Удаляем из удаленных
@@ -704,7 +705,7 @@ public class Meeting extends BaseEntitie {
         // Если после всех этих проверок добрались сюда, то имеем дело с совершенно новым юзером, просто вещаем его в список приглашенных:
         this.invitedUsers.add(user); // Причисляем его к приглашенным
         // А заодно и в общий список всех заинтересованных пользователей
-        this.users.add(user);
+       // this.users.add(user);
 
     }
 
@@ -728,7 +729,7 @@ public class Meeting extends BaseEntitie {
         if (this.acceptedUsers.contains(user)){ // Если он уже висит среди принявших приглашение, делаем его участником
             this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
             // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
-            this.createDuplicate(user.getId());
+          //  this.createDuplicate(user.getId());
             return;
         }
 
@@ -736,7 +737,7 @@ public class Meeting extends BaseEntitie {
             this.acceptedUsers.add(user); // Причисляем к группе принявших приглашение
             this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
             // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
-            this.createDuplicate(user.getId());
+         //   this.createDuplicate(user.getId());
 
             // и на всякий случай удалем противоречивую информацию, а именно возможность состоять в группах, которые взаимоисключают текущее состояние:
             this.refusedUsers.remove(user); // Удаляем из отказавшихся
@@ -745,7 +746,7 @@ public class Meeting extends BaseEntitie {
             return;
         }
 
-        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+       // if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
 
     }
 
@@ -763,17 +764,18 @@ public class Meeting extends BaseEntitie {
     public void addRefusedUsers(User user){
         if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
         if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, то, что он отказался от встречи, уже не играет роли (он опоздал с отказом)
-        if (this.refusedUsers.contains(user)) return; // Если он уже висит в отказавшихся от приглашения, выходим
+       // if (this.refusedUsers.contains(user)) return; // Если он уже висит в отказавшихся от приглашения, выходим
 
         if (this.memberUsers.contains(user)){ // Если он уже висит в участниках,
             this.memberUsers.remove(user); // Удаляем его из участников
-            this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
+         //   this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
             this.refusedUsers.add(user); // и добавляем пользователя к отказавшимся
             return;
         }
 
+        this.invitedUsers.remove(user);  // если пользователь отказывается, то и приглашение сгорает.
         this.refusedUsers.add(user);
-        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+       // if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
 
     }
 
@@ -793,22 +795,22 @@ public class Meeting extends BaseEntitie {
     // 5-3 Метод добавления нового пользователя в группу пользователей, являющихся действующими участниками встречи
     public void addMemberUsers(User user) throws InvocationTargetException, SQLException, IllegalAccessException, ParseException, NoSuchMethodException {
         if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
-        if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, выходим
+        //if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, выходим
         if (this.memberUsers.contains(user)) return; // Если он находится среди участников, выходим
 
-        if (this.refusedUsers.contains(user)) return; // Если он уже висит в отказавшихся от приглашения, выходим
+       // if (this.refusedUsers.contains(user)) return; // Если он уже висит в отказавшихся от приглашения, выходим
 
         if (this.acceptedUsers.contains(user)){ // Если он уже висит среди принявших приглашение, делаем его участником
             this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
             // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
-            this.createDuplicate(user.getId());
+         //   this.createDuplicate(user.getId());
             return;
         }
 
         if (this.beggingUsers.contains(user)){ // Если он уже висит в отправивших запрос,
             this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
             // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
-            this.createDuplicate(user.getId());
+           // this.createDuplicate(user.getId());
 
             // и на всякий случай удалем противоречивую информацию, а именно возможность состоять в группах, которые взаимоисключают текущее состояние:
             this.refusedUsers.remove(user); // Удаляем из отказавшихся
@@ -818,7 +820,7 @@ public class Meeting extends BaseEntitie {
         }
 
         this.memberUsers.add(user);
-        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+        //if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
 
     }
 
@@ -836,19 +838,19 @@ public class Meeting extends BaseEntitie {
     // 6-3 Метод добавления нового пользователя в группу пользователей, покинувших встречу уже после согласия принять участие
     public void addExitedUsers(User user){
         if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
-        if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, выходим
+       // if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, выходим
         if (this.exitedUsers.contains(user)) return; // Если он уже висит в покинувших встречу, выходим
 
         if (this.memberUsers.contains(user)) { // Если он находится среди участников, выходим
             this.memberUsers.remove(user); // Удаляем его из участников
             this.acceptedUsers.remove(user); // Удаляем его из принявших приглашение
-            this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
-            this.refusedUsers.add(user); // и добавляем пользователя к отказавшимся
+//            this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
+            this.exitedUsers.add(user); // и добавляем пользователя к отказавшимся
             return;
         }
 
-        this.refusedUsers.add(user); // и добавляем пользователя к отказавшимся
-        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+        this.exitedUsers.add(user); // и добавляем пользователя к покинувшим встречу по собственному желанию
+       // if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
     }
 
 
@@ -873,12 +875,12 @@ public class Meeting extends BaseEntitie {
         this.acceptedUsers.remove(user);
         this.refusedUsers.remove(user);
         this.memberUsers.remove(user);
-        this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
+       // this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
         this.exitedUsers.remove(user);
         this.deletedUsers.remove(user);
         // И добавляем в заблокированные
         this.blockedUsers.add(user);
-        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+       // if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
     }
 
     // 8-1 Метод получения группы пользователей, удаленных создателем встречи
@@ -894,7 +896,10 @@ public class Meeting extends BaseEntitie {
     // 8-3 Метод добавления нового пользователя в группу пользователей, удаленных создателем встречи
     public void addDeletedUsers(User user) {
         if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
-        if (this.deletedUsers.contains(user)) return; // Если создатель встречи удалил юзера, выходим
+        if (this.deletedUsers.contains(user)) {
+            this.beggingUsers.remove(user);
+            return; // Если создатель встречи удалил юзера, выходим
+        }
 
         // Во всех остальных случаях убираем пользователя из всех групп, кроме блокированных, удаленных и общей группы
         this.beggingUsers.remove(user);
@@ -902,11 +907,13 @@ public class Meeting extends BaseEntitie {
         this.acceptedUsers.remove(user);
         this.refusedUsers.remove(user);
         this.memberUsers.remove(user);
-        this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
+       // if (users.contains(user)) {
+       //     this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
+      //  }
         this.exitedUsers.remove(user);
         // И добавляем в удаленные
         this.deletedUsers.add(user);
-        if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
+        //if (! this.users.contains(user)) this.users.add(user); // Если этого юзера нет среди общего списка, вешаем его туда
 
     }
 }

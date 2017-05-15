@@ -123,7 +123,21 @@
                 });
             }
             if (type === "meetingRequest") {
-                stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+                $.ajax({
+                    url: '/addBeggingUser',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        senderID: gSenderID,
+                        additionalID: meetingID,
+                    },
+                    success: function (data) {
+                        var check = JSON.parse(data.text);
+                        if (check === true) {
+                            stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+                        }
+                    }
+                });
             }
             if (type === "infoFriendAccept") {
                 stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление

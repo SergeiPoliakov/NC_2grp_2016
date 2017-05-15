@@ -192,11 +192,7 @@ public class MeetingController {
         }
 
         // Выпиливаются приглашённые друзья
-        // ArrayList<User> meetingUsers = meeting.getUsers();
-        // 2017-05-14 Поправка на логику смены групп пользователем встречи
-        ArrayList<User> meetingUsers = meeting.getInvitedUsers();
-        meetingUsers.addAll(meeting.getMemberUsers());
-        //
+        ArrayList<User> meetingUsers = meeting.getUsers();
         ArrayList<User> organizerFriends = meeting.getOrganizer().getFriends();
         organizerFriends.removeAll(meetingUsers);
         m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
@@ -218,8 +214,7 @@ public class MeetingController {
 
         if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
             return "/meetingAdmin";
-        // else if (meeting.getUsers().contains(user)) { // Страницу запрашивает участник встречи
-        else if (meeting.getMemberUsers().contains(user)) { // 2017-05-14 Поправка на логику смены групп // Страницу запрашивает участник встречи
+        else if (meeting.getUsers().contains(user)) { // Страницу запрашивает участник встречи
             return "/meetingMember";
         } else {
             throw new CustomException("Вы не можете просмотреть эту встречу, так как не являетесь ее участником. Попроситесь или напишите организатору");
@@ -279,54 +274,61 @@ public class MeetingController {
     @RequestMapping("/declineInviteMeeting/{objectId}")
     public String declineInviteMeeting(@PathVariable("objectId") Integer objectId,
                                 ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
-        int idUser = userService.getObjID(userService.getCurrentUsername());
+        User user = converter.ToUser(loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername())));
+
+        Meeting meeting = null;
+        try {
+            meeting = new Meeting(doCache.get(objectId));
+            meeting.addRefusedUsers(user);
+            loadingService.updateDataObject(meeting.toDataObject());
+            doCache.refresh(meeting.getId());
+            System.out.println("Размер листа пользователей, приглашенных создателем встречи " + meeting.getInvitedUsers().size());
+            System.out.println("Размер листа пользователей, отклонивших приглашение " + meeting.getRefusedUsers().size());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
         String message1 = "Стать участником";
         String message2 = "Приглашение на встречу успешно отклонено";
         m.addAttribute("info1", message1);
         m.addAttribute("info2", message2);
-        loggerLog.add(Log.DECLINE_INVITE_MEETING, objectId, idUser); // Отказ от приглашения на встречу
-        
-		// 2017-05-14 Поправка на смену групп пользователя встречи
-        // Получаем встречу:
-        Meeting meeting = new Meeting();
-        try {
-            meeting = new Meeting(doCache.get(objectId));
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        // и переводим текущего юзера в разряд отказавшихся от приглашения
-        User user = userService.getCurrentUser();
-        meeting.addRefusedUsers(user);
-
-		return "info";
+        loggerLog.add(Log.DECLINE_INVITE_MEETING, objectId, user.getId()); // Отказ от приглашения на встречу
+        return "info";
     }
-
-    @RequestMapping("/declineRequestMeeting/{objectId}")
+    //отклонить запрос пользователя на участие в встрече
+    @RequestMapping("/declineRequestMeeting/{objectId}/{senderID}")
     public String declineRequestMeeting(@PathVariable("objectId") Integer objectId,
-                                ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+                                        @PathVariable("senderID") Integer senderID,
+                                        ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         int idUser = userService.getObjID(userService.getCurrentUsername());
         String message1 = "Принять пользователя";
         String message2 = "Запрос успешно отклонен";
         m.addAttribute("info1", message1);
         m.addAttribute("info2", message2);
-        loggerLog.add(Log.DECLINE_REQUEST_MEETING, objectId, idUser); // Отказ принять пользователя на встречу
-        
-		// 2017-05-15 Поправка на смену групп пользователя встречи
+        loggerLog.add(Log.DECLINE_REQUEST_MEETING, idUser, objectId); // Отказ принять пользователя на встречу
+
+        // 2017-05-15 Поправка на смену групп пользователя встречи
         // Получаем встречу:
-        Meeting meeting = new Meeting();
+        DataObject currentUser = loadingService.getDataObjectByIdAlternative(senderID);
+        User user = converter.ToUser(currentUser);
+        Meeting meeting = null;
         try {
             meeting = new Meeting(doCache.get(objectId));
+            // и переводим юзера в разряд тех, кому администратор отказал во встрече
+            meeting.addDeletedUsers(user);
+            loadingService.updateDataObject(meeting.toDataObject());
+            doCache.refresh(meeting.getId());
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        // и переводим текущего юзера в разряд тех, кому администратор отказал во встрече
-        User user = userService.getCurrentUser();
-        meeting.addDeletedUsers(user);
 
-		return "info";
+        System.out.println("Размер листа с пользователями желающие принять участие " + meeting.getBeggingUsers().size());
+        System.out.println("Размер листа с пользователями удаленные администратором " + meeting.getDeletedUsers().size());
+
+        return "info";
     }
 
-    // Добавить пользователя на встречу DO, 2017-05-14 поправка на логику смены групп пользователя, 2017-04-11 добавил создание уведомления о добавлении ко встрече для юзеров
+    // Добавить пользователя на встречу DO, 2017-04-11 добавил создание уведомления о добавлении ко стрече для юзеров
     @RequestMapping(value = "/inviteUserAtMeeting/{meetingID}/{userID}")
     public String inviteUserAtMeeting(@PathVariable("userID") Integer userID,
                                       @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException,
@@ -340,43 +342,34 @@ public class MeetingController {
             e.printStackTrace();
         }
        // int idSender = userService.getCurrentUser().getId(); // получаем айди текущего юзера (он создатель встречи и отправитель приглашения на встречу)
-        // 2017-05-14 исправлено на логику смены групп
-
-        /* // Старая логика
-         ArrayList<User> userList = meeting.getUsers();   //исправлено
-
+        ArrayList<User> userList = meeting.getUsers();   //исправлено
 
 
             // Приглашаемый юзер (и он же получатель уведомления)
             User user = new User(doCache.get(userID));
-
-                userList.add(user);  // добавлять нужно, если пользователь примет приглашение на встречу, а не как сейчас. Потом переделаю - ??????
+                meeting.addMemberUsers(user);
+                userList.add(user);
                 //добавляю дубликат
                 meeting.createDuplicate(user.getId());
-                // Формируем уведомление
-        */
 
-        // 2017-05-14 исправлено на логику смены групп
-        // Приглашаемый юзер (и он же получатель уведомления)
-        User user = new User(doCache.get(userID));
-        meeting.addMemberUsers(user);
+        meeting.setUsers(userList);
 
 
-        DataObject dataObject = meeting.toDataObject();
-        loadingService.updateDataObject(dataObject);
-        doCache.invalidate(meetingID);
+
+            DataObject dataObject = meeting.toDataObject();
+            loadingService.updateDataObject(dataObject);
+            doCache.invalidate(meetingID);
 
 
-        // meeting.setUsers(userList);
-        int id = loadingService.updateDataObject(meeting.toDataObject());
-        doCache.invalidate(meetingID);
 
-        loggerLog.add(Log.INVITE_MEETING, meetingID, userID); // Принять приглашения на встречу
+
+        System.out.println("Размер листа с участниками " + meeting.getMemberUsers().size());
+        loggerLog.add(Log.INVITE_MEETING, userID, meetingID); // Принять приглашения на встречу
 
         return "redirect:/meeting{meetingID}";
     }
 
-    // Покинуть встречу 2017-05-15 Поправка на логику смены групп пользователя встречи
+    // Покинуть встречу
     @RequestMapping(value = "/leaveMeeting{meetingID}", method = RequestMethod.GET)
     public String leaveMeeting( @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
 
@@ -388,7 +381,10 @@ public class MeetingController {
         }
         DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
         User user = converter.ToUser(dataObject);
-/*
+
+        meeting.addExitedUsers(user);
+        System.out.println("Размер листа с участниками " + meeting.getMemberUsers().size());
+        System.out.println("Размер листа покинувших участников " + meeting.getExitedUsers().size());
         meeting.getUsers().remove(user);
         if (meeting.getOrganizer().equals(user)) {
             meeting.getUsers().remove(user);
@@ -422,27 +418,7 @@ public class MeetingController {
                     loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
                 }
             }
-*/
-        meeting.addExitedUsers(user);
-        if (meeting.getOrganizer().equals(user)) {
-            meeting.setOrganizer(meeting.getMemberUsers().get(0)); // следующий участник становится организатором
-        }
 
-        ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
-
-
-        loadingService.updateDataObject(meeting.toDataObject());
-        doCache.invalidate(meetingID);
-
-        //удаляем дубликаты
-        for (Integer i: ids_duplicates
-                ) {
-            DataObject dataObjectDuplicate = doCache.get(i);
-            if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {
-                System.out.println("Дубликат встречи удален");
-                loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
-            }
-        }
 
         // Логирование:
         loggerLog.add(Log.LEAVED_MEETING, meetingID);
@@ -475,7 +451,7 @@ public class MeetingController {
         return "redirect:/meeting{meetingID}";
     }
 
-    // Редактирование встречи Ajax // 2017-05-15 Поправка на логику смены групп пользователем встречи
+    // Редактирование встречи Ajax
     @RequestMapping(value = "/updateMeetingAJAX{meetingID}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Response inviteUserAtMeetingWithAJAX(
             @PathVariable("meetingID") Integer meetingID,
@@ -511,7 +487,7 @@ public class MeetingController {
         meeting.setInfo(info);
 
         ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
-        ArrayList<User> users = meeting.getMemberUsers(); // ArrayList<User> users = meeting.getUsers();
+        ArrayList<User> users = meeting.getUsers();
 
 
         DataObject dataObject = meeting.toDataObject();
