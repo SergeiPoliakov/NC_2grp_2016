@@ -652,8 +652,10 @@ public class UserController {
             }
         }
         int idUser = userService.getObjID(userService.getCurrentUsername());
-        String message = "Пользователь успешно добавлен в список друзей";
-        m.addAttribute("info", message);
+        String message1 = "Добавление в друзья";
+        String message2 = "Пользователь успешно добавлен в список друзей";
+        m.addAttribute("info1", message1);
+        m.addAttribute("info2", message2);
         
         loggerLog.add(Log.ADD_FRIEND, objectId, idUser); // Добавление пользователя в друзья
         return "info";
@@ -665,8 +667,10 @@ public class UserController {
                                ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         userService.deleteFriend(objectId);
         int idUser = userService.getObjID(userService.getCurrentUsername());
-        String message = "Пользователь успешно удален из списока друзей";
-        m.addAttribute("info", message);
+        String message1 = "Удаление пользователя из друзей";
+        String message2 = "Пользователь успешно удален из списока друзей";
+        m.addAttribute("info1", message1);
+        m.addAttribute("info2", message2);
         loggerLog.add(Log.DEL_FRIEND, objectId, idUser); // Удаления пользователя из друзей
         return "/info";
     }
@@ -676,8 +680,10 @@ public class UserController {
     public String declineFriend(@PathVariable("objectId") Integer objectId,
                                 ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         int idUser = userService.getObjID(userService.getCurrentUsername());
-        String message = "Заявка в друзья успешно отклонена";
-        m.addAttribute("info", message);
+        String message1 = "Отклонение заявки в друзья";
+        String message2 = "Заявка в друзья успешно отклонена";
+        m.addAttribute("info1", message1);
+        m.addAttribute("info2", message2);
         loggerLog.add(Log.DECLINE_FRIEND, objectId, idUser); // Отказ от добавления в друзья
         return "info";
     }

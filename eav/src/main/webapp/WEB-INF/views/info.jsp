@@ -27,9 +27,9 @@
 
 <div class="container">
     <div class="page-header">
-        <h1>Netcracker <small>Добавление в друзья</small></h1>
+        <h1>Netcracker <small>${info1}</small></h1>
     </div>
-    <h2>${info}</h2>
+    <h2>${info2}</h2>
         <ul class="nav nav-pills">
             <li class="active pull-left"><a href="/main-login">Продолжить</a></li>
         </ul>

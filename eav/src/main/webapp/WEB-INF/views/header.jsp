@@ -122,6 +122,12 @@
                     }
                 });
             }
+            if (type === "meetingRequest") {
+                stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+            }
+            if (type === "infoFriendAccept") {
+                stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
+            }
 
         }
     </script>

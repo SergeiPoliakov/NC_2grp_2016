@@ -78,7 +78,7 @@
                                         <h3 class="card-title text-center">${meeting.title}</h3>
                                         <div class="profile-userbuttons">
 
-                                            <c:if test="${status eq 'user' or meeting.organizer eq user}">
+                                            <c:if test="${status eq 'user' or meeting.organizer eq user or meeting.users.contains(user)}">
                                             <a href="/meeting${meeting.id}">
                                                 <button type="button" class="btn btn-info btn-sm"><span
                                                         class="glyphicon glyphicon-user"
@@ -88,7 +88,7 @@
 
                                             <a href="/leaveMeeting${meeting.id}" <c:if
                                                     test="${meeting.users.size() eq 1}"> class="disabled" </c:if> >
-                                            <c:if test="${status eq 'user'}">
+                                            <c:if test="${status eq 'user' or meeting.users.contains(user)}">
                                                 <button type="button" class="btn btn-danger btn-xs" <c:if
                                                         test="${meeting.users.size() eq 1}"> disabled </c:if>  >
                                                     <span class="glyphicon glyphicon-trash"
@@ -97,7 +97,7 @@
                                             </c:if>
                                             </a>
 
-                                            <a href="">
+                                            <a href="" onclick="sendMessage('meetingRequest', ${meeting.organizer.id}, '${meeting.id}', '${meeting.title}')">
                                             <c:if test="${status eq 'guest'}">
                                                 <button type="button" class="btn btn-danger btn-xs">
                                                     <span class="glyphicon glyphicon-trash"

@@ -34,6 +34,7 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
     public static final int EDIT_EVENT =    642; // Редактирование события (ссылка на событие) -- сслылка на объект
     public static final int DEL_EVENT =     643; // Удаление события (ссылка на событие не нужна!)
 
+    public static final int DECLINE_REQUEST_MEETING =   650; // Отказ принять пользователя на встречу
     public static final int ADD_MEETING =   651; // Создание встречи -- сслылка на объект
     public static final int EDIT_MEETING =  652; // Редактирование встречи -- сслылка на объект
     public static final int DEL_MEETING =   653; // Удаление встречи -- сслылка на объект
@@ -42,7 +43,7 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
     public static final int CLOSED_MEETING = 656; // закрытие встречи
     public static final int DELETED_MEETING = 657; // удаление встречи из истории пользователя
     public static final int LEAVED_MEETING = 658; // удаление встречи из истории пользователя
-    public static final int DECLINE_MEETING = 659; // Отказ от приглашения на встречу
+    public static final int DECLINE_INVITE_MEETING = 659; // Отказ от приглашения на встречу
     public static final int INVITE_MEETING = 660; // принять приглашение на встречу
 
     public static final int ADD_CALENDAR =  661; // Подключение календаря -- параметр
@@ -234,6 +235,9 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
             case (DEL_EVENT): // Удаление события (ссылка на событие не нужна!)
                 name = "DEL_EVENT";
                 break;
+            case (DECLINE_REQUEST_MEETING): // Отказ принять пользователя на встречу
+                name = "DECLINE_REQUEST_MEETING";
+                break;
             case (ADD_MEETING): // Создание встречи
                 name = "ADD_MEETING";
                 break;
@@ -258,8 +262,8 @@ public class Log extends BaseEntitie { // тип сущности 1008, диап
             case (LEAVED_MEETING):  // удаление встречи из истории пользователя
                 name = "LEAVED_MEETING";
                 break;
-            case (DECLINE_MEETING):  // удаление встречи из истории пользователя
-                name = "DECLINE_MEETING";
+            case (DECLINE_INVITE_MEETING):  // удаление встречи из истории пользователя
+                name = "DECLINE_INVITE_MEETING";
                 break;
             case (INVITE_MEETING):  // принять приглашение на встречу
                 name = "INVITE_MEETING";

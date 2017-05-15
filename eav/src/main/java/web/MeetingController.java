@@ -270,13 +270,28 @@ public class MeetingController {
         return "redirect:/meetings";
     }  */
 
+   //отклонить приглашение на встречу
     @RequestMapping("/declineInviteMeeting/{objectId}")
-    public String declineFriend(@PathVariable("objectId") Integer objectId,
+    public String declineInviteMeeting(@PathVariable("objectId") Integer objectId,
                                 ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         int idUser = userService.getObjID(userService.getCurrentUsername());
-        String message = "Приглашение на встречу успешно отклонено";
-        m.addAttribute("info", message);
-        loggerLog.add(Log.DECLINE_MEETING, objectId, idUser); // Отказ от приглашения на встречу
+        String message1 = "Стать участником";
+        String message2 = "Приглашение на встречу успешно отклонено";
+        m.addAttribute("info1", message1);
+        m.addAttribute("info2", message2);
+        loggerLog.add(Log.DECLINE_INVITE_MEETING, objectId, idUser); // Отказ от приглашения на встречу
+        return "info";
+    }
+
+    @RequestMapping("/declineRequestMeeting/{objectId}")
+    public String declineRequestMeeting(@PathVariable("objectId") Integer objectId,
+                                ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        String message1 = "Принять пользователя";
+        String message2 = "Запрос успешно отклонен";
+        m.addAttribute("info1", message1);
+        m.addAttribute("info2", message2);
+        loggerLog.add(Log.DECLINE_REQUEST_MEETING, objectId, idUser); // Отказ принять пользователя на встречу
         return "info";
     }
 
