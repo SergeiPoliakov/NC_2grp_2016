@@ -65,14 +65,20 @@ public class NewMeetingManager {
             meeting = new Meeting(title, date_start, date_end, info, userService.getCurrentUser(), worlds, "", String.valueOf(duration), date_edit);
         }
 
+        /*
         ArrayList<User> users = new ArrayList<>();
         User user = new User();
         user.setId(meeting.getOrganizer().getId());
         users.add(user);
         meeting.setUsers(users);
+        */
+
+        User user = userService.getCurrentUser();
+        meeting.addMemberUsers(user);
+        meeting.setOrganizer(user);
 
         //добавляю дубликат
-        Integer user_id = userService.getCurrentUser().getId();
+        Integer user_id = user.getId();
         meeting.createDuplicate(user_id);
 
         DataObject dataObject = meeting.toDataObject();

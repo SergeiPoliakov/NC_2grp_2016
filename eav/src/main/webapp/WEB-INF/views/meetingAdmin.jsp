@@ -78,7 +78,7 @@
     <!-- Информация о встрече -->
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
-            <div class="card">
+            <div class="card" style="background-color: rgb(236, 240, 241);">
                 <h3 class="card-title text-center" id="pTitle">${meeting.title}</h3>
                 <div class="profile-userbuttons">
                     <c:if test="${meeting.status eq 'active'}">
@@ -178,7 +178,7 @@
 
         <!-- ЧАТ -->
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-lg-offset-5">
-            <div class="card" style="background-color: rgb(236, 240, 241);">
+            <div class="card">
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Чат</h3>
                 </div>
@@ -456,7 +456,7 @@
     var groups = new vis.DataSet();
     groups.add([
 
-        <c:forEach items="${meeting.users}" var="user">
+        <c:forEach items="${meeting.memberUsers}" var="user">
         {
             id: ${user.id},
             content: "<a href='/user${user.id}'>${user.name} ${user.middleName} ${user.surname}</a>",
@@ -472,7 +472,7 @@
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
 
-        <c:forEach items="${meeting.users}" var="user">
+        <c:forEach items="${meeting.memberUsers}" var="user">
         <c:forEach items="${user.eventsUser}" var="event">
         {
             id: ${event.id},

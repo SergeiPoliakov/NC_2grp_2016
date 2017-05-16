@@ -476,7 +476,7 @@ public class DBHelp {
                      "        ON ev.OBJECT_ID = pa5.OBJECT_ID AND pa5.ATTR_ID = 305 " +
                      "      LEFT JOIN PARAMS pa6 " +
                      "        ON ev.OBJECT_ID = pa6.OBJECT_ID AND pa6.ATTR_ID = 306 " +
-                     "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 307 ORDER BY ev.OBJECT_ID");) {
+                     "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 318 ORDER BY ev.OBJECT_ID");) {
 
             // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
 
@@ -535,10 +535,10 @@ public class DBHelp {
 
             // 3) Добавление ссылки Встреча - Участники (админ в анном случае):
             Integer idUser = meeting.getOrganizer().getId();
-            int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
+            int referenceAttrId = 318; // Параметр-ссылка, в данном случае - список участников встречи
 
             PS2.setInt(1, meetingID); // ID встречи
-            PS2.setInt(2, referenceAttrId); // ID параметра(307)
+            PS2.setInt(2, referenceAttrId); // ID параметра(318)
             PS2.setInt(3, idUser); // ID организатора
             PS2.executeQuery(); //PS2.executeBatch();
         }
@@ -549,11 +549,11 @@ public class DBHelp {
         try (Connection connection = getConnection();
              PreparedStatement PS2 = connection.prepareStatement("INSERT INTO REFERENCES (OBJECT_ID, ATTR_ID, REFERENCE) VALUES (?,?,?)");) {
 
-            int referenceAttrId = 307; // Параметр-ссылка, в данном случае - список участников встречи
+            int referenceAttrId = 318; // Параметр-ссылка, в данном случае - список участников встречи
 
             for (String userID : userIDs) {
                 PS2.setInt(1, meetingID); // ID встречи
-                PS2.setInt(2, referenceAttrId); // ID параметра(307)
+                PS2.setInt(2, referenceAttrId); // ID параметра(318)
                 PS2.setString(3, userID); // ID пользователя
                 PS2.addBatch();
             }
@@ -586,7 +586,7 @@ public class DBHelp {
                      "        ON ob.OBJECT_ID = re.OBJECT_ID " +
                      "      LEFT JOIN PARAMS pa1 " +
                      "        ON re.REFERENCE = pa1.OBJECT_ID AND pa1.ATTR_ID = 1 " +
-                     "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 307 ORDER BY re.OBJECT_ID");) {
+                     "WHERE ob.OBJECT_ID = ? AND re.ATTR_ID = 318 ORDER BY re.OBJECT_ID");) {
 
             // PreparedStatement PS = Con.prepareStatement("SELECT OBJECT_NAME FROM OBJECTS WHERE OBJECT_TYPE_ID = ?");
 
@@ -1097,26 +1097,26 @@ public class DBHelp {
                 //-- Правильное получение списка айди всех встреч текущего пользователя
                 //SELECT ob.OBJECT_ID FROM OBJECTS ob
 
-                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 318 ";
                 sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
                 sql += "AND ob2.OBJECT_ID = " + userService.getCurrentUser().getId() + " ";
 
                 /*
-                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 318 ";
                 sql += "JOIN PARAMS pa ON re.REFERENCE = pa.OBJECT_ID AND pa.ATTR_ID = 4 ";
                 sql += "WHERE ob.OBJECT_TYPE_ID =  " + MEETING + " ";
                 sql += "AND pa.VALUE = " + "'" + userService.getCurrentUsername() + "'" + " ";
                 */
             } else if (params.get(MeetingFilter.FOR_USER_WITH_NAME) != null) { // если надо получить ID всех встреч пользователя по его имени,
                 ArrayList<String> user_name = params.get(MeetingFilter.FOR_USER_WITH_NAME);
-                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 318 ";
                 sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
                 sql += "AND ob2.OBJECT_NAME = " + user_name.get(0) + " ";
             } else if (params.get(MeetingFilter.FOR_USER_WITH_ID) != null) { // если надо получить ID всех встреч пользователя по его ID,
                 ArrayList<String> user_id = params.get(MeetingFilter.FOR_USER_WITH_ID);
-                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 318 ";
                 sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
                 sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
                 sql += "AND ob2.OBJECT_ID = " + user_id.get(0) + " ";
@@ -1126,7 +1126,7 @@ public class DBHelp {
                 sql = "SELECT * FROM (";
                 for (i = 0; i < user_names.size(); i++) {
                     sql += "(SELECT ob.OBJECT_ID FROM OBJECTS ob ";
-                    sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                    sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 318 ";
                     sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
                     sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
                     sql += "AND ob2.OBJECT_NAME = " + user_names.get(i) + ") ";
@@ -1141,7 +1141,7 @@ public class DBHelp {
                 sql = "SELECT * FROM (";
                 for (i = 0; i < user_ids.size(); i++) {
                     sql += "(SELECT ob.OBJECT_ID FROM OBJECTS ob ";
-                    sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 307 ";
+                    sql += "JOIN REFERENCES re ON ob.OBJECT_ID = re.OBJECT_ID AND re.ATTR_ID = 318 ";
                     sql += "JOIN OBJECTS ob2 ON ob2.OBJECT_ID = re.REFERENCE ";
                     sql += "WHERE ob.OBJECT_TYPE_ID = " + MEETING + " ";
                     sql += "AND ob2.OBJECT_ID = " + user_ids.get(i) + ") ";
@@ -2166,7 +2166,7 @@ public class DBHelp {
                 // Для основных фильтров:
                 if (params.get(MeetingPartition.FULL) != null) { // если надо получить объекты целиком,
                     sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
-                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 AND ATTR_ID != 307) " +
+                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 AND ATTR_ID != 318) " +
                             "UNION (SELECT ATTR_ID, CAST(REFERENCE AS VARCHAR(70)), 1, OBJECT_ID FROM REFERENCES WHERE OBJECT_ID " + set + ")) ORDER BY OBJECT_ID, KEY";
                     System.out.println("Формирую запрос " + sql);
                 } else if (params.get(MeetingPartition.LITE) != null) { // если надо получить только заголовки для объектов (айди, имя, тип),
@@ -2174,7 +2174,7 @@ public class DBHelp {
                     System.out.println("Формирую запрос " + sql);
                 } else if (params.get(MeetingPartition.WITH_ALL_PARAMS) != null) { // если надо получить объекты только с заголовком и всеми параметрами,
                     sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
-                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 AND ATTR_ID != 307) ";
+                            "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 AND ATTR_ID != 318) ";
                     sql += ") ";
                     System.out.println("Формирую запрос " + sql);
                 } else if (params.get(MeetingPartition.WITH_ALL_REFERENCES) != null) { // если надо получить объекты только с заголовком и всеми ссылками,
@@ -2214,7 +2214,7 @@ public class DBHelp {
                     // и дописываем запрос
                     if (setParams.length() > "IN (0)".length()) { // Если положили хоть один параметр, то ставим условие в запрос
                         sql += "UNION (SELECT ATTR_ID, listagg(VALUE, '~') WITHIN GROUP(ORDER BY pa.ATTR_ID) over(PARTITION BY VALUE) AS VALUE_LIST, 0, OBJECT_ID FROM PARAMS pa " +
-                                "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 AND ATTR_ID != 307 ";
+                                "WHERE OBJECT_ID " + set + " AND ATTR_ID != 12 AND ATTR_ID != 13 AND ATTR_ID != 318 ";
                         sql += "AND ATTR_ID " + setParams + ")";
                     }
 
@@ -2224,7 +2224,7 @@ public class DBHelp {
                     // И проверяем аргумента параметра-ссылки фильтра
                     ArrayList<String> members = params.get(MeetingPartition.MEMBERS);
                     if (members != null) {
-                        setReferences += "307, ";
+                        setReferences += "318, ";
                     }
                     setReferences += "0)"; //  в конце дописываем форматирующий ноль, чтобы не получилось ", )", а получилось ", 0)"
                     // и дописываем запрос

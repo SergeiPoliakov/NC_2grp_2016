@@ -233,7 +233,7 @@
                     <ul class="dropdown-menu" role="menu">
                         <li ><a href="/allEvent">Список событий</a></li>
                         <li ><a href="/userOptimizerProblem">Требующие внимания</a></li>
-                        <li ><a href="/allUser">Все пользователи</a></li>
+                      <!--  <li ><a href="/allUser">Все пользователи</a></li>  -->
                         <li ><a href="/statistics">Статистика</a></li>
                     </ul>
                 </li>
@@ -243,13 +243,7 @@
 
             <div class="form-group navbar-form navbar-left">
                 <div class="form-group">
-
-                    <select multiple type="text" class="form-control searchBox" name="name" style="width: 30rem;">
-                        <option value="AL">Убрать</option>
-                        <option value="AL2">Или</option>
-                        <option value="AL3">Что</option>
-                    </select>
-
+                    <input type="text" class="form-control searchBox"  name="query" id="search_box" onkeyup="check()" value="" autocomplete="off" style="width: 30rem;">
                     <button class="btn btn-success btn-sm" onclick="getFind()">
                         <span class="glyphicon glyphicon-search"></span> Поиск
                     </button>
@@ -383,36 +377,16 @@
     </div>
 </div>
 
-
+<!--
 <script type="text/javascript">
     $(".searchBox").select2({
-        ajax: {
-            url: "/getTags",
-            type: 'POST',
-            dataType: 'json',
-            contentType: "application/json",
-            mimeType: 'application/json',
-            data: JSON.stringify({
-            type: 'name',       // name | user | meeting
-            operation: 'or',   // and | or
-            text: 'кисе'
-            }),
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            }
-        },
-        minimumInputLength: 3,
         language: "ru",
         tags: true,
         tokenSeparators: [',', ' '],
         placeholder: ' Поиск...'
     });
-
-
 </script>
-
+-->
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/notifications.js"></script>
 <%
