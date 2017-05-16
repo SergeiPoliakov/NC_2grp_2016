@@ -109,7 +109,7 @@ public class NewMeetingController {
         String userName = userService.getCurrentUsername(); // Получаем имя текущего юзера
         Meeting meeting = new Meeting(doCache.get(idMeeting));
 
-        ArrayList<User> userList = meeting.getUsers(); // Обходим всех участников встречи, кроме текущего юзера, и отправляем им уведомление о том, что данный пользователь присоединился к встрече:
+        ArrayList<User> userList = meeting.getMemberUsers(); // Обходим всех участников встречи, кроме текущего юзера, и отправляем им уведомление о том, что данный пользователь присоединился к встрече:
 
 
         for (User user : userList) {
@@ -143,9 +143,20 @@ public class NewMeetingController {
 
     // 5) Обработка нажатия кнопки Отказаться от встречи в окне уведомления приглашения на встречу НАДО ДОДЕЛАТЬ!
     @RequestMapping(value = "/refuseNewMeeting", method = RequestMethod.POST)
-    public String refuseNewMeeting(@RequestParam("meeting_id") String meeting_id) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
+    public String refuseNewMeeting(@RequestParam("meeting_id") Integer meeting_id) throws SQLException, InvocationTargetException, NoSuchMethodException, ParseException, IllegalAccessException, ExecutionException {
         // Нужно удалить уведомление у текущего пользователя (из памяти и из базы),
         // затем создать уведомление для администратора о том, что данный пользователь отказался принять участие в встрече,
+
+        Meeting meeting = new Meeting(doCache.get(meeting_id));
+        User user = userService.getCurrentUser(); // получаем текущего юзера (покидающего встречу)
+
+        meeting.addExitedUsers(user); // Переносим в группу ппокинувших встречу
+        meeting.deleteDuplicate(user.getId()); // И удаляем дубликат
+
+        loadingService.updateDataObject(meeting.toDataObject());
+        doCache.invalidate(meeting_id);
+
+        // тут, может, еще что-то нужно?? Удалить из кеша дубликат??
 
         return "redirect:/meetings";
     }

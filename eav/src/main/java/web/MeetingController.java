@@ -68,7 +68,7 @@ public class MeetingController {
 
     private ArrayList<DataObject> getListDataObject(Map<Integer, DataObject> map) {
         ArrayList<DataObject> list = new ArrayList<>();
-        for(Map.Entry<Integer, DataObject> e : map.entrySet()) {
+        for (Map.Entry<Integer, DataObject> e : map.entrySet()) {
             list.add(e.getValue());
         }
         return list;
@@ -76,7 +76,7 @@ public class MeetingController {
 
     @RequestMapping(value = "/viewMeeting/{meetingID}", method = RequestMethod.GET)
     public String getMeetingPage(@PathVariable("meetingID") Integer meetingID,
-                              ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+                                 ModelMap m) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         ArrayList<Meeting> meetingArrayList = new ArrayList<>();
         DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
         User user = converter.ToUser(currentUser);
@@ -88,7 +88,7 @@ public class MeetingController {
         }
         meetingArrayList.add(meeting);
         String status = "guest";
-        if (meeting.getUsers().contains(user)) {
+        if (meeting.getMemberUsers().contains(user)) {
             status = "user";
         }
         m.addAttribute("status", status);
@@ -183,7 +183,7 @@ public class MeetingController {
 
     // Просмотр встречи DO
     @RequestMapping(value = "/meeting{meetingID}", method = RequestMethod.GET)
-    public String getMeetingPage( ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException, ParseException, CustomException {
+    public String getMeetingPage(ModelMap m, @PathVariable("meetingID") Integer meetingID) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ExecutionException, ParseException, CustomException {
         Meeting meeting = new Meeting();
         try {
             meeting = new Meeting(doCache.get(meetingID));
@@ -192,7 +192,7 @@ public class MeetingController {
         }
 
         // Выпиливаются приглашённые друзья
-        ArrayList<User> meetingUsers = meeting.getUsers();
+        ArrayList<User> meetingUsers = meeting.getMemberUsers();
         ArrayList<User> organizerFriends = meeting.getOrganizer().getFriends();
         organizerFriends.removeAll(meetingUsers);
         m.addAttribute("meeting", meeting); // Добавление информации о событии на страницу
@@ -205,8 +205,8 @@ public class MeetingController {
         User user = converter.ToUser(dataObject);
 
         ArrayList<Integer> listIds = new ArrayList<>();
-        for (User user_id: meetingUsers
-             ) {
+        for (User user_id : meetingUsers
+                ) {
             listIds.add(user_id.getId());
         }
         m.addAttribute("ids", listIds);
@@ -214,7 +214,7 @@ public class MeetingController {
 
         if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
             return "/meetingAdmin";
-        else if (meeting.getUsers().contains(user)) { // Страницу запрашивает участник встречи
+        else if (meeting.getMemberUsers().contains(user)) { // Страницу запрашивает участник встречи
             return "/meetingMember";
         } else {
             throw new CustomException("Вы не можете просмотреть эту встречу, так как не являетесь ее участником. Попроситесь или напишите организатору");
@@ -270,10 +270,10 @@ public class MeetingController {
         return "redirect:/meetings";
     }  */
 
-   //отклонить приглашение на встречу
+    //отклонить приглашение на встречу
     @RequestMapping("/declineInviteMeeting/{objectId}")
     public String declineInviteMeeting(@PathVariable("objectId") Integer objectId,
-                                ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
+                                       ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException {
         User user = converter.ToUser(loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername())));
 
         Meeting meeting = null;
@@ -295,6 +295,7 @@ public class MeetingController {
         loggerLog.add(Log.DECLINE_INVITE_MEETING, objectId, user.getId()); // Отказ от приглашения на встречу
         return "info";
     }
+
     //отклонить запрос пользователя на участие в встрече
     @RequestMapping("/declineRequestMeeting/{objectId}/{senderID}")
     public String declineRequestMeeting(@PathVariable("objectId") Integer objectId,
@@ -328,7 +329,7 @@ public class MeetingController {
         return "info";
     }
 
-    // Добавить пользователя на встречу DO, 2017-04-11 добавил создание уведомления о добавлении ко стрече для юзеров
+    // Добавить пользователя на встречу DO, 2017-04-11 добавил создание уведомления о добавлении ко встрече для юзеров
     @RequestMapping(value = "/inviteUserAtMeeting/{meetingID}/{userID}")
     public String inviteUserAtMeeting(@PathVariable("userID") Integer userID,
                                       @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException,
@@ -341,26 +342,23 @@ public class MeetingController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-       // int idSender = userService.getCurrentUser().getId(); // получаем айди текущего юзера (он создатель встречи и отправитель приглашения на встречу)
-        ArrayList<User> userList = meeting.getUsers();   //исправлено
+        // int idSender = userService.getCurrentUser().getId(); // получаем айди текущего юзера (он создатель встречи и отправитель приглашения на встречу)
+        ArrayList<User> userList = meeting.getInvitedUsers();   //исправлено
 
 
-            // Приглашаемый юзер (и он же получатель уведомления)
-            User user = new User(doCache.get(userID));
-                meeting.addMemberUsers(user);
-                userList.add(user);
-                //добавляю дубликат
-                meeting.createDuplicate(user.getId());
+        // Приглашаемый юзер (и он же получатель уведомления)
+        User user = new User(doCache.get(userID));
+        meeting.addInvitedUsers(user);
+        userList.add(user);
+        //добавляю дубликат
+        meeting.createDuplicate(user.getId());
 
-        meeting.setUsers(userList);
-
-
-
-            DataObject dataObject = meeting.toDataObject();
-            loadingService.updateDataObject(dataObject);
-            doCache.invalidate(meetingID);
+        // meeting.setUsers(userList); // Ну нежно, он автоматически ляжет там, когда пройдет addInvitedUsers()
 
 
+        DataObject dataObject = meeting.toDataObject();
+        loadingService.updateDataObject(dataObject);
+        doCache.invalidate(meetingID);
 
 
         System.out.println("Размер листа с участниками " + meeting.getMemberUsers().size());
@@ -371,7 +369,7 @@ public class MeetingController {
 
     // Покинуть встречу
     @RequestMapping(value = "/leaveMeeting{meetingID}", method = RequestMethod.GET)
-    public String leaveMeeting( @PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
+    public String leaveMeeting(@PathVariable("meetingID") Integer meetingID) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
 
         Meeting meeting = new Meeting();
         try {
@@ -382,42 +380,46 @@ public class MeetingController {
         DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
         User user = converter.ToUser(dataObject);
 
-        meeting.addExitedUsers(user);
+        meeting.addExitedUsers(user); // Отправляем в группу покинувших встречу
         System.out.println("Размер листа с участниками " + meeting.getMemberUsers().size());
         System.out.println("Размер листа покинувших участников " + meeting.getExitedUsers().size());
-        meeting.getUsers().remove(user);
+
+
+        // meeting.getUsers().remove(user);
+
         if (meeting.getOrganizer().equals(user)) {
-            meeting.getUsers().remove(user);
-            meeting.setOrganizer(meeting.getUsers().get(0)); // следующий участник становится организатором
-        } else meeting.getUsers().remove(user);
+            // meeting.getUsers().remove(user);
 
-            ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
+            meeting.setOrganizer(meeting.getMemberUsers().get(0)); // следующий участник становится организатором // А если всего один участник был? Тогда встречу надо закрыть? Удалить??
+        } // else meeting.getUsers().remove(user);
 
-            for (Integer i: ids_duplicates
-                    ) {
-                DataObject dataObjectDuplicate = doCache.get(i);
-                if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {  //если это наш дубликат
+        ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
 
-                    //удаляем юзера из встречи
+        for (Integer i : ids_duplicates
+                ) {
+            DataObject dataObjectDuplicate = doCache.get(i);
+            if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {  //если это наш дубликат
+
+                //удаляем юзера из встречи
 
 
-                    //удаляем ссылку на дубликат из встречи
-                    meeting.getDuplicates().remove(dataObjectDuplicate);
-                }
+                //удаляем ссылку на дубликат из встречи
+                meeting.getDuplicates().remove(dataObjectDuplicate);
             }
+        }
 
-            loadingService.updateDataObject(meeting.toDataObject());
-            doCache.invalidate(meetingID);
+        loadingService.updateDataObject(meeting.toDataObject());
+        doCache.invalidate(meetingID);
 
-            //удаляем дубликаты
-            for (Integer i: ids_duplicates
-                    ) {
-                DataObject dataObjectDuplicate = doCache.get(i);
-                if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {
-                    System.out.println("Дубликат встречи удален");
-                    loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
-                }
+        //удаляем дубликаты
+        for (Integer i : ids_duplicates
+                ) {
+            DataObject dataObjectDuplicate = doCache.get(i);
+            if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {
+                System.out.println("Дубликат встречи удален");
+                loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
             }
+        }
 
 
         // Логирование:
@@ -453,7 +455,9 @@ public class MeetingController {
 
     // Редактирование встречи Ajax
     @RequestMapping(value = "/updateMeetingAJAX{meetingID}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Response inviteUserAtMeetingWithAJAX(
+    public
+    @ResponseBody
+    Response inviteUserAtMeetingWithAJAX(
             @PathVariable("meetingID") Integer meetingID,
             @RequestParam("title") String title,
             @RequestParam("tag") StringBuilder tag,
@@ -487,16 +491,16 @@ public class MeetingController {
         meeting.setInfo(info);
 
         ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
-        ArrayList<User> users = meeting.getUsers();
+        ArrayList<User> users = meeting.getMemberUsers();
 
 
         DataObject dataObject = meeting.toDataObject();
         loadingService.updateDataObject(dataObject);
         doCache.refresh(meetingID);
 
-        for (User user: users
+        for (User user : users
                 ) {
-            for (Integer i: ids_duplicates
+            for (Integer i : ids_duplicates
                     ) {
                 DataObject dataObjectDuplicate = doCache.get(i);
                 if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {
@@ -506,14 +510,14 @@ public class MeetingController {
         }
 
         //удаляем ссылки на дубликаты
-        for (Integer i: ids_duplicates
+        for (Integer i : ids_duplicates
                 ) {
             DataObject dataObjectDuplicate = doCache.get(i);
             meeting.getDuplicates().remove(dataObjectDuplicate);
             doCache.invalidate(i);
         }
 
-        for (User user: users
+        for (User user : users
                 ) {
             meeting.createDuplicate(user.getId());
 
@@ -555,9 +559,9 @@ public class MeetingController {
         Meeting meeting = new Meeting(dataObject);
         meeting.setStatus("closed");
 
-       //удаляю ссылки на дубликаты из встречи
+        //удаляю ссылки на дубликаты из встречи
         ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
-        for (Integer i: ids_duplicates
+        for (Integer i : ids_duplicates
                 ) {
             DataObject dataObjectDuplicate = doCache.get(i);
             meeting.getDuplicates().remove(dataObjectDuplicate);
@@ -568,7 +572,7 @@ public class MeetingController {
         doCache.invalidate(meetingID);
 
         //удаляем дубликаты
-        for (Integer i: ids_duplicates
+        for (Integer i : ids_duplicates
                 ) {
             DataObject dataObjectDuplicate = doCache.get(i);
             System.out.println("Дубликат встречи удален");
