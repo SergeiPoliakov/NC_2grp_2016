@@ -53,7 +53,7 @@
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
             <div class="card">
-                <h4 class="card-title text-center">${user.name} ${user.surname} ${user.middleName}</h4>
+                <h4 class="card-title text-center">${user.surname} ${user.name} ${user.middleName}</h4>
                 <div class="card-title text-center">
                     <small class=" text-muted"><span
                             class="glyphicon glyphicon-user"></span> ${user.login} </small>

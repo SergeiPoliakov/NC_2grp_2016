@@ -127,9 +127,9 @@ function key_activate(n) {
     }
 }
 
-function getFind() {
-    input_initial_value = $("#search_box").val();
-    document.getElementById("search_box").value = '';
+function getFind(searchText) {
+    searchText = $("#searchInput option:selected").text();
+    input_initial_value = searchText;
 
     $.ajax({
         url: "/getFind",
@@ -147,7 +147,7 @@ function getFind() {
         }
     });
 
-    var delay = 1000;
+    var delay = 1;
     // и с задержкой переходим на страницу с результатами
 
     if ($('input[name="checkObject"]:checked').val() == "meeting") {

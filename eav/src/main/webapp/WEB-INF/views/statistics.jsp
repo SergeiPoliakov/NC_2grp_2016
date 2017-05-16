@@ -16,7 +16,7 @@
 
 <html lang="en">
 <head>
-    <title>Статистики :: тестовая версия</title>
+    <title>Статистика</title>
     <%@include file='header.jsp'%>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="resources\css\bootstrap.min.css">

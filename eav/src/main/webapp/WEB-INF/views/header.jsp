@@ -241,29 +241,25 @@
 
 
 
-            <div class="form-group navbar-form navbar-left">
+            <div class="form-group navbar-form navbar-left" style="padding-top: 0.6rem;">
                 <div class="form-group">
 
-                    <select multiple type="text" class="form-control searchBox" name="name" style="width: 30rem;">
-                        <option value="AL">Убрать</option>
-                        <option value="AL2">Или</option>
-                        <option value="AL3">Что</option>
+                    <select multiple type="text" class="form-control searchBox" name="name" id="searchInput" style="width: 30rem!important; overflow-y: auto !important;">
                     </select>
 
-                    <button class="btn btn-success btn-sm" onclick="getFind()">
+                    <button class="btn btn-success btn-sm" onclick="getFind(searchText)">
                         <span class="glyphicon glyphicon-search"></span> Поиск
                     </button>
-                    <div id="search_advice_wrapper"></div>
                 </div>
 
 
 
-                <div class="form-group" style="width: 32rem;">
-                <li class="dropdown">
+                <div class="form-group" style="width: 28.7rem;">
+                <div class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Настройки поиска</b> <span class="caret"></span></a>
                     <ul id="search-dp" class="dropdown-menu">
-                        <li>
-                            <div class="form-group">
+                        <div>
+                            <div class="form-group" style="padding-left: 1rem;padding-right: 1rem;padding-top: 1rem;">
                                 <label for="object">Что ищем?</label>
                                 <div id="object" class="funkyradio">
 
@@ -274,7 +270,7 @@
 
                                     <div class="funkyradio-success">
                                         <input type="radio" name="checkObject" id="checkUser" value="user"  >
-                                        <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">Пользователя по интересам (тегам)</label>
+                                        <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">Пользователя по интересам</label>
                                     </div>
 
                                     <div class="funkyradio-success">
@@ -284,26 +280,25 @@
 
                                 </div>
                             </div>
-
-                            <div class="form-group">
+                            <div class="form-group" style="padding-left: 1rem;padding-right: 1rem;padding-bottom: 1rem;padding-top: 1rem;">
                                 <label for="logic">Критерий поиска</label>
                                 <div id="logic" class="funkyradio">
                                     <div class="funkyradio-success">
-                                        <div class="form-group">
-                                        <input type="radio" name="checkLogic" id="checkOR" value="or" checked="checked"  >
-                                        <label class="radio-inline" for="checkOR" style="margin-top: 0.5rem;">OR</label>
+                                        <div class="form-group" style="padding-right: 3rem;">
+                                            <input type="radio" name="checkLogic" id="checkOR" value="or" checked="checked"  >
+                                            <label class="radio-inline" for="checkOR" style="margin-top: 0.5rem;padding-right: 2rem;">OR</label>
                                         </div>
 
                                         <div class="form-group">
-                                        <input type="radio" name="checkLogic" id="checkAND" value="and"  />
-                                        <label class="radio-inline" for="checkAND" style="margin-top: 0.5rem;">AND</label>
+                                            <input type="radio" name="checkLogic" id="checkAND" value="and"  />
+                                            <label class="radio-inline" for="checkAND" style="margin-top: 0.5rem;padding-right: 1rem;">AND</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </li>
+                        </div>
                     </ul>
-                </li>
+                </div>
                 </div>
             </div>
 
@@ -385,6 +380,7 @@
 
 
 <script type="text/javascript">
+    var searchText = "";
     $(".searchBox").select2({
         ajax: {
             url: "/getTags",
@@ -392,27 +388,47 @@
             dataType: 'json',
             contentType: "application/json",
             mimeType: 'application/json',
-            data: JSON.stringify({
-            type: 'name',       // name | user | meeting
-            operation: 'or',   // and | or
-            text: 'кисе'
-            }),
+            cache: true,
+            data: function (params) {
+                var type = $('input[name="checkObject"]:checked').val();
+                var operation = $('input[name="checkLogic"]:checked').val();
+                var retval = JSON.stringify({
+                    type: type,       // name | user | meeting
+                    operation: operation,   // and | or
+                    text: params.term
+                });
+                searchText = params.term;
+                return retval;
+            },
             processResults: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    data[i].id = data[i].text;
+                    data[i].text += " ";
+                }
                 return {
                     results: data
                 };
             }
         },
-        minimumInputLength: 3,
-        language: "ru",
+        createTag: function (params) {
+            var term = $.trim(params.term);
+            if (term === '') {
+                return null;
+            }
+            term += " ";
+            return {
+                id: term,
+                text: term,
+            }
+        },
         tags: true,
         tokenSeparators: [',', ' '],
+        minimumInputLength: 1,
+        language: "ru",
         placeholder: ' Поиск...'
     });
 
-
 </script>
-
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/notifications.js"></script>
 <%
