@@ -23,7 +23,9 @@ public class NameTreeManager {
         // 1 Новое уточнение: каждое имя пытаться достраивать до полного:
         ArrayList<String> names = new ArrayList<>();
         for(int i = 0; i < names2.size(); i++){
-            names.addAll(getNameListForUser(names2.get(i)));
+            ArrayList<String> find_names = getNameListForUser(names2.get(i));
+            if (find_names != null && find_names.size()>0)
+            names.addAll(find_names);
         }
 
         ArrayList<User> userList = new ArrayList<>();

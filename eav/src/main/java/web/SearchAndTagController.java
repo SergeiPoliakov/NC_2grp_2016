@@ -66,7 +66,7 @@ public class SearchAndTagController {
         return "search";
     }
 
-    // 2017-03-30 На запрос по тегу и поиск тега
+    // 2017-03-30 На запрос по тегу и поиск тега (предварительный поиск)
     @RequestMapping(value = "/getTags", method = RequestMethod.POST, headers = {"Content-type=application/json"})
     @ResponseBody
     public ArrayList<FinderTagResponse> getTags(@RequestBody FinderTagRequest finder) throws SQLException {
@@ -74,8 +74,9 @@ public class SearchAndTagController {
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.FIND_TAG, finder.getText(), idUser); // Поиск тегов (запишем поисковую строку)
         // Запускаем логику обработки запроса и выбора подходящих тегов:
-        ArrayList<FinderTagResponse> retv = FinderLogic.getWithLogic(finder);
-        return retv;
+
+        if (finder.getType().equals("name")) finder.setType("pre_name"); // чтобы в методе FinderLogic.getWithLogic(finder) различать предварительный и окончательный поиск
+        return FinderLogic.getWithLogic(finder);
     }
 
 
@@ -130,11 +131,11 @@ public class SearchAndTagController {
     @RequestMapping(value = "/getFind", method = RequestMethod.POST, headers = {"Content-type=application/json"})
     public String getFind(@RequestBody FinderTagRequest finder,
                           HttpServletRequest request) throws SQLException {
-        // А тут к нам пришли все нужные параметры, которые достаем и можем испольовать для логики поиска, а потмо подготовить список и отдать на какую-то сраницу
+        // А тут к нам пришли все нужные параметры, которые достаем и можем использовать для логики поиска, а потом подготовить список и отдать на какую-то сраницу
         // Логирование
         int idUser = userService.getObjID(userService.getCurrentUsername());
 
-        if (finder.getType().equals("name")) finder.setType("user");
+        // if (finder.getType().equals("name")) finder.setType("user");
 
         if (finder.getType().equals("user")){
             loggerLog.add(Log.FIND_USER, finder.getText(), idUser); // Поиск юзера (запишем строку с именем из поиска)
