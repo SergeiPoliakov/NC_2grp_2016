@@ -231,7 +231,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/searchUser", method = RequestMethod.GET)
-    public String searchUser(HttpServletRequest request, Map<String, Object> mapObjects, ModelMap m) throws CustomException, SQLException {
+    public String searchUser(HttpServletRequest request, Map<String, Object> mapObjects) throws CustomException, SQLException, ExecutionException {
 
         HttpSession session = request.getSession();
         if (session.getAttribute("finder") != null) {
@@ -275,16 +275,41 @@ public class UserController {
                     mapObjects.put("allUsers", users);
                     DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
                     User currentUser = converter.ToUser(dataObject);
-                    m.addAttribute("currentUser", currentUser);
+                    mapObjects.put("currentUser", currentUser);
                     session.removeAttribute("finder");
 
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
+            } else if ("name".equals(finder.getType())) {
+                ArrayList<User> users = new ArrayList<>();
+                ArrayList<Integer> userIds = new ArrayList<>();
+
+                ArrayList<FinderTagResponse> finderTagResponseList = FinderLogic.getWithLogic(finder);
+
+                for (FinderTagResponse ftr : finderTagResponseList){
+                    userIds.add(ftr.getId());
+                }
+
+                if (userIds.size() > 0){
+                    Map<Integer, DataObject> map = doCache.getAll(userIds);
+                    ArrayList<DataObject> list = getListDataObject(map);
+                    for (DataObject dataObject : list) {
+                        User user = converter.ToUser(dataObject);
+                        users.add(user);
+                    }
+                }
+
+                mapObjects.put("allUsers", users);
+                DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+                User currentUser = converter.ToUser(dataObject);
+                mapObjects.put("currentUser", currentUser);
+                session.removeAttribute("finder");
+
+                }
             } else {
                 throw new CustomException("Неизвестная ошибка!");
             }
-        }
         return "/searchUser";
     }
 

@@ -16,7 +16,8 @@ public class FinderLogic {
 
     public static ArrayList<FinderTagResponse> getWithLogic(FinderTagRequest finder) {
 
-        if (finder.getType().equals("name")) return preFindUser(finder); // работаем с юзерами, загружаем список юзеров из дерева имен
+        if (finder.getType().equals("pre_name")) return preFindUser(finder); // работаем с юзерами, запускаем предварительный поиск
+        if (finder.getType().equals("name")) return FindUser(finder); // работаем с юзерами, запускаем окончательный поиск
 
         // Пропускаем через парсер строку с тегами:
 
@@ -140,12 +141,34 @@ public class FinderLogic {
     }
 
 
-    // 2017-05-13 Метод динамического (предварительного) поиска юзера (по ФИО, а не по тегам в данном случае) по OR или AND
+    // 2017-05-13 Метод динамического (предварительного) поиска юзера (по ФИО, а не по тегам в данном случае) // Теперь всегда ищет по OR !!!
     private static ArrayList<FinderTagResponse> preFindUser(FinderTagRequest finder){
         // 1 Пропускаем через парсер строку запроса и разбираем на массив слов:
         ArrayList<String> words = SearchParser.parse(finder.getText());
         // 2 Подготавливаем список подсказок для ответа (в поле динамического поиска):
         ArrayList<FinderTagResponse> finderResponseList = new ArrayList<>();
+        // 3 Делаем запрос и получаем список пользователей через методы NameTreeManager'а:
+        ArrayList<User> users = new NameTreeManager().findAllUsersWithNames(words, "or");
+
+        // 4 Обходим всех пользователей и формируем список ответов:
+        for (User user : users){
+            Integer user_id = user.getId();
+            String user_name = user.getSurname() + " " + user.getName() + " " + user.getMiddleName();
+            finderResponseList.add(new FinderTagResponse(user_id, user_name));
+        }
+
+        return finderResponseList;
+    }
+
+
+    // 2017-05-17 Метод окончательного поиска юзера (по ФИО, а не по тегам в данном случае) по OR или AND
+    private static ArrayList<FinderTagResponse> FindUser(FinderTagRequest finder){
+        // 1 Пропускаем через парсер строку запроса и разбираем на массив слов:
+        ArrayList<String> words = SearchParser.parse(finder.getText());
+        // 2 Подготавливаем список для ответа (в поле динамического поиска):
+        ArrayList<FinderTagResponse> finderResponseList = new ArrayList<>();
+
+
         // 3 Делаем запрос и получаем список пользователей через методы NameTreeManager'а:
         ArrayList<User> users;
         if (finder.getOperation().equals("and")){
