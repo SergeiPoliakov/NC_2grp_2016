@@ -103,7 +103,7 @@
         </div>
         <!-- ЧАТ -->
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-lg-offset-6">
-            <div class="card">
+            <div class="card" style="background-color: rgb(236, 240, 241);">
                 <div class="card-title">
                     <h3 class="text-center" id="cardsholder">Чат</h3>
                 </div>

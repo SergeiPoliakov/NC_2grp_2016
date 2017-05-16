@@ -74,7 +74,8 @@ public class SearchAndTagController {
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.FIND_TAG, finder.getText(), idUser); // Поиск тегов (запишем поисковую строку)
         // Запускаем логику обработки запроса и выбора подходящих тегов:
-        return FinderLogic.getWithLogic(finder);
+        ArrayList<FinderTagResponse> retv = FinderLogic.getWithLogic(finder);
+        return retv;
     }
 
 
