@@ -56,13 +56,14 @@
 
                 <div class="profile-userbuttons">
                     <form action="/sendMessage/${user.id}">
-                        <button type="submit" class="btn btn-info btn-sm" <c:if test="${flagMessage eq false}"> disabled </c:if> >
+                        <button type="submit" class="btn btn-info btn-sm" <c:if test="${flagMessage eq false or user.equals(currentUser)}"> disabled </c:if> >
                             <span class="glyphicon glyphicon-envelope" aria-hidden="true"> Чат</span>
                         </button>
                     </form>
+
                     <c:if test="${flagFriend eq false}">
                     <form action="/addFriend/${user.id}/addFriend">
-                        <button type="submit" class="btn btn-success btn-sm" >
+                        <button type="submit" class="btn btn-success btn-sm" <c:if test="${user.equals(currentUser)}"> disabled </c:if>>
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"> Добавить в друзья</span>
                         </button>
                     </form>

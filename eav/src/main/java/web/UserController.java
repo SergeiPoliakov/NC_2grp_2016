@@ -231,7 +231,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/searchUser", method = RequestMethod.GET)
-    public String searchUser(HttpServletRequest request, Map<String, Object> mapObjects) throws CustomException {
+    public String searchUser(HttpServletRequest request, Map<String, Object> mapObjects, ModelMap m) throws CustomException, SQLException {
 
         HttpSession session = request.getSession();
         if (session.getAttribute("finder") != null) {
@@ -273,7 +273,9 @@ public class UserController {
                     }
 
                     mapObjects.put("allUsers", users);
-
+                    DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+                    User currentUser = converter.ToUser(dataObject);
+                    m.addAttribute("currentUser", currentUser);
                     session.removeAttribute("finder");
 
                 } catch (ExecutionException e) {
@@ -324,7 +326,7 @@ public class UserController {
 
     // 2017-02-16 Анатолий, Проба работы новых фильтров и альтернативного лоадера
     @RequestMapping("/allUser")
-    public String listObjects(Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public String listObjects(Map<String, Object> mapObjects, ModelMap m) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL));
 
         try {
@@ -338,6 +340,9 @@ public class UserController {
             }
             System.out.println("Размер кэша после добавления " + doCache.size());
 
+            DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+            User currentUser = converter.ToUser(dataObject);
+            m.addAttribute("currentUser", currentUser);
             mapObjects.put("allUsers", users);
 
         } catch (ExecutionException e) {
@@ -701,6 +706,7 @@ public class UserController {
         String flagFriend = "false";
 
         int current_user_id = userService.getObjID(userService.getCurrentUsername());
+        User currentUser = converter.ToUser(doCache.get(current_user_id));
         ArrayList<Integer> ilCurrentUserFriends = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(current_user_id)));
         try {
             Map<Integer, DataObject> mapFriends = doCache.getAll(ilCurrentUserFriends);
@@ -729,7 +735,9 @@ public class UserController {
                     flagProfile = "true";
                 }
             }
+            m.addAttribute("currentUser", currentUser);
             m.addAttribute(user);
+
         } catch (ExecutionException e) {
             e.printStackTrace();
         }

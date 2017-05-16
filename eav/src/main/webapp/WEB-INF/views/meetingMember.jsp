@@ -82,8 +82,8 @@
                 <h3 class="card-title text-center">${meeting.title}</h3>
                 <div class="profile-userbuttons">
                     <c:if test="${meeting.status eq 'active'}">
-                        <a href="/leaveMeeting${meeting.id}" <c:if test="${meeting.users.size() eq 1}"> class="disabled" </c:if> >
-                            <button type="button" class="btn btn-danger btn-sm" <c:if test="${meeting.users.size() eq 1}"> disabled </c:if>  >
+                        <a href="/leaveMeeting${meeting.id}" <c:if test="${meeting.memberUsers.size() eq 1}"> class="disabled" </c:if> >
+                            <button type="button" class="btn btn-danger btn-sm" <c:if test="${meeting.memberUsers.size() eq 1}"> disabled </c:if>  >
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true" > Покинуть</span>
                             </button>
                         </a>
@@ -320,7 +320,7 @@
     var groups = new vis.DataSet();
     groups.add([
 
-        <c:forEach items="${meeting.users}" var="user">
+        <c:forEach items="${meeting.memberUsers}" var="user">
         {
             id: ${user.id},
             content: "<a href='/user${user.id}'>${user.name} ${user.middleName} ${user.surname}</a>",
@@ -336,7 +336,7 @@
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
 
-        <c:forEach items="${meeting.users}" var="user">
+        <c:forEach items="${meeting.memberUsers}" var="user">
         <c:forEach items="${user.eventsUser}" var="event">
         {
             id: ${event.id},

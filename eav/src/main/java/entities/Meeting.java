@@ -188,9 +188,9 @@ public class Meeting extends BaseEntitie {
         // 3 Если же не было ограничений, то нужны разрешения - а именно членство в группе memberUsers
         if (! this.memberUsers.contains(find_user)) return; // Нет членства - тоже никаких дубликатов!
         // 4 Если же есть членство в memberUsers, надо еще проверить, может, уже есть дубликат:
-        for(Event event : this.getDuplicates()){
-            if (event.getHost_id().equals(user_id)) return; // Если есть дубликат, больше никаких дубликатов!
-        }
+        //for(Event event : this.getDuplicates()){
+        //    if (event.getHost_id().equals(user_id)) return; // Если есть дубликат, больше никаких дубликатов!               Ломает работу, пока закомментрил
+        //}
         // 5 Иначе можно продолжить и выдать пользователю дубликат как действующему участнику встречи:
         //
 

@@ -257,12 +257,8 @@ public class StatisticManager {
 
         // 6 (2017-05-16 Исправлено на траектории смены групп) // Надо как-то идентифицировать отказы от встреч. Это будут те встречи, в которых юзер есть среди refusedUsers
         // 6-1 Выбираем из базы все встречи за данный период, в которых фигурирует данный юзер
-        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.ALL, MeetingFilter.BETWEEN_TWO_DATES, date_1, date_2));
-        Map<Integer, DataObject> amap = doCache.getAll(al);
-        ArrayList<DataObject> aList = new Converter().getMapToListDataObject(amap);
         ArrayList<Meeting> ameetings = new ArrayList<>();
-        for (DataObject dataObject : aList) {
-            Meeting meeting = new Meeting(dataObject);
+        for (Meeting meeting : meetings) {
             for (User user : meeting.getRefusedUsers()){
                 if (user.getId() == user_id){
                     ameetings.add(meeting);
@@ -270,45 +266,10 @@ public class StatisticManager {
                 }
             }
         }
+
+
         Integer delete_duplicates = ameetings.size();
 
-
-        /*
-
-        // 6 Надо как-то идентифицировать отказы от встреч. Это будут те встречи, в которых юзер есть среди users, но дубликата среди duplicates для него нет
-        // 6-1 Выбираем из базы все встречи за данный период, в которых фигурирует данный юзер
-        ArrayList<Integer> al = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.ALL, MeetingFilter.BETWEEN_TWO_DATES, date_1, date_2));
-        Map<Integer, DataObject> amap = doCache.getAll(al);
-        ArrayList<DataObject> aList = new Converter().getMapToListDataObject(amap);
-        ArrayList<Meeting> ameetings = new ArrayList<>();
-        for (DataObject dataObject : aList) {
-            Meeting meeting = new Meeting(dataObject);
-            for (User user : meeting.getUsers()){
-                if (user.getId() == user_id){
-                    ameetings.add(meeting);
-                    break;
-                }
-            }
-        }
-
-        Integer delete_duplicates = 0;
-        // 6-2 И обходим все оставшиеся встречи в поисках такой, у которой для данного пользователя нет дубликата
-        for (Meeting meeting : ameetings){
-            ArrayList<Event> m_duplicates = meeting.getDuplicates();
-            Boolean flag = true;
-            for (Event m_dupl : m_duplicates){ // и в каждой встрече - все дубликаты
-                if (m_dupl.getId().equals(user_id)){ // Сравниваем с айди юзера айдишник host_id копии встречи, если совпадают, выходим из цикла for, сбросив флаг
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag) {
-                // Если флаг остался, то это как раз та встреча, от которой пользователь отказался,
-                // и можно увеличить счетчик отказов:
-                delete_duplicates ++;
-            }
-        }
-        */
 
         // 7 Осталось только подсчитать процентаж:
         Integer summ = admin_duplicates.size() + user_duplicates.size() + delete_duplicates; // общее количество
@@ -321,7 +282,7 @@ public class StatisticManager {
         ArrayList<StatResponse> results = new ArrayList<>(); // Лист для результатов
 
 
-        results.add(new StatResponse("Общие встречи", admin_meet));
+        results.add(new StatResponse("Созданные встречи", admin_meet));
         results.add(new StatResponse("Принятые встречи", user_meet));
         results.add(new StatResponse("Отказы", delete_meet));
 

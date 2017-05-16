@@ -348,12 +348,12 @@ public class MeetingController {
 
         // Приглашаемый юзер (и он же получатель уведомления)
         User user = new User(doCache.get(userID));
-        meeting.addInvitedUsers(user);
+        meeting.addAcceptedUsers(user);
         userList.add(user);
         //добавляю дубликат
         meeting.createDuplicate(user.getId());
 
-        // meeting.setUsers(userList); // Ну нежно, он автоматически ляжет там, когда пройдет addInvitedUsers()
+        // meeting.setUsers(userList); // Не нужно, он автоматически ляжет там, когда пройдет addInvitedUsers()
 
 
         DataObject dataObject = meeting.toDataObject();
@@ -492,6 +492,7 @@ public class MeetingController {
 
         ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
         ArrayList<User> users = meeting.getMemberUsers();
+        System.out.println("РАЗМЕР!!!!!!!!!!! " + users.size());
 
 
         DataObject dataObject = meeting.toDataObject();
