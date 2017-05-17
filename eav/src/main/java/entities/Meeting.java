@@ -780,10 +780,9 @@ public class Meeting extends BaseEntitie {
         if (this.acceptedUsers.contains(user)){ // Если он уже висит среди принявших приглашение, делаем его участником
             this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
             // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
-          //  this.createDuplicate(user.getId());
+            //  this.createDuplicate(user.getId());
             return;
         }
-
 
 
         if (this.invitedUsers.contains(user)){ // Если он уже висит в приглашенных,

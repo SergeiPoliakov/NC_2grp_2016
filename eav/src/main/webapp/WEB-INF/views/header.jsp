@@ -83,7 +83,6 @@
                 'isSeen' : "active",
                 'date': toLocaleDateTimeString(new Date())
             });
-            stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
             if (type === 'friendRequest') {
                 $.ajax({
                     url: '/checkPrivacyFriendForNotification',
@@ -100,8 +99,7 @@
                         }
                     }
                 });
-            }
-            if (type === "meetingInvite") {
+            } else if (type === "meetingInvite") {
                 $.ajax({
                     url: '/checkPrivacyMeetingForNotification',
                     type: 'POST',
@@ -118,8 +116,7 @@
                         }
                     }
                 });
-            }
-            if (type === "meetingRequest") {
+            } else if (type === "meetingRequest") {
                 $.ajax({
                     url: '/addBeggingUser',
                     type: 'POST',
@@ -135,10 +132,7 @@
                         }
                     }
                 });
-            }
-            if (type === "infoFriendAccept") {
-                stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
-            }
+            } else stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
         }
     </script>
 

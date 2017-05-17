@@ -135,7 +135,7 @@ public class SearchAndTagController {
         // Логирование
         int idUser = userService.getObjID(userService.getCurrentUsername());
 
-        // if (finder.getType().equals("name")) finder.setType("user");
+        if (finder.getType().equals("name")) finder.setType("user");
 
         if (finder.getType().equals("user")){
             loggerLog.add(Log.FIND_USER, finder.getText(), idUser); // Поиск юзера (запишем строку с именем из поиска)

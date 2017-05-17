@@ -348,7 +348,9 @@ public class MeetingController {
 
         // Приглашаемый юзер (и он же получатель уведомления)
         User user = new User(doCache.get(userID));
-        meeting.addAcceptedUsers(user);
+        if (meeting.getBeggingUsers().contains(user)) {
+            meeting.addInvitedUsers(user);
+        } else meeting.addAcceptedUsers(user);
         userList.add(user);
         //добавляю дубликат
         meeting.createDuplicate(user.getId());
