@@ -170,7 +170,7 @@ public class FinderLogic {
 
 
         // 3 Делаем запрос и получаем список пользователей через методы NameTreeManager'а:
-        ArrayList<User> users;
+        ArrayList<User> users = new ArrayList<>();
         if (finder.getOperation().equals("and")){
             users = new NameTreeManager().findAllUsersWithNames(words, "and");
         }
