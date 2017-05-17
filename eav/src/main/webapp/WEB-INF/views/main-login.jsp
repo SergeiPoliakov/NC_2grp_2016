@@ -85,9 +85,8 @@
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-lg-offset-6">
             <div class="card" id = "insert_place_col-lg-12">
                 <div class="card-title">
-                    <h3 class="text-center" id="cardsholder">Статистики</h3>
+                    <a href="/statistics"><h3 class="text-center" id="cardsholder">Статистика</h3></a>
                 </div>
-                <button type="button" class="btn btn-success btn-block" id="statisticsButton">Подробнее</button>
             </div>
         </div>
     </div>

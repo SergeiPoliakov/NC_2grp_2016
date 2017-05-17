@@ -33,6 +33,13 @@
     %>
 
 
+    <style>
+        .labelbutton:hover{
+            color: rgb(24, 188, 156)!important;
+        }
+    </style>
+
+
 
     <script src="<%=request.getContextPath()%>/resources/js/sockjs-0.3.4.js" type="text/javascript"></script>
     <script src="<%=request.getContextPath()%>/resources/js/stomp.js" type="text/javascript"></script>
@@ -246,8 +253,8 @@
                     <select multiple type="text" class="form-control searchBox" name="name" id="searchInput" style="width: 30rem!important; overflow-y: auto !important;">
                     </select>
 
-                    <button class="btn btn-success btn-sm" onclick="getFind(searchText)">
-                        <span class="glyphicon glyphicon-search"></span> Поиск
+                    <button class="btn btn-success btn-sm labelbutton" onclick="getFind(searchText)" style="background-color: rgb(44, 62, 80);border-color: rgb(44, 62, 80);">
+                        <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </div>
 
@@ -263,36 +270,15 @@
                                 <div id="object" class="funkyradio">
 
                                     <div class="funkyradio-success">
-                                        <input type="radio" name="checkObject" id="checkName" value="name" checked="checked"  >
+                                        <input type="radio" name="checkObject" id="checkUser" value="user"  checked>
                                         <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">Пользователя по имени</label>
                                     </div>
 
                                     <div class="funkyradio-success">
-                                        <input type="radio" name="checkObject" id="checkUser" value="user"  >
-                                        <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">Пользователя по интересам</label>
-                                    </div>
-
-                                    <div class="funkyradio-success">
-                                        <input type="radio" name="checkObject" id="checkMeeting" value="meeting"  />
+                                        <input type="radio" name="checkObject" id="checkMeeting" value="meeting" />
                                         <label class="radio-inline" for="checkMeeting" style="margin-top: 0.5rem;">Встречу по тегам</label>
                                     </div>
 
-                                </div>
-                            </div>
-                            <div class="form-group" style="padding-left: 1rem;padding-right: 1rem;padding-bottom: 1rem;padding-top: 1rem;">
-                                <label for="logic">Критерий поиска</label>
-                                <div id="logic" class="funkyradio">
-                                    <div class="funkyradio-success">
-                                        <div class="form-group" style="padding-right: 3rem;">
-                                            <input type="radio" name="checkLogic" id="checkOR" value="or" checked="checked"  >
-                                            <label class="radio-inline" for="checkOR" style="margin-top: 0.5rem;padding-right: 2rem;">OR</label>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <input type="radio" name="checkLogic" id="checkAND" value="and"  />
-                                            <label class="radio-inline" for="checkAND" style="margin-top: 0.5rem;padding-right: 1rem;">AND</label>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -390,7 +376,7 @@
             cache: true,
             data: function (params) {
                 var type = $('input[name="checkObject"]:checked').val();
-                var operation = $('input[name="checkLogic"]:checked').val();
+                var operation = 'or';
                 var retval = JSON.stringify({
                     type: type,       // name | user | meeting
                     operation: operation,   // and | or
