@@ -74,4 +74,30 @@ public class StatisticController {
         return results;
     }
 
+
+    // 2017-05-17 К запросу на получение настроек для микро статистик (на главную страницу), какие данные для отрисовки диаграмм и графиков выставил юзер
+    @RequestMapping(value = "/getStatSettingsSmall", method = RequestMethod.POST, headers = {"Content-type=application/json"})
+    @ResponseBody
+    public ArrayList<StatSetting> getStatSettingsSmall(@RequestBody StatRequest statRequest) throws SQLException {
+
+        ArrayList<StatSetting> results = new ArrayList<>(); // Пока просто заглушка
+
+        if (statRequest.getPlotview().equals("settings")){ // Тест - отправляем на страницу статистик настройки
+            // Эти настройки надо из настроек из базы вытаскивать
+
+            // results.add(new StatSetting("plot", "on", "activity", "day", "location_2", "Время, часы", "Интенсивность работы"));
+
+            // results.add(new StatSetting("round", "on", "meeting", "week", "location_1", "Процентаж встреч за неделю"));
+
+            results.add(new StatSetting("round", "on", "procentazh", "week", "location_1", "Ваша активность за неделю"));
+
+            //results.add(new StatSetting("plot", "on", "activity", "week", "location_4","Интенсивность работы за неделю", "Время, дни", "Интенсивность работы"));
+
+            results.add(new StatSetting("round", "on", "message", "week", "location_2", "Ваши сообщения за неделю"));
+
+        }
+
+        return results;
+    }
+
 }

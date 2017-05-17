@@ -43,6 +43,18 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
 
 
+    <!-- Подгружаем скрипты для загрузки статистик: -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/stat_load_small.js"></script>
+
+    <style>
+        .card_statistic{
+            min-height: 20rem;
+            max-height: 20rem;
+            overflow: hidden;
+        }
+    </style>
+
 
 </head>
 <body>
@@ -71,23 +83,11 @@
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-lg-offset-6">
-            <div class="card">
+            <div class="card" id = "insert_place_col-lg-12">
                 <div class="card-title">
-                    <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>
+                    <h3 class="text-center" id="cardsholder">Статистики</h3>
                 </div>
-                <ul class="list-group list-group-my list-group-flush text-center navi mCustomScrollbar" data-mcs-theme="minimal-dark" id="cardsholderItems">
-                    <li class="list-group-item list-group-item-info">РАЗ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-danger">ДВА ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-info">ТРИ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-info">ЧЕТЫРЕ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-danger">ПЯТЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-warning">ШЕСТЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-danger">СЕМЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-warning">ВОСЕМЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-info">ДЕВЯТЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-warning">ДЕСЯТЬ ШАБЛОН</li>
-                </ul>
-                <button type="button" class="btn btn-success btn-block" id="templateAddButton">Добавить</button>
+                <button type="button" class="btn btn-success btn-block" id="statisticsButton">Подробнее</button>
             </div>
         </div>
     </div>
@@ -228,17 +228,15 @@
             $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
         });
     });
-    // Нажатие кнопки под шаблонами
-    document.getElementById('templateAddButton').onclick = function() {
-        $("#modalAddButton").html('Добавить');
-        $('#taskmodal').modal('show');
-        $('#taskmodal').on('shown.bs.modal', function () {
-            $("#SaveTemplateCheckBox").prop("checked", true);
-            $('#taskName').val("Новая задача");
-            $('#taskName').focus();
-            $('#taskName').select();
-        })
+    // Нажатие кнопки над статистиками
+    document.getElementById('statisticsButton').onclick = function() {
+        var delay = 1;
+        // и с задержкой переходим на страницу со статистиками
+        setTimeout("document.location.href='/statistics'", delay);
+
     };
+
+
     // Нажатие кнопки "Добавить" в всплывающем окне
     document.getElementById('modalAddButton').onclick = function() {
         $('#taskmodal').modal('hide');
@@ -275,14 +273,14 @@
     // Create a DataSet (allows two way data-binding)
     var items = new vis.DataSet([
         <c:forEach items="${allEvents}" var="event">
-            <c:choose>
-                <c:when test="${event.priority.equals('Style4')}">
-                    {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}', group: 1, editable: false, selectable: false},
-                </c:when>
-                <c:otherwise>
-                    {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}', group: 0},
-                </c:otherwise>
-            </c:choose>
+        <c:choose>
+        <c:when test="${event.priority.equals('Style4')}">
+        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}', group: 1, editable: false, selectable: false},
+        </c:when>
+        <c:otherwise>
+        {id: ${event.id}, content: '${event.name}', start: new Date(getDateFromString('${event.date_begin}')), end: new Date(getDateFromString('${event.date_end}')), className: '${event.priority}', group: 0},
+        </c:otherwise>
+        </c:choose>
         </c:forEach>
     ]);
 
@@ -293,9 +291,9 @@
         selectable: true,
         stack: false,
         margin:{
-          item:{
-              horizontal: 0
-          }
+            item:{
+                horizontal: 0
+            }
         },
         multiselect: true,
         dataAttributes: 'all',
