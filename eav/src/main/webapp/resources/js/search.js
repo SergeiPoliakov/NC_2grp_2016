@@ -34,7 +34,7 @@ $(window).load(function () {
                         contentType: "application/json",
                         mimeType: 'application/json',
                         data: JSON.stringify({
-                            type: $('input[name="checkObject"]:checked').val(),  // name | user | meeting
+                            type: $("#searchType").val(),  // name | user | meeting
                             operation: 'or',   // and | or
                             text: input_initial_value
                         }),
@@ -137,7 +137,7 @@ function getFind(searchText) {
         contentType: "application/json",
         mimeType: 'application/json',
         data: JSON.stringify({
-            type: $('input[name="checkObject"]:checked').val(),       // name | user | meeting
+            type: $("#searchType").val(),       // name | user | meeting
             operation: 'or',   // and | or
             text: input_initial_value
         }),
@@ -149,8 +149,8 @@ function getFind(searchText) {
     var delay = 1;
     // и с задержкой переходим на страницу с результатами
 
-    if ($('input[name="checkObject"]:checked').val() == "meeting") {
-        setTimeout("document.location.href='/meetings'", delay);
+    if ($("#searchType").val() == "meeting") {
+        setTimeout("document.location.href='/search/' + input_initial_value", delay);
     } else {
         setTimeout("document.location.href='/searchUser'", delay);
     }

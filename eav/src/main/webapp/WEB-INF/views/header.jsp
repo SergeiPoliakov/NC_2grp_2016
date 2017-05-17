@@ -257,36 +257,22 @@
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </div>
-
-
-
-                <div class="form-group" style="width: 28.7rem;">
-                <div class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Настройки поиска</b> <span class="caret"></span></a>
-                    <ul id="search-dp" class="dropdown-menu">
-                        <div>
-                            <div class="form-group" style="padding-left: 1rem;padding-right: 1rem;padding-top: 1rem;">
-                                <label for="object">Что ищем?</label>
-                                <div id="object" class="funkyradio">
-
-                                    <div class="funkyradio-success">
-                                        <input type="radio" name="checkObject" id="checkUser" value="user"  checked>
-                                        <label class="radio-inline" for="checkUser" style="margin-top: 0.5rem;">Пользователя по имени</label>
-                                    </div>
-
-                                    <div class="funkyradio-success">
-                                        <input type="radio" name="checkObject" id="checkMeeting" value="meeting" />
-                                        <label class="radio-inline" for="checkMeeting" style="margin-top: 0.5rem;">Встречу по тегам</label>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </ul>
-                </div>
-                </div>
+                <a style="cursor: pointer;" value="user" id ="searchType" onclick="changeState()">Человека по имени</a>
             </div>
+            <script type="text/javascript">
+                $("#searchType").val("user");
+                function changeState(){
+                    var from = $("#searchType").val();
+                    if ($("#searchType").val() ==="user") {
+                        $("#searchType").val("meeting");
+                        $("#searchType").html("Встречу по тегам");
+                    } else{
+                        $("#searchType").val("user");
+                        $("#searchType").html("Человека по имени");
+                    }
+                }
 
+            </script>
 
 
 
@@ -375,7 +361,7 @@
             mimeType: 'application/json',
             cache: true,
             data: function (params) {
-                var type = $('input[name="checkObject"]:checked').val();
+                var type = $("#searchType").val();
                 var operation = 'or';
                 var retval = JSON.stringify({
                     type: type,       // name | user | meeting
