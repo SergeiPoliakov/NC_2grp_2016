@@ -83,6 +83,7 @@
                 'isSeen' : "active",
                 'date': toLocaleDateTimeString(new Date())
             });
+            stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
             if (type === 'friendRequest') {
                 $.ajax({
                     url: '/checkPrivacyFriendForNotification',
@@ -138,7 +139,6 @@
             if (type === "infoFriendAccept") {
                 stompClient.send("/app/notify" + recieverID, {}, JSONMessage); // Тут айди юзера, которому отправляется уведомление
             }
-
         }
     </script>
 
@@ -204,7 +204,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class="dropdown dropdown-notifications" id="notificationDrop">
-                    <a class="dropdown-toggle" id="notificationDropa">
+                    <a class="dropdown-toggle" id="notificationDropa" title="Уведомления">
                         <i data-count="0" class="glyphicon glyphicon-bell notification-icon" id ="notificationCount"></i>
                     </a>
                     <div class="dropdown-container" style="top: 5.8rem !important;">
@@ -223,6 +223,11 @@
                             <a style="cursor: pointer;">  </a>
                         </div><!-- /dropdown-footer -->
                     </div><!-- /dropdown-container -->
+                </li><!-- /dropdown -->
+                <li class="dropdown dropdown-notifications" id="messagesDrop">
+                    <a href="/allUnreadMessages" class="dropdown-toggle" id="messagesDropa" title="Сообщения">
+                        <i data-count="0" class="glyphicon glyphicon-envelope notification-icon" id ="messageCount"></i>
+                    </a>
                 </li><!-- /dropdown -->
 
                 <li><a href="/main-login">Расписание</a></li>
