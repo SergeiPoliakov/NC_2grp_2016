@@ -37,7 +37,7 @@
                 </div>
                 <div class="panel-collapse in" id="collapseOne">
                     <div class="panel-body">
-                        <ul class="chat">
+                        <ul>
 
                             <c:forEach items="${allUsers}" var="object">
                                 <li class="right clearfix"><span class="chat-img pull-right">

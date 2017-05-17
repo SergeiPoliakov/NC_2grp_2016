@@ -184,7 +184,7 @@ public class Meeting extends BaseEntitie {
         }
         if (find_user == null) return; // Если нет такого пользователя, никаких ему дубликатов!
         // 2 А если есть, проверяем его права:
-        if (this.blockedUsers.contains(find_user) || this.deletedUsers.contains(find_user) || this.exitedUsers.contains(find_user)) return; // Нет прав - никаких дубликатов
+       // if (this.blockedUsers.contains(find_user) || this.deletedUsers.contains(find_user) || this.exitedUsers.contains(find_user)) return; // Нет прав - никаких дубликатов
         // 3 Если же не было ограничений, то нужны разрешения - а именно членство в группе memberUsers
         if (! this.memberUsers.contains(find_user)) return; // Нет членства - тоже никаких дубликатов!
         // 4 Если же есть членство в memberUsers, надо еще проверить, может, уже есть дубликат:
@@ -776,12 +776,15 @@ public class Meeting extends BaseEntitie {
         if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, то, что он согласился на встречу, уже не играет роли
         if (this.memberUsers.contains(user)) return; // Если он уже висит среди участников, выходим
 
+
         if (this.acceptedUsers.contains(user)){ // Если он уже висит среди принявших приглашение, делаем его участником
             this.memberUsers.add(user); // И автоматически превращаем его в участника встречи
             // И тут потребуется создать ему дубликат встречи, раз он уже стал участником:
           //  this.createDuplicate(user.getId());
             return;
         }
+
+
 
         if (this.invitedUsers.contains(user)){ // Если он уже висит в приглашенных,
             this.acceptedUsers.add(user); // Причисляем к группе принявших приглашение
@@ -904,12 +907,15 @@ public class Meeting extends BaseEntitie {
     public void addExitedUsers(User user){
         if (this.blockedUsers.contains(user)) return; // Если создатель встречи заблочил юзера, выходим
         if (this.deletedUsers.contains(user)) return; // Если он находится среди удаленных администратором, выходим (он не может перепрыгнуть на соседнюю траекторию, его уже удалил админ)
-        if (this.exitedUsers.contains(user)) return; // Если он уже висит в покинувших встречу, выходим
+       // if (this.exitedUsers.contains(user)) return; // Если он уже висит в покинувших встречу, выходим
 
         if (this.memberUsers.contains(user)) { // Если он находится среди участников,
             this.memberUsers.remove(user); // Удаляем его из участников
             // this.deleteDuplicate(user.getId()); // Удаляем дубликат встречи данного пользователя
-            this.exitedUsers.add(user); // и добавляем пользователя к отказавшимся
+            if (this.exitedUsers.contains(user)) {
+                this.exitedUsers.add(user); // и добавляем пользователя к отказавшимся
+                return;
+            }
             return;
         }
 

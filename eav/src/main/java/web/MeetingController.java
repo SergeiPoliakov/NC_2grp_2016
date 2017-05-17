@@ -380,7 +380,7 @@ public class MeetingController {
         DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
         User user = converter.ToUser(dataObject);
 
-        meeting.addExitedUsers(user); // Отправляем в группу покинувших встречу
+
         System.out.println("Размер листа с участниками " + meeting.getMemberUsers().size());
         System.out.println("Размер листа покинувших участников " + meeting.getExitedUsers().size());
 
@@ -393,6 +393,7 @@ public class MeetingController {
             meeting.setOrganizer(meeting.getMemberUsers().get(0)); // следующий участник становится организатором // А если всего один участник был? Тогда встречу надо закрыть? Удалить??
         } // else meeting.getUsers().remove(user);
 
+
         ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs();
 
         for (Integer i : ids_duplicates
@@ -401,7 +402,7 @@ public class MeetingController {
             if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {  //если это наш дубликат
 
                 //удаляем юзера из встречи
-
+                meeting.addExitedUsers(user); // Отправляем в группу покинувших встречу
 
                 //удаляем ссылку на дубликат из встречи
                 meeting.getDuplicates().remove(dataObjectDuplicate);
@@ -418,9 +419,11 @@ public class MeetingController {
             if (dataObjectDuplicate.getReference(141).get(0).equals(user.getId())) {
                 System.out.println("Дубликат встречи удален");
                 loadingService.deleteDataObjectById(dataObjectDuplicate.getId());
+                doCache.invalidate(i);
             }
         }
 
+        doCache.invalidate(meetingID);
 
         // Логирование:
         loggerLog.add(Log.LEAVED_MEETING, meetingID);

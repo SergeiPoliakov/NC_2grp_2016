@@ -118,7 +118,7 @@
                 </div>
                 <div class="panel-collapse in" id="collapseOne">
                     <div class="panel-body">
-                        <ul class="chat">
+                        <ul>
 
                             <p id="result_array"></p>
 
