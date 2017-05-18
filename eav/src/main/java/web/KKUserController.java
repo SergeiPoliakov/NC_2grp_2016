@@ -141,11 +141,11 @@ public class KKUserController {
     @RequestMapping(value = "/userChangeEventAJAX/{eventId}", method = RequestMethod.POST)
     public @ResponseBody
     Response changeEventAJAX(@PathVariable("eventId") Integer eventId,
-                              @ModelAttribute("name") String name,
-                              @ModelAttribute("priority") String priority,
-                              @ModelAttribute("date_begin") String date_begin,
-                              @ModelAttribute("date_end") String date_end,
-                              @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
+                             @ModelAttribute("name") String name,
+                             @ModelAttribute("priority") String priority,
+                             @ModelAttribute("date_begin") String date_begin,
+                             @ModelAttribute("date_end") String date_end,
+                             @ModelAttribute("info") String info) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
 
         Response response = new Response();
         TreeMap<Integer, Object> mapAttr = new TreeMap<>();
@@ -154,6 +154,37 @@ public class KKUserController {
         mapAttr.put(102, date_end);
         mapAttr.put(103, String.valueOf(DateConverter.duration(date_begin, date_end)));
         mapAttr.put(104, info);
+        mapAttr.put(105, priority);
+
+        DataObject dataObject = new DataObject(eventId, name, 1002, mapAttr);
+
+        int id = loadingService.updateDataObject(dataObject);
+
+        doCache.refresh(eventId);
+
+        // Логируем:
+        int idUser = userService.getObjID(userService.getCurrentUsername());
+        logger.add(Log.EDIT_EVENT, id, idUser);
+
+        return response;
+    }
+
+    // Редактирование события на встрече
+    @RequestMapping(value = "/userChangeEventAtMeeting/{eventId}", method = RequestMethod.POST)
+    public @ResponseBody
+    Response changeEventAtMeetingAJAX(@PathVariable("eventId") Integer eventId,
+                             @ModelAttribute("name") String name,
+                             @ModelAttribute("priority") String priority,
+                             @ModelAttribute("date_begin") String date_begin,
+                             @ModelAttribute("date_end") String date_end) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException, ParseException {
+
+        Response response = new Response();
+        TreeMap<Integer, Object> mapAttr = new TreeMap<>();
+
+        mapAttr.put(101, date_begin);
+        mapAttr.put(102, date_end);
+        mapAttr.put(103, String.valueOf(DateConverter.duration(date_begin, date_end)));
+        mapAttr.put(104, "Meeting");
         mapAttr.put(105, priority);
 
         DataObject dataObject = new DataObject(eventId, name, 1002, mapAttr);

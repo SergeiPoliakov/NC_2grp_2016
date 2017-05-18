@@ -210,7 +210,7 @@ public class MeetingController {
             listIds.add(user_id.getId());
         }
         m.addAttribute("ids", listIds);
-
+        m.addAttribute("currentUser", user);
 
         if (meeting.getOrganizer().getId() == userService.getObjID(userService.getCurrentUsername())) // Страницу запрашивает создатель встречи
             return "/meetingAdmin";

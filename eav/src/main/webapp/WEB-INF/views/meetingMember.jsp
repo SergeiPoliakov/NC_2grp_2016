@@ -339,9 +339,17 @@
         <c:forEach items="${meeting.memberUsers}" var="user">
         <c:forEach items="${user.eventsUser}" var="event">
         {
+            <c:choose>
+                <c:when test="${user.id == currentUser.id && meeting.date_edit != null}">
+                    editable: true,
+                </c:when>
+                <c:otherwise>
+                    editable: false,
+                </c:otherwise>
+            </c:choose>
+
             id: ${event.id},
             group: ${user.id},
-            editable: false,
             content: '${event.name}',
             start: new Date(getDateFromString('${event.date_begin}')),
             end: new Date(getDateFromString('${event.date_end}')),
@@ -357,61 +365,46 @@
     var options = {
         locale: 'RU',
         // ЕСЛИ ЭТО СОЗДАТЕЛЬ ВСТРЕЧИ - ЗНАЧЕНИЕ TRUE, ИНАЧЕ - FALSE
-        editable: false,
+        editable: true,
         selectable: true,
         stack: false,
         multiselect: true,
         dataAttributes: 'all',
+        snap: null,
         start: new Date(getDateFromString('${meeting.date_start}')).setHours(0,0,0,0),
 
         // Добавление задачи
         onAdd: function (item, callback) {
-            $('#taskName').val("Новая задача");
-            $("#modalAddButton").html('Добавить');
-            document.getElementById('taskStartTime').value = toLocaleDateTimeString(item.start);
-            document.getElementById('taskEndTime').value = toLocaleDateTimeString(item.start);
-            $('#taskmodal').modal('show');
-            document.getElementById('modalAddButton').onclick = function () {
-                item.className = $('#taskPriority').val() == '' ? 'Style3' : $('#taskPriority').val();
-                item.start = getDateFromString(document.getElementById('taskStartTime').value);
-                item.end = getDateFromString(document.getElementById('taskEndTime').value);
-                item.content = document.getElementById('taskName').value;
-                item.group = 1000;
-                $('#taskmodal').modal('hide');
-                callback(item);
-                createTooltip();
-            };
             callback(null);
+        },
+
+        // Перемещение задачи
+        onMove: function (item, callback) {
+            $.ajax({
+                url : '/userChangeEventAtMeeting/' + item.id,
+                type: 'POST',
+                dataType: 'json',
+                data : {
+                    name: item.content,
+                    priority: item.className,
+                    date_begin: toLocaleDateTimeString(item.start),
+                    date_end: toLocaleDateTimeString(item.end)
+                },
+                success: function (data) {
+                    callback(item);
+                    createTooltip();
+                }
+            });
         },
 
         // Удаление задачи
         onRemove: function (item, callback) {
-            callback(item);
+            callback(null);
         },
 
         // Обновление задачи
         onUpdate: function (item, callback) {
-            if (item.group == 1000) {
-                $("#modalAddButton").html('Сохранить');
-                $('#taskStartTime').val(toLocaleDateTimeString(item.start));
-                $('#taskEndTime').val(toLocaleDateTimeString(item.end));
-                $('#taskName').val(item.content);
-                $('#taskPriority').val(item.className);
-                $('#taskPriority').selectpicker('refresh');
-                $('#taskmodal').modal('show');
-                document.getElementById('modalAddButton').onclick = function () {
-                    item.className = $('#taskPriority').val() == '' ? 'Style3' : $('#taskPriority').val();
-                    item.start = getDateFromString(document.getElementById('taskStartTime').value);
-                    item.end = getDateFromString(document.getElementById('taskEndTime').value);
-                    item.content = document.getElementById('taskName').value;
-                    item.group = 1000;
-                    $('#taskmodal').modal('hide');
-                    callback(item);
-                    createTooltip();
-                };
-                callback(null);
-            } else
-                callback(null);
+            callback(null);
         }
     };
     // Create a Timeline
