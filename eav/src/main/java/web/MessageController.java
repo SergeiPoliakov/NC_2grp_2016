@@ -105,7 +105,7 @@ public class MessageController {
             userService.fittingEmail("newMessage", from_id, Integer.parseInt(to_id));  //идет сборка будущего сообщения
         }
         if ("true".equals(settings.getPhoneNewMessage())) {
-            //  userService.sendSmS("newMessage", from_id, Integer.parseInt(to_id)); //отправка смс
+              userService.sendSmS("newMessage", from_id, Integer.parseInt(to_id)); //отправка смс
         }
 
 

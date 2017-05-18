@@ -222,7 +222,7 @@ public class NewMeetingController {
                 userService.fittingEmail("meetingInvite", senderID, recieverID);
             }
             if ("true".equals(settings.getPhoneMeetingInvite())) {
-                // userService.sendSmS("meetingInvite" ,senderID, recieverID);  //отправка смс
+                 userService.sendSmS("meetingInvite" ,senderID, recieverID);  //отправка смс
             }
         } else {
             check = false;

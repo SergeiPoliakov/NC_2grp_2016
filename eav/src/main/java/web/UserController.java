@@ -445,9 +445,9 @@ public class UserController {
         mapAttr.put(9, "");
         mapAttr.put(10, "");
         mapAttr.put(11, "/resources/img/avatar.png"); // mapAttr.put(11, "ftp://" + this.ftp_server +"/upload/default/avatar.png"); // mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");
-        mapAttr.put(15, "true");  //изначально должно быть false
+        mapAttr.put(15, "false");  //изначально должно быть false
         mapAttr.put(16, phone);
-        mapAttr.put(17, "true");  //изначально должно быть false
+        mapAttr.put(17, "false");  //изначально должно быть false
         // mapAttr.put(12, null);
         // mapAttr.put(13, null); не нужно, иначе потом пустая ссылка на событие висит, и при добавлении новой задачи она так и остается висеть. Иначе надо будет при добавлении эту обновлять
 
@@ -538,14 +538,19 @@ public class UserController {
     }
 
     @RequestMapping(value = "/generatePhoneCode", method = RequestMethod.GET)
-    public String generatePhoneCode() throws SQLException {
+    public String generatePhoneCode() throws SQLException, ExecutionException {
+
+        DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+        User user = converter.ToUser(dataObject);
+
         String code = userService.generatePhoneToken();
         this.code = code;
         System.out.println("Сгенированыый код " + code);
 
-        //SMSCSender sd= new SMSCSender("Netcracker", "q7Sq2O_VqLhh", "utf-8", true);   //после теста закомментируйте обратно!!!!!
-        //sd.sendSms("7**********", "Код подтверждения: " + code, 0, "", "", 0, "NC", "");  // тут нужно указать ваш номер телефона
-        //sd.getBalance();
+        SMSCSender sd= new SMSCSender("Netcracker", "q7Sq2O_VqLhh", "utf-8", true);   //после теста закомментируйте обратно!!!!!
+        sd.sendSms(user.getPhone(), "Код подтверждения: " + code, 0, "", "", 0, "NC", "");  // тут нужно указать ваш номер телефона
+        sd.getBalance();
+
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.EDIT_SETTINGS, "generatePhoneCode", idUser); // Изменение настроек
         return "redirect:/profile";
@@ -605,7 +610,7 @@ public class UserController {
     @RequestMapping("/allFriends")
     public String friendList(Map<String, Object> mapObjects, ModelMap m) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
         int current_user_id = userService.getObjID(userService.getCurrentUsername());
-        User currentUser = converter.ToUser(doCache.get(current_user_id));
+       // User currentUser = converter.ToUser(doCache.get(current_user_id));
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(current_user_id)));
         ArrayList<User> friends = new ArrayList<>();
         try {
@@ -715,7 +720,7 @@ public class UserController {
                 userService.fittingEmail("addFriend", dataObjectFrom.getId(), objectId);
             }
             if ("true".equals(settings.getPhoneNewFriend())) {
-                // userService.sendSmS("addFriend" ,dataObject.getId(), objectId);  //отправка смс
+                 userService.sendSmS("addFriend" ,dataObjectFrom.getId(), objectId);  //отправка смс
             }
         }
         int idUser = userService.getObjID(userService.getCurrentUsername());
