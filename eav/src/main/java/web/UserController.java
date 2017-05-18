@@ -603,14 +603,16 @@ public class UserController {
     }
 
     @RequestMapping("/allFriends")
-    public String friendList(Map<String, Object> mapObjects) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public String friendList(Map<String, Object> mapObjects, ModelMap m) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
         int current_user_id = userService.getObjID(userService.getCurrentUsername());
+        User currentUser = converter.ToUser(doCache.get(current_user_id));
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(current_user_id)));
+        ArrayList<User> friends = new ArrayList<>();
         try {
             System.out.println("Ищем в кэше список друзей");
             Map<Integer, DataObject> map = doCache.getAll(il);
             ArrayList<DataObject> list = getListDataObject(map);
-            ArrayList<User> friends = new ArrayList<>(list.size());
+            friends = new ArrayList<>(list.size());
             for (DataObject dataObject : list) {
                 User user = converter.ToUser(dataObject);
                 friends.add(user);
@@ -622,6 +624,41 @@ public class UserController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
+        HashMap<Integer,String> flagsMessage = new HashMap<>();
+
+        for (int i = 0; i < friends.size(); i++) {
+            // проверяем, есть ли текущий пользователь в друзьях, чтобы дать ему доступ
+            ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(friends.get(i).getId())));
+            try {
+                Settings settings = converter.ToSettings(doCache.get(friends.get(i).getSettingsID()));
+                System.out.println(settings.getPrivateMessage());
+
+
+                if ("nobody".equals(settings.getPrivateMessage())) {
+                    System.out.println("1");
+                    flagsMessage.put(friends.get(i).getId() ,"false");
+                } else if (("onlyFriend".equals(settings.getPrivateMessage()) && ilFriend.contains(current_user_id)) || ("any".equals(settings.getPrivateMessage()))) {
+                    System.out.println("2");
+                    flagsMessage.put(friends.get(i).getId(), "true");
+                } else {
+                    System.out.println("3");
+                    flagsMessage.put(friends.get(i).getId(), "false");
+                }
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("EEEEEEEEEEEEEEEEE");
+        for (Map.Entry entry: flagsMessage.entrySet()) {
+            Integer key = (Integer) entry.getKey();
+            String value = (String) entry.getValue();
+            System.out.println(key + value);
+        }
+
+        m.addAttribute("flagsMessage", flagsMessage);
+
         int idUser = userService.getObjID(userService.getCurrentUsername());
         loggerLog.add(Log.PAGE, "allFriends", idUser); // Посещение страницы
         return "allFriends";

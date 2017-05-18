@@ -98,6 +98,32 @@ public class MeetingController {
     }
 
     // Список встреч пользователя
+    @RequestMapping(value = "/meetingsUser/{userID}", method = RequestMethod.GET)
+    public String getUserMeetingsPage(@PathVariable("userID") Integer userID, ModelMap m) throws SQLException, ExecutionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, CustomException {
+
+        User user = converter.ToUser(doCache.get(userID));
+        User currentUser = converter.ToUser(doCache.get(userService.getObjID(userService.getCurrentUsername())));
+        Settings settings = converter.ToSettings(doCache.get(user.getSettingsID()));
+        ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(user.getId())));
+        if (("onlyFriend".equals(settings.getPrivateProfile()) && ilFriend.contains(currentUser.getId())) || ("any".equals(settings.getPrivateProfile()))) {
+
+            ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new MeetingFilter(MeetingFilter.FOR_USER_WITH_ID, String.valueOf(user.getId())));
+
+            Map<Integer, DataObject> map = doCache.getAll(il);
+            ArrayList<DataObject> list = getListDataObject(map);
+            ArrayList<Meeting> meetings = new ArrayList<>(list.size());
+            for (DataObject dataObject : list) {
+                Meeting meeting = new Meeting(dataObject);
+                meetings.add(meeting);
+            }
+
+            m.addAttribute("meetings", meetings);
+            m.addAttribute("user", currentUser);
+        } else throw new CustomException("Пользователь ограничил доступ к этой странице");
+        return "/meetings";
+    }
+
+    // Список встреч пользователя
     @RequestMapping(value = "/meetings", method = RequestMethod.GET)
     public String getMeetingsPage(HttpServletRequest request, ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException {
         HttpSession session = request.getSession();

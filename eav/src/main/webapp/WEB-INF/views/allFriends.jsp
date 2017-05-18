@@ -27,7 +27,7 @@
 <body>
 <div class="container top-buffer-20">
     <div class="row">
-        <c:forEach items="${allObject}" var="object">
+        <c:forEach items="${allObject}"  var="object">
             <!-- Карточка пользователя -->
             <div class="col-sm-12 col-md-6 col-lg-3">
                 <div class="card style_prevu_kit_static_blue" >
@@ -43,7 +43,15 @@
                     </div>
                     <div class="profile-userbuttons">
                         <a href="/user${object.id}"><button type="button" class="btn btn-primary btn-sm"><span   class="glyphicon glyphicon-cog" aria-hidden="true"> Профиль</span></button></a>
-                        <a href="/sendMessage/${object.id}"><button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-envelope" aria-hidden="true"> К  чату</span></button></a>
+
+
+
+                        <form action="/sendMessage/${object.id}">
+                            <button type="submit" class="btn btn-info btn-sm" <c:if test="${flagsMessage.get(object.id) eq false}"> disabled </c:if> >
+                                <span class="glyphicon glyphicon-envelope" aria-hidden="true"> Чат</span>
+                            </button>
+                        </form>
+
                         <a href="/deleteFriend/${object.id}"><button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span></button></a>
                     </div>
                     <ul class="list-group list-group-my list-group-flush mCustomScrollbar" style="max-height: 18.9rem;" data-mcs-theme="minimal-dark">
