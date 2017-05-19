@@ -581,6 +581,7 @@ public class UserController {
                              @RequestParam("ageDate") String ageDate,
                              @RequestParam("sex") String sex,
                              @RequestParam("city") String city,
+                             @RequestParam("phone") String phone,
                              @RequestParam("info") String additional_field) throws InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 
         String full_name = name + " " + surname + " " + middle_name;
@@ -597,6 +598,7 @@ public class UserController {
         mapAttr.put(8, sex);
         mapAttr.put(9, city);
         mapAttr.put(10, additional_field);
+        mapAttr.put(16, phone);
 
         DataObject dataObject = new DataObject(userId, full_name, 1001, mapAttr);
         loadingService.updateDataObject(dataObject);

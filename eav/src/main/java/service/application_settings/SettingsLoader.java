@@ -18,7 +18,7 @@ public class SettingsLoader {
     }
 
     private static void refreshProps() throws IOException {
-        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("app_settings.properties");
+        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("app_settings_local.properties");
         property.load(inputStream);
         load_status = true;
     }

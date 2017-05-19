@@ -157,11 +157,11 @@ public class UserServiceImp implements UserService {
                         "<html><body><a href=" + url + ">" + "Войти в чат " + "</a></body></html>" +
                         "Это сообщение создано автоматически, на него не нужно отвечать!", true);
             } else if ("addFriend".equals(type)) {
-                String url = "http://" + host_name + host_port + "/allUnconfirmedFriends";
+                String url = "http://" + host_name + host_port + "/main-login";
                 helper.setText("Пользователь " + userFrom.getLogin() + " хочет стать вашим другом. " +
                         "<html><body><a href=" + url + ">" + "Подробнее" + "</a></body></html>", true);
             } else if ("meetingInvite".equals(type)) {
-                String url = "http://" + host_name + host_port + "/meetings";
+                String url = "http://" + host_name + host_port + "/main-login";
                 helper.setText("Пользователь " + userFrom.getLogin() + " приглашает вас на встречу. " +
                         "<html><body><a href=" + url + ">" + "Подробнее" + "</a></body></html>", true);
             }
