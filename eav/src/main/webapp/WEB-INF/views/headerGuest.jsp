@@ -69,13 +69,7 @@
                         <li>
                             <div class="row">
                                 <div class="col-md-12">
-                                    Войти с помощью
-                                    <div class="form-group">
-                                        <button class="btn btn-vk btn-block">
-                                            <i class="fa fa-vk fa-2x"></i>
-                                        </button>
-                                    </div>
-                                    или
+                                    <h4 class="text-center">Авторизация</h4>
                                     <form class="form" role="form" method="post" action="<%=request.getContextPath()%>/j_spring_security_check" accept-charset="UTF-8" id="login-nav">
                                         <div class="form-group">
                                             <label class="sr-only" for="exampleInputUsername2">Логин</label>
