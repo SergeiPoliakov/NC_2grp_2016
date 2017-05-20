@@ -73,9 +73,6 @@ public class NameNodeTree {
             userMap.put(user.getId(), user);
         }
 
-
-        //this.root = TagNode.getInstance(); // Создаем базовый узел
-
         // И затем обходим всех юзеров и подвешиваем их имена к дереву
         for (int i = 0; i < users.size(); i++){
             User user = users.get(i);
@@ -83,7 +80,6 @@ public class NameNodeTree {
             insertForUser(user.getSurname(), user.getId()); // Вешаем на дерево фамилию
             if (user.getMiddleName() != null && user.getMiddleName().length() > 0) insertForUser(user.getMiddleName(), user.getId()); // Если еще и отчество есть, то и его вешаем
         }
-
 
     }
 

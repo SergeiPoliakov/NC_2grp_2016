@@ -17,32 +17,62 @@
 <html>
 <head>
     <title>Ваше расписание</title>
-    <%@include file='header.jsp' %>
+    <%@include file='header.jsp'%>
 
     <meta charset="UTF-8">
 
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-select.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="<%=request.getContextPath()%>/resources/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tipped.css">
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/vis.min.css">
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tlmain.css">
-    <link rel="stylesheet" type="text/css"
-          href="<%=request.getContextPath()%>/resources/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/tipped.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/vis.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/tlmain.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/jquery.mCustomScrollbar.min.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"> </script>
+    <script type="text/javascript" src="/resources/js/moment-with-locales.min.js"> </script>
+    <script type="text/javascript" src="/resources/js/tipped.js"> </script>
+    <script type="text/javascript" src="/resources/js/vis.js"> </script>
+    <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/resources/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="/resources/js/bootstrap-select.min.js"> </script>
+    <script type="text/javascript" src="/resources/js/jquery.mCustomScrollbar.concat.min.js"> </script>
 
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/moment-with-locales.min.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/tipped.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/vis.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
-    <script type="text/javascript"
-            src="<%=request.getContextPath()%>/resources/js/bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap-select.min.js"></script>
-    <script type="text/javascript"
-            src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
+    <!-- 2017-05-12 Для работы чата (остальное в файле chat.js) -->
+    <script type="text/javascript" src="/resources/js/chat.js"> </script>
+    <script type="text/javascript">
+        // Для работы чата (остальное в файле chat.js)
+        var v_message_id = 0;
+        var v_meeting_id = '${meeting.id}';
+    </script>
+
+
+
+    <style type="text/css">
+        p{
+            margin: 0px;
+        }
+        .hideinput{
+            margin-bottom: 0.5rem;
+        }
+        .input-group-addon-my{
+            min-width: 9rem;
+        }
+    </style>
+
+
+    <script>
+        var m_id = ${meeting.id};
+        var str = "";
+
+        <c:forEach items="${ids}" var="users_id">
+        str = str + ${users_id} + ", ";
+        </c:forEach>
+
+    </script>
+
+
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/slots.js"></script>
 
     <script type="text/javascript">
         // 2017-05-08 Для вывода первого таймера (обратный отсчет до окончания времени редактирования)
@@ -113,25 +143,38 @@
             <%@include file='countdown_002.jsp'%>
             <!-- Окончание второго таймера -->
 
-
-            <div class="card">
+            <!-- ЧАТ -->
+            <div class="card" style="background-color: rgb(236, 240, 241);">
                 <div class="card-title">
-                    <h3 class="text-center" id="cardsholder">Ваши шаблоны</h3>
+                    <h3 class="text-center" id="cardsholder">Чат</h3>
                 </div>
-                <ul class="list-group list-group-my list-group-flush text-center navi mCustomScrollbar"
-                    data-mcs-theme="minimal-dark" id="cardsholderItems">
-                    <li class="list-group-item list-group-item-info">РАЗ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-danger">ДВА ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-info">ТРИ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-info">ЧЕТЫРЕ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-danger">ПЯТЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-warning">ШЕСТЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-danger">СЕМЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-warning">ВОСЕМЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-info">ДЕВЯТЬ ШАБЛОН</li>
-                    <li class="list-group-item list-group-item-warning">ДЕСЯТЬ ШАБЛОН</li>
+                <ul class="list-group list-group-my list-group-flush text-left chat mCustomScrollbar"
+                    data-mcs-theme="minimal-dark" id="cardsholderItems" style="background-color: rgb(238, 238, 238);">
+
+                    <div id = "insert_place_messages"></div> <!-- 2017-05-12 Место вставки сообщений, см. chat.js -->
+
                 </ul>
-                <button type="button" class="btn btn-success btn-block" id="templateAddButton">Добавить</button>
+
+                <form id="messageSend" name="creation" method="post" style="margin-bottom: 0px;"> <!-- 2017-05-12 Кнопка отправки сообщений, см. chat.js -->
+                    <div class="input-group">
+                        <textarea class="form-control custom-control" rows="2" style="resize:none"
+                                  placeholder="Введите сообщение" maxlength="70" id="messageInput">
+                        </textarea>
+
+                        <span class="input-group-addon btn btn-primary" id="messageSendButton" title="Отправить">
+							<span class="glyphicon glyphicon-send"></span>
+						</span>
+                    </div>
+                </form>
+
+
+                <div class="input-group">
+					<span class="input-group-addon ">
+						<div class="text-right" id="textarea_feedback">
+						Осталось
+						</div>
+					</span>
+                </div>
             </div>
         </div>
     </div>
@@ -304,14 +347,45 @@
 <br>
 
 <style type="text/css">
-    #elem {
-        display: none;
-    }
-
-    #elem2 {
-        display: block;
-    }
+    #elem {display:none;}
+    #elem2 {display:block;}
 </style>
+
+<script type="text/javascript">
+
+    // Нажатие Enter в поле ввода чата
+    $('#messageInput').keyup(function(e){
+        if(e.keyCode == 13) {
+            sendMessageChat();
+        }
+    });
+
+    $('#messageSendButton').click(function(e){
+        sendMessageChat();
+    });
+
+    $("#cardsholderItems").mCustomScrollbar({
+        scrollInertia: 275
+    });
+
+    // Нажатие кнопки "Пригласить"
+    $("#inviteButton").click(function () {
+        alert($('#inviteAtMeetingSelectPicker').val());
+        $('#inviteAtMeetingSelectPicker').selectpicker('deselectAll');
+    });
+    // Лимит числа символов в сообщении
+    $(function () {
+        var text_max = 70;
+        $('#textarea_feedback').html('Осталось символов: ' + text_max);
+
+        $('#messageInput').keydown(function () {
+            var text_length = $('#messageInput').val().length;
+            var text_remaining = text_max - text_length;
+
+            $('#textarea_feedback').html('Осталось символов: ' + text_remaining);
+        });
+    });
+</script>
 
 
 <script type="text/javascript">

@@ -114,7 +114,7 @@
 
                 </ul>
 
-                <form id="messageSend" name="creation" onclick="sendMessageChat()" method="post" style="margin-bottom: 0px;"> <!-- 2017-05-12 Кнопка отправки сообщений, см. chat.js -->
+                <form id="messageSend" name="creation" method="post" style="margin-bottom: 0px;"> <!-- 2017-05-12 Кнопка отправки сообщений, см. chat.js -->
                     <div class="input-group">
                         <textarea class="form-control custom-control" rows="2" style="resize:none"
                                   placeholder="Введите сообщение" maxlength="70" id="messageInput">

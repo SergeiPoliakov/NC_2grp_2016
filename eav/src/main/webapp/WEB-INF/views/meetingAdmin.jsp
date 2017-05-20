@@ -338,6 +338,10 @@
         sendMessageChat();
     });
 
+    $("#cardsholderItems").mCustomScrollbar({
+        scrollInertia: 275
+    });
+
     // Переключение между просмотром и редактированием
     $(".hideinput").hide();
     $("#settingsButton").click(function(){

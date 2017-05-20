@@ -253,14 +253,13 @@
 
                 </ul>
 
-                <form id="messageSend" name="creation" onclick="sendMessageChat()" method="post" style="margin-bottom: 0px;"> <!-- 2017-05-12 Кнопка отправки сообщений, см. chat.js -->
+                <form id="messageSend" name="creation" method="post" style="margin-bottom: 0px;"> <!-- 2017-05-12 Кнопка отправки сообщений, см. chat.js -->
                     <div class="input-group">
                         <textarea class="form-control custom-control" rows="2" style="resize:none"
                                   placeholder="Введите сообщение" maxlength="70" id="messageInput">
                         </textarea>
 
-                        <span class="input-group-addon btn btn-primary" id="messageSendButton" title="Отправить"
-                              type="submit">
+                        <span class="input-group-addon btn btn-primary" id="messageSendButton" title="Отправить">
 							<span class="glyphicon glyphicon-send"></span>
 						</span>
                     </div>
@@ -420,6 +419,25 @@
     #elem {display:none;}
     #elem2 {display:block;}
 </style>
+
+<script type="text/javascript">
+
+    // Нажатие Enter в поле ввода чата
+    $('#messageInput').keyup(function(e){
+        if(e.keyCode == 13) {
+            sendMessageChat();
+        }
+    });
+
+    $('#messageSendButton').click(function(e){
+        sendMessageChat();
+    });
+
+    $("#cardsholderItems").mCustomScrollbar({
+        scrollInertia: 275
+    });
+
+</script>
 
 <script type="text/javascript">
     // Для вывода полоски сообщения снизу под таймлайном
