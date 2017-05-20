@@ -123,6 +123,8 @@ public class UserController {
             }
             throw new CustomException("Вы еще не подтвердили свой email!");
         }
+
+        System.out.println("ТЕЛЕФОН" + currentUser.getValue(17));
         System.out.println("Размер кэша до обновления страницы " + doCache.size());
         try {
             DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
@@ -231,18 +233,21 @@ public class UserController {
 
 
     @RequestMapping(value = "/searchUser", method = RequestMethod.GET)
-    public String searchUser(HttpServletRequest request, Map<String, Object> mapObjects) throws CustomException, SQLException, ExecutionException {
+    public String searchUser(HttpServletRequest request, Map<String, Object> mapObjects) throws CustomException, SQLException, ExecutionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         HttpSession session = request.getSession();
         if (session.getAttribute("finder") != null) {
             FinderTagRequest finder = (FinderTagRequest) session.getAttribute("finder");
             System.out.println("finder пришел из сессии!!!" + finder.getText());
-
+            HashMap<Integer,String> checkAddFriendButton = new HashMap<>();
             if ("user".equals(finder.getType())) {
                 ArrayList<FinderTagResponse> finderTagResponseList = FinderLogic.getWithLogic(finder);
                 Set<Integer> usersID = new HashSet<>();
                 ArrayList<Integer> userListWithTag;
 
+                DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+                User currentUser = converter.ToUser(dataObjectUser);
+                ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(currentUser.getId())));
 
                 assert finderTagResponseList != null;
                 for (FinderTagResponse tag : finderTagResponseList
@@ -264,7 +269,13 @@ public class UserController {
                     ArrayList<User> users = new ArrayList<>(list.size());
                     for (DataObject dataObject : list) {
                         User user = converter.ToUser(dataObject);
-                        users.add(user);
+                        if (ilFriend.contains(user.getId())) {
+                            checkAddFriendButton.put(user.getId(), "false");
+                            users.add(user);
+                        } else {
+                            checkAddFriendButton.put(user.getId(), "true");
+                            users.add(user);
+                        }
                     }
 
                     for (User user : users
@@ -273,8 +284,7 @@ public class UserController {
                     }
 
                     mapObjects.put("allUsers", users);
-                    DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
-                    User currentUser = converter.ToUser(dataObject);
+                    mapObjects.put("checkAddFriendButton", checkAddFriendButton);
                     mapObjects.put("currentUser", currentUser);
                     session.removeAttribute("finder");
 
@@ -282,6 +292,9 @@ public class UserController {
                     e.printStackTrace();
                 }
             } else if ("name".equals(finder.getType())) {
+                DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+                User currentUser = converter.ToUser(dataObjectUser);
+                ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(currentUser.getId())));
                 ArrayList<User> users = new ArrayList<>();
                 ArrayList<Integer> userIds = new ArrayList<>();
 
@@ -296,13 +309,18 @@ public class UserController {
                     ArrayList<DataObject> list = getListDataObject(map);
                     for (DataObject dataObject : list) {
                         User user = converter.ToUser(dataObject);
-                        users.add(user);
+                        if (ilFriend.contains(user.getId())) {
+                            checkAddFriendButton.put(user.getId(), "false");
+                            users.add(user);
+                        } else {
+                            checkAddFriendButton.put(user.getId(), "true");
+                            users.add(user);
+                        }
                     }
                 }
 
                 mapObjects.put("allUsers", users);
-                DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
-                User currentUser = converter.ToUser(dataObject);
+                mapObjects.put("checkAddFriendButton", checkAddFriendButton);
                 mapObjects.put("currentUser", currentUser);
                 session.removeAttribute("finder");
 
@@ -351,9 +369,13 @@ public class UserController {
 
     // 2017-02-16 Анатолий, Проба работы новых фильтров и альтернативного лоадера
     @RequestMapping("/allUser")
-    public String listObjects(Map<String, Object> mapObjects, ModelMap m) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL));
+    public String listObjects(Map<String, Object> mapObjects, ModelMap m) throws SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, ExecutionException {
+        DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
+        User currentUser = converter.ToUser(dataObjectUser);
 
+        ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL));
+        ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(currentUser.getId())));
+        HashMap<Integer,String> checkAddFriendButton = new HashMap<>();
         try {
             System.out.println("Ищем в кэше список пользователей");
             Map<Integer, DataObject> map = doCache.getAll(il);
@@ -361,14 +383,20 @@ public class UserController {
             ArrayList<User> users = new ArrayList<>(list.size());
             for (DataObject dataObject : list) {
                 User user = converter.ToUser(dataObject);
-                users.add(user);
+                if (ilFriend.contains(user.getId())) {
+                    checkAddFriendButton.put(user.getId(), "false");
+                    users.add(user);
+                } else {
+                    checkAddFriendButton.put(user.getId(), "true");
+                    users.add(user);
+                }
             }
             System.out.println("Размер кэша после добавления " + doCache.size());
 
-            DataObject dataObject = doCache.get(userService.getObjID(userService.getCurrentUsername()));
-            User currentUser = converter.ToUser(dataObject);
+
             m.addAttribute("currentUser", currentUser);
             mapObjects.put("allUsers", users);
+            mapObjects.put("checkAddFriendButton", checkAddFriendButton);
 
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -445,7 +473,7 @@ public class UserController {
         mapAttr.put(9, "");
         mapAttr.put(10, "");
         mapAttr.put(11, "/resources/img/avatar.png"); // mapAttr.put(11, "ftp://" + this.ftp_server +"/upload/default/avatar.png"); // mapAttr.put(11, "http://nc2.hop.ru/upload/default/avatar.png");
-        mapAttr.put(15, "false");  //изначально должно быть false
+        mapAttr.put(15, "true");  //изначально должно быть false
         mapAttr.put(16, phone);
         mapAttr.put(17, "false");  //изначально должно быть false
         // mapAttr.put(12, null);
@@ -614,6 +642,7 @@ public class UserController {
         int current_user_id = userService.getObjID(userService.getCurrentUsername());
        // User currentUser = converter.ToUser(doCache.get(current_user_id));
         ArrayList<Integer> il = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(current_user_id)));
+
         ArrayList<User> friends = new ArrayList<>();
         try {
             System.out.println("Ищем в кэше список друзей");
@@ -627,6 +656,7 @@ public class UserController {
             }
             System.out.println("Размер кэша после добавления " + doCache.size());
 
+
             mapObjects.put("allObject", friends);
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -637,6 +667,7 @@ public class UserController {
         for (int i = 0; i < friends.size(); i++) {
             // проверяем, есть ли текущий пользователь в друзьях, чтобы дать ему доступ
             ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(friends.get(i).getId())));
+
             try {
                 Settings settings = converter.ToSettings(doCache.get(friends.get(i).getSettingsID()));
                 System.out.println(settings.getPrivateMessage());
@@ -657,7 +688,6 @@ public class UserController {
                 e.printStackTrace();
             }
         }
-        System.out.println("EEEEEEEEEEEEEEEEE");
         for (Map.Entry entry: flagsMessage.entrySet()) {
             Integer key = (Integer) entry.getKey();
             String value = (String) entry.getValue();
@@ -707,6 +737,8 @@ public class UserController {
 
         DataObject dataObjectTo = doCache.get(objectId);
         User user = converter.ToUser(dataObjectTo);
+
+
         Settings settings = converter.ToSettings(doCache.get(user.getSettingsID()));
 
         if ("nobody".equals((settings.getPrivateAddFriend())) && !"acceptFriend".equals(type)) {
@@ -730,7 +762,7 @@ public class UserController {
         String message2 = "Пользователь успешно добавлен в список друзей";
         m.addAttribute("info1", message1);
         m.addAttribute("info2", message2);
-        
+
         loggerLog.add(Log.ADD_FRIEND, objectId, idUser); // Добавление пользователя в друзья
         return "info";
     }

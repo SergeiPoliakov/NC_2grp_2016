@@ -194,7 +194,8 @@ public class UserServiceImp implements UserService {
     }
 
     public void sendSmS(String type, Integer fromID, Integer toID) throws ExecutionException {
-        DataObject dataObject = doCache.get(fromID);
+        DataObject dataObject = doCache.get(toID);
+
         if (dataObject.getValue(17).equals("true")) {  // тут нужно будет проверять расширенные настройки потом
             SMSCSender sd = new SMSCSender("Netcracker", "q7Sq2O_VqLhh", "utf-8", true);   //после теста закомментируйте обратно!!!!!
             User userTo = new Converter().ToUser(doCache.get(toID));
