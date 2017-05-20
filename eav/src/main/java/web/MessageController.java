@@ -149,8 +149,8 @@ public class MessageController {
                 Message message = converter.ToMessage(DO);
                 AR.add(message);
                 // И проверяем, если это сообщение текущему пользователю, а не от текущего, можно выставить флаг о прочтении
-                if (message.getFrom_id() != from_id ){
-                    flagUpRead.add(message.getId());
+                if (! message.getFrom_id().equals(from_id) ){  // Тут косяк был с выставлением флага, исправил 2017-05-21 (как всегда, сравнение не по equals. Но все потому, что раньше getFrom_id давал int, и все норм было)
+                     flagUpRead.add(message.getId());
                 }
             }
             // И выставляем флаги о прочтении:

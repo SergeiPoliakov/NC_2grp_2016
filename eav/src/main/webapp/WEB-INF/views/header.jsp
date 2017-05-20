@@ -278,8 +278,8 @@
 
 
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/allUnconfirmedFriends" id="result_text_friend"></a></li> <!-- AJAX "Друзья: 5" -->
-                <li><a href="/allUnreadMessages" id="result_text_message"></a></li> <!-- AJAX "Сообщения: 10" -->
+                <!--2017-05-21 Временное выключение вывода справа уведомлений о сообщениях <li><a href="/allUnconfirmedFriends" id="result_text_friend"></a></li> <!-- AJAX "Друзья: 5" -->
+                <!--2017-05-21 Временное выключение вывода справа уведомлений о сообщениях <li><a href="/allUnreadMessages" id="result_text_message"></a></li> <!-- AJAX "Сообщения: 10" -->
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b><span class="glyphicon glyphicon-user"></span> <sec:authentication property="principal.username"/></b> <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">

@@ -26,7 +26,7 @@
     </script>
 
     <script type="text/javascript">
-        function doAjaxArray() {
+        function doAjaxArray() { // Получение истории сообщений между двумя пользователями (личка)
 
             var inputText = '${to_id}';
 

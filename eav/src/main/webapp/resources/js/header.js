@@ -19,14 +19,17 @@ function doAjaxNewMessages() {
             console.log(data);
 
             var result = 'Новых сообщений нет';
-            if (data.count > 0)
-                result = data.text+': '+data.count;
+            if (data.count > 0){
+                // result = data.text+': '+data.count; // 2017-05-21 А вывод справа временно отключим, зачем дублировать
+                $( "#messageCount" ).attr( "data-count", data.count); // 2017-05-21 А это для вывода количества новыйх непрочитаннных сообщений слева, где уведомления в хедере
+            }
 
-            $("#result_text_message").text(result);
+
+            // $("#result_text_message").text(result); // 2017-05-21 А вывод справа временно отключим, зачем дублировать
         }
     });
 }
-setInterval(doAjaxNewMessages, 10000);
+setInterval(doAjaxNewMessages, 2000); // 10000
 
 function doAjaxNotifications() {
 
