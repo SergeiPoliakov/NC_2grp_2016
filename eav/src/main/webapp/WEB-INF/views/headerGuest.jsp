@@ -54,7 +54,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li><a href="/addUser">Регистрация</a></li>
-                <li><a href="#">Быстрый старт</a></li>
+                <li><a href="https://www.youtube.com/watch?v=1Q5tfgkjws4">Быстрый старт</a></li>
             </ul>
             <!--<form action="/searchUser" class="navbar-form navbar-left" role="search" method="post">
                 <div class="form-group">
@@ -70,6 +70,13 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="text-center">Авторизация</h4>
+                                   <!--Войти с помощью
+                                    <div class="form-group">
+                                        <button class="btn btn-vk btn-block">
+                                            <i class="fa fa-vk fa-2x"></i>
+                                        </button>
+                                    </div>
+                                    или -->
                                     <form class="form" role="form" method="post" action="<%=request.getContextPath()%>/j_spring_security_check" accept-charset="UTF-8" id="login-nav">
                                         <div class="form-group">
                                             <label class="sr-only" for="exampleInputUsername2">Логин</label>

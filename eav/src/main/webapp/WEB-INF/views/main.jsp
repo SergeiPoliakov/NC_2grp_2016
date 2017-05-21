@@ -41,10 +41,13 @@
                 <div class="mbr-table-cell mbr-right-padding-md-up mbr-valign-top col-md-7 image-size" style="width: 50%;">
                     <div class="mbr-figure"><iframe class="mbr-embedded-video" src="https://www.youtube.com/embed/1Q5tfgkjws4?rel=0&amp;amp;showinfo=0&amp;autoplay=0&amp;loop=0" width="1280" height="720" frameborder="0" allowfullscreen></iframe></div>
                 </div>
-                <div class="mbr-table-cell col-md-5 text-xs-center text-md-left content-size">
+
+
+                <div class="profile-userbuttons">
                     <h2>БЫСТРЫЙ СТАРТ: ВИДЕО</h2>
-                    <button class="btn btn-info btn-sm" id="btn-read">ПОДРОБНЕЕ</button>
+                    <a href="https://www.youtube.com/watch?v=1Q5tfgkjws4"><button type="button" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"> ПОДРОБНЕЕ</span></button></a>
                 </div>
+
             </div>
         </div>
     </div>
@@ -54,13 +57,13 @@
     <div class="container">
         <div class="row">
             <div class="mbr-table-md-up">
-                <div class="mbr-table-cell col-md-5 text-xs-center text-md-right content-size">
+
+
+                <div class="profile-userbuttons">
                     <h2>ПРИСОЕДИНЯЙТЕСЬ УЖЕ СЕГОДНЯ!</h2>
-                    <div class="lead">
-                        <p></p>
-                    </div>
-                    <button class="btn btn-info btn-sm" href="/addUser" id="btn-add">РЕГИСТРАЦИЯ</button>
+                    <a href="/addUser"><button type="button" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-ok" aria-hidden="true"> РЕГИСТРАЦИЯ</span></button></a>
                 </div>
+
                 <div class="mbr-table-cell mbr-left-padding-md-up mbr-valign-top col-md-7 image-size" style="width: 50%;">
                     <div class="mbr-figure"><img src="/resources/assets/images/desktop.jpg"></div>
                 </div>
