@@ -587,8 +587,8 @@
             group: ${user.id},
             editable: false,
             content: '${event.name}',
-            start: new Date(getDateFromString('${event.date_begin}')),
-            end: new Date(getDateFromString('${event.date_end}')),
+            start: new Date(getDateFromString('${duplicate.date_begin}')),
+            end: new Date(getDateFromString('${duplicate.date_end}')),
             className: '${event.priority}'
         },
         </c:if>

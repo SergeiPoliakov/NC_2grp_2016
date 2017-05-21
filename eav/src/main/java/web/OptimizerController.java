@@ -543,6 +543,8 @@ public class OptimizerController {
         // 1) Пытаемся получить финальную точку сохранения эвентов из сейвера по составному ключу
         Meeting meeting = SlotSaverAdmin.getDuplicateFinalPoint(currentUser.getId(), meeting_id);
 
+
+
         // Если она есть, то уже начинали оптимизировать, но не успели сохранить в базу, и дальше работаем с этой копией из сейвера,
         // иначе надо выбрать из кэша (или из базы) нужную встречу и положить ее в сейвер, а затем отправить на страницу:
         if (meeting == null) {
@@ -610,7 +612,7 @@ public class OptimizerController {
 
         Integer root_id = userService.getObjID(userService.getCurrentUsername());
 
-        // Вызываем метод сохранения в базу всех изменений из сейвера с параметрами айди пользователя, айди встречи и период оптимизации:
+        // Вызываем метод отмены всех изменений из сейвера с параметрами айди пользователя, айди встречи и период оптимизации:
         SlotOptimizer.resetMeeting(root_id, meeting_id);
 
         // Перегружаем страничку
