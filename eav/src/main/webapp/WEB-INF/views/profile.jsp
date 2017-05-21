@@ -210,7 +210,8 @@
                                                     </select>
                                                 </div>
                                             </div>
-
+                                            
+                                            <!--
                                             <div class="form-group">
                                                 <div class="text-center">
                                                     <label class="control-label" for="privateLookFriend">Кто может cмотреть мой список друзей</label>
@@ -221,6 +222,7 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            -->
 
                                         </div>
                                     </div>
