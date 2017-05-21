@@ -32,7 +32,7 @@ function getStatSettings() {
                 var block_col_lg_12 = '<div class="row">';
 
                 block_col_lg_12 += '<div class="col-lg-12">';
-                block_col_lg_12 += '<div id="location_' + count_loc + '" class="card card_statistic mCustomScrollbar" data-mcs-theme="minimal-dark">';
+                block_col_lg_12 += '<div id="location_' + count_loc + '" style="min-height: 15rem;max-height: 15rem; border-top: 2px solid #c8c8c8;" data-mcs-theme="minimal-dark">';
                 block_col_lg_12 += '<h4 class="card-title text-center">Загрузка статистики... Пожалуйста, подождите </h4>';
                 block_col_lg_12 += '</div>';
                 block_col_lg_12 += '</div>';

@@ -151,6 +151,7 @@
     </div>
 </div>
 
+<div style="margin-bottom: 8rem;"/>
 <%@include file='footer.jsp' %>
 
 <script type="text/javascript">

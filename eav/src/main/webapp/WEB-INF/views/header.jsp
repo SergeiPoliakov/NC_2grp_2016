@@ -393,7 +393,7 @@
         },
         tags: true,
         tokenSeparators: [',', ' '],
-        minimumInputLength: 1,
+        minimumInputLength: 3,
         language: "ru",
         placeholder: ' Поиск...'
     });
