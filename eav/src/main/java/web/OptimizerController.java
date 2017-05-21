@@ -153,8 +153,6 @@ public class OptimizerController {
             date_edit_countdown = DateConverter.stringToCountdown(date_edit_countdown);
         }
         m.addAttribute("timer_001", date_edit_countdown);
-
-
         // 2 Получаем дубликат встречи из встречи для текущего юзера:
         Event duplicate = null;
         for (Event dupl : meeting.getDuplicates()){
@@ -228,7 +226,6 @@ public class OptimizerController {
     public String userOptimizerPage(@PathVariable("meeting_id") String meeting_id,
                                     @PathVariable("date_start") String date_start,
                                     @PathVariable("date_end") String date_end,
-
 */
 
     // 5) 2017-04-13 На добавление события через AJAX в сейвер
@@ -478,23 +475,23 @@ public class OptimizerController {
         }
         else{ // иначе удаляем как пользователь (реализовал): */
 
-            ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs(); // в этот список получаем из встречи все айдишники дубликатов
-            for (Integer i: ids_duplicates
-                 ) {
-                DataObject dataObjectDuplicate = doCache.get(i);
-                if (dataObjectDuplicate.getReference(141).get(0).equals(user_id)) {  //если это наш дубликат
+        ArrayList<Integer> ids_duplicates = meeting.getDuplicateIDs(); // в этот список получаем из встречи все айдишники дубликатов
+        for (Integer i: ids_duplicates
+                ) {
+            DataObject dataObjectDuplicate = doCache.get(i);
+            if (dataObjectDuplicate.getReference(141).get(0).equals(user_id)) {  //если это наш дубликат
 
-                    //удаляем юзера из встречи
-                    meeting.getUsers().remove(user);
+                //удаляем юзера из встречи
+                meeting.getUsers().remove(user);
 
 
-                    //удаляем ссылку на дубликат из встречи
-                    meeting.getDuplicates().remove(dataObjectDuplicate);
+                //удаляем ссылку на дубликат из встречи
+                meeting.getDuplicates().remove(dataObjectDuplicate);
 
-                    // Логирвоание:
-                    loggerLog.add(Log.LEAVED_MEETING, meeting_id);
-                }
+                // Логирвоание:
+                loggerLog.add(Log.LEAVED_MEETING, meeting_id);
             }
+        }
 
         loadingService.updateDataObject(meeting.toDataObject());
         doCache.invalidate(meeting_id);
@@ -533,7 +530,7 @@ public class OptimizerController {
     // 14) 2017-05-07 На подгрузку страницы оптимизации встречи для администратора встречи: (все работает через сайвер, в отличие от методов в других контроллерах) Integer meeting_id
     @RequestMapping(value = "/adminOptimizer/{meeting_id}", method = RequestMethod.GET)
     public String adminOptimizerPage(@PathVariable("meeting_id") Integer meeting_id,
-                                    ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException, ParseException {
+                                     ModelMap m) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, ExecutionException, CustomException, ParseException {
 
         DataObject currentUser = loadingService.getDataObjectByIdAlternative(userService.getObjID(userService.getCurrentUsername()));
         int user_id = userService.getObjID(userService.getCurrentUsername());

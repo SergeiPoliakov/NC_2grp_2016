@@ -395,7 +395,6 @@ public class SlotOptimizer {
 
     // Админский оптимизатор встречи
     public static void optimizeItForAdmin(Integer user_id, Integer meeting_id) throws NoSuchMethodException, ParseException, ExecutionException, SQLException, IllegalAccessException, InvocationTargetException, CloneNotSupportedException {
-
         // 1 Получаем из сейвера финальную точку сохранения (встречу) по составному ключу:
         Meeting meeting = SlotSaverAdmin.getDuplicateFinalPoint(user_id, meeting_id);
         meeting = (Meeting) meeting.clone();

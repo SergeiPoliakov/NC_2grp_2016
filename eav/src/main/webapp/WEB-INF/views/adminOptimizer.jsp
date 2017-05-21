@@ -64,11 +64,9 @@
     <script>
         var m_id = ${meeting.id};
         var str = "";
-
         <c:forEach items="${ids}" var="users_id">
         str = str + ${users_id} + ", ";
         </c:forEach>
-
     </script>
 
 
@@ -207,7 +205,6 @@
               <div class="row">
                   <div class="col-md-5">
                       <div class="panel panel-primary">
-
                           <div class="panel-heading" id="accordion">
                               <span class="glyphicon glyphicon-comment"></span> Список свободных слотов для встречи за текущую неделю
                               <div class="btn-group pull-right">
@@ -217,16 +214,12 @@
                                   </a>
                               </div>
                           </div>
-
                           <div class="panel-collapse in" id="collapseOne">
                               <div class="panel-body">
                                   <ul class="chat">
-
                                       <p id="result_array"></p>
-
                                   </ul>
                               </div>
-
                           </div>
                       </div>
                   </div>
@@ -421,22 +414,18 @@
 </style>
 
 <script type="text/javascript">
-
     // Нажатие Enter в поле ввода чата
     $('#messageInput').keyup(function(e){
         if(e.keyCode == 13) {
             sendMessageChat();
         }
     });
-
     $('#messageSendButton').click(function(e){
         sendMessageChat();
     });
-
     $("#cardsholderItems").mCustomScrollbar({
         scrollInertia: 275
     });
-
 </script>
 
 <script type="text/javascript">
@@ -453,7 +442,6 @@
     $(".hideinput").hide();
     $("#settingsButton").click(function(){
         var title = $("#pTitle").text();
-
         if ($(this).html() == '<span class="glyphicon glyphicon-ok" aria-hidden="true"> Принять</span>'){
             $(this).html('<span class="glyphicon glyphicon-cog" aria-hidden="true"> Настройки</span>');
             //$(this).prop("type", "submit");
@@ -475,7 +463,6 @@
         $("#meetingInfo").toggle();
         $(".hideinput").toggle();
     });
-
     function callAJAX() {
         $.ajax({
             url : '/updateMeetingAJAX${meeting.id}',
@@ -499,11 +486,9 @@
             }
         });
     }
-
     $("#cardsholderItems").mCustomScrollbar({
         scrollInertia: 275
     });
-
     // Нажатие кнопки "Пригласить"
     $("#inviteButton").click(function () {
         if ($('#inviteAtMeetingSelectPicker').val() == null) {
@@ -517,15 +502,12 @@
     $(function () {
         var text_max = 70;
         $('#textarea_feedback').html('Осталось символов: ' + text_max);
-
         $('#messageInput').keydown(function () {
             var text_length = $('#messageInput').val().length;
             var text_remaining = text_max - text_length;
-
             $('#textarea_feedback').html('Осталось символов: ' + text_remaining);
         });
     });
-
     // Modal datetimepickers для создания новой задачи
     $(function () {
         $('#datetimepicker1').datetimepicker({
@@ -545,7 +527,6 @@
     });
     // Нажатие кнопки под шаблонами
     document.getElementById('messageSendButton').onclick = function () {
-
     };
     // Нажатие кнопки "Добавить" в всплывающем окне
     document.getElementById('modalAddButton').onclick = function () {
@@ -557,11 +538,9 @@
     // TIMELINE FILL, SETUP AND CREATE
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     var container = document.getElementById('visualization');
-
     // Группы элементов (1 группа - 1 пользователь)
     var groups = new vis.DataSet();
     groups.add([
-
         <c:forEach items="${meeting.users}" var="user">
         {
             id: ${user.id},
@@ -573,11 +552,8 @@
             content: "<b>Расписание встречи</b>"
         }
     ]);
-
-
     // Create a DataSet (allows two way data-binding) // 2017-05-07 Подправил, чтобы не выводилось расписание пользователей, а только сама встреча и ее дубликаты
     var items = new vis.DataSet([
-
         <c:forEach items="${meeting.users}" var="user"> // обходим всех прикрепленных пользователей
         <c:forEach items="${user.eventsUser}" var="event"> // и в каждого пользователя - все события (ищем дубликат, который есть в дуюликатах встречи)
         <c:forEach items="${meeting.duplicates}" var="duplicate"> // обходим дубликаты
@@ -592,14 +568,11 @@
             className: '${event.priority}'
         },
         </c:if>
-
         </c:forEach>
         </c:forEach>
         </c:forEach>
         {id: 'A', group: 0, type: 'background', start: new Date(getDateFromString('${meeting.date_start}')), end: new Date(getDateFromString('${meeting.date_end}')), className: 'negative'} // Подсветка времени встречи
-
     ]);
-
     // Configuration for the Timeline
     var options = {
         locale: 'RU',
@@ -616,7 +589,6 @@
         multiselect: true,
         dataAttributes: 'all',
         start: new Date(getDateFromString('${meeting.date_start}')).setHours(0,0,0,0),
-
         // Добавление задачи
         onAdd: function (item, callback) {
             $('#taskName').val("Новая задача");
@@ -636,12 +608,10 @@
             };
             callback(null);
         },
-
         // Удаление задачи
         onRemove: function (item, callback) {
             callback(item);
         },
-
         // Обновление задачи
         onUpdate: function (item, callback) {
             if (item.group == 1000) {
@@ -670,7 +640,6 @@
     // Create a Timeline
     var timeline = new vis.Timeline(container, items, groups, options);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     // Вывод информации, при наведении на элемент
     function createTooltip() {
         Tipped.create('.vis-item', function (element) {
@@ -688,7 +657,6 @@
             }
         );
     }
-
     // Преобразовать дату в строку формата DD.MM.YYYY hh:mm
     function toLocaleDateTimeString(dateString) {
         var eventTime = dateString.toLocaleTimeString();
@@ -698,7 +666,6 @@
         var startDate = dateString.toLocaleDateString() + ' ' + eventTimeAfter;
         return startDate;
     }
-
     // Получить дату из строки вида DD.MM.YYYY hh:mm
     function getDateFromString(dateString) {
         var reggie = /(\d{2}).(\d{2}).(\d{4}) (\d{2}):(\d{2})/;
@@ -712,7 +679,6 @@
         );
         return dateObject;
     }
-
     // Просмотр сегодняшнего дня
     document.getElementById('showTodayButton').onclick = function () {
         var currentDate = new Date();
@@ -721,7 +687,6 @@
         nextDay.setDate(nextDay.getDate() + 1);
         timeline.setWindow(currentDate, nextDay);
     };
-
     // Просмотр недели
     document.getElementById('showWeekButton').onclick = function () {
         var currentDate = new Date();
@@ -734,7 +699,6 @@
         inWeek.setDate(monday.getDate() + 7);
         timeline.setWindow(monday, inWeek);
     };
-
     // Просмотр месяца
     document.getElementById('showMonthButton').onclick = function () {
         var currentDate = new Date();
@@ -743,7 +707,6 @@
         var lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
         timeline.setWindow(firstDay, lastDay);
     };
-
     // Просмотр года
     document.getElementById('showYearButton').onclick = function () {
         var currentDate = new Date();
@@ -752,7 +715,6 @@
         var lastDay = new Date(currentDate.getFullYear(), 12, 0);
         timeline.setWindow(firstDay, lastDay);
     };
-
     // Просмотр встречи
     document.getElementById('showMeetingButton').onclick = function () {
         var start = new Date(getDateFromString('${meeting.date_start}'));
