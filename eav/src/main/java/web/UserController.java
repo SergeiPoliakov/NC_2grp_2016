@@ -240,6 +240,7 @@ public class UserController {
             FinderTagRequest finder = (FinderTagRequest) session.getAttribute("finder");
             System.out.println("finder пришел из сессии!!!" + finder.getText());
             HashMap<Integer,String> checkAddFriendButton = new HashMap<>();
+            HashMap<Integer,String> flagsMessage = new HashMap<>();
             if ("user".equals(finder.getType())) {
                 ArrayList<FinderTagResponse> finderTagResponseList = FinderLogic.getWithLogic(finder);
                 Set<Integer> usersID = new HashSet<>();
@@ -269,6 +270,7 @@ public class UserController {
                     ArrayList<User> users = new ArrayList<>(list.size());
                     for (DataObject dataObject : list) {
                         User user = converter.ToUser(dataObject);
+                        Settings settings = converter.ToSettings(doCache.get(user.getId()));
                         if (ilFriend.contains(user.getId())) {
                             checkAddFriendButton.put(user.getId(), "false");
                             users.add(user);
@@ -276,6 +278,18 @@ public class UserController {
                             checkAddFriendButton.put(user.getId(), "true");
                             users.add(user);
                         }
+
+                        if ("nobody".equals(settings.getPrivateMessage())) {
+                            System.out.println("1");
+                            flagsMessage.put(user.getId() ,"false");
+                        } else if (("onlyFriend".equals(settings.getPrivateMessage()) && ilFriend.contains(currentUser.getId())) || ("any".equals(settings.getPrivateMessage()))) {
+                            System.out.println("2");
+                            flagsMessage.put(user.getId(), "true");
+                        } else {
+                            System.out.println("3");
+                            flagsMessage.put(user.getId(), "false");
+                        }
+
                     }
 
                     for (User user : users
@@ -285,6 +299,7 @@ public class UserController {
 
                     mapObjects.put("allUsers", users);
                     mapObjects.put("checkAddFriendButton", checkAddFriendButton);
+                    mapObjects.put("flagsMessage", flagsMessage);
                     mapObjects.put("currentUser", currentUser);
                     session.removeAttribute("finder");
 
@@ -309,6 +324,7 @@ public class UserController {
                     ArrayList<DataObject> list = getListDataObject(map);
                     for (DataObject dataObject : list) {
                         User user = converter.ToUser(dataObject);
+                        Settings settings = converter.ToSettings(doCache.get(user.getId()));
                         if (ilFriend.contains(user.getId())) {
                             checkAddFriendButton.put(user.getId(), "false");
                             users.add(user);
@@ -316,11 +332,24 @@ public class UserController {
                             checkAddFriendButton.put(user.getId(), "true");
                             users.add(user);
                         }
+
+                        if ("nobody".equals(settings.getPrivateMessage())) {
+                            System.out.println("1");
+                            flagsMessage.put(user.getId() ,"false");
+                        } else if (("onlyFriend".equals(settings.getPrivateMessage()) && ilFriend.contains(currentUser.getId())) || ("any".equals(settings.getPrivateMessage()))) {
+                            System.out.println("2");
+                            flagsMessage.put(user.getId(), "true");
+                        } else {
+                            System.out.println("3");
+                            flagsMessage.put(user.getId(), "false");
+                        }
+
                     }
                 }
 
                 mapObjects.put("allUsers", users);
                 mapObjects.put("checkAddFriendButton", checkAddFriendButton);
+                mapObjects.put("flagsMessage", flagsMessage);
                 mapObjects.put("currentUser", currentUser);
                 session.removeAttribute("finder");
 

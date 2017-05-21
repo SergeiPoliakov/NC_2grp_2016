@@ -46,9 +46,10 @@
                                 <li class="right clearfix"><span class="chat-img pull-right">
                                 <a class="btn btn-primary btn-xs" href="/user${object.id}"><span class="glyphicon glyphicon-cog">  </span>Профиль </a>
 
-                                <a class="btn btn-info btn-xs" href="/sendMessage/${object.id}"><span class="glyphicon glyphicon-envelope"></span>Написать</a>
+                                <a class="btn btn-info btn-xs <c:if test="${flagsMessage.get(object.id) eq false}"> disabled </c:if>" href="/sendMessage/${object.id}"  ><span class="glyphicon glyphicon-envelope"></span>Написать</a>
+
                                 <c:if test="${checkAddFriendButton.get(object.id) eq true}">
-                                    <a class="btn btn-success btn-xs" href="/addFriend/${object.id}/addFriend" <c:if test="${object.equals(currentUser)}"> disabled </c:if> onclick="sendMessage('friendRequest', ${object.id}, null, null)">
+                                    <a class="btn btn-success btn-xs <c:if test="${object.equals(currentUser)}"> disabled </c:if>" href="/addFriend/${object.id}/addFriend"  onclick="sendMessage('friendRequest', ${object.id}, null, null)">
                                         <span class="glyphicon glyphicon-plus"></span>В друзья
                                     </a>
                                 </c:if>

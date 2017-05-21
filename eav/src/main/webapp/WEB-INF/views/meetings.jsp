@@ -18,17 +18,17 @@
     <title>Ваши встречи</title>
     <%@include file='header.jsp' %>
 
-    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="resources\css\bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css"
           href="<%=request.getContextPath()%>/resources/css/jquery.mCustomScrollbar.min.css">
 
-    <link rel="stylesheet" type="text/css" href="resources\css\tlmain.css">
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/tlmain.css">
 
-    <script type="text/javascript" src="resources\js\jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="resources\js\moment-with-locales.min.js"></script>
-    <script type="text/javascript" src="resources\js\bootstrap.min.js"></script>
-    <script type="text/javascript" src="resources\js\bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript"
             src="<%=request.getContextPath()%>/resources/js/jquery.mCustomScrollbar.concat.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validator.min.js"></script>
