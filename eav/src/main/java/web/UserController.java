@@ -270,7 +270,7 @@ public class UserController {
                     ArrayList<User> users = new ArrayList<>(list.size());
                     for (DataObject dataObject : list) {
                         User user = converter.ToUser(dataObject);
-                        Settings settings = converter.ToSettings(doCache.get(user.getId()));
+                        Settings settings = converter.ToSettings(doCache.get(user.getSettingsID()));
                         if (ilFriend.contains(user.getId())) {
                             checkAddFriendButton.put(user.getId(), "false");
                             users.add(user);
@@ -282,7 +282,7 @@ public class UserController {
                         if ("nobody".equals(settings.getPrivateMessage())) {
                             System.out.println("1");
                             flagsMessage.put(user.getId() ,"false");
-                        } else if (("onlyFriend".equals(settings.getPrivateMessage()) && ilFriend.contains(currentUser.getId())) || ("any".equals(settings.getPrivateMessage()))) {
+                        } else if (("onlyFriend".equals(settings.getPrivateMessage()) && ilFriend.contains(user.getId())) || ("any".equals(settings.getPrivateMessage()))) {
                             System.out.println("2");
                             flagsMessage.put(user.getId(), "true");
                         } else {
@@ -301,7 +301,7 @@ public class UserController {
                     mapObjects.put("checkAddFriendButton", checkAddFriendButton);
                     mapObjects.put("flagsMessage", flagsMessage);
                     mapObjects.put("currentUser", currentUser);
-                    session.removeAttribute("finder");
+                    //session.removeAttribute("finder");
 
                 } catch (ExecutionException e) {
                     e.printStackTrace();
@@ -309,10 +309,10 @@ public class UserController {
             } else if ("name".equals(finder.getType())) {
                 DataObject dataObjectUser = doCache.get(userService.getObjID(userService.getCurrentUsername()));
                 User currentUser = converter.ToUser(dataObjectUser);
-                ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(currentUser.getId())));
+
                 ArrayList<User> users = new ArrayList<>();
                 ArrayList<Integer> userIds = new ArrayList<>();
-
+                ArrayList<Integer> ilFriend = loadingService.getListIdFilteredAlternative(new UserFilter(UserFilter.ALL_FRIENDS_FOR_USER_WITH_ID, String.valueOf(currentUser.getId())));
                 ArrayList<FinderTagResponse> finderTagResponseList = FinderLogic.getWithLogic(finder);
 
                 for (FinderTagResponse ftr : finderTagResponseList){
@@ -323,8 +323,9 @@ public class UserController {
                     Map<Integer, DataObject> map = doCache.getAll(userIds);
                     ArrayList<DataObject> list = getListDataObject(map);
                     for (DataObject dataObject : list) {
+
                         User user = converter.ToUser(dataObject);
-                        Settings settings = converter.ToSettings(doCache.get(user.getId()));
+                        Settings settings = converter.ToSettings(doCache.get(user.getSettingsID()));
                         if (ilFriend.contains(user.getId())) {
                             checkAddFriendButton.put(user.getId(), "false");
                             users.add(user);
@@ -336,7 +337,7 @@ public class UserController {
                         if ("nobody".equals(settings.getPrivateMessage())) {
                             System.out.println("1");
                             flagsMessage.put(user.getId() ,"false");
-                        } else if (("onlyFriend".equals(settings.getPrivateMessage()) && ilFriend.contains(currentUser.getId())) || ("any".equals(settings.getPrivateMessage()))) {
+                        } else if (("onlyFriend".equals(settings.getPrivateMessage()) && ilFriend.contains(user.getId())) || ("any".equals(settings.getPrivateMessage()))) {
                             System.out.println("2");
                             flagsMessage.put(user.getId(), "true");
                         } else {
@@ -347,11 +348,13 @@ public class UserController {
                     }
                 }
 
+
+
                 mapObjects.put("allUsers", users);
                 mapObjects.put("checkAddFriendButton", checkAddFriendButton);
                 mapObjects.put("flagsMessage", flagsMessage);
                 mapObjects.put("currentUser", currentUser);
-                session.removeAttribute("finder");
+                //session.removeAttribute("finder");
 
                 }
             } else {

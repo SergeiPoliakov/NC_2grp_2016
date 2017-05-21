@@ -44,28 +44,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="userOptimizer.jsp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/userOptimizer.jsp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7446">
-              <caret line="438" column="7" lean-forward="false" selection-start-line="438" selection-start-column="7" selection-end-line="438" selection-end-column="7" />
-              <folding>
-                <marker date="1495370930367" expanded="true" signature="18424:31736" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="adminOptimizer.jsp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/adminOptimizer.jsp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9180">
-              <caret line="540" column="11" lean-forward="false" selection-start-line="540" selection-start-column="11" selection-end-line="540" selection-end-column="11" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="main.jsp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main.jsp">
           <provider selected="true" editor-type-id="text-editor">
@@ -101,38 +79,38 @@
       <file leaf-file-name="UserController.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/web/UserController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="745">
-              <caret line="351" column="61" lean-forward="false" selection-start-line="351" selection-start-column="61" selection-end-line="351" selection-end-column="61" />
+            <state relative-caret-position="1393">
+              <caret line="303" column="22" lean-forward="false" selection-start-line="303" selection-start-column="22" selection-end-line="303" selection-end-column="22" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="profile.jsp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/profile.jsp">
+      <file leaf-file-name="MeetingController.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/web/MeetingController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="212" column="0" lean-forward="false" selection-start-line="212" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
+            <state relative-caret-position="1979">
+              <caret line="427" column="34" lean-forward="false" selection-start-line="427" selection-start-column="34" selection-end-line="427" selection-end-column="34" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="searchUser.jsp" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/searchUser.jsp">
+      <file leaf-file-name="NewMeetingController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/web/NewMeetingController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="731">
-              <caret line="59" column="98" lean-forward="true" selection-start-line="59" selection-start-column="98" selection-end-line="59" selection-end-column="98" />
+            <state relative-caret-position="1062">
+              <caret line="263" column="28" lean-forward="false" selection-start-line="263" selection-start-column="28" selection-end-line="263" selection-end-column="28" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="meetings.jsp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetings.jsp">
+      <file leaf-file-name="Meeting.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/entities/Meeting.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="697">
-              <caret line="41" column="12" lean-forward="true" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
+            <state relative-caret-position="416">
+              <caret line="705" column="32" lean-forward="false" selection-start-line="705" selection-start-column="32" selection-end-line="705" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -226,7 +204,6 @@
         <option value="$PROJECT_DIR$/src/main/java/web/KKUserController.java" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/viewProfile.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/allFriends.jsp" />
-        <option value="$PROJECT_DIR$/src/main/java/web/MeetingController.java" />
         <option value="$PROJECT_DIR$/src/main/java/service/application_settings/SettingsLoader.java" />
         <option value="$PROJECT_DIR$/src/main/java/service/UserServiceImp.java" />
         <option value="$PROJECT_DIR$/src/main/resources/app_settings_local.properties" />
@@ -244,9 +221,10 @@
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/headerGuest.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/profile.jsp" />
-        <option value="$PROJECT_DIR$/src/main/java/web/UserController.java" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetings.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/searchUser.jsp" />
+        <option value="$PROJECT_DIR$/src/main/java/web/UserController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/web/MeetingController.java" />
       </list>
     </option>
   </component>
@@ -2058,12 +2036,12 @@
       <workItem from="1495319304791" duration="3786000" />
       <workItem from="1495323474161" duration="1261000" />
       <workItem from="1495370976646" duration="3934000" />
-      <workItem from="1495389390396" duration="2649000" />
+      <workItem from="1495389390396" duration="7827000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1979115000" />
+    <option name="totallyTimeSpent" value="1984293000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -2154,27 +2132,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/4.1.1.RELEASE/spring-webmvc-4.1.1.RELEASE.jar!/org/springframework/web/servlet/mvc/method/annotation/ServletInvocableHandlerMethod.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
-          <caret line="75" column="0" lean-forward="false" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-web/4.2.1.RELEASE/spring-web-4.2.1.RELEASE.jar!/org/springframework/web/method/support/InvocableHandlerMethod.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="271">
-          <caret line="65" column="0" lean-forward="false" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/resources/js/search.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2584">
-          <caret line="152" column="56" lean-forward="false" selection-start-line="152" selection-start-column="56" selection-end-line="152" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/web/SearchAndTagController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="799">
@@ -2239,14 +2196,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="21" column="46" lean-forward="false" selection-start-line="21" selection-start-column="46" selection-end-line="21" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/web/MeetingController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2057">
-          <caret line="121" column="54" lean-forward="false" selection-start-line="121" selection-start-column="54" selection-end-line="121" selection-end-column="54" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2550,14 +2499,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/web/NewMeetingController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="518">
-          <caret line="277" column="0" lean-forward="false" selection-start-line="277" selection-start-column="0" selection-end-line="277" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/resources/js/header.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
@@ -2681,22 +2622,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/profile.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="212" column="0" lean-forward="false" selection-start-line="212" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/web/UserController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="745">
-          <caret line="351" column="61" lean-forward="false" selection-start-line="351" selection-start-column="61" selection-end-line="351" selection-end-column="61" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/allFriends.jsp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
@@ -2708,15 +2633,71 @@
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/meetings.jsp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="697">
-          <caret line="41" column="12" lean-forward="true" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
+          <caret line="41" column="12" lean-forward="false" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/profile.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="212" column="0" lean-forward="false" selection-start-line="212" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/service/converter/Converter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="208" column="0" lean-forward="false" selection-start-line="208" selection-start-column="0" selection-end-line="208" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/searchUser.jsp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="731">
-          <caret line="59" column="98" lean-forward="true" selection-start-line="59" selection-start-column="98" selection-end-line="59" selection-end-column="98" />
+        <state relative-caret-position="759">
+          <caret line="65" column="42" lean-forward="true" selection-start-line="65" selection-start-column="42" selection-end-line="65" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/web/UserController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1393">
+          <caret line="303" column="22" lean-forward="false" selection-start-line="303" selection-start-column="22" selection-end-line="303" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/web/NewMeetingController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1062">
+          <caret line="263" column="28" lean-forward="false" selection-start-line="263" selection-start-column="28" selection-end-line="263" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_111/src.zip!/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="456" column="19" lean-forward="false" selection-start-line="456" selection-start-column="19" selection-end-line="456" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/entities/Meeting.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="705" column="32" lean-forward="false" selection-start-line="705" selection-start-column="32" selection-end-line="705" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/web/MeetingController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1979">
+          <caret line="427" column="34" lean-forward="false" selection-start-line="427" selection-start-column="34" selection-end-line="427" selection-end-column="34" />
           <folding />
         </state>
       </provider>

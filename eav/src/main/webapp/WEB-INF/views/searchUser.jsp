@@ -23,7 +23,7 @@
 
     <link href="<%=request.getContextPath()%>/resources/css/resultList.css" rel="stylesheet">
 
-    <script type="text/javascript" src="/resources/js/jquery-1.9.1.min.js"> </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/jquery-1.9.1.min.js"> </script>
 
 </head>
 <body>
@@ -46,7 +46,7 @@
                                 <li class="right clearfix"><span class="chat-img pull-right">
                                 <a class="btn btn-primary btn-xs" href="/user${object.id}"><span class="glyphicon glyphicon-cog">  </span>Профиль </a>
 
-                                <a class="btn btn-info btn-xs <c:if test="${flagsMessage.get(object.id) eq false}"> disabled </c:if>" href="/sendMessage/${object.id}"  ><span class="glyphicon glyphicon-envelope"></span>Написать</a>
+                                <a class="btn btn-info btn-xs  <c:if test="${flagsMessage.get(object.id) eq false}"> disabled </c:if> " href="/sendMessage/${object.id}"><span class="glyphicon glyphicon-envelope"></span>Написать</a>
 
                                 <c:if test="${checkAddFriendButton.get(object.id) eq true}">
                                     <a class="btn btn-success btn-xs <c:if test="${object.equals(currentUser)}"> disabled </c:if>" href="/addFriend/${object.id}/addFriend"  onclick="sendMessage('friendRequest', ${object.id}, null, null)">
