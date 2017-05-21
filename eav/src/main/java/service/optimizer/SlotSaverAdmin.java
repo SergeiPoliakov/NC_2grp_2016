@@ -1,4 +1,5 @@
 package service.optimizer;
+import entities.Event;
 import entities.Meeting;
 
 import java.lang.reflect.InvocationTargetException;
@@ -115,6 +116,12 @@ public class SlotSaverAdmin {
         // И меняем редактируемую точку сохранения:
         duplicateMap.get(key).remove(1);
         duplicateMap.get(key).add(meeting);
+        /*
+        Meeting meeting1 = duplicateMap.get(key).get(1);
+        for(int i = 0; i < meeting1.getDuplicates().size(); i++){
+            Event duplicate = meeting1.getDuplicates().get(i);
+        }
+        */
         //
         savePointDateMap.get(key).remove(1);
         savePointDateMap.get(key).add(savePointDate);
@@ -137,6 +144,7 @@ public class SlotSaverAdmin {
             result = duplicateMap.get(key).get(1);
             // наче останется нулл, его и отдадим
         }
+
         return result;
     }
 

@@ -394,10 +394,12 @@ public class SlotOptimizer {
     // 2017-05-07 ------------------------------ К ОПТИМИЗАТОРУ АДМИНА ------------------------------
 
     // Админский оптимизатор встречи
-    public static void optimizeItForAdmin(Integer user_id, Integer meeting_id) throws NoSuchMethodException, ParseException, ExecutionException, SQLException, IllegalAccessException, InvocationTargetException {
+    public static void optimizeItForAdmin(Integer user_id, Integer meeting_id) throws NoSuchMethodException, ParseException, ExecutionException, SQLException, IllegalAccessException, InvocationTargetException, CloneNotSupportedException {
 
         // 1 Получаем из сейвера финальную точку сохранения (встречу) по составному ключу:
         Meeting meeting = SlotSaverAdmin.getDuplicateFinalPoint(user_id, meeting_id);
+        meeting = (Meeting) meeting.clone();
+        // Meeting meeting = new SlotManager().getMeeting(meeting_id); // получаем встречу // Чтобы получить изменения из базы
 
         // 2 Проверяем, является ли данная встреча встречей с плавающими границами
         // (в этом случае ее фактическая продолжительность меньше продолжительности, рассчитанной по датам начала и окончания)
@@ -431,10 +433,11 @@ public class SlotOptimizer {
             // и записываем в список смещений:
             displacements.add(me_du);
             // и увеличиваем продолжительность среднего смещения:
-            sr_Duration.plus(me_du);
+            sr_Duration = sr_Duration.plus(me_du);
         }
 
         // 5 Рассчитываем среднее смещение:
+        // Long lo_Duration = sr_Duration.toMinutes() / displacements.size(); // делим на количество дубликатов
         sr_Duration = sr_Duration.dividedBy(displacements.size()); // делим на количество дубликатов
 
 
