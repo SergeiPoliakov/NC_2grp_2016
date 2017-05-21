@@ -36,6 +36,7 @@ function getAllMessagesChat() {
 			}
 
 			if (data.length > 0){
+                $("#cardsholderItems").mCustomScrollbar("scrollTo", "bottom");
 				v_message_id = (data[data.length - 1]).id; // И помещаем айди последнего (в списке) сообщения в переменную, чтобы потом знать, с какого номера запрашивать
 			}
 
@@ -75,7 +76,6 @@ function getMessagesChatAfterId() {
                 $("#cardsholderItems").mCustomScrollbar("scrollTo", "bottom");
 				v_message_id = (data[data.length - 1]).id; // И помещаем айди последнего (в списке) сообщения в переменную, чтобы потом знать, с какого номера запрашивать
 			}
-
 		}
 	});
 }

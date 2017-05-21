@@ -136,7 +136,7 @@
                 </ul>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-lg-offset-6">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-lg-offset-5">
 
 
             <!-- Место второго таймера (обратный отсчет до начала встречи) -->
@@ -149,7 +149,7 @@
                     <h3 class="text-center" id="cardsholder">Чат</h3>
                 </div>
                 <ul class="list-group list-group-my list-group-flush text-left chat mCustomScrollbar"
-                    data-mcs-theme="minimal-dark" id="cardsholderItems" style="background-color: rgb(238, 238, 238);">
+                    data-mcs-theme="minimal-dark" id="cardsholderItems" style="background-color: rgb(238, 238, 238); position: relative;min-height: 30rem;max-height: 30rem;">
 
                     <div id = "insert_place_messages"></div> <!-- 2017-05-12 Место вставки сообщений, см. chat.js -->
 
