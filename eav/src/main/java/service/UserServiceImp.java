@@ -195,14 +195,17 @@ public class UserServiceImp implements UserService {
 
     public void sendSmS(String type, Integer fromID, Integer toID) throws ExecutionException {
         DataObject dataObject = doCache.get(toID);
-
+        System.out.println("Я внутри");
+        System.out.println(dataObject.getValue(17));
         if (dataObject.getValue(17).equals("true")) {  // тут нужно будет проверять расширенные настройки потом
+            System.out.println("Проверка прошла");
             SMSCSender sd = new SMSCSender("Netcracker", "q7Sq2O_VqLhh", "utf-8", true);   //после теста закомментируйте обратно!!!!!
             User userTo = new Converter().ToUser(doCache.get(toID));
             User userFrom = new Converter().ToUser(doCache.get(fromID));
             if ("newMessage".equals(type)) {
                 sd.sendSms(userTo.getPhone(), "У вас новое сообщение от " + userFrom.getLogin() + ".", 0, "", "", 0, "NC", "");
             } else if ("addFriend".equals(type)) {
+                System.out.println("Отправляем");
                 sd.sendSms(userTo.getPhone(), "Пользователь " + userFrom.getLogin() + " хочет стать вашим другом.", 0, "", "", 0, "NC", "");
             } else if ("meetingInvite".equals(type)) {
                 sd.sendSms(userTo.getPhone(), "Пользователь " + userFrom.getLogin() + " приглашает вас на встречу.", 0, "", "", 0, "NC", "");

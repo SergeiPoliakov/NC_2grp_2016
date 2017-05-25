@@ -301,7 +301,7 @@ public class UserController {
                     mapObjects.put("checkAddFriendButton", checkAddFriendButton);
                     mapObjects.put("flagsMessage", flagsMessage);
                     mapObjects.put("currentUser", currentUser);
-                    //session.removeAttribute("finder");
+                    session.removeAttribute("finder");
 
                 } catch (ExecutionException e) {
                     e.printStackTrace();
@@ -354,7 +354,7 @@ public class UserController {
                 mapObjects.put("checkAddFriendButton", checkAddFriendButton);
                 mapObjects.put("flagsMessage", flagsMessage);
                 mapObjects.put("currentUser", currentUser);
-                //session.removeAttribute("finder");
+                session.removeAttribute("finder");
 
                 }
             } else {
@@ -626,6 +626,7 @@ public class UserController {
             String confirmedPhone = "true";
             dataObject.setValue(17, confirmedPhone);
             loadingService.updateDataObject(dataObject);
+            doCache.refresh(dataObject.getId());
             return "redirect:/profile";
         } else System.out.println("Неверный код подтверждения!");
 
@@ -786,6 +787,7 @@ public class UserController {
                 userService.fittingEmail("addFriend", dataObjectFrom.getId(), objectId);
             }
             if ("true".equals(settings.getPhoneNewFriend())) {
+                System.out.println("Я перед входом в метод отправки");
                  userService.sendSmS("addFriend" ,dataObjectFrom.getId(), objectId);  //отправка смс
             }
         }

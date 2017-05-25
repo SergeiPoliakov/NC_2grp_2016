@@ -228,6 +228,8 @@ public class NewMeetingController {
             check = false;
         }
 
+        System.out.println("Барьер пройден");
+
         if (check) {
             Meeting meeting = null;
             try {
